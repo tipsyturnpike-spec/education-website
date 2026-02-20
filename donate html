@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Education Reform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #e74c3c;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .donate-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+        
+        .donation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .donation-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .donation-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #e74c3c;
+            margin: 1rem 0;
+        }
+        
+        .donation-card ul {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        
+        .donation-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>EduFuture</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#history">The Crisis</a></li>
+                <li><a href="index.html#curriculum">Curriculum</a></li>
+                <li><a href="index.html#community">Community</a></li>
+                <li><a href="donate.html">Donate</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <section class="donate-hero">
+        <h1>Support the Future of Education</h1>
+        <p>Your donation helps develop curriculum and train teachers nationwide</p>
+    </section>
+    
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Choose Your Impact Level</h2>
+        
+        <div class="donation-grid">
+            <div class="donation-card">
+                <h3>Community Supporter</h3>
+                <div class="donation-amount">$25</div>
+                <p>per month</p>
+                <ul>
+                    <li>✓ Monthly newsletter</li>
+                    <li>✓ Community access</li>
+                    <li>✓ Curriculum updates</li>
+                </ul>
+                <button class="btn" onclick="processDonation(25)">Select</button>
+            </div>
+            
+            <div class="donation-card">
+                <h3>Curriculum Champion</h3>
+                <div class="donation-amount">$50</div>
+                <p>per month</p>
+                <ul>
+                    <li>✓ Everything in Supporter</li>
+                    <li>✓ Voting rights on curriculum</li>
+                    <li>✓ Early access to resources</li>
+                </ul>
+                <button class="btn" onclick="processDonation(50)">Select</button>
+            </div>
+            
+            <div class="donation-card">
+                <h3>Education Visionary</h3>
+                <div class="donation-amount">$100</div>
+                <p>per month</p>
+                <ul>
+                    <li>✓ Everything in Champion</li>
+                    <li>✓ Name on donor wall</li>
+                    <li>✓ Annual summit invitation</li>
+                </ul>
+                <button class="btn" onclick="processDonation(100)">Select</button>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 3rem 0;">
+            <h3>Custom Amount</h3>
+            <input type="number" id="customAmount" placeholder="Enter amount" style="padding: 0.5rem; margin: 1rem; width: 200px;">
+            <button class="btn" onclick="processCustomDonation()">Donate</button>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>&copy; 2024 EduFuture. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        function processDonation(amount) {
+            alert(`Thank you for considering a $${amount}/month donation! In a full implementation, this would connect to a payment processor.`);
+        }
+        
+        function processCustomDonation() {
+            const amount = document.getElementById('customAmount').value;
+            if (amount && amount > 0) {
+                alert(`Thank you for considering a $${amount} donation!`);
+            } else {
+                alert('Please enter a valid amount.');
+            }
+        }
+    </script>
+</body>
+</html>
