@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Living Curriculum | Rebuilding American Education</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Consistent Navigation for ALL pages */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(42,92,125,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Hero Section with Call to Action */
+        .hero {
+            background: var(--gradient);
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 70px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><path d="M20 20 L80 20 L80 80 L20 80 Z" fill="none" stroke="white" stroke-width="2"/><circle cx="50" cy="50" r="10" fill="white"/></svg>');
+            background-size: 50px 50px;
+            animation: move 20s linear infinite;
+        }
+
+        @keyframes move {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(50px) translateY(50px); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .callout-phrase {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 3rem 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mission Section */
+        .mission-section {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .mission-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .mission-title {
+            font-size: 3rem;
+            color: var(--dark);
+            margin-bottom: 2rem;
+        }
+
+        .mission-statement {
+            font-size: 1.8rem;
+            font-weight: 300;
+            line-height: 1.5;
+            color: var(--primary);
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .mission-card {
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 20px;
+            transition: transform 0.3s;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .mission-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* History of Failure Section */
+        .history-section {
+            padding: 6rem 2rem;
+            background: var(--light);
+        }
+
+        .history-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .history-title {
+            font-size: 3rem;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .history-timeline {
+            position: relative;
+            margin: 4rem 0;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .history-year {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--highlight);
+            min-width: 150px;
+        }
+
+        .history-content h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .history-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--highlight);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .stat-source {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        /* Rebuilding Section */
+        .rebuild-section {
+            padding: 6rem 2rem;
+            background: var(--gradient);
+            color: white;
+        }
+
+        .rebuild-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .rebuild-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .rebuild-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .rebuild-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Age Navigation Cards */
+        .age-nav-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .age-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .age-card {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .age-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .age-range {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .age-name {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .history-stats,
+            .mission-grid,
+            .rebuild-grid,
+            .age-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .history-item {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Consistent Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Powerful Call to Action -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>The American Dream Needs New Schools</h1>
+            <p>For 40 years, we've watched our education system fail our children. Literacy rates plummet. Practical skills vanish. A generation that can't fix, can't grow, can't build.</p>
+            <div class="callout-phrase">🔥 WE NEED YOU TO HELP REBUILD OUR SCHOOLS 🔥</div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="openModal()">Join the Rebuilding</button>
+                <a href="#history" class="btn btn-secondary">Learn the Truth</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Statement -->
+    <section class="mission-section">
+        <div class="mission-container">
+            <h2 class="mission-title">Our Mission</h2>
+            <div class="mission-statement">
+                "To rebuild American education from the ground up - creating hands-on, minds-on learning that produces capable, thoughtful, innovative humans who can garden, cook, build, fix, calculate, question, and create. We're not reforming the old system. We're building a new one."
+            </div>
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <div class="mission-icon">🔨</div>
+                    <h3>Hands First</h3>
+                    <p>Children learn by doing. Every concept is experienced before it's explained.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">🌱</div>
+                    <h3>Life Ready</h3>
+                    <p>Every graduate can garden, cook, fix, budget, and think critically.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">🤔</div>
+                    <h3>Question Everything</h3>
+                    <p>No sanitized textbooks. No single narrative. Multiple perspectives always.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History of Failure Section -->
+    <section id="history" class="history-section">
+        <div class="history-container">
+            <h2 class="history-title">The Betrayal: How America Failed Its Children</h2>
+            
+            <div class="history-timeline">
+                <div class="history-item">
+                    <div class="history-year">1983</div>
+                    <div class="history-content">
+                        <h3>"A Nation at Risk" - The Warning We Ignored</h3>
+                        <p>The National Commission on Excellence in Education declared: "The educational foundations of our society are being eroded by a rising tide of mediocrity that threatens our very future as a Nation and a people." They warned that if another country had done this to us, we'd view it as an act of war. We did nothing.</p>
+                        <p><small>Source: U.S. Department of Education, 1983</small></p>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-year">2002</div>
+                    <div class="history-content">
+                        <h3>No Child Left Behind - The Testing Disaster</h3>
+                        <p>Schools began teaching to the test. Art, music, shop class, home economics - eliminated. Children became data points. Creativity died. By 2007, 62% of school districts had cut time from other subjects to focus on reading and math.</p>
+                        <p><small>Source: Center on Education Policy, 2008</small></p>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-year">2015</div>
+                    <div class="history-content">
+                        <h3>Every Student Succeeds Act - More of the Same</h3>
+                        <p>Despite promises of change, the damage was done. A generation had grown up without ever using a tool, planting a seed, or fixing anything. We created excellent test-takers and helpless humans.</p>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-year">2024</div>
+                    <div class="history-content">
+                        <h3>The Crisis Today</h3>
+                        <p>54% of U.S. adults read below 6th grade level. 66% can't perform basic car maintenance. 89% of young adults wish they'd learned practical skills in school. We have failed an entire generation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-stats">
+                <div class="stat-box">
+                    <span class="stat-number">54%</span>
+                    <span class="stat-label">of adults read below 6th grade</span>
+                    <div class="stat-source">PIAAC, 2023</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">66%</span>
+                    <span class="stat-label">Can't change a tire</span>
+                    <div class="stat-source">AAA Survey, 2023</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">75%</span>
+                    <span class="stat-label">Can't cook from scratch</span>
+                    <div class="stat-source">USDA, 2022</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">89%</span>
+                    <span class="stat-label">Want practical skills</span>
+                    <div class="stat-source">Nat. Gardening Assoc., 2023</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rebuilding Section -->
+    <section class="rebuild-section">
+        <div class="rebuild-container">
+            <h2 class="rebuild-title">We Are Rebuilding. From Scratch.</h2>
+            <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto;">Not reforming. Not patching. Building something entirely new.</p>
+            
+            <div class="rebuild-grid">
+                <div class="rebuild-card">
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🔨</h3>
+                    <h3>Hands-On Everything</h3>
+                    <p>Math through carpentry. Science through cooking. History through stories, not textbooks.</p>
+                </div>
+                <div class="rebuild-card">
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🌍</h3>
+                    <h3>Real Perspectives</h3>
+                    <p>No sanitized American textbooks. Every story has multiple sides. We teach them all.</p>
+                </div>
+                <div class="rebuild-card">
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🔧</h3>
+                    <h3>Life Ready</h3>
+                    <p>By graduation: garden, cook, fix a car, file taxes, handle emergencies, build furniture.</p>
+                </div>
+            </div>
+
+            <div style="font-size: 2rem; font-weight: 700; margin: 3rem 0;">
+                "THE OLD SCHOOL IS BURNING. LET'S BUILD SOMETHING BETTER."
+            </div>
+            
+            <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 1rem 3rem;" onclick="openModal()">I Want to Help Build It</button>
+        </div>
+    </section>
+
+    <!-- Age Group Navigation -->
+    <section class="age-nav-section">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">Explore by Age</h2>
+        <div class="age-grid">
+            <div class="age-card" onclick="location.href='infants.html'">
+                <div class="age-range">0-4 Years</div>
+                <div class="age-name">Infant & Toddler</div>
+                <p>Sensory exploration, attachment, first words through play</p>
+            </div>
+            <div class="age-card" onclick="location.href='elementary.html'">
+                <div class="age-range">5-10 Years</div>
+                <div class="age-name">Elementary Explorers</div>
+                <p>Gardening, simple tools, cooking, projects</p>
+            </div>
+            <div class="age-card" onclick="location.href='middle.html'">
+                <div class="age-range">11-13 Years</div>
+                <div class="age-name">Middle School Makers</div>
+                <p>Woodshop, mechanics, advanced projects</p>
+            </div>
+            <div class="age-card" onclick="location.href='highschool.html'">
+                <div class="age-range">14-18 Years</div>
+                <div class="age-name">High School Masters</div>
+                <p>Auto, taxes, gun safety, certifications</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="signupModal" class="modal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
+            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Join the Rebuilding</h2>
+            <p style="margin-bottom: 2rem;">We need teachers, parents, and community members who believe in something better.</p>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+            <select style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+                <option>I am a parent</option>
+                <option>I am a teacher</option>
+                <option>I am a community member</option>
+            </select>
+            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you for joining the movement!')">Join Now</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc;">High (14-18)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <ul style="list-style: none;">
+                    <li><a href="community.html" style="color: #ccc;">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 The Living Curriculum. We're building something new.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
