@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical Education | The Living Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+            --pe: #E67E22;
+            --outdoor: #27AE60;
+            --sports: #3498DB;
+            --movement: #9B59B6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
+        }
+
+        .btn-pe {
+            background: var(--pe);
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFD27F 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: linear-gradient(135deg, #E67E22 0%, #D35400 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .philosophy-banner h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .philosophy-banner p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Category Navigation */
+        .category-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+            position: sticky;
+            top: 80px;
+            background: white;
+            padding: 1rem;
+            border-radius: 60px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .category-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .category-btn.sports { border-left: 5px solid var(--sports); }
+        .category-btn.outdoor { border-left: 5px solid var(--outdoor); }
+        .category-btn.movement { border-left: 5px solid var(--movement); }
+        .category-btn.integrated { border-left: 5px solid var(--pe); }
+
+        /* PE Sections */
+        .pe-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            scroll-margin-top: 150px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid;
+        }
+
+        .section-header.sports { border-bottom-color: var(--sports); }
+        .section-header.outdoor { border-bottom-color: var(--outdoor); }
+        .section-header.movement { border-bottom-color: var(--movement); }
+        .section-header.integrated { border-bottom-color: var(--pe); }
+
+        .section-icon {
+            font-size: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--dark);
+        }
+
+        /* Age Groups */
+        .age-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .age-tab {
+            padding: 0.5rem 1.5rem;
+            background: var(--light);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .age-tab:hover,
+        .age-tab.active {
+            background: var(--pe);
+            color: white;
+        }
+
+        /* Activity Grid */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .activity-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 20px;
+            border-left: 5px solid var(--pe);
+            transition: transform 0.3s;
+        }
+
+        .activity-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .activity-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .activity-card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .academic-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin: 0.5rem 0.5rem 0 0;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: var(--pe);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin: 0.5rem 0.5rem 0 0;
+        }
+
+        .integration-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 2px dashed var(--pe);
+        }
+
+        /* Sports Cards */
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .sport-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .sport-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .sport-image {
+            height: 150px;
+            background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .sport-content {
+            padding: 1.5rem;
+        }
+
+        .sport-content h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .math-note {
+            background: #F0F7FF;
+            padding: 0.5rem;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Outdoor Activities */
+        .outdoor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .outdoor-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--outdoor);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .activity-grid,
+            .sports-grid,
+            .outdoor-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-nav {
+                flex-direction: column;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="special-education.html">Special Education</a></li>
+                <li><a href="physical-education.html" class="active">Physical Education</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Physical Education</h1>
+        <p style="font-size: 1.3rem;">Moving Bodies, Thinking Minds</p>
+    </section>
+
+    <div class="container">
+        <!-- Philosophy Banner -->
+        <div class="philosophy-banner">
+            <h2>🏃 Learning Doesn't Stop When Movement Starts</h2>
+            <p>Physical education isn't a break from learning - it's a different way of learning. Every sport, game, and outdoor activity is packed with math, science, strategy, and social studies. We just make it feel like play.</p>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="category-nav">
+            <button class="category-btn sports" onclick="document.getElementById('sports').scrollIntoView({behavior: 'smooth'})">Team Sports</button>
+            <button class="category-btn outdoor" onclick="document.getElementById('outdoor').scrollIntoView({behavior: 'smooth'})">Outdoor Adventure</button>
+            <button class="category-btn movement" onclick="document.getElementById('movement').scrollIntoView({behavior: 'smooth'})">Movement & Wellness</button>
+            <button class="category-btn integrated" onclick="document.getElementById('integrated').scrollIntoView({behavior: 'smooth'})">Integrated Activities</button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TEAM SPORTS SECTION - MATH THROUGH GAMES -->
+        <!-- ============================================ -->
+        <section id="sports" class="pe-section">
+            <div class="section-header sports">
+                <div class="section-icon">⚽</div>
+                <h2 class="section-title">Team Sports: Math in Motion</h2>
+            </div>
+
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Every sport is geometry and physics in action. Students learn by playing, not by sitting.</p>
+
+            <!-- Age Tabs -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('sports-elementary', this)">Elementary (5-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('sports-middle', this)">Middle (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('sports-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Elementary Sports -->
+            <div id="sports-elementary" class="age-content">
+                <h3 style="color: var(--sports); margin: 1.5rem 0;">Elementary: Learning Through Play</h3>
+                
+                <div class="sports-grid">
+                    <div class="sport-card">
+                        <div class="sport-image">⚽</div>
+                        <div class="sport-content">
+                            <h3>Kickball</h3>
+                            <p><strong>Looks like:</strong> Fun recess game</p>
+                            <p><strong>Actually learning:</strong> Physics of force and motion, prediction, spatial awareness</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> How hard do you need to kick to reach the outfield? That's force = mass × acceleration. Students feel it before they name it.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sport-card">
+                        <div class="sport-image">🏃</div>
+                        <div class="sport-content">
+                            <h3>Relay Races</h3>
+                            <p><strong>Looks like:</strong> Running and having fun</p>
+                            <p><strong>Actually learning:</strong> Team strategy, time measurement, pacing</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> Calculate average speed. If you ran 50 meters in 10 seconds, how fast is that in miles per hour? Real data collection.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sport-card">
+                        <div class="sport-image">🏀</div>
+                        <div class="sport-content">
+                            <h3>Basketball Basics</h3>
+                            <p><strong>Looks like:</strong> Shooting hoops</p>
+                            <p><strong>Actually learning:</strong> Angles, force, trajectory</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> The angle of the shot determines success. Students experiment: too flat? too high? They're learning quadratic equations through their bodies.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon">📊</div>
+                    <h3>Stats Kids Love</h3>
+                    <p>Every game becomes a math lesson. Students track:</p>
+                    <ul style="margin: 1rem 0 0 2rem;">
+                        <li>How many throws until you hit the target? (Probability)</li>
+                        <li>What's your personal best time? (Data tracking)</li>
+                        <li>How many points did your team score? (Addition)</li>
+                    </ul>
+                    <div class="integration-box">
+                        <strong>Teacher Tip:</strong> Have students keep "sports journals" with simple stats. They're doing math without worksheets.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle School Sports -->
+            <div id="sports-middle" class="age-content" style="display: none;">
+                <h3 style="color: var(--sports); margin: 1.5rem 0;">Middle School: Strategy & Systems</h3>
+                
+                <div class="sports-grid">
+                    <div class="sport-card">
+                        <div class="sport-image">⚾</div>
+                        <div class="sport-content">
+                            <h3>Baseball/Softball</h3>
+                            <p><strong>Looks like:</strong> America's pastime</p>
+                            <p><strong>Actually learning:</strong> Statistics, probability, physics</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> Calculate batting averages. Predict where a ball will land based on launch angle. Understand statistics through real data.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sport-card">
+                        <div class="sport-image">🏈</div>
+                        <div class="sport-content">
+                            <h3>Flag Football</h3>
+                            <p><strong>Looks like:</strong> Fun, active game</p>
+                            <p><strong>Actually learning:</strong> Geometry of plays, strategy, probability</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> Draw up plays on whiteboards. Calculate yardage needed. Understand angles of running routes.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sport-card">
+                        <div class="sport-image">🏐</div>
+                        <div class="sport-content">
+                            <h3>Volleyball</h3>
+                            <p><strong>Looks like:</strong> Hitting a ball</p>
+                            <p><strong>Actually learning:</strong> Geometry of the court, teamwork, force modulation</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> The court is a rectangle divided into squares. Rotations teach patterns. Setting up plays teaches spatial reasoning.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon">📈</div>
+                    <h3>Advanced Stats Project</h3>
+                    <p>Students become sports analysts:</p>
+                    <ul style="margin: 1rem 0 0 2rem;">
+                        <li>Track performance over a season</li>
+                        <li>Create graphs showing improvement</li>
+                        <li>Calculate averages, medians, modes</li>
+                        <li>Predict outcomes based on past data</li>
+                    </ul>
+                    <div class="integration-box">
+                        <strong>🔬 Science Connection:</strong> Why does a curveball curve? That's physics - air pressure, spin, velocity. Students experience it before they learn the formula.
+                    </div>
+                </div>
+            </div>
+
+            <!-- High School Sports -->
+            <div id="sports-high" class="age-content" style="display: none;">
+                <h3 style="color: var(--sports); margin: 1.5rem 0;">High School: Advanced Applications</h3>
+                
+                <div class="sports-grid">
+                    <div class="sport-card">
+                        <div class="sport-image">🏀</div>
+                        <div class="sport-content">
+                            <h3>Basketball Analytics</h3>
+                            <p><strong>Looks like:</strong> Competitive games</p>
+                            <p><strong>Actually learning:</strong> Advanced statistics, game theory, probability</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> Expected value of shots. Two-point vs three-point percentages. When should you foul? Game theory in action.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sport-card">
+                        <div class="sport-image">⚽</div>
+                        <div class="sport-content">
+                            <h3>Soccer Strategy</h3>
+                            <p><strong>Looks like:</strong> World's game</p>
+                            <p><strong>Actually learning:</strong> Physics of ball motion, team geometry, strategy</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> Calculate passing angles. Understand formations as geometric patterns. Analyze possession statistics.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sport-card">
+                        <div class="sport-image">🏊</div>
+                        <div class="sport-content">
+                            <h3>Swimming & Track</h3>
+                            <p><strong>Looks like:</strong> Individual sports</p>
+                            <p><strong>Actually learning:</strong> Rate, time, distance relationships</p>
+                            <div class="math-note">
+                                <strong>🧮 Math Integration:</strong> If you swim 100 meters in 60 seconds, what's your speed? How does pace affect endurance? Real physics and math.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-icon">📊</div>
+                    <h3>Sports Science Project</h3>
+                    <p>Students design experiments:</p>
+                    <ul style="margin: 1rem 0 0 2rem;">
+                        <li>How does heart rate relate to performance?</li>
+                        <li>What's the optimal angle for a free throw?</li>
+                        <li>How does temperature affect running speed?</li>
+                    </ul>
+                    <div class="integration-box">
+                        <strong>🔬 Science Integration:</strong> Biomechanics, physiology, physics - all through sports they love.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- OUTDOOR ADVENTURE SECTION - SCIENCE & GEOGRAPHY -->
+        <!-- ============================================ -->
+        <section id="outdoor" class="pe-section">
+            <div class="section-header outdoor">
+                <div class="section-icon">🏔️</div>
+                <h2 class="section-title">Outdoor Adventure: Nature's Classroom</h2>
+            </div>
+
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">The outdoors isn't just for play - it's for learning about the world.</p>
+
+            <!-- Age Tabs -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('outdoor-elementary', this)">Elementary (5-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('outdoor-middle', this)">Middle (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('outdoor-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Elementary Outdoor -->
+            <div id="outdoor-elementary" class="age-content">
+                <h3 style="color: var(--outdoor); margin: 1.5rem 0;">Elementary: Discovering the World</h3>
+                
+                <div class="outdoor-grid">
+                    <div class="outdoor-card">
+                        <h3>🌿 Nature Scavenger Hunts</h3>
+                        <p><strong>Looks like:</strong> Fun outdoor game</p>
+                        <p><strong>Actually learning:</strong> Biology, classification, observation</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🔬 Science:</strong> Find 5 different leaves - classify them by shape. Find something living, something that was alive, something non-living. That's biology basics.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🗺️ Compass Courses</h3>
+                        <p><strong>Looks like:</strong> Treasure hunt</p>
+                        <p><strong>Actually learning:</strong> Navigation, angles, directions</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🧮 Math:</strong> Follow directions: 10 steps north, 5 steps east. That's coordinate geometry on their feet.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>⛰️ Nature Hikes</h3>
+                        <p><strong>Looks like:</strong> Walking in the woods</p>
+                        <p><strong>Actually learning:</strong> Observation, journaling, ecology</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>📝 Writing:</strong> Keep nature journals. Draw what you see. Write about it. Observation leads to description.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🌧️ Weather Observation</h3>
+                        <p><strong>Looks like:</strong> Playing outside</p>
+                        <p><strong>Actually learning:</strong> Meteorology, data collection</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>📊 Science:</strong> Track daily weather. Look for patterns. Predict tomorrow's weather based on today.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle School Outdoor -->
+            <div id="outdoor-middle" class="age-content" style="display: none;">
+                <h3 style="color: var(--outdoor); margin: 1.5rem 0;">Middle School: Skills & Science</h3>
+                
+                <div class="outdoor-grid">
+                    <div class="outdoor-card">
+                        <h3>🏕️ Camping Skills</h3>
+                        <p><strong>Looks like:</strong> Outdoor fun</p>
+                        <p><strong>Actually learning:</strong> Shelter, survival, planning</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>📐 Math:</strong> Calculate how much tent space per person. Plan food quantities. Figure out firewood needs.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🧭 Orienteering</h3>
+                        <p><strong>Looks like:</strong> Race through woods</p>
+                        <p><strong>Actually learning:</strong> Advanced navigation, map reading, geometry</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🗺️ Geography:</strong> Read topographic maps. Understand contour lines. Plan routes using terrain features.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🌱 Gardening & Composting</h3>
+                        <p><strong>Looks like:</strong> Digging in dirt</p>
+                        <p><strong>Actually learning:</strong> Biology, chemistry, ecology</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🔬 Science:</strong> Study decomposition. Understand nitrogen/carbon ratios. Learn plant life cycles.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🪐 Stargazing</h3>
+                        <p><strong>Looks like:</strong> Night activity</p>
+                        <p><strong>Actually learning:</strong> Astronomy, mythology, navigation</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🌌 History:</strong> Learn constellation myths from multiple cultures. Understand how ancients navigated.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High School Outdoor -->
+            <div id="outdoor-high" class="age-content" style="display: none;">
+                <h3 style="color: var(--outdoor); margin: 1.5rem 0;">High School: Advanced Outdoor Education</h3>
+                
+                <div class="outdoor-grid">
+                    <div class="outdoor-card">
+                        <h3>🧗 Rock Climbing</h3>
+                        <p><strong>Looks like:</strong> Extreme sport</p>
+                        <p><strong>Actually learning:</strong> Physics, safety, trust</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>⚙️ Physics:</strong> Understand friction, center of gravity, force distribution. Calculate fall factors and rope stretch.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🛶 Canoeing/Kayaking</h3>
+                        <p><strong>Looks like:</strong> Water fun</p>
+                        <p><strong>Actually learning:</strong> Fluid dynamics, ecology, navigation</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🌊 Science:</strong> Study water flow, currents, weather patterns. Understand watershed ecology.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🏔️ Multi-Day Expeditions</h3>
+                        <p><strong>Looks like:</strong> Adventure trip</p>
+                        <p><strong>Actually learning:</strong> Planning, budgeting, leadership</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>💰 Life Skills:</strong> Plan route, budget for food, calculate supplies, navigate. Real-world planning skills.
+                        </div>
+                    </div>
+
+                    <div class="outdoor-card">
+                        <h3>🌍 Environmental Science</h3>
+                        <p><strong>Looks like:</strong> Hiking</p>
+                        <p><strong>Actually learning:</strong> Ecology, conservation, data collection</p>
+                        <div class="integration-box" style="border-color: var(--outdoor);">
+                            <strong>🔬 Research:</strong> Collect water quality data. Track wildlife. Participate in citizen science projects.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- MOVEMENT & WELLNESS SECTION - HEALTH & SCIENCE -->
+        <!-- ============================================ -->
+        <section id="movement" class="pe-section">
+            <div class="section-header movement">
+                <div class="section-icon">🧘</div>
+                <h2 class="section-title">Movement & Wellness: Body Science</h2>
+            </div>
+
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Understanding how our bodies work by using them.</p>
+
+            <!-- Age Tabs -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('movement-elementary', this)">Elementary (5-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('movement-middle', this)">Middle (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('movement-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Elementary Movement -->
+            <div id="movement-elementary" class="age-content">
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-icon">🫀</div>
+                        <h3>Heart Rate Explorations</h3>
+                        <p><strong>Activity:</strong> Run, jump, rest. Feel your heartbeat.</p>
+                        <p><strong>Learning:</strong> How does exercise affect heart rate? Why does it matter?</p>
+                        <span class="academic-tag">Science</span>
+                        <span class="academic-tag">Health</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🧘</div>
+                        <h3>Yoga & Mindfulness</h3>
+                        <p><strong>Activity:</strong> Animal poses, breathing games</p>
+                        <p><strong>Learning:</strong> Body awareness, self-regulation, calm</p>
+                        <span class="academic-tag">Social-Emotional</span>
+                        <span class="academic-tag">Health</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">💪</div>
+                        <h3>Muscle Groups Game</h3>
+                        <p><strong>Activity:</strong> Simon says with specific muscles</p>
+                        <p><strong>Learning:</strong> Anatomy basics, body awareness</p>
+                        <span class="academic-tag">Biology</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🥗</div>
+                        <h3>Energy In, Energy Out</h3>
+                        <p><strong>Activity:</strong> Track activity and food choices</p>
+                        <p><strong>Learning:</strong> Nutrition basics, energy balance</p>
+                        <span class="academic-tag">Health</span>
+                        <span class="academic-tag">Math</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle School Movement -->
+            <div id="movement-middle" class="age-content" style="display: none;">
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-icon">📊</div>
+                        <h3>Fitness Testing & Tracking</h3>
+                        <p><strong>Activity:</strong> Measure pushups, situps, running times</p>
+                        <p><strong>Learning:</strong> Data collection, graphing, improvement over time</p>
+                        <span class="academic-tag">Math</span>
+                        <span class="academic-tag">Science</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🧬</div>
+                        <h3>Body Systems Study</h3>
+                        <p><strong>Activity:</strong> Exercise to feel different systems in action</p>
+                        <p><strong>Learning:</strong> Cardiovascular, respiratory, muscular systems</p>
+                        <span class="academic-tag">Biology</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🧠</div>
+                        <h3>Brain & Movement</h3>
+                        <p><strong>Activity:</strong> Coordination challenges, cross-lateral movements</p>
+                        <p><strong>Learning:</strong> How movement helps learning and brain development</p>
+                        <span class="academic-tag">Neuroscience</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🥦</div>
+                        <h3>Nutrition Science</h3>
+                        <p><strong>Activity:</strong> Fueling for performance experiments</p>
+                        <p><strong>Learning:</strong> How food affects energy and recovery</p>
+                        <span class="academic-tag">Health</span>
+                        <span class="academic-tag">Science</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High School Movement -->
+            <div id="movement-high" class="age-content" style="display: none;">
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-icon">📈</div>
+                        <h3>Training Principles</h3>
+                        <p><strong>Activity:</strong> Design personal fitness plans</p>
+                        <p><strong>Learning:</strong> Overload, progression, specificity - exercise science</p>
+                        <span class="academic-tag">Exercise Science</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">❤️</div>
+                        <h3>Lifetime Fitness</h3>
+                        <p><strong>Activity:</strong> Try activities you can do at any age</p>
+                        <p><strong>Learning:</strong> Lifelong health habits, prevention</p>
+                        <span class="academic-tag">Health</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🧘</div>
+                        <h3>Stress Management</h3>
+                        <p><strong>Activity:</strong> Yoga, meditation, breathing techniques</p>
+                        <p><strong>Learning:</strong> Mental health, self-regulation, stress science</p>
+                        <span class="academic-tag">Psychology</span>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-icon">🏋️</div>
+                        <h3>Strength Training Science</h3>
+                        <p><strong>Activity:</strong> Proper lifting techniques</p>
+                        <p><strong>Learning:</strong> Physics of leverage, muscle physiology, safety</p>
+                        <span class="academic-tag">Physics</span>
+                        <span class="academic-tag">Biology</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- INTEGRATED ACTIVITIES SECTION -->
+        <!-- ============================================ -->
+        <section id="integrated" class="pe-section">
+            <div class="section-header integrated">
+                <div class="section-icon">🎯</div>
+                <h2 class="section-title">Integrated Activities: All Subjects in Motion</h2>
+            </div>
+
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Activities that weave multiple subjects into one experience.</p>
+
+            <div class="sports-grid">
+                <div class="sport-card">
+                    <div class="sport-image">📐</div>
+                    <div class="sport-content">
+                        <h3>Geometry Hopscotch</h3>
+                        <p><strong>Looks like:</strong> Classic playground game</p>
+                        <p><strong>Subjects:</strong> Math, PE</p>
+                        <div class="math-note">
+                            Draw shapes instead of numbers. Jump to the hexagon. Name the shape. Identify angles with your feet.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sport-card">
+                    <div class="sport-image">🌍</div>
+                    <div class="sport-content">
+                        <h3>Around the World Game</h3>
+                        <p><strong>Looks like:</strong> Running game</p>
+                        <p><strong>Subjects:</strong> Geography, PE</p>
+                        <div class="math-note">
+                            Mark countries on playground. Call out a country - students run there. Learn geography through movement.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sport-card">
+                    <div class="sport-image">📝</div>
+                    <div class="sport-content">
+                        <h3>Spelling Relay</h3>
+                        <p><strong>Looks like:</strong> Relay race</p>
+                        <p><strong>Subjects:</strong> Language Arts, PE</p>
+                        <div class="math-note">
+                            Run to letter cards, bring back letters, spell words as a team. Movement reinforces learning.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sport-card">
+                    <div class="sport-image">🧪</div>
+                    <div class="sport-content">
+                        <h3>Physics Playground</h3>
+                        <p><strong>Looks like:</strong> Swings and slides</p>
+                        <p><strong>Subjects:</strong> Physics, PE</p>
+                        <div class="math-note">
+                            Swings teach pendulums. Slides teach gravity and friction. See-saws teach levers. The playground is a physics lab.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sport-card">
+                    <div class="sport-image">💰</div>
+                    <div class="sport-content">
+                        <h3>Fitness Finance</h3>
+                        <p><strong>Looks like:</strong> Exercise stations</p>
+                        <p><strong>Subjects:</strong> Math, PE</p>
+                        <div class="math-note">
+                            Each exercise earns "money." Save for rewards. Calculate earnings. Budget workout time.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sport-card">
+                    <div class="sport-image">🎨</div>
+                    <div class="sport-content">
+                        <h3>Movement Art</h3>
+                        <p><strong>Looks like:</strong> Dance</p>
+                        <p><strong>Subjects:</strong> Art, PE</p>
+                        <div class="math-note">
+                            Create movements that express emotions. Choreograph stories. Draw the shapes your body makes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Weekly Schedule -->
+            <div style="background: var(--light); padding: 2rem; border-radius: 20px; margin: 3rem 0;">
+                <h3 style="color: var(--pe); margin-bottom: 1.5rem;">📅 Sample Week: Learning Through Movement</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem;">
+                    <div style="background: white; padding: 1rem; border-radius: 10px;">
+                        <strong style="color: var(--pe);">Monday</strong>
+                        <p>Math Basketball: Calculate percentages while shooting hoops</p>
+                    </div>
+                    <div style="background: white; padding: 1rem; border-radius: 10px;">
+                        <strong style="color: var(--pe);">Tuesday</strong>
+                        <p>Nature Hike: Collect leaves, identify species, draw in journals</p>
+                    </div>
+                    <div style="background: white; padding: 1rem; border-radius: 10px;">
+                        <strong style="color: var(--pe);">Wednesday</strong>
+                        <p>Heart Rate Science: Measure before/during/after exercise</p>
+                    </div>
+                    <div style="background: white; padding: 1rem; border-radius: 10px;">
+                        <strong style="color: var(--pe);">Thursday</strong>
+                        <p>Orienteering: Map reading, compass use, treasure hunt</p>
+                    </div>
+                    <div style="background: white; padding: 1rem; border-radius: 10px;">
+                        <strong style="color: var(--pe);">Friday</strong>
+                        <p>Integrated Games: Spelling relay, geography tag</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Philosophy Statement -->
+            <div style="background: var(--gradient); color: white; padding: 3rem; border-radius: 30px; text-align: center;">
+                <h2 style="color: white; font-size: 2rem; margin-bottom: 1rem;">🎯 The Point</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
+                    Physical education isn't separate from "real" learning. It IS real learning. 
+                    When students move, their brains work better. When they play, they remember more. 
+                    When they're outside, they understand the world. We don't take breaks from learning - 
+                    we just change how we learn.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Join Modal -->
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
+            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Join the Movement</h2>
+            <p style="margin-bottom: 2rem;">Help us build education that moves.</p>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you for joining!')">Join Now</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Education that moves - bodies and minds.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc; text-decoration: none;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc; text-decoration: none;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc; text-decoration: none;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc; text-decoration: none;">High (14-18)</a></li>
+                    <li><a href="physical-education.html" style="color: #ccc; text-decoration: none;">Physical Education</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <ul style="list-style: none;">
+                    <li><a href="community.html" style="color: #ccc; text-decoration: none;">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 The Living Curriculum. Learning doesn't stop when movement starts.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Age group tab functionality
+        function showAgeGroup(groupId, element) {
+            // Find the parent section
+            const section = element.closest('.pe-section');
+            
+            // Hide all age content in this section
+            const contents = section.querySelectorAll('.age-content');
+            contents.forEach(c => c.style.display = 'none');
+            
+            // Show selected group
+            document.getElementById(groupId).style.display = 'block';
+            
+            // Update active tab
+            const tabs = section.querySelectorAll('.age-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Initialize first tab for each section
+        document.querySelectorAll('.pe-section').forEach(section => {
+            const firstTab = section.querySelector('.age-tab');
+            if (firstTab) {
+                const firstContentId = firstTab.getAttribute('onclick').match(/'([^']+)'/)[1];
+                showAgeGroup(firstContentId, firstTab);
+            }
+        });
+    </script>
+</body>
+</html>
