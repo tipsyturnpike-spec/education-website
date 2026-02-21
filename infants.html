@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infants (0-4) | The Living Curriculum</title>
+    <style>
+        /* Copy all styles from index.html up to hero section */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Same navbar styles as index */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #FFE5D9 0%, #FFD5C2 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: var(--light);
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 2rem 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        /* Subject Cards with Detailed Hands-On Activities */
+        .subject-section {
+            margin: 4rem 0;
+        }
+
+        .subject-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .no-textbook-badge {
+            background: var(--highlight);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+
+        .hands-on-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .activity-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+
+        .activity-card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .activity-desc {
+            margin: 1rem 0;
+            color: #555;
+        }
+
+        .developmental-note {
+            background: #E3F2FD;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .age-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .milestone-section {
+            background: var(--light);
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 4rem 0;
+        }
+
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .milestone-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .hands-on-grid,
+            .milestone-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Same Navigation as Home Page -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html" class="active">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>Infants & Toddlers</h1>
+        <p style="font-size: 1.3rem;">Ages 0-4: Learning Through Everything They Do</p>
+    </section>
+
+    <div class="container">
+        <!-- NO TEXTBOOKS Banner -->
+        <div class="philosophy-banner">
+            <h2 style="color: var(--dark); font-size: 2rem;">🚫 NO TEXTBOOKS. NO FLASHCARDS. NO WORKSHEETS.</h2>
+            <p style="font-size: 1.2rem; margin-top: 1rem;">At this age, the world is the classroom. Every interaction, every sensation, every moment with a caring adult is learning. We don't teach infants - we create environments where they can discover.</p>
+        </div>
+
+        <!-- Mathematics - Hands-On Detailed -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🔢 Mathematics Through Play</span>
+            </div>
+            <span class="no-textbook-badge">NO TEXTBOOKS - JUST LIVING</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">0-12 months</span>
+                    <h3>Object Permanence Games</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Play peek-a-boo with toys under blankets. Hide and reveal objects repeatedly. Let baby "find" things. This teaches the foundation of object permanence - understanding that things exist even when not seen - the basis of counting and memory.</p>
+                    <div class="developmental-note">
+                        <strong>🧠 What's happening:</strong> Baby's brain is forming neural connections about existence, space, and memory. Each game of peek-a-boo strengthens these pathways.
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">12-24 months</span>
+                    <h3>Stacking and Nesting</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Provide graduated blocks, cups, or rings. Child stacks, nests, and orders them. Narrate: "Big cup, bigger cup, biggest cup!" Let them discover size relationships through trial and error.</p>
+                    <div class="developmental-note">
+                        <strong>📏 Concepts learned:</strong> Size comparison, order, spatial relationships, cause and effect when towers fall.
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">24-36 months</span>
+                    <h3>Sorting Laundry Together</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Have child help sort laundry by color, by owner, by type. "Find all the socks." "Put the blue things here." This is classification and set theory in real life.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">36-48 months</span>
+                    <h3>Setting the Table</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Child sets table for family. Count plates: "We need 4 plates." Count forks, spoons. This is one-to-one correspondence and counting with purpose.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Science - Hands-On Detailed -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🔬 Science Through Curiosity</span>
+            </div>
+            <span class="no-textbook-badge">NO TEXTBOOKS - JUST WONDER</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">0-12 months</span>
+                    <h3>Sink or Float Bath Play</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> In the bath, provide safe objects that sink (washcloth) and float (rubber duck). Let baby explore repeatedly. They're learning properties of materials through pure experimentation.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">12-24 months</span>
+                    <h3>Outdoor Exploration Basket</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Go outside with a basket. Collect leaves, rocks, sticks. At home, explore them together. Which is rough? Smooth? Heavy? Light? This is classification and observation.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">24-36 months</span>
+                    <h3>Planting a Bean in a Cup</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Child puts soil in clear cup, plants bean, waters it. Watch daily. Draw what they see. This is the scientific method: hypothesis (what will happen?), observation, conclusion.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">36-48 months</span>
+                    <h3>Weather Charting</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Each day, go outside and observe weather. Child puts a picture on a chart - sun, cloud, rain. Discuss what to wear. This is data collection and pattern recognition.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Literature - No Textbooks Approach -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>📚 Literature & Language</span>
+            </div>
+            <span class="no-textbook-badge">NO READING INSTRUCTION - JUST STORIES</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">0-12 months</span>
+                    <h3>Lap Reading</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Baby sits in lap, holds board books, chews them, turns pages. Adult reads with expression. The connection is the point, not the words.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">12-24 months</span>
+                    <h3>Story Time with Puppets</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Read a simple story, then act it out with puppets or toys. Child participates. This builds comprehension and narrative understanding.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">24-36 months</span>
+                    <h3>Tell Me a Story</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Child dictates a story. Adult writes it down exactly as said. Read it back. Child sees their words become "book."</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">36-48 months</span>
+                    <h3>Library Visits</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Child chooses their own books from library. They learn that books are theirs to choose, to love, to return and get new ones.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Studies - Reimagined -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🌍 Social Studies: My World</span>
+            </div>
+            <span class="no-textbook-badge">NO TEXTBOOKS - REAL COMMUNITY</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">12-24 months</span>
+                    <h3>Neighborhood Walks</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Walk same route regularly. Point out landmarks: "There's the red mailbox. There's Mrs. Jones's house." Child learns their place in community.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">24-36 months</span>
+                    <h3>Community Helper Visits</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Visit fire station, talk to mail carrier, wave at bus driver. Meet the people who make community work.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">36-48 months</span>
+                    <h3>Family Celebrations</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Document family traditions. Draw pictures of celebrations. Share with class. Learn that different families do things differently.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practical Life Skills -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🌱 Practical Life Skills</span>
+            </div>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">12-24 months</span>
+                    <h3>Water Pouring</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> At water table or in bath, provide cups and pitchers. Child practices pouring. This builds hand-eye coordination and concentration.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">24-36 months</span>
+                    <h3>Helping in Garden</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Child digs holes, drops in seeds, covers them, waters. They experience where food comes from.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">36-48 months</span>
+                    <h3>Food Prep Station</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Set up low table with child-safe knife (plastic), banana, apple slicer. Child prepares own snack. Independence and confidence grow.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developmental Milestones -->
+        <div class="milestone-section">
+            <h2 style="font-size: 2rem; margin-bottom: 2rem;">What to Expect at Each Age</h2>
+            <div class="milestone-grid">
+                <div class="milestone-card">
+                    <h3>0-12 Months</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ Follows moving objects</li>
+                        <li>✓ Responds to sound</li>
+                        <li>✓ Reaches for toys</li>
+                        <li>✓ Explores with mouth</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h3>12-24 Months</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ First words (50+)</li>
+                        <li>✓ Follows directions</li>
+                        <li>✓ Begins pretend play</li>
+                        <li>✓ Stacks blocks</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h3>24-36 Months</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ 200-300 words</li>
+                        <li>✓ Sorts by color/shape</li>
+                        <li>✓ Pretend play with story</li>
+                        <li>✓ Shows empathy</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h3>36-48 Months</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ 1000+ words</li>
+                        <li>✓ Counts to 10</li>
+                        <li>✓ Asks "why" constantly</li>
+                        <li>✓ Plays cooperatively</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Same Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc;">High (14-18)</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Same Modal -->
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
+            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary);">Join the Movement</h2>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin: 1rem 0;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin: 1rem 0;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you!')">Join Now</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
