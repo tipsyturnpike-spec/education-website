@@ -19,6 +19,7 @@
             --light: #F7F9FC;
             --dark: #2E4053;
             --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+            --special-ed: #9B59B6;
         }
 
         body {
@@ -27,7 +28,7 @@
             color: #333;
         }
 
-        /* Consistent Navigation for ALL pages */
+        /* Consistent Navigation */
         .navbar {
             background: rgba(255,255,255,0.98);
             backdrop-filter: blur(10px);
@@ -121,7 +122,7 @@
             color: var(--primary);
         }
 
-        /* Hero Section with Call to Action */
+        /* Hero Section */
         .hero {
             background: var(--gradient);
             min-height: 90vh;
@@ -253,7 +254,7 @@
             margin-bottom: 1rem;
         }
 
-        /* History of Failure Section */
+        /* History Section */
         .history-section {
             padding: 6rem 2rem;
             background: var(--light);
@@ -332,37 +333,112 @@
             margin-top: 0.5rem;
         }
 
-        /* Rebuilding Section */
-        .rebuild-section {
+        /* Special Education Section - NEW */
+        .special-ed-section {
             padding: 6rem 2rem;
-            background: var(--gradient);
-            color: white;
+            background: linear-gradient(135deg, #F3E8FF 0%, #E5D5FF 100%);
         }
 
-        .rebuild-container {
+        .special-ed-container {
             max-width: 1200px;
             margin: 0 auto;
-            text-align: center;
         }
 
-        .rebuild-title {
+        .special-ed-title {
             font-size: 3rem;
+            color: var(--dark);
+            text-align: center;
             margin-bottom: 2rem;
         }
 
-        .rebuild-grid {
+        .special-ed-subtitle {
+            font-size: 1.3rem;
+            text-align: center;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .special-ed-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            margin: 4rem 0;
         }
 
-        .rebuild-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
+        .special-ed-card {
+            background: white;
             padding: 2rem;
             border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--special-ed);
+            transition: transform 0.3s;
+        }
+
+        .special-ed-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .special-ed-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .special-ed-card h3 {
+            color: var(--special-ed);
+            margin-bottom: 1rem;
+        }
+
+        .special-ed-badge {
+            display: inline-block;
+            background: var(--special-ed);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        /* Physical Education Section - NEW */
+        .pe-section {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .pe-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pe-title {
+            font-size: 3rem;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .pe-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pe-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+        }
+
+        .pe-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .pe-card h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
         }
 
         /* Age Navigation Cards */
@@ -439,7 +515,8 @@
             
             .history-stats,
             .mission-grid,
-            .rebuild-grid,
+            .special-ed-grid,
+            .pe-grid,
             .age-grid {
                 grid-template-columns: 1fr;
             }
@@ -451,7 +528,7 @@
     </style>
 </head>
 <body>
-    <!-- Consistent Navigation Bar -->
+    <!-- Updated Navigation with Special Ed Tab -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">The Living Curriculum</div>
@@ -461,17 +538,18 @@
                 <li><a href="elementary.html">Elementary (5-10)</a></li>
                 <li><a href="middle.html">Middle (11-13)</a></li>
                 <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="special-education.html">Special Education</a></li> <!-- NEW TAB -->
                 <li><a href="community.html">Community</a></li>
             </ul>
             <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
         </div>
     </nav>
 
-    <!-- Hero Section with Powerful Call to Action -->
+    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <h1>The American Dream Needs New Schools</h1>
-            <p>For 40 years, we've watched our education system fail our children. Literacy rates plummet. Practical skills vanish. A generation that can't fix, can't grow, can't build.</p>
+            <p>For over 40 years, we've watched our education system fail our children. Literacy rates plummet. Practical skills vanish. A generation that can't fix, can't grow, can't build. It's 2026, and the crisis continues.</p>
             <div class="callout-phrase">🔥 WE NEED YOU TO HELP REBUILD OUR SCHOOLS 🔥</div>
             <div class="hero-buttons">
                 <button class="btn btn-primary" onclick="openModal()">Join the Rebuilding</button>
@@ -507,7 +585,7 @@
         </div>
     </section>
 
-    <!-- History of Failure Section -->
+    <!-- History of Failure Section - UPDATED DATES -->
     <section id="history" class="history-section">
         <div class="history-container">
             <h2 class="history-title">The Betrayal: How America Failed Its Children</h2>
@@ -540,10 +618,10 @@
                 </div>
 
                 <div class="history-item">
-                    <div class="history-year">2024</div>
+                    <div class="history-year">2026</div>
                     <div class="history-content">
                         <h3>The Crisis Today</h3>
-                        <p>54% of U.S. adults read below 6th grade level. 66% can't perform basic car maintenance. 89% of young adults wish they'd learned practical skills in school. We have failed an entire generation.</p>
+                        <p>Today, in 2026, the crisis has only deepened. 54% of U.S. adults read below 6th grade level. 66% can't perform basic car maintenance. 89% of young adults wish they'd learned practical skills in school. We have failed an entire generation - and the next one is waiting.</p>
                     </div>
                 </div>
             </div>
@@ -573,35 +651,76 @@
         </div>
     </section>
 
-    <!-- Rebuilding Section -->
-    <section class="rebuild-section">
-        <div class="rebuild-container">
-            <h2 class="rebuild-title">We Are Rebuilding. From Scratch.</h2>
-            <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto;">Not reforming. Not patching. Building something entirely new.</p>
+    <!-- NEW: Special Education Section -->
+    <section class="special-ed-section">
+        <div class="special-ed-container">
+            <h2 class="special-ed-title">Every Child Deserves to Shine</h2>
+            <p class="special-ed-subtitle">Our curriculum is designed for all learners. We believe that every child - regardless of ability, challenge, or learning difference - deserves hands-on, meaningful education.</p>
             
-            <div class="rebuild-grid">
-                <div class="rebuild-card">
-                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🔨</h3>
-                    <h3>Hands-On Everything</h3>
-                    <p>Math through carpentry. Science through cooking. History through stories, not textbooks.</p>
+            <div class="special-ed-grid">
+                <div class="special-ed-card">
+                    <div class="special-ed-icon">🧩</div>
+                    <h3>Adaptive Learning</h3>
+                    <p>Every activity can be modified for different abilities. We focus on what children CAN do, not what they can't.</p>
+                    <span class="special-ed-badge">All Ages</span>
                 </div>
-                <div class="rebuild-card">
-                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🌍</h3>
-                    <h3>Real Perspectives</h3>
-                    <p>No sanitized American textbooks. Every story has multiple sides. We teach them all.</p>
+                
+                <div class="special-ed-card">
+                    <div class="special-ed-icon">🤲</div>
+                    <h3>Sensory Integration</h3>
+                    <p>Hands-on learning is naturally therapeutic. Gardening, cooking, and building engage all senses and support regulation.</p>
+                    <span class="special-ed-badge">All Ages</span>
                 </div>
-                <div class="rebuild-card">
-                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🔧</h3>
-                    <h3>Life Ready</h3>
-                    <p>By graduation: garden, cook, fix a car, file taxes, handle emergencies, build furniture.</p>
+                
+                <div class="special-ed-card">
+                    <div class="special-ed-icon">👥</div>
+                    <h3>Inclusive Community</h3>
+                    <p>All children learn together. Our curriculum builds understanding, patience, and friendship across all abilities.</p>
+                    <span class="special-ed-badge">All Ages</span>
                 </div>
             </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <button class="btn btn-primary" onclick="location.href='special-education.html'">Explore Special Education →</button>
+            </div>
+        </div>
+    </section>
 
-            <div style="font-size: 2rem; font-weight: 700; margin: 3rem 0;">
-                "THE OLD SCHOOL IS BURNING. LET'S BUILD SOMETHING BETTER."
+    <!-- NEW: Physical Education Section -->
+    <section class="pe-section">
+        <div class="pe-container">
+            <h2 class="pe-title">Physical Education: Bodies in Motion</h2>
+            <p style="text-align: center; font-size: 1.2rem; max-width: 800px; margin: 0 auto 3rem;">Not just sports - lifelong physical confidence and health</p>
+            
+            <div class="pe-grid">
+                <div class="pe-card">
+                    <div class="pe-icon">🏃</div>
+                    <h3>Cooperative Games</h3>
+                    <p>No one sits on the bench. Every game is designed for everyone to play.</p>
+                </div>
+                
+                <div class="pe-card">
+                    <div class="pe-icon">🧗</div>
+                    <h3>Adventure Skills</h3>
+                    <p>Hiking, climbing, camping, navigation. Confidence in the outdoors.</p>
+                </div>
+                
+                <div class="pe-card">
+                    <div class="pe-icon">🤸</div>
+                    <h3>Body Awareness</h3>
+                    <p>Yoga, dance, stretching. Understanding and caring for your body.</p>
+                </div>
+                
+                <div class="pe-card">
+                    <div class="pe-icon">🏊</div>
+                    <h3>Lifelong Sports</h3>
+                    <p>Swimming, biking, hiking - activities you can enjoy at any age.</p>
+                </div>
             </div>
             
-            <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 1rem 3rem;" onclick="openModal()">I Want to Help Build It</button>
+            <div style="text-align: center; margin-top: 3rem;">
+                <button class="btn btn-primary" onclick="location.href='physical-education.html'">Explore Physical Education →</button>
+            </div>
         </div>
     </section>
 
@@ -629,11 +748,21 @@
                 <div class="age-name">High School Masters</div>
                 <p>Auto, taxes, gun safety, certifications</p>
             </div>
+            <div class="age-card" onclick="location.href='special-education.html'">
+                <div class="age-range">All Ages</div>
+                <div class="age-name">Special Education</div>
+                <p>Adaptive, inclusive, every child shines</p>
+            </div>
+            <div class="age-card" onclick="location.href='physical-education.html'">
+                <div class="age-range">All Ages</div>
+                <div class="age-name">Physical Education</div>
+                <p>Lifelong movement and health</p>
+            </div>
         </div>
     </section>
 
     <!-- Modal -->
-    <div id="signupModal" class="modal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
         <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
             <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
             <h2 style="color: var(--primary); margin-bottom: 1rem;">Join the Rebuilding</h2>
@@ -649,6 +778,7 @@
         </div>
     </div>
 
+    <!-- Updated Footer with New Sections -->
     <footer class="footer">
         <div class="footer-content">
             <div>
@@ -658,21 +788,23 @@
             <div>
                 <h4>Explore</h4>
                 <ul style="list-style: none;">
-                    <li><a href="infants.html" style="color: #ccc;">Infants (0-4)</a></li>
-                    <li><a href="elementary.html" style="color: #ccc;">Elementary (5-10)</a></li>
-                    <li><a href="middle.html" style="color: #ccc;">Middle (11-13)</a></li>
-                    <li><a href="highschool.html" style="color: #ccc;">High (14-18)</a></li>
+                    <li><a href="infants.html" style="color: #ccc; text-decoration: none;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc; text-decoration: none;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc; text-decoration: none;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc; text-decoration: none;">High (14-18)</a></li>
+                    <li><a href="special-education.html" style="color: #ccc; text-decoration: none;">Special Education</a></li>
+                    <li><a href="physical-education.html" style="color: #ccc; text-decoration: none;">Physical Education</a></li>
                 </ul>
             </div>
             <div>
                 <h4>Connect</h4>
                 <ul style="list-style: none;">
-                    <li><a href="community.html" style="color: #ccc;">Community</a></li>
+                    <li><a href="community.html" style="color: #ccc; text-decoration: none;">Community</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2024 The Living Curriculum. We're building something new.</p>
+            <p>© 2026 The Living Curriculum. We're building something new.</p>
         </div>
     </footer>
 
