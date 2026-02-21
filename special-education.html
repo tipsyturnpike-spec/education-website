@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Education | The Living Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+            --special-ed: #9B59B6;
+            --adhd: #F39C12;
+            --autism: #3498DB;
+            --physical: #E67E22;
+            --intellectual: #1ABC9C;
+            --learning: #E74C3C;
+            --speech: #9B59B6;
+            --hearing: #34495E;
+            --vision: #16A085;
+            --emotional: #D35400;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
+        }
+
+        .btn-special {
+            background: var(--special-ed);
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #F3E8FF 0%, #E5D5FF 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .philosophy-banner h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .philosophy-banner p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Disability Categories Navigation */
+        .category-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+            position: sticky;
+            top: 80px;
+            background: white;
+            padding: 1rem;
+            border-radius: 60px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .category-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .category-btn.adhd { border-left: 5px solid var(--adhd); }
+        .category-btn.autism { border-left: 5px solid var(--autism); }
+        .category-btn.physical { border-left: 5px solid var(--physical); }
+        .category-btn.intellectual { border-left: 5px solid var(--intellectual); }
+        .category-btn.learning { border-left: 5px solid var(--learning); }
+        .category-btn.speech { border-left: 5px solid var(--speech); }
+        .category-btn.hearing { border-left: 5px solid var(--hearing); }
+        .category-btn.vision { border-left: 5px solid var(--vision); }
+        .category-btn.emotional { border-left: 5px solid var(--emotional); }
+
+        /* Disability Sections */
+        .disability-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            scroll-margin-top: 150px;
+        }
+
+        .disability-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid;
+        }
+
+        .disability-header.adhd { border-bottom-color: var(--adhd); }
+        .disability-header.autism { border-bottom-color: var(--autism); }
+        .disability-header.physical { border-bottom-color: var(--physical); }
+        .disability-header.intellectual { border-bottom-color: var(--intellectual); }
+        .disability-header.learning { border-bottom-color: var(--learning); }
+        .disability-header.speech { border-bottom-color: var(--speech); }
+        .disability-header.hearing { border-bottom-color: var(--hearing); }
+        .disability-header.vision { border-bottom-color: var(--vision); }
+        .disability-header.emotional { border-bottom-color: var(--emotional); }
+
+        .disability-icon {
+            font-size: 3rem;
+        }
+
+        .disability-title {
+            font-size: 2.5rem;
+            color: var(--dark);
+        }
+
+        .understanding-box {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+
+        .age-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .age-tab {
+            padding: 0.5rem 1.5rem;
+            background: var(--light);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .age-tab:hover,
+        .age-tab.active {
+            background: var(--special-ed);
+            color: white;
+        }
+
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .strategy-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--special-ed);
+        }
+
+        .strategy-card h4 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .accommodation-tag {
+            display: inline-block;
+            background: var(--light);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin: 0.5rem 0.5rem 0 0;
+            border: 1px solid #ddd;
+        }
+
+        .activity-example {
+            background: #F0F7FF;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+        }
+
+        .resource-list {
+            list-style: none;
+        }
+
+        .resource-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .resource-list li::before {
+            content: '•';
+            color: var(--special-ed);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .strategies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-nav {
+                flex-direction: column;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="special-education.html" class="active">Special Education</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Special Education</h1>
+        <p style="font-size: 1.3rem;">Every child. Every ability. Every opportunity.</p>
+    </section>
+
+    <div class="container">
+        <!-- Philosophy Banner -->
+        <div class="philosophy-banner">
+            <h2>💜 Inclusion Is Not Optional</h2>
+            <p>Every child deserves a hands-on, meaningful education regardless of ability. Our curriculum is designed to be adapted, modified, and personalized for every learner. We don't see disabilities - we see different ways of learning, experiencing, and contributing.</p>
+        </div>
+
+        <!-- Quick Navigation by Disability -->
+        <div class="category-nav">
+            <button class="category-btn adhd" onclick="document.getElementById('adhd').scrollIntoView({behavior: 'smooth'})">ADHD</button>
+            <button class="category-btn autism" onclick="document.getElementById('autism').scrollIntoView({behavior: 'smooth'})">Autism Spectrum</button>
+            <button class="category-btn physical" onclick="document.getElementById('physical').scrollIntoView({behavior: 'smooth'})">Physical Disabilities</button>
+            <button class="category-btn intellectual" onclick="document.getElementById('intellectual').scrollIntoView({behavior: 'smooth'})">Intellectual Disabilities</button>
+            <button class="category-btn learning" onclick="document.getElementById('learning').scrollIntoView({behavior: 'smooth'})">Learning Disabilities</button>
+            <button class="category-btn speech" onclick="document.getElementById('speech').scrollIntoView({behavior: 'smooth'})">Speech & Language</button>
+            <button class="category-btn hearing" onclick="document.getElementById('hearing').scrollIntoView({behavior: 'smooth'})">Deaf & Hard of Hearing</button>
+            <button class="category-btn vision" onclick="document.getElementById('vision').scrollIntoView({behavior: 'smooth'})">Blind & Visually Impaired</button>
+            <button class="category-btn emotional" onclick="document.getElementById('emotional').scrollIntoView({behavior: 'smooth'})">Emotional & Behavioral</button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ADHD SECTION -->
+        <!-- ============================================ -->
+        <section id="adhd" class="disability-section">
+            <div class="disability-header adhd">
+                <div class="disability-icon">⚡</div>
+                <h2 class="disability-title">ADHD (Attention-Deficit/Hyperactivity Disorder)</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--adhd); margin-bottom: 1rem;">Understanding ADHD</h3>
+                <p>ADHD is not a lack of attention - it's difficulty regulating attention. Students with ADHD may struggle with focus, impulsivity, hyperactivity, or a combination. They often think divergently, notice things others miss, and have tremendous energy when engaged.</p>
+            </div>
+
+            <!-- Age Groups -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('adhd-early', this)">Early Childhood (0-5)</button>
+                <button class="age-tab" onclick="showAgeGroup('adhd-elementary', this)">Elementary (6-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('adhd-middle', this)">Middle School (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('adhd-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Early Childhood -->
+            <div id="adhd-early" class="age-content">
+                <h3 style="color: var(--adhd); margin: 1.5rem 0;">Early Childhood (Ages 0-5)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>At this age, ADHD may appear as constant movement, difficulty sitting still for stories, quick transitions between activities, and intense reactions. This is not defiance - it's neurological.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Movement breaks every 10-15 min</span>
+                            <span class="accommodation-tag">Sensory seating options</span>
+                            <span class="accommodation-tag">Visual schedules</span>
+                            <span class="accommodation-tag">Clear, simple instructions</span>
+                            <span class="accommodation-tag">Immediate feedback</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">🌱 Hands-On Activity: Moving Garden</h4>
+                    <p><strong>Standard Activity:</strong> Planting seeds in one spot.</p>
+                    <p><strong>ADHD-Adapted:</strong> Create a "garden circuit" - child moves between stations: dig here, water there, drop seeds at next spot, cover at another. Movement is built into the learning.</p>
+                    <p style="margin-top: 0.5rem; font-style: italic;">Why it works: Allows movement while accomplishing the same task. Channels energy productively.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">🔨 Hands-On Activity: Tool Exploration</h4>
+                    <p><strong>Standard Activity:</strong> Sit and watch tool demonstration.</p>
+                    <p><strong>ADHD-Adapted:</strong> Let child hold each tool while you explain. Let them tap it, feel it, move with it. Short bursts of instruction followed by immediate hands-on practice.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">📚 Hands-On Activity: Story Time</h4>
+                    <p><strong>Standard Activity:</strong> Sit and listen to story.</p>
+                    <p><strong>ADHD-Adapted:</strong> Act out the story while reading. Child becomes the characters, moves through the plot physically. Story sticks when body is involved.</p>
+                </div>
+            </div>
+
+            <!-- Elementary -->
+            <div id="adhd-elementary" class="age-content" style="display: none;">
+                <h3 style="color: var(--adhd); margin: 1.5rem 0;">Elementary (Ages 6-10)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>School demands increase. Child may be labeled "behavior problem" for fidgeting, interrupting, or forgetting. They often feel bad about themselves. They need success experiences, not punishment.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Preferred seating near teacher</span>
+                            <span class="accommodation-tag">Fidget tools allowed</span>
+                            <span class="accommodation-tag">Break tasks into chunks</span>
+                            <span class="accommodation-tag">Timers for focus periods</span>
+                            <span class="accommodation-tag">Movement as reward</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">🧮 Math: Multiplication That Moves</h4>
+                    <p><strong>Standard:</strong> Worksheets.</p>
+                    <p><strong>ADHD-Adapted:</strong> Create a multiplication hopscotch. Draw grid on playground. Child jumps to answers. Or use rhythm and clapping patterns for times tables. Body learns what brain struggles with.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">🔬 Science: Experiment Stations</h4>
+                    <p><strong>Standard:</strong> One experiment, all watch.</p>
+                    <p><strong>ADHD-Adapted:</strong> Set up 5 experiment stations. Students rotate every 7 minutes. ADHD child gets novelty, movement, and still completes all experiments.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">📝 Writing: Active Composition</h4>
+                    <p><strong>Standard:</strong> Sit and write.</p>
+                    <p><strong>ADHD-Adapted:</strong> Act out story first. Use whiteboards standing up. Try writing on windows with dry-erase markers. Change position frequently. Typing may work better than handwriting.</p>
+                </div>
+            </div>
+
+            <!-- Middle School -->
+            <div id="adhd-middle" class="age-content" style="display: none;">
+                <h3 style="color: var(--adhd); margin: 1.5rem 0;">Middle School (Ages 11-13)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Executive function demands increase. Organization, planning, time management become critical. ADHD students often fall behind not because they can't understand, but because they can't organize.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Written AND verbal instructions</span>
+                            <span class="accommodation-tag">Check-in halfway through tasks</span>
+                            <span class="accommodation-tag">Extra time for organization</span>
+                            <span class="accommodation-tag">Movement-friendly furniture</span>
+                            <span class="accommodation-tag">No penalty for fidgeting</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">🛠️ Woodshop: Building with Purpose</h4>
+                    <p><strong>Standard:</strong> Follow written plans.</p>
+                    <p><strong>ADHD-Adapted:</strong> ADHD students often excel in woodshop - it's hands-on, visible progress, concrete results. Break project into small steps with clear stopping points. Use checklists. Celebrate completion.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">📊 Math: Real Projects</h4>
+                    <p><strong>Standard:</strong> Abstract algebra problems.</p>
+                    <p><strong>ADHD-Adapted:</strong> ADHD brains crave relevance. Teach algebra through building a skateboard ramp, budgeting for a project, calculating sports statistics. When math matters, focus improves.</p>
+                </div>
+            </div>
+
+            <!-- High School -->
+            <div id="adhd-high" class="age-content" style="display: none;">
+                <h3 style="color: var(--adhd); margin: 1.5rem 0;">High School (Ages 14-18)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Young Adult</h4>
+                        <p>Self-awareness grows. Many ADHD students have developed coping strategies. They need support in executive function while honoring their different brain wiring.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Assistive technology</span>
+                            <span class="accommodation-tag">Extended time on tasks</span>
+                            <span class="accommodation-tag">Option for movement breaks</span>
+                            <span class="accommodation-tag">Choice in demonstration of learning</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">🔧 Auto Mechanics: Perfect for ADHD</h4>
+                    <p>Auto mechanics is often IDEAL for ADHD students. It's hands-on, problem-solving, varied tasks, immediate feedback. Many ADHD adults become excellent mechanics, electricians, builders - careers that value their wiring.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--adhd);">📝 Self-Advocacy Skills</h4>
+                    <p>Teach students to understand their own ADHD. What helps them focus? What environments work? How do they learn best? This self-knowledge is more valuable than any accommodation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- AUTISM SPECTRUM SECTION -->
+        <!-- ============================================ -->
+        <section id="autism" class="disability-section">
+            <div class="disability-header autism">
+                <div class="disability-icon">🧩</div>
+                <h2 class="disability-title">Autism Spectrum Disorder</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--autism); margin-bottom: 1rem;">Understanding Autism</h3>
+                <p>Autism is a neurodevelopmental difference affecting communication, social interaction, and sensory processing. Every autistic person is unique. Strengths often include pattern recognition, deep focus on interests, honesty, and attention to detail.</p>
+            </div>
+
+            <!-- Age Groups -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('autism-early', this)">Early Childhood (0-5)</button>
+                <button class="age-tab" onclick="showAgeGroup('autism-elementary', this)">Elementary (6-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('autism-middle', this)">Middle School (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('autism-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Early Childhood -->
+            <div id="autism-early" class="age-content">
+                <h3 style="color: var(--autism); margin: 1.5rem 0;">Early Childhood (Ages 0-5)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>May show differences in eye contact, response to name, play patterns. May have intense interests, sensory sensitivities (to sounds, textures, lights). May communicate differently - some nonverbal, some with advanced vocabulary.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Predictable routines</span>
+                            <span class="accommodation-tag">Visual schedules</span>
+                            <span class="accommodation-tag">Sensory-friendly environment</span>
+                            <span class="accommodation-tag">Alternative communication (PECS, sign)</span>
+                            <span class="accommodation-tag">Prepare for transitions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🌱 Gardening: Sensory Garden</h4>
+                    <p><strong>Standard:</strong> Plant seeds in dirt.</p>
+                    <p><strong>Autism-Adapted:</strong> Create a sensory garden with plants of different textures (lamb's ear - soft), smells (mint, lavender), colors. Let child explore at their own pace. Some may love the feel of soil; others may need gloves. Honor sensory needs.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🔨 Tool Play: Structured Exploration</h4>
+                    <p>Many autistic children love order and systems. Present tools in organized trays. Demonstrate exactly where each belongs. Some may line them up - that's okay. Predictability is calming.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">📚 Communication Through Interest</h4>
+                    <p>If child is obsessed with trains, use trains to teach everything. Count trains, read about trains, build trains. Connection happens through their interests.</p>
+                </div>
+            </div>
+
+            <!-- Elementary -->
+            <div id="autism-elementary" class="age-content" style="display: none;">
+                <h3 style="color: var(--autism); margin: 1.5rem 0;">Elementary (Ages 6-10)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Social demands increase. Child may struggle with group work, recess, understanding social cues. May have intense interests. May experience sensory overload in busy classrooms.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Quiet space for breaks</span>
+                            <span class="accommodation-tag">Social stories</span>
+                            <span class="accommodation-tag">Explicit social instruction</span>
+                            <span class="accommodation-tag">No forced eye contact</span>
+                            <span class="accommodation-tag">Interest-based learning</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🧮 Math: Pattern Recognition</h4>
+                    <p>Many autistic children excel at patterns. Use this strength. Teach math through patterns, sequences, systems. Let them create their own patterns. This is their superpower.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🌍 Social Studies: System Understanding</h4>
+                    <p>Autistic minds often understand systems deeply. Teach how governments work as systems, how economies function. This approach makes abstract concepts concrete.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🤝 Social Skills Through Shared Interests</h4>
+                    <p>Create interest-based groups - train club, drawing club, building club. Social skills develop naturally when children share passion, not through forced interaction.</p>
+                </div>
+            </div>
+
+            <!-- Middle School -->
+            <div id="autism-middle" class="age-content" style="display: none;">
+                <h3 style="color: var(--autism); margin: 1.5rem 0;">Middle School (Ages 11-13)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Social awareness grows. Autistic students may feel more different. Bullying risk increases. Self-advocacy becomes important. Many discover their autistic identity.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Safe adult to check in with</span>
+                            <span class="accommodation-tag">Lunch bunch options</span>
+                            <span class="accommodation-tag">Clear expectations</span>
+                            <span class="accommodation-tag">Sensory breaks as needed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🛠️ Woodshop: Detail Work</h4>
+                    <p>Many autistic students excel at detailed, precise work. Woodshop can be a place of pride. They may measure more accurately, notice details others miss. Celebrate these strengths.</p>
+                </div>
+            </div>
+
+            <!-- High School -->
+            <div id="autism-high" class="age-content" style="display: none;">
+                <h3 style="color: var(--autism); margin: 1.5rem 0;">High School (Ages 14-18)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Young Adult</h4>
+                        <p>Many embrace their autistic identity. Self-advocacy skills are crucial. Planning for post-secondary - some will go to college, some to trade school, some directly to work.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Self-advocacy training</span>
+                            <span class="accommodation-tag">Career exploration based on strengths</span>
+                            <span class="accommodation-tag">Social groups with similar interests</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">🔧 Auto Mechanics: System Thinkers</h4>
+                    <p>Autistic individuals often excel at understanding complex systems. Auto mechanics, computer programming, engineering are natural fits. Provide opportunities to dive deep into these areas.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--autism);">📝 College/Career Prep</h4>
+                    <p>Help students understand their learning needs. Practice requesting accommodations. Explore careers that value autistic strengths - attention to detail, honesty, deep focus, pattern recognition.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- PHYSICAL DISABILITIES SECTION -->
+        <!-- ============================================ -->
+        <section id="physical" class="disability-section">
+            <div class="disability-header physical">
+                <div class="disability-icon">🦽</div>
+                <h2 class="disability-title">Physical Disabilities</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--physical); margin-bottom: 1rem;">Understanding Physical Disabilities</h3>
+                <p>Physical disabilities include cerebral palsy, spina bifida, muscular dystrophy, spinal cord injuries, limb differences, and mobility impairments. These affect movement, but not intelligence. Our curriculum is designed to be fully accessible to all bodies.</p>
+            </div>
+
+            <!-- Age Groups -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('physical-early', this)">Early Childhood (0-5)</button>
+                <button class="age-tab" onclick="showAgeGroup('physical-elementary', this)">Elementary (6-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('physical-middle', this)">Middle School (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('physical-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Early Childhood -->
+            <div id="physical-early" class="age-content">
+                <h3 style="color: var(--physical); margin: 1.5rem 0;">Early Childhood (Ages 0-5)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Children with physical disabilities explore the world differently. They may need adaptive equipment to sit, move, or manipulate objects. Their cognitive development follows same patterns as peers - they just need different ways to interact.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Adaptive seating</span>
+                            <span class="accommodation-tag">Accessible play spaces</span>
+                            <span class="accommodation-tag">Switch-adapted toys</span>
+                            <span class="accommodation-tag">Positioning equipment</span>
+                            <span class="accommodation-tag">Extra time for exploration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🌱 Gardening: Accessible Gardens</h4>
+                    <p><strong>Standard:</strong> Ground-level garden beds.</p>
+                    <p><strong>Adapted:</strong> Create raised garden beds at wheelchair height. Use vertical gardens for children who can't bend. Provide adapted tools with easy-grip handles. Every child can plant, water, and harvest when the garden comes to them.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🔨 Tool Exploration: Adapted Tools</h4>
+                    <p>Provide tools with built-up handles, straps, or switches. A child with limited hand use can still hammer with a adapted mallet. A child who can't hold a paintbrush can use a head pointer or mouth stick. Creativity removes barriers.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">📚 Story Time: Positioning for Participation</h4>
+                    <p>Ensure child is comfortably positioned - in stander, on wedge, in adapted chair - so they can fully participate. Use eye gaze boards for children who can't point. Every child can choose which book to read.</p>
+                </div>
+            </div>
+
+            <!-- Elementary -->
+            <div id="physical-elementary" class="age-content" style="display: none;">
+                <h3 style="color: var(--physical); margin: 1.5rem 0;">Elementary (Ages 6-10)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>School environment may present physical barriers. Fatigue can be an issue. Child may need assistance with mobility, writing, or manipulation. Focus on independence and self-advocacy.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Accessible classroom layout</span>
+                            <span class="accommodation-tag">Assistive technology</span>
+                            <span class="accommodation-tag">Speech-to-text software</span>
+                            <span class="accommodation-tag">Alternative writing tools</span>
+                            <span class="accommodation-tag">Extra time for tasks</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🧮 Math: Manipulatives for All</h4>
+                    <p>Provide magnetic numbers for students who can't hold small pieces. Use large, lightweight manipulatives. Try digital math tools with switch access. Math understanding doesn't require fine motor skills.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🔬 Science: Adapted Experiments</h4>
+                    <p>Set up experiments so child can observe and participate. Use tube testers, adapted lab equipment. Partner with peer for two-person tasks where child directs, peer executes. Leadership builds confidence.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🛠️ Woodshop: Universal Design</h4>
+                    <p>Workbenches at wheelchair height. Adapted clamps to hold materials. Power tools with easy-grip switches. Students can design and direct even if they need assistance with some physical tasks.</p>
+                </div>
+            </div>
+
+            <!-- Middle School -->
+            <div id="physical-middle" class="age-content" style="display: none;">
+                <h3 style="color: var(--physical); margin: 1.5rem 0;">Middle School (Ages 11-13)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Self-advocacy becomes crucial. Student should know their equipment, understand their needs, and be able to communicate them. Social inclusion is vital - physical differences can lead to isolation.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Self-advocacy training</span>
+                            <span class="accommodation-tag">Peer mentoring</span>
+                            <span class="accommodation-tag">Assistive tech training</span>
+                            <span class="accommodation-tag">Accessible field trips</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🔧 Mechanics: Accessible Auto Shop</h4>
+                    <p>Work with physical therapists to find positions that work - sitting, standing with support, using adapted tools. Many people with physical disabilities work successfully in trades with proper accommodations.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">📝 Writing: Alternative Methods</h4>
+                    <p>Teach touch-typing if handwriting is difficult. Voice-to-text software improves. Some students use eye gaze systems. Focus on ideas and content, not method of production.</p>
+                </div>
+            </div>
+
+            <!-- High School -->
+            <div id="physical-high" class="age-content" style="display: none;">
+                <h3 style="color: var(--physical); margin: 1.5rem 0;">High School (Ages 14-18)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Young Adult</h4>
+                        <p>Transition planning is critical. Explore careers, college accommodations, independent living skills. Student should understand ADA rights and how to request accommodations.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Transition planning</span>
+                            <span class="accommodation-tag">Career exploration</span>
+                            <span class="accommodation-tag">College visit planning</span>
+                            <span class="accommodation-tag">Independent living skills</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">💰 Financial: Managing Personal Care</h4>
+                    <p>Teach budgeting for personal care attendants, equipment maintenance, medical expenses. Real-world financial skills specific to life with a disability.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--physical);">🔧 Career Exploration</h4>
+                    <p>Connect with adults with similar disabilities who work in fields of interest. Virtual job shadows, interviews, mentorships. Show what's possible.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- INTELLECTUAL DISABILITIES SECTION -->
+        <!-- ============================================ -->
+        <section id="intellectual" class="disability-section">
+            <div class="disability-header intellectual">
+                <div class="disability-icon">🧠</div>
+                <h2 class="disability-title">Intellectual Disabilities</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--intellectual); margin-bottom: 1rem;">Understanding Intellectual Disabilities</h3>
+                <p>Intellectual disabilities affect cognitive functioning and adaptive behavior. This includes Down syndrome, Fragile X, and many other conditions. Learning may take longer, but every person can learn, grow, and contribute meaningfully.</p>
+            </div>
+
+            <!-- Age Groups -->
+            <div class="age-tabs">
+                <button class="age-tab active" onclick="showAgeGroup('intellectual-early', this)">Early Childhood (0-5)</button>
+                <button class="age-tab" onclick="showAgeGroup('intellectual-elementary', this)">Elementary (6-10)</button>
+                <button class="age-tab" onclick="showAgeGroup('intellectual-middle', this)">Middle School (11-13)</button>
+                <button class="age-tab" onclick="showAgeGroup('intellectual-high', this)">High School (14-18)</button>
+            </div>
+
+            <!-- Early Childhood -->
+            <div id="intellectual-early" class="age-content">
+                <h3 style="color: var(--intellectual); margin: 1.5rem 0;">Early Childhood (Ages 0-5)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Development may follow same sequence but at slower pace. Celebrate every milestone. Focus on what child CAN do. Early intervention is crucial.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Repetition and routine</span>
+                            <span class="accommodation-tag">Multi-sensory teaching</span>
+                            <span class="accommodation-tag">Break tasks into steps</span>
+                            <span class="accommodation-tag">Immediate positive feedback</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🌱 Gardening: One Step at a Time</h4>
+                    <p>Teach gardening in tiny steps. Today: touch the soil. Next week: put seed in soil. Next: cover it. Celebrate each step. The garden doesn't need to be perfect - the process matters.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🔨 Tool Play: Mastery Through Repetition</h4>
+                    <p>Practice same tool skill many times. Child may need 100 repetitions to master what another learns in 10. That's okay. Mastery builds confidence and real skill.</p>
+                </div>
+            </div>
+
+            <!-- Elementary -->
+            <div id="intellectual-elementary" class="age-content" style="display: none;">
+                <h3 style="color: var(--intellectual); margin: 1.5rem 0;">Elementary (Ages 6-10)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Academic learning may be slower. Focus on functional skills alongside academics. Reading, writing, math that apply to daily life. Social inclusion is crucial.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Modified materials</span>
+                            <span class="accommodation-tag">Visual supports</span>
+                            <span class="accommodation-tag">Peer buddies</span>
+                            <span class="accommodation-tag">Life skills integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🧮 Math: Real-Life Math</h4>
+                    <p>Count snack items. Measure ingredients. Set table for correct number of people. Math that matters for daily living is highly motivating.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🍳 Cooking: Independence Through Recipes</h4>
+                    <p>Use picture recipes. Step-by-step cards. Practice same recipe many times until independent. Cooking is a lifelong skill worth the time.</p>
+                </div>
+            </div>
+
+            <!-- Middle School -->
+            <div id="intellectual-middle" class="age-content" style="display: none;">
+                <h3 style="color: var(--intellectual); margin: 1.5rem 0;">Middle School (Ages 11-13)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Child</h4>
+                        <p>Focus shifts to functional independence and community participation. Vocational awareness begins. Social connections remain vital.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Community-based instruction</span>
+                            <span class="accommodation-tag">Job sampling</span>
+                            <span class="accommodation-tag">Social skills groups</span>
+                            <span class="accommodation-tag">Daily living skills</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">💰 Money: Community Shopping</h4>
+                    <p>Practice money skills in real stores. Make small purchases. Count change. Real-world practice beats worksheets every time.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🔧 Pre-Vocational Skills</h4>
+                    <p>Try different hands-on tasks - gardening, woodshop, kitchen, cleaning. Find what student enjoys and can develop into future skills.</p>
+                </div>
+            </div>
+
+            <!-- High School -->
+            <div id="intellectual-high" class="age-content" style="display: none;">
+                <h3 style="color: var(--intellectual); margin: 1.5rem 0;">High School (Ages 14-18)</h3>
+                
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding the Young Adult</h4>
+                        <p>Transition to adulthood is primary focus. Job training, independent living, community participation, relationships. Quality of life is the goal.</p>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>Key Accommodations</h4>
+                        <div>
+                            <span class="accommodation-tag">Job coaching</span>
+                            <span class="accommodation-tag">Community-based instruction</span>
+                            <span class="accommodation-tag">Self-determination training</span>
+                            <span class="accommodation-tag">Adult service connection</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🔧 Work-Based Learning</h4>
+                    <p>Paid or volunteer work experiences. Start with school-based jobs (cafeteria, office, grounds). Move to community placements with support. Real work, real pride.</p>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--intellectual);">🏡 Independent Living</h4>
+                    <p>Practice cooking, cleaning, laundry, budgeting in real settings. Apartment or house on school grounds provides safe practice. Independence is the goal.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- LEARNING DISABILITIES SECTION -->
+        <!-- ============================================ -->
+        <section id="learning" class="disability-section">
+            <div class="disability-header learning">
+                <div class="disability-icon">📖</div>
+                <h2 class="disability-title">Specific Learning Disabilities</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--learning); margin-bottom: 1rem;">Understanding Learning Disabilities</h3>
+                <p>Learning disabilities affect how the brain processes information. This includes dyslexia (reading), dyscalculia (math), dysgraphia (writing). Intelligence is average or above - the brain is simply wired differently.</p>
+            </div>
+
+            <!-- Subcategories -->
+            <div style="margin: 2rem 0;">
+                <h3 style="color: var(--learning);">Dyslexia (Reading)</h3>
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding</h4>
+                        <p>Difficulty with phonological processing, word recognition, spelling. NOT about intelligence. Many brilliant minds have dyslexia.</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4>Accommodations</h4>
+                        <p>Audiobooks, text-to-speech, extra time, multisensory instruction, decodable texts, no public reading unless voluntary.</p>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--learning);">📚 Literature: Accessible Reading</h4>
+                    <p>Provide audiobooks for same literature peers read. Student can listen while following along. Comprehension is the goal - decoding is just one path.</p>
+                </div>
+
+                <h3 style="color: var(--learning); margin-top: 2rem;">Dyscalculia (Math)</h3>
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding</h4>
+                        <p>Difficulty with number sense, math facts, calculation, spatial reasoning. Not about effort.</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4>Accommodations</h4>
+                        <p>Calculator use, manipulatives, graph paper for organization, extra time, real-world math focus.</p>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--learning);">🧮 Math: Real Numbers</h4>
+                    <p>Teach math through woodworking (measurement), cooking (fractions), money (decimals). Concrete before abstract.</p>
+                </div>
+
+                <h3 style="color: var(--learning); margin-top: 2rem;">Dysgraphia (Writing)</h3>
+                <div class="strategies-grid">
+                    <div class="strategy-card">
+                        <h4>Understanding</h4>
+                        <p>Difficulty with handwriting, spelling, organizing ideas on paper. Physical act of writing may be painful.</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4>Accommodations</h4>
+                        <p>Speech-to-text, typing, dictation, graphic organizers, reduced written output requirements.</p>
+                    </div>
+                </div>
+
+                <div class="activity-example">
+                    <h4 style="color: var(--learning);">📝 Writing: Voice First</h4>
+                    <p>Let student dictate ideas. They can see their words appear on screen. Content is what matters - handwriting is just one method.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SPEECH & LANGUAGE DISABILITIES SECTION -->
+        <!-- ============================================ -->
+        <section id="speech" class="disability-section">
+            <div class="disability-header speech">
+                <div class="disability-icon">🗣️</div>
+                <h2 class="disability-title">Speech & Language Disorders</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--speech); margin-bottom: 1rem;">Understanding Communication Disorders</h3>
+                <p>Includes articulation disorders, fluency disorders (stuttering), voice disorders, and language disorders (receptive/expressive). Difficulty communicating does NOT mean difficulty thinking.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Key Principles</h4>
+                    <ul style="list-style: none;">
+                        <li>• Never interrupt or finish sentences</li>
+                        <li>• Give unhurried time to respond</li>
+                        <li>• Accept all communication methods</li>
+                        <li>• Model, don't correct</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Accommodations</h4>
+                    <div>
+                        <span class="accommodation-tag">AAC devices</span>
+                        <span class="accommodation-tag">Picture exchange</span>
+                        <span class="accommodation-tag">Sign language</span>
+                        <span class="accommodation-tag">Extra response time</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--speech);">🌱 Gardening: Non-Verbal Participation</h4>
+                <p>Child can participate fully without speaking. Point to what they want to do next. Use picture cards for choices. All communication is valid.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--speech);">🔧 Woodshop: Doing Speaks</h4>
+                <p>Many children with speech disorders excel in hands-on work where communication isn't primary. Let their work speak for them.</p>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- DEAF & HARD OF HEARING SECTION -->
+        <!-- ============================================ -->
+        <section id="hearing" class="disability-section">
+            <div class="disability-header hearing">
+                <div class="disability-icon">🦻</div>
+                <h2 class="disability-title">Deaf & Hard of Hearing</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--hearing); margin-bottom: 1rem;">Understanding Hearing Differences</h3>
+                <p>The Deaf community has its own culture and language (ASL). Hearing levels vary from mild loss to profound deafness. Visual access is crucial.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Key Principles</h4>
+                    <ul style="list-style: none;">
+                        <li>• Face student when speaking</li>
+                        <li>• Ensure lighting on face</li>
+                        <li>• Use visual supports</li>
+                        <li>• Learn basic signs</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Accommodations</h4>
+                    <div>
+                        <span class="accommodation-tag">ASL interpreter</span>
+                        <span class="accommodation-tag">FM system</span>
+                        <span class="accommodation-tag">Captioned videos</span>
+                        <span class="accommodation-tag">Visual alerts</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--hearing);">🔧 Auto Mechanics: Visual Learning</h4>
+                <p>Many Deaf individuals excel in visual-spatial trades. Demonstrate, don't just explain. Written instructions, diagrams, hands-on practice work well.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--hearing);">🌱 Gardening: See the Process</h4>
+                <p>Gardening is naturally visual. Show seed, show planted seed, show sprout. The process is visible. Great learning for visual learners.</p>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- BLIND & VISUALLY IMPAIRED SECTION -->
+        <!-- ============================================ -->
+        <section id="vision" class="disability-section">
+            <div class="disability-header vision">
+                <div class="disability-icon">🦯</div>
+                <h2 class="disability-title">Blind & Visually Impaired</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--vision); margin-bottom: 1rem;">Understanding Visual Impairments</h3>
+                <p>Range from low vision to total blindness. Learning happens through touch, hearing, and other senses. Braille literacy is crucial for many.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Key Principles</h4>
+                    <ul style="list-style: none;">
+                        <li>• Describe clearly (don't point)</li>
+                        <li>• Use hands-on exploration</li>
+                        <li>• Maintain consistent environment</li>
+                        <li>• Teach orientation & mobility</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Accommodations</h4>
+                    <div>
+                        <span class="accommodation-tag">Braille materials</span>
+                        <span class="accommodation-tag">Audio description</span>
+                        <span class="accommodation-tag">Large print</span>
+                        <span class="accommodation-tag">Tactile graphics</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--vision);">🌱 Gardening: Tactile Garden</h4>
+                <p>Create garden with plants of different textures. Use raised beds at comfortable height. Feel the soil, feel the leaves, smell the herbs. Gardening is sensory, not just visual.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--vision);">🛠️ Woodshop: Feel the Work</h4>
+                <p>Many blind individuals become excellent woodworkers. Teach through hands-on guidance. Use tactile measuring tools. Feel the wood grain, feel the cut. Safety first - clear organization of tools.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--vision);">🔧 Auto Mechanics: Feel and Hear</h4>
+                <p>Diagnose by sound, by feel, by smell. Many mechanics close their eyes to focus on these senses anyway. Blind mechanics can excel with proper training.</p>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- EMOTIONAL & BEHAVIORAL DISORDERS SECTION -->
+        <!-- ============================================ -->
+        <section id="emotional" class="disability-section">
+            <div class="disability-header emotional">
+                <div class="disability-icon">❤️</div>
+                <h2 class="disability-title">Emotional & Behavioral Disorders</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--emotional); margin-bottom: 1rem;">Understanding Emotional & Behavioral Needs</h3>
+                <p>Includes anxiety disorders, depression, bipolar disorder, conduct disorders, PTSD, and more. Behavior is communication. These students need support, not punishment.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Key Principles</h4>
+                    <ul style="list-style: none;">
+                        <li>• Build trusting relationships first</li>
+                        <li>• Predictable routines reduce anxiety</li>
+                        <li>• Teach self-regulation skills</li>
+                        <li>• Behavior is communication</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Accommodations</h4>
+                    <div>
+                        <span class="accommodation-tag">Quiet space for breaks</span>
+                        <span class="accommodation-tag">Sensory tools</span>
+                        <span class="accommodation-tag">Check-in system</span>
+                        <span class="accommodation-tag">Flexible deadlines</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--emotional);">🌱 Gardening: Therapeutic by Nature</h4>
+                <p>Gardening is inherently calming. Soil contact increases serotonin. Watching things grow builds hope. Responsibility builds self-worth. Perfect for emotional regulation.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--emotional);">🛠️ Woodshop: Channeling Energy</h4>
+                <p>Physical work releases energy and stress. Creating something tangible builds self-esteem. Following steps provides structure. Can be highly therapeutic.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--emotional);">🔧 Auto Mechanics: Problem-Solving Focus</h4>
+                <p>Diagnosing and fixing provides sense of control and mastery. Great for students who feel helpless in other areas.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--emotional);">🍳 Cooking: Nurturing Self and Others</h4>
+                <p>Cooking for others builds connection. Learning to nourish self builds independence. Immediate sensory rewards (smell, taste) provide comfort.</p>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- MULTIPLE DISABILITIES SECTION -->
+        <!-- ============================================ -->
+        <section id="multiple" class="disability-section">
+            <div class="disability-header" style="border-bottom-color: #777;">
+                <div class="disability-icon">🌟</div>
+                <h2 class="disability-title">Multiple Disabilities & Complex Needs</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: #777; margin-bottom: 1rem;">Understanding Complex Needs</h3>
+                <p>Some students have combinations of disabilities - physical, intellectual, sensory, medical. Each student is unique. The goal is always quality of life, communication, and meaningful participation.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Key Principles</h4>
+                    <ul style="list-style: none;">
+                        <li>• Presume competence</li>
+                        <li>• Find communication method</li>
+                        <li>• Celebrate small responses</li>
+                        <li>• Medical needs come first</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Approaches</h4>
+                    <div>
+                        <span class="accommodation-tag">Sensory stimulation</span>
+                        <span class="accommodation-tag">Switch access</span>
+                        <span class="accommodation-tag">Positioning for participation</span>
+                        <span class="accommodation-tag">Eye gaze technology</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: #777;">🌱 Sensory Garden</h4>
+                <p>Plants with different textures, smells, colors. Student can experience even if they can't actively plant. Position them to touch, smell, see (if possible). Every child deserves nature.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: #777;">🔨 Adapted Tool Use</h4>
+                <p>With proper positioning and adapted switches, many students can activate tools. Even pressing a switch to start a drill provides sense of agency and participation.</p>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: #777;">📚 Story Time</h4>
+                <p>Read aloud with sensory experiences. When character touches something soft, student touches soft fabric. When it rains, mist water. Learning through all senses.</p>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- TRAUMATIC BRAIN INJURY SECTION -->
+        <!-- ============================================ -->
+        <section id="tbi" class="disability-section">
+            <div class="disability-header" style="border-bottom-color: #E67E22;">
+                <div class="disability-icon">🧠</div>
+                <h2 class="disability-title">Traumatic Brain Injury</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: #E67E22; margin-bottom: 1rem;">Understanding TBI</h3>
+                <p>TBI affects each person differently depending on injury location. Student may have been typical before injury and now has new challenges. Memory, attention, processing speed, and behavior may be affected.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Key Principles</h4>
+                    <ul style="list-style: none;">
+                        <li>• Be patient with memory</li>
+                        <li>• Reduce cognitive load</li>
+                        <li>• Watch for fatigue</li>
+                        <li>• Build on strengths</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Accommodations</h4>
+                    <div>
+                        <span class="accommodation-tag">Memory supports</span>
+                        <span class="accommodation-tag">Frequent breaks</span>
+                        <span class="accommodation-tag">Reduced distractions</span>
+                        <span class="accommodation-tag">Consistent routines</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- UNIVERSAL DESIGN PRINCIPLES -->
+        <!-- ============================================ -->
+        <section class="disability-section">
+            <div class="disability-header" style="border-bottom-color: var(--special-ed);">
+                <div class="disability-icon">🌍</div>
+                <h2 class="disability-title">Universal Design for Learning</h2>
+            </div>
+
+            <div class="understanding-box">
+                <h3 style="color: var(--special-ed); margin-bottom: 1rem;">Design for Everyone from the Start</h3>
+                <p>When we design for accessibility, everyone benefits. These principles should be built into every activity, not added as an afterthought.</p>
+            </div>
+
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <h4>Multiple Means of Engagement</h4>
+                    <p>Offer choices, connect to interests, provide authentic tasks. When students care, they learn.</p>
+                </div>
+                <div class="strategy-card">
+                    <h4>Multiple Means of Representation</h4>
+                    <p>Present information in multiple ways - visual, auditory, tactile, kinesthetic. No single method works for all.</p>
+                </div>
+                <div class="strategy-card">
+                    <h4>Multiple Means of Expression</h4>
+                    <p>Let students show learning in different ways - speaking, writing, building, drawing, performing. Assess the learning, not the method.</p>
+                </div>
+            </div>
+
+            <div class="activity-example">
+                <h4 style="color: var(--special-ed);">🌱 Garden Project - Universal Design</h4>
+                <p><strong>Engagement:</strong> Students choose what to plant based on interests (food, flowers, herbs).<br>
+                <strong>Representation:</strong> Show planting through demonstration, pictures, written steps, and verbal instruction.<br>
+                <strong>Expression:</strong> Students show learning by harvesting, drawing, writing, photographing, or teaching others.</p>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <div style="background: var(--light); padding: 3rem; border-radius: 30px; margin: 4rem 0;">
+            <h2 style="color: var(--dark); text-align: center; margin-bottom: 2rem;">📚 Resources for Families & Educators</h2>
+            
+            <div class="strategies-grid">
+                <div>
+                    <h3 style="color: var(--special-ed);">Organizations</h3>
+                    <ul class="resource-list">
+                        <li>Council for Exceptional Children</li>
+                        <li>Understood.org</li>
+                        <li>National Center for Learning Disabilities</li>
+                        <li>Autism Society of America</li>
+                        <li>United Cerebral Palsy</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: var(--special-ed);">Legal Rights</h3>
+                    <ul class="resource-list">
+                        <li>IDEA (Individuals with Disabilities Education Act)</li>
+                        <li>Section 504 of Rehabilitation Act</li>
+                        <li>ADA (Americans with Disabilities Act)</li>
+                        <li>IEP vs 504 Plans</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inclusion Statement -->
+        <div style="background: var(--gradient); color: white; padding: 4rem; border-radius: 40px; margin: 4rem 0; text-align: center;">
+            <h2 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">💜 Every Child Belongs</h2>
+            <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto;">In our classrooms, there are no "regular" kids and "special" kids. There are just kids - each with unique strengths, challenges, and gifts. Our job is to help every child discover what they CAN do.</p>
+        </div>
+    </div>
+
+    <!-- Join Modal -->
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
+            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Join the Movement</h2>
+            <p style="margin-bottom: 2rem;">Help us build education that works for every child.</p>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you for joining!')">Join Now</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up - for every child.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc; text-decoration: none;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc; text-decoration: none;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc; text-decoration: none;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc; text-decoration: none;">High (14-18)</a></li>
+                    <li><a href="special-education.html" style="color: #ccc; text-decoration: none;">Special Education</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <ul style="list-style: none;">
+                    <li><a href="community.html" style="color: #ccc; text-decoration: none;">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 The Living Curriculum. Every child belongs. Every child can learn. Every child matters.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Age group tab functionality
+        function showAgeGroup(groupId, element) {
+            // Find the parent section
+            const section = element.closest('.disability-section');
+            
+            // Hide all age content in this section
+            const contents = section.querySelectorAll('.age-content');
+            contents.forEach(c => c.style.display = 'none');
+            
+            // Show selected group
+            document.getElementById(groupId).style.display = 'block';
+            
+            // Update active tab
+            const tabs = section.querySelectorAll('.age-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Initialize first tab for each section
+        document.querySelectorAll('.disability-section').forEach(section => {
+            const firstTab = section.querySelector('.age-tab');
+            if (firstTab) {
+                const firstContentId = firstTab.getAttribute('onclick').match(/'([^']+)'/)[1];
+                showAgeGroup(firstContentId, firstTab);
+            }
+        });
+    </script>
+</body>
+</html>
