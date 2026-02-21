@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elementary (5-10) | The Living Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Same Navigation as Home Page */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #E8F0FE 0%, #D1E2FF 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: var(--light);
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 2rem 0;
+            border-left: 5px solid var(--secondary);
+        }
+
+        /* Subject Sections */
+        .subject-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .subject-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .no-textbook-badge {
+            background: var(--highlight);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .hands-on-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .activity-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 20px;
+            border-left: 5px solid var(--secondary);
+            transition: transform 0.3s;
+        }
+
+        .activity-card:hover {
+            transform: translateX(10px);
+        }
+
+        .activity-card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .activity-desc {
+            margin: 1rem 0;
+            color: #555;
+        }
+
+        .developmental-note {
+            background: #E3F2FD;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .age-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .milestone-section {
+            background: var(--light);
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 4rem 0;
+        }
+
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .milestone-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .integration-example {
+            background: var(--gradient);
+            color: white;
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 4rem 0;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .hands-on-grid,
+            .milestone-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Same Navigation as Home Page -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html" class="active">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>Elementary Explorers</h1>
+        <p style="font-size: 1.3rem;">Ages 5-10: Where Hands Build Understanding</p>
+    </section>
+
+    <div class="container">
+        <!-- NO TEXTBOOKS Banner -->
+        <div class="philosophy-banner">
+            <h2 style="color: var(--dark); font-size: 2rem;">📚 NO TEXTBOOKS. NO WORKSHEETS. NO BUSY WORK.</h2>
+            <p style="font-size: 1.2rem; margin-top: 1rem;">Elementary children learn by doing. They need to touch, build, create, and move. Our curriculum puts tools in their hands, not pencils. Every academic concept is taught through real projects that matter.</p>
+        </div>
+
+        <!-- Mathematics Section -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🔢 Mathematics: Built by Hand</span>
+            </div>
+            <span class="no-textbook-badge">NO MATH TEXTBOOKS - REAL MATH THROUGH MAKING</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <span class="skill-tag">Counting & Addition</span>
+                    <h3>Classroom Market</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Set up a classroom store with real items. Students get "money" and shop. They must count items, add prices, make change. The store changes weekly - sometimes it's a bakery, sometimes a tool shop.</p>
+                    <div class="developmental-note">
+                        <strong>📊 Math Concepts:</strong> Counting, addition, subtraction, money values, making change. Students don't realize they're doing math - they're just shopping!
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <span class="skill-tag">Geometry</span>
+                    <h3>Shape Hunt & Building</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Go on a shape hunt around school. Photograph shapes found. Then build them with clay, sticks, or blocks. Create shape museums. Build 3D forms from 2D shapes.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <span class="skill-tag">Multiplication</span>
+                    <h3>Garden Arrays</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Plant gardens in rows. "We have 4 rows of 6 carrots. How many is that?" Students see multiplication visually. Create garden plans with different array configurations.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <span class="skill-tag">Fractions</span>
+                    <h3>Pizza Fractions</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Make real pizzas. Cut into halves, quarters, eighths. Then design paper pizzas with different fraction toppings. Have pizza parties where students must divide fairly.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <span class="skill-tag">Measurement</span>
+                    <h3>Build a Birdhouse</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Design and build actual birdhouses. Measure wood in inches and centimeters. Calculate area for floor. Learn fractions through saw cuts. Real tools, real measurements, real products.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <span class="skill-tag">Data & Graphing</span>
+                    <h3>Weather Station</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Build simple weather instruments. Track temperature, rainfall, wind daily. Create graphs. Look for patterns. Predict weather based on data.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Science Section -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🔬 Science: Questions Become Experiments</span>
+            </div>
+            <span class="no-textbook-badge">NO SCIENCE TEXTBOOKS - REAL EXPERIMENTS</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Seed Starting Station</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Each child plants multiple seeds in clear cups. Experiment: What happens if one gets no water? No sun? No soil? Students observe, draw, and conclude. This is the scientific method in action.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Sink or Float Center</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Permanent water table with objects. Students predict, test, record. Gradually they learn to predict based on material properties, not just guessing.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Simple Machines Playground</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Build levers, pulleys, ramps with real materials. Lift heavy objects with simple machines. Measure force needed. Connect to playground equipment - see the machines everywhere.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Kitchen Chemistry</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Make bread - watch yeast work. Make butter - shake cream until it separates. Make pickles - observe preservation. Every cooking project is a chemistry experiment.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Compost Bin Investigation</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Build and maintain compost bin. Study decomposition. What breaks down fast? Slow? What lives in compost? Create scientific drawings and journals.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Electricity Explorations</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Use battery packs, wires, bulbs, motors. Create circuits. Make switches from household items. Build something that works - a light, a fan, a simple machine.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Literature Section - NO TEXTBOOKS -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>📚 Literature: Real Books, Real Readers</span>
+            </div>
+            <span class="no-textbook-badge">NO READING TEXTBOOKS - REAL BOOKS ONLY</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Author Study: Eric Carle</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Read multiple Eric Carle books. Then create art in his collage style. Write simple stories in his pattern. This is deep literacy - understanding an author's craft by doing.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Story Dramatization</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> After reading a story, act it out. Make simple costumes. Build a stage. Perform for another class. Comprehension comes through embodiment.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Book Clubs</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Small groups read same real book (not textbook). They discuss, draw, write responses. Groups choose how to share - skit, poster, diorama, or teach another group.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Poetry Out Loud</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Memorize and perform poems. Create poetry slam. Write original poems about real experiences - the garden, the shop, the playground.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Classroom Publishing House</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Students write, illustrate, edit, and publish their own books. Books go into classroom library. Hold author celebrations where authors read to younger students.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Literature and Life</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Read "Hatchet" then learn survival skills. Read "The Gardener" then start seeds. Connect every book to real experience.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Studies - REIMAGINED NO TEXTBOOKS -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🌍 Social Studies: Multiple Perspectives</span>
+            </div>
+            <span class="no-textbook-badge">NO TEXTBOOK HISTORY - REAL STORIES, MULTIPLE VOICES</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Family Stories Project</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Interview family members. Bring photos. Share family traditions, foods, celebrations. Create a class book of family stories. Learn that every family has unique history.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Community Helpers</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Invite community helpers to class. Visit fire station, police station, bakery, farm. Draw thank you cards. Learn how community works together.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Indigenous Peoples Study</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Learn about local indigenous peoples BEFORE colonization. If possible, invite indigenous educators. Study traditional skills, stories, ways of knowing. Create respectful projects that honor these cultures.</p>
+                    <div class="developmental-note">
+                        <strong>⚠️ Critical:</strong> We do NOT teach that America was "discovered" or "empty." We teach the truth - thriving civilizations existed here for millennia.
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Immigration Stories</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Research family immigration stories. Map where families came from. Interview recent immigrants if possible. Create map showing class origins.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Civil Rights Through Biographies</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Instead of textbook summary, read biographies of civil rights leaders - multiple leaders from multiple movements. Create living history museum where students become figures and tell their stories.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Local History Investigation</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Research history of your town. Visit historical society. Look at old maps. Interview elders. Create local history exhibit for community.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geography Section -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🗺️ Geography: Maps and Meaning</span>
+            </div>
+            <span class="no-textbook-badge">NO TEXTBOOK GEOGRAPHY - MAPPING REAL PLACES</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Map Your Room</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Draw simple maps of bedroom. Add furniture. Then map classroom. Then map route from classroom to playground. Start with known spaces.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Compass Treasure Hunt</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Learn to use compass. Hide treasures. Give directions using cardinal directions. Students navigate to find them.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>3D Topographic Maps</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Use clay or papier-mâché to build 3D maps of local area. Show hills, valleys, water. Understand elevation and landforms physically.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practical Life Skills -->
+        <div class="subject-section">
+            <div class="subject-title">
+                <span>🌱 Practical Life Skills: Capable Kids</span>
+            </div>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Gardening: Seed to Snack</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Each child has small garden plot. Plant easy vegetables (radishes, lettuce, peas). Water, weed, harvest. Eat what they grow. Learn that food comes from earth, not store.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 5-7</span>
+                    <h3>Cooking: No-Bake Recipes</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Make simple foods - fruit salad, sandwiches, yogurt parfaits. Practice measuring, mixing, cleaning up. Learn kitchen safety basics.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Woodshop: Tool Introduction</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Learn hammer, screwdriver, hand saw. Make birdhouse, simple shelf, or tool box. Safety first - always. Build something useful.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 7-9</span>
+                    <h3>Sewing: Button and Mend</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Learn to sew on button. Mend torn clothing. Make simple pillow or bag. Understand that we fix things, don't throw away.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Advanced Gardening</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Plan garden for full season. Learn composting. Save seeds. Extend season with cold frames. Understand food systems.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 9-10</span>
+                    <h3>Bike Maintenance</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Learn to fix flat tire. Oil chain. Adjust brakes. Every child should be able to maintain their own bike.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Example -->
+        <div class="integration-example">
+            <h2 style="color: white; font-size: 2.5rem;">🌽 How It All Connects: The Corn Project</h2>
+            <p style="margin: 1rem 0; font-size: 1.2rem;">One topic, every subject - no textbooks needed.</p>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+                <div>
+                    <h3 style="color: var(--accent);">Mathematics</h3>
+                    <p>Count seeds, measure rows, calculate harvest yields, graph growth</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Science</h3>
+                    <p>Plant life cycle, soil science, weather impact, genetics of corn</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Literature</h3>
+                    <p>Read indigenous corn stories, write corn poems, create corn books</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Social Studies</h3>
+                    <p>Corn in indigenous cultures, corn trade, global food systems</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Geography</h3>
+                    <p>Where corn grows, climate zones, global corn production</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Practical</h3>
+                    <p>Plant corn, harvest, dry seeds, grind corn, make tortillas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developmental Milestones -->
+        <div class="milestone-section">
+            <h2 style="font-size: 2rem; margin-bottom: 2rem;">What to Expect: Ages 5-10</h2>
+            <div class="milestone-grid">
+                <div class="milestone-card">
+                    <h3>Ages 5-6</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ Read simple books</li>
+                        <li>✓ Count to 100</li>
+                        <li>✓ Write name and words</li>
+                        <li>✓ Understand time concepts</li>
+                        <li>✓ Play cooperatively</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h3>Ages 7-8</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ Read chapter books</li>
+                        <li>✓ Multiplication basics</li>
+                        <li>✓ Write paragraphs</li>
+                        <li>✓ Understand maps</li>
+                        <li>✓ Complex friendships</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h3>Ages 9-10</h3>
+                    <ul style="list-style: none;">
+                        <li>✓ Read independently</li>
+                        <li>✓ Fractions & decimals</li>
+                        <li>✓ Research skills</li>
+                        <li>✓ Multiple perspectives</li>
+                        <li>✓ Lead group projects</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Same Modal -->
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
+            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary);">Join the Movement</h2>
+            <p style="margin: 1rem 0;">Help us rebuild American education.</p>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you for joining! Together we rebuild.')">Join Now</button>
+        </div>
+    </div>
+
+    <!-- Same Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc;">High (14-18)</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom" style="text-align: center; margin-top: 2rem;">
+            <p>© 2024 The Living Curriculum. We're building something new.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
