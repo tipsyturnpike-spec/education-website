@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High School (14-18) | The Living Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Same Navigation as Home Page */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #DEE8FF 0%, #C5D6FF 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Dashboard */
+        .requirements-dashboard {
+            background: var(--light);
+            padding: 3rem;
+            border-radius: 30px;
+            margin: 2rem 0;
+        }
+
+        .requirement-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .requirement-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .requirement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-progress {
+            background: #E6B85C20;
+            color: #B3861A;
+            padding: 0.3rem;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+        }
+
+        /* Safety Banner */
+        .safety-banner {
+            background: #FFF3CD;
+            border-left: 5px solid #FFC107;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
+        /* Subject Sections */
+        .subject-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .subject-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .no-textbook-badge {
+            background: var(--highlight);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .certification-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .cert-card {
+            background: var(--light);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .cert-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .cert-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .cert-body {
+            padding: 2rem;
+        }
+
+        .cert-body ul {
+            list-style: none;
+        }
+
+        .cert-body li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .hands-on-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .activity-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 20px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .age-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .capstone-section {
+            background: var(--gradient);
+            color: white;
+            padding: 4rem;
+            border-radius: 40px;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .requirement-grid,
+            .certification-grid,
+            .hands-on-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Same Navigation as Home Page -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html" class="active">High (14-18)</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>High School Masters</h1>
+        <p style="font-size: 1.3rem;">Ages 14-18: Real Skills for Real Life</p>
+    </section>
+
+    <div class="container">
+        <!-- Graduation Requirements Dashboard -->
+        <div class="requirements-dashboard">
+            <h2 style="font-size: 2.5rem; color: var(--dark);">🎓 Graduation Requirements</h2>
+            <p style="margin: 1rem 0 2rem;">Not credits - competencies. You demonstrate mastery before you graduate.</p>
+
+            <div class="requirement-grid">
+                <div class="requirement-card">
+                    <div class="requirement-icon">🔧</div>
+                    <h3>Auto Mechanics</h3>
+                    <p>Oil change, tire rotation, brake inspection</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">💰</div>
+                    <h3>Financial Literacy</h3>
+                    <p>File taxes, budget, invest</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">🔫</div>
+                    <h3>Gun Safety</h3>
+                    <p>Safe handling, storage, ethics</p>
+                    <div class="status-progress">Certification Required</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">🌱</div>
+                    <h3>Sustainable Living</h3>
+                    <p>Garden, preserve, compost</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">🍳</div>
+                    <h3>Cooking</h3>
+                    <p>20 recipes from scratch</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">🪚</div>
+                    <h3>Woodworking</h3>
+                    <p>Build furniture, use all tools</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">📊</div>
+                    <h3>Mathematics</h3>
+                    <p>Algebra, geometry, statistics</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+                <div class="requirement-card">
+                    <div class="requirement-icon">🌍</div>
+                    <h3>Global Perspectives</h3>
+                    <p>World history, multiple narratives</p>
+                    <div class="status-progress">In Progress</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Safety Section -->
+        <div class="safety-banner">
+            <h3 style="color: #856404; font-size: 1.8rem;">🔫 Comprehensive Gun Safety Program</h3>
+            <p style="margin: 1rem 0; font-size: 1.1rem;">This is not about politics. This is about ensuring every young adult knows how to handle firearms safely if they choose to or encounter them. Certified instructors, NRA guidelines, emphasis on respect and responsibility.</p>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+                <div>✅ Safe handling rules</div>
+                <div>✅ Proper storage</div>
+                <div>✅ Legal responsibilities</div>
+                <div>✅ Range safety</div>
+                <div>✅ Ethics & respect</div>
+                <div>✅ State certification</div>
+            </div>
+        </div>
+
+        <!-- Auto Mechanics Section -->
+        <div class="subject-section">
+            <h2 class="subject-title">🔧 Auto Mechanics: Take Control of Your Machine</h2>
+            <span class="no-textbook-badge">NO TEXTBOOKS - HANDS ON ENGINES</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 14-15</span>
+                    <h3>Oil Change & Basic Maintenance</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Each student brings in family car (with permission). Learn to check all fluids, change oil and filter, check belts and hoses. This is the foundation - every graduate can do this.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 14-15</span>
+                    <h3>Tire Rotation & Repair</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Learn to safely jack car, remove tires, rotate according to pattern. Patch a flat tire. Check tire pressure and tread depth. No one should be stranded by a flat.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 15-16</span>
+                    <h3>Brake Inspection & Replacement</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Remove wheels, inspect brake pads and rotors. Replace pads. Understand braking systems. This is critical safety knowledge.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 16-18</span>
+                    <h3>Engine Diagnostics</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Use diagnostic tools to read engine codes. Troubleshoot common issues. Understand how modern cars work. Students who complete this can diagnose their own check engine lights.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; padding: 1.5rem; background: var(--light); border-radius: 15px;">
+                <h3>🎓 Auto Mechanics Certification Requirements:</h3>
+                <ul style="columns: 2; margin-top: 1rem;">
+                    <li>✓ Perform oil change independently</li>
+                    <li>✓ Rotate and balance tires</li>
+                    <li>✓ Replace brake pads</li>
+                    <li>✓ Check all fluids</li>
+                    <li>✓ Jump start a car safely</li>
+                    <li>✓ Change a spare tire</li>
+                    <li>✓ Read diagnostic codes</li>
+                    <li>✓ Understand basic engine systems</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Financial Literacy Section -->
+        <div class="subject-section">
+            <h2 class="subject-title">💰 Financial Literacy: Master Your Money</h2>
+            <span class="no-textbook-badge">NO TEXTBOOKS - REAL MONEY, REAL DECISIONS</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 14-15</span>
+                    <h3>Banking & Budgeting</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Open real checking/savings accounts. Track spending for a month. Create budget. Understand checking accounts, debit cards, online banking. Start good habits now.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 15-16</span>
+                    <h3>Tax Filing Simulation</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Use real tax forms (1040EZ, 1040) with sample W-2s. File taxes. Understand deductions, credits, why we pay taxes. By senior year, file your own taxes with parent supervision.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 16-17</span>
+                    <h3>Credit & Debt</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Understand credit scores - what helps, what hurts. Simulate loans: car loan, student loan, mortgage. Calculate interest. Learn how debt works before you sign anything.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 17-18</span>
+                    <h3>Investment Basics</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Open small investment account (with parent). Research stocks, bonds, index funds. Make small investments. Track performance. Understand compound interest - the most powerful force in finance.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; background: var(--primary); color: white; padding: 1.5rem; border-radius: 15px;">
+                <h3 style="color: white;">🎓 Financial Literacy Requirements:</h3>
+                <ul style="columns: 2; margin-top: 1rem; color: white;">
+                    <li>✓ File your own taxes</li>
+                    <li>✓ Create monthly budget</li>
+                    <li>✓ Understand credit score</li>
+                    <li>✓ Explain compound interest</li>
+                    <li>✓ Read a paystub</li>
+                    <li>✓ Understand loans</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mathematics Section -->
+        <div class="subject-section">
+            <h2 class="subject-title">📊 Mathematics: Real World Applications</h2>
+            <span class="no-textbook-badge">NO TEXTBOOKS - MATH THAT MATTERS</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 14-15</span>
+                    <h3>Algebra Through Business</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Run a school-based business. Use algebra to model profit, predict sales, adjust pricing. Create spreadsheets with formulas. Algebra isn't abstract - it's what keeps your business profitable.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 15-16</span>
+                    <h3>Geometry in Construction</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Design and build something - shed, stage, playhouse. Calculate angles, areas, volumes. Use Pythagorean theorem daily. Geometry is what keeps buildings standing.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 16-17</span>
+                    <h3>Statistics in Real Life</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Conduct surveys. Analyze data. Understand what statistics really mean - and how they can lie. Learn to evaluate claims based on data.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 17-18</span>
+                    <h3>Calculus Through Physics</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> For students who choose advanced math, learn calculus through real physics problems - motion, growth, change. Not abstract formulas but descriptions of how things change.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Studies / History - REIMAGINED -->
+        <div class="subject-section">
+            <h2 class="subject-title">🌍 Social Studies: Critical Perspectives</h2>
+            <span class="no-textbook-badge">NO TEXTBOOKS - PRIMARY SOURCES, MULTIPLE VOICES</span>
+            
+            <div class="hands-on-grid">
+                <div class="activity-card">
+                    <span class="age-tag">Ages 14-15</span>
+                    <h3>World History Through Objects</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Instead of textbook, study history through objects. Handle reproductions of tools, pottery, weapons. What can objects tell us about how people lived? Create museum exhibits.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 14-15</span>
+                    <h3>American History: Multiple Narratives</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Study major events through documents from different perspectives. Colonization: read Spanish accounts, indigenous accounts, African accounts. Civil War: read Union, Confederate, enslaved, women's accounts. History is never simple.</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 15-16</span>
+                    <h3>Reading List Includes:</h3>
+                    <p class="activity-desc">"A People's History of the United States" - Howard Zinn<br>
+                    "An Indigenous Peoples' History" - Roxanne Dunbar-Ortiz<br>
+                    "The New Jim Crow" - Michelle Alexander<br>
+                    "March" (graphic novel trilogy) - John Lewis</p>
+                </div>
+
+                <div class="activity-card">
+                    <span class="age-tag">Ages 16-18</span>
+                    <h3>Current Events Investigation</h3>
+                    <p class="activity-desc"><strong>Hands-On Activity:</strong> Choose current issue. Research multiple news sources, including international. Identify bias. Write analysis. Present multiple perspectives. Learn to be informed citizen.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practical Life Skills Certifications -->
+        <div class="subject-section">
+            <h2 class="subject-title">🔨 Life Skills Certifications</h2>
+            
+            <div class="certification-grid">
+                <div class="cert-card">
+                    <div class="cert-header">Woodworking</div>
+                    <div class="cert-body">
+                        <ul>
+                            <li>✓ Use all shop tools safely</li>
+                            <li>✓ Build a piece of furniture</li>
+                            <li>✓ Read building plans</li>
+                            <li>✓ Calculate materials</li>
+                            <li>✓ Finishing techniques</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cert-card">
+                    <div class="cert-header">Cooking</div>
+                    <div class="cert-body">
+                        <ul>
+                            <li>✓ 20 meals from scratch</li>
+                            <li>✓ Meal planning on budget</li>
+                            <li>✓ Food preservation</li>
+                            <li>✓ Nutrition knowledge</li>
+                            <li>✓ Kitchen safety</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cert-card">
+                    <div class="cert-header">Gardening</div>
+                    <div class="cert-body">
+                        <ul>
+                            <li>✓ Year-round food plan</li>
+                            <li>✓ Soil management</li>
+                            <li>✓ Seed saving</li>
+                            <li>✓ Composting</li>
+                            <li>✓ Season extension</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cert-card">
+                    <div class="cert-header">First Aid</div>
+                    <div class="cert-body">
+                        <ul>
+                            <li>✓ CPR certified</li>
+                            <li>✓ First Aid certified</li>
+                            <li>✓ Emergency response</li>
+                            <li>✓ Mental health first aid</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cert-card">
+                    <div class="cert-header">Home Maintenance</div>
+                    <div class="cert-body">
+                        <ul>
+                            <li>✓ Fix running toilet</li>
+                            <li>✓ Patch drywall</li>
+                            <li>✓ Paint a room</li>
+                            <li>✓ Basic electrical</li>
+                            <li>✓ Unclog drains</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cert-card">
+                    <div class="cert-header">Gun Safety</div>
+                    <div class="cert-body">
+                        <ul>
+                            <li>✓ Safe handling</li>
+                            <li>✓ Proper storage</li>
+                            <li>✓ Legal requirements</li>
+                            <li>✓ Range safety</li>
+                            <li>✓ Ethics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Senior Capstone -->
+        <div class="capstone-section">
+            <h2 style="color: white; font-size: 3rem;">🎯 Senior Capstone</h2>
+            <p style="font-size: 1.3rem; margin: 1rem 0;">Every senior completes a community project demonstrating all their skills.</p>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 3rem 0;">
+                <div>
+                    <h3 style="color: var(--accent);">Design & Build</h3>
+                    <p>Create something useful for community</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Teach Others</h3>
+                    <p>Share a skill with younger students</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent);">Document</h3>
+                    <p>Portfolio of process and learning</p>
+                </div>
+            </div>
+            <button class="btn" style="background: white; color: var(--primary); padding: 1rem 3rem; font-size: 1.2rem;">View Capstone Examples</button>
+        </div>
+
+        <!-- What Graduates Can Do -->
+        <div style="background: var(--light); padding: 3rem; border-radius: 30px;">
+            <h2 style="color: var(--dark); font-size: 2rem;">When You Graduate, You Can:</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+                <div>
+                    <h3>🔧 Fix</h3>
+                    <p>Change a tire, fix a toilet, patch drywall, cook dinner</p>
+                </div>
+                <div>
+                    <h3>💰 Manage</h3>
+                    <p>File taxes, invest money, budget, understand credit</p>
+                </div>
+                <div>
+                    <h3>🌱 Grow</h3>
+                    <p>Garden, preserve food, live sustainably</p>
+                </div>
+                <div>
+                    <h3>🤔 Think</h3>
+                    <p>Question sources, see multiple perspectives, analyze critically</p>
+                </div>
+                <div>
+                    <h3>🔫 Handle</h3>
+                    <p>Gun safety, first aid, emergency response</p>
+                </div>
+                <div>
+                    <h3>👥 Lead</h3>
+                    <p>Run meetings, organize projects, teach others</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Same Modal -->
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
+            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary);">Join the Movement</h2>
+            <p style="margin: 1rem 0;">Help us rebuild American education from the ground up.</p>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+            <select style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+                <option>I am a parent</option>
+                <option>I am a teacher</option>
+                <option>I am a community member</option>
+            </select>
+            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you for joining! Together we rebuild.')">Join Now</button>
+        </div>
+    </div>
+
+    <!-- Same Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc;">High (14-18)</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom" style="text-align: center; margin-top: 2rem;">
+            <p>© 2024 The Living Curriculum. We're building something new.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
