@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community | The Living Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #F0E6FF 0%, #E0D0FF 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Two-Column Layout */
+        .community-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+
+        /* Signup Section */
+        .signup-section {
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(42,92,125,0.1);
+        }
+
+        .signup-title {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .signup-title span {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* Form Embed */
+        .form-container {
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .google-form-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 15px;
+            background: var(--light);
+        }
+
+        .form-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Admin Updates Section */
+        .updates-section {
+            background: var(--light);
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(42,92,125,0.1);
+        }
+
+        .updates-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .updates-title {
+            font-size: 2rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .updates-title span {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.2rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .admin-login-area {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .admin-input {
+            padding: 0.5rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .updates-feed {
+            margin-top: 2rem;
+        }
+
+        .update-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--secondary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .update-date {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .update-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .update-content {
+            color: #555;
+        }
+
+        .no-updates {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid var(--accent);
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-panel h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .admin-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .admin-form-group input,
+        .admin-form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+        }
+
+        .admin-form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Vision Section */
+        .vision-section {
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 4rem 0;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .vision-title {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .vision-text {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .vision-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .vision-card {
+            padding: 1.5rem;
+        }
+
+        .vision-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-placeholder {
+            color: #999;
+            font-style: italic;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 15px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+            .vision-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="community.html" class="active">Community</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openJoinModal()">Join Movement</button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>Our Community</h1>
+        <p style="font-size: 1.3rem;">Join the movement and stay updated on our progress</p>
+    </section>
+
+    <div class="container">
+        <div class="community-grid">
+            <!-- LEFT COLUMN: Public Signup Form - NOW WORKING -->
+            <div class="signup-section">
+                <div class="signup-title">
+                    📧 Join the Movement
+                    <span>Public</span>
+                </div>
+                <p style="margin-bottom: 1.5rem; color: #555;">Add your name to our growing community of educators, parents, and changemakers. Together, we can rebuild American education for every child, in every state.</p>
+                
+                <div class="form-container">
+                    <!-- YOUR WORKING GOOGLE FORM EMBED -->
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPrwuO-4mXUZP1kGf7Iv5YR8lYfKhZkyvCupQywM6_5m5_FA/viewform?embedded=true" class="google-form-iframe">Loading…</iframe>
+                </div>
+                
+                <p class="form-note">Your information will never be shared. Unsubscribe anytime.</p>
+            </div>
+
+            <!-- RIGHT COLUMN: Admin Updates -->
+            <div class="updates-section">
+                <div class="updates-header">
+                    <div class="updates-title">
+                        📢 Latest Updates
+                        <span>Admin</span>
+                    </div>
+                    
+                    <div class="admin-login-area">
+                        <input type="password" id="adminPasswordInput" class="admin-input" placeholder="Admin password">
+                        <button class="btn btn-outline" onclick="checkAdminPassword()">Login</button>
+                    </div>
+                </div>
+
+                <div id="adminPanel" class="admin-panel">
+                    <h3>📝 Post New Update</h3>
+                    <div class="admin-form-group">
+                        <label>Update Title</label>
+                        <input type="text" id="updateTitle" placeholder="e.g., New Curriculum Release">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Update Content</label>
+                        <textarea id="updateContent" placeholder="Write your update here..."></textarea>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="btn btn-primary" onclick="postUpdate()">Publish Update</button>
+                        <button class="btn btn-outline" onclick="toggleAdminPanel()">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="updates-feed" id="updatesFeed"></div>
+            </div>
+        </div>
+
+        <!-- Vision Section -->
+        <div class="vision-section">
+            <h2 class="vision-title">Growing Together, State by State</h2>
+            <p class="vision-text">Our goal is to represent every state and every community. We're building this movement together, and every voice matters. As we grow, we'll share real stories from real people - not made-up testimonials.</p>
+            
+            <div class="vision-grid">
+                <div class="vision-card">
+                    <div class="vision-icon">🌱</div>
+                    <h3>Just Beginning</h3>
+                    <p>We're in the early stages of building this community. Every signup helps us grow stronger.</p>
+                </div>
+                <div class="vision-card">
+                    <div class="vision-icon">🗺️</div>
+                    <h3>All States Welcome</h3>
+                    <p>From California to Maine, we want to hear from everyone. American education belongs to all of us.</p>
+                </div>
+                <div class="vision-card">
+                    <div class="vision-icon">🤝</div>
+                    <h3>Real Stories Only</h3>
+                    <p>When we share testimonials, they'll be from actual community members - with their permission.</p>
+                </div>
+            </div>
+            
+            <div class="stats-placeholder">
+                <p>📊 Community numbers will appear here as we grow.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">(We believe in transparency - we'll only share real data)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Modal -->
+    <div id="joinModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px; position: relative;">
+            <span style="position: absolute; right: 20px; top: 10px; font-size: 2rem; cursor: pointer;" onclick="closeJoinModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Quick Join</h2>
+            <p style="margin: 1rem 0;">Add your email to join the movement. We'll never share your information.</p>
+            <input type="email" id="modalEmail" placeholder="Your Email" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+            <select id="modalRole" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+                <option value="Parent">I am a Parent</option>
+                <option value="Teacher">I am a Teacher</option>
+                <option value="Community">I am a Community Member</option>
+            </select>
+            <button class="btn btn-primary" style="width: 100%;" onclick="quickJoin()">Join Now</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc; text-decoration: none;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc; text-decoration: none;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc; text-decoration: none;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc; text-decoration: none;">High (14-18)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <ul style="list-style: none;">
+                    <li><a href="community.html" style="color: #ccc; text-decoration: none;">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 The Living Curriculum. Building something new - honestly and transparently.</p>
+        </div>
+    </footer>
+
+    <script>
+        // SET YOUR ADMIN PASSWORD HERE
+        const ADMIN_PASSWORD = "living2024";
+        
+        let updates = [];
+        
+        function loadUpdates() {
+            const saved = localStorage.getItem('curriculumUpdates');
+            if (saved) {
+                updates = JSON.parse(saved);
+            } else {
+                updates = [
+                    {
+                        id: 1,
+                        date: new Date().toISOString().split('T')[0],
+                        title: "Welcome to The Living Curriculum Community",
+                        content: "We're just getting started. This is where you'll find real updates about our progress, new curriculum materials, and ways to get involved. Thank you for being here."
+                    }
+                ];
+                saveUpdates();
+            }
+            renderUpdates();
+        }
+        
+        function saveUpdates() {
+            localStorage.setItem('curriculumUpdates', JSON.stringify(updates));
+        }
+        
+        function renderUpdates() {
+            const feed = document.getElementById('updatesFeed');
+            if (!feed) return;
+            
+            if (updates.length === 0) {
+                feed.innerHTML = '<div class="no-updates">No updates yet. Check back soon!</div>';
+                return;
+            }
+            
+            let html = '';
+            const sorted = [...updates].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sorted.forEach(update => {
+                html += `
+                    <div class="update-card">
+                        <div class="update-date">📅 ${formatDate(update.date)}</div>
+                        <div class="update-title">${update.title}</div>
+                        <div class="update-content">${update.content}</div>
+                    </div>
+                `;
+            });
+            
+            feed.innerHTML = html;
+        }
+        
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+        
+        function checkAdminPassword() {
+            const input = document.getElementById('adminPasswordInput').value;
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('adminPanel').classList.add('show');
+                document.getElementById('adminPasswordInput').value = '';
+            } else {
+                alert('Incorrect password');
+            }
+        }
+        
+        function toggleAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('show');
+        }
+        
+        function postUpdate() {
+            const title = document.getElementById('updateTitle').value;
+            const content = document.getElementById('updateContent').value;
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+            
+            const newUpdate = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                title: title,
+                content: content
+            };
+            
+            updates.push(newUpdate);
+            saveUpdates();
+            renderUpdates();
+            
+            document.getElementById('updateTitle').value = '';
+            document.getElementById('updateContent').value = '';
+            document.getElementById('adminPanel').classList.remove('show');
+            
+            alert('Update posted successfully!');
+        }
+        
+        function openJoinModal() {
+            document.getElementById('joinModal').style.display = 'block';
+        }
+        
+        function closeJoinModal() {
+            document.getElementById('joinModal').style.display = 'none';
+        }
+        
+        function quickJoin() {
+            const email = document.getElementById('modalEmail').value;
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+            alert('Thank you for joining! You will receive updates soon.');
+            closeJoinModal();
+            document.getElementById('modalEmail').value = '';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('joinModal');
+            if (event.target == modal) {
+                closeJoinModal();
+            }
+        }
+        
+        window.onload = function() {
+            loadUpdates();
+        };
+    </script>
+</body>
+</html>
