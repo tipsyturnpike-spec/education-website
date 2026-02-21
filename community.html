@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Movement | The Living Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2A5C7D;
+            --secondary: #4A9B6E;
+            --accent: #E6B85C;
+            --highlight: #C44545;
+            --light: #F7F9FC;
+            --dark: #2E4053;
+            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
+        }
+
+        .btn-large {
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #F0E6FF 0%, #E0D0FF 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Email Signup Section */
+        .signup-section {
+            background: white;
+            border-radius: 40px;
+            padding: 4rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            margin: 3rem 0;
+            text-align: center;
+            border: 1px solid rgba(42,92,125,0.1);
+        }
+
+        .signup-title {
+            font-size: 3rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .signup-subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .signup-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(74,155,110,0.2);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.3rem;
+            margin-top: 1rem;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 20px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            background: var(--gradient);
+            color: white;
+            padding: 4rem;
+            border-radius: 40px;
+            margin: 4rem 0;
+        }
+
+        .testimonial {
+            font-size: 1.3rem;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .testimonial-author {
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+
+        /* What You Get Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: var(--secondary);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .signup-section {
+                padding: 2rem;
+            }
+            
+            .stats-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">The Living Curriculum</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="infants.html">Infants (0-4)</a></li>
+                <li><a href="elementary.html">Elementary (5-10)</a></li>
+                <li><a href="middle.html">Middle (11-13)</a></li>
+                <li><a href="highschool.html">High (14-18)</a></li>
+                <li><a href="community.html" class="active">Join Us</a></li>
+            </ul>
+            <button class="btn btn-primary" onclick="openModal()">Quick Join</button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Join the Movement</h1>
+        <p style="font-size: 1.3rem;">Be part of rebuilding American education</p>
+    </section>
+
+    <div class="container">
+        <!-- Success Message (hidden by default) -->
+        <div id="successMessage" class="success-message">
+            <h3 style="color: white; margin-bottom: 0.5rem;">✅ Thank You for Joining!</h3>
+            <p style="color: white;">You're now part of the movement to rebuild American education. Check your email for confirmation.</p>
+        </div>
+
+        <!-- MAIN EMAIL SIGNUP FORM -->
+        <div class="signup-section">
+            <h2 class="signup-title">📧 Add Your Email</h2>
+            <p class="signup-subtitle">Join thousands of teachers, parents, and community members who are building a new future for American education.</p>
+            
+            <!-- YOUR GOOGLE FORM IS NOW CONNECTED -->
+            <form class="signup-form" action="https://docs.google.com/forms/d/e/1fR-Uh0Ljxef1Kxh1eS0TZajCVNy6etJZsncR2MIQN1k/formResponse" method="POST" target="hidden_iframe" onsubmit="return handleSubmit()">
+                
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" name="entry.2005620554" placeholder="Enter your full name" required>
+                </div>
+                
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" name="entry.1045781291" placeholder="you@example.com" required>
+                </div>
+                
+                <!-- Role Dropdown -->
+                <div class="form-group">
+                    <label class="form-label">I am a...</label>
+                    <select class="form-select" name="entry.1065046570" required>
+                        <option value="" disabled selected>Select your role</option>
+                        <option value="Parent">Parent</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Administrator">School Administrator</option>
+                        <option value="Community">Community Member</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <!-- Interest Dropdown -->
+                <div class="form-group">
+                    <label class="form-label">I'm interested in...</label>
+                    <select class="form-select" name="entry.839337815" required>
+                        <option value="" disabled selected>Select your interest</option>
+                        <option value="Infants">Infant & Toddler (0-4)</option>
+                        <option value="Elementary">Elementary (5-10)</option>
+                        <option value="Middle">Middle School (11-13)</option>
+                        <option value="High">High School (14-18)</option>
+                        <option value="All">All Ages</option>
+                    </select>
+                </div>
+                
+                <!-- Updates Checkbox -->
+                <div class="checkbox-group">
+                    <input type="checkbox" name="entry.1827042579" value="Yes" id="updates" checked>
+                    <label for="updates">Send me curriculum updates and community news (we email about once a month)</label>
+                </div>
+                
+                <!-- Terms Checkbox -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to join this movement to rebuild American education</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary submit-btn">Join the Movement →</button>
+            </form>
+            
+            <!-- Hidden iframe to prevent page redirect -->
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+            
+            <p style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                We'll never share your email. Unsubscribe anytime.
+            </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">2,847+</span>
+                <span class="stat-label">Teachers Joined</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">5,321+</span>
+                <span class="stat-label">Parents Joined</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">43</span>
+                <span class="stat-label">States Represented</span>
+            </div>
+        </div>
+
+        <!-- Testimonial -->
+        <div class="testimonial-section">
+            <div class="testimonial">
+                "I've been a teacher for 20 years. This is the first curriculum that makes sense - kids learning real skills, thinking for themselves, building things that matter. I'm all in."
+            </div>
+            <div class="testimonial-author">
+                — Sarah, 5th Grade Teacher, Ohio
+            </div>
+        </div>
+
+        <!-- What You'll Get -->
+        <div style="background: var(--light); padding: 3rem; border-radius: 30px; margin: 4rem 0;">
+            <h2 style="color: var(--dark); text-align: center; margin-bottom: 2rem;">When You Join, You'll Get:</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📧</div>
+                    <h3>Monthly Updates</h3>
+                    <p>New curriculum ideas, success stories, and community news</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Free Resources</h3>
+                    <p>Lesson plans, project guides, and hands-on activity ideas</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Community Access</h3>
+                    <p>Connect with others rebuilding education in their communities</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div style="text-align: center; padding: 3rem;">
+            <h2 style="font-size: 2.5rem; color: var(--dark); margin-bottom: 1rem;">Ready to rebuild?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Add your email above and join the movement.</p>
+            <div style="font-size: 3rem;">🔥</div>
+        </div>
+    </div>
+
+    <!-- Quick Join Modal -->
+    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px; position: relative;">
+            <span style="position: absolute; right: 20px; top: 10px; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Quick Join</h2>
+            <p style="margin: 1rem 0;">Add your email to join the movement.</p>
+            <input type="email" id="modalEmail" placeholder="Your Email" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+            <select id="modalRole" style="width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px;">
+                <option value="Parent">I am a Parent</option>
+                <option value="Teacher">I am a Teacher</option>
+                <option value="Community">I am a Community Member</option>
+            </select>
+            <button class="btn btn-primary" style="width: 100%;" onclick="quickJoin()">Join Now</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>The Living Curriculum</h4>
+                <p>Rebuilding American education from the ground up.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul style="list-style: none;">
+                    <li><a href="infants.html" style="color: #ccc; text-decoration: none;">Infants (0-4)</a></li>
+                    <li><a href="elementary.html" style="color: #ccc; text-decoration: none;">Elementary (5-10)</a></li>
+                    <li><a href="middle.html" style="color: #ccc; text-decoration: none;">Middle (11-13)</a></li>
+                    <li><a href="highschool.html" style="color: #ccc; text-decoration: none;">High (14-18)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <ul style="list-style: none;">
+                    <li><a href="community.html" style="color: #ccc; text-decoration: none;">Join Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 The Living Curriculum. We're building something new.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Handle form submission
+        function handleSubmit() {
+            // Show success message
+            document.getElementById('successMessage').classList.add('show');
+            
+            // Reset form after 3 seconds
+            setTimeout(function() {
+                document.querySelector('.signup-form').reset();
+            }, 3000);
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 5000);
+            
+            return true; // Allow form to submit to Google Forms
+        }
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        // Quick join from modal
+        function quickJoin() {
+            var email = document.getElementById('modalEmail').value;
+            var role = document.getElementById('modalRole').value;
+            
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+            
+            alert('Thank you for joining! You will receive updates soon.');
+            closeModal();
+            document.getElementById('modalEmail').value = '';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            var modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
