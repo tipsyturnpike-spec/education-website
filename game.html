@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - The Game</title>
+    <title>JN Wonderland - Enhanced</title>
     <style>
-        /* ========== PIXEL STYLE ========== */
+        /* ========== IMPORTS ========== */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
+        /* ========== RESET ========== */
         * {
             margin: 0;
             padding: 0;
@@ -28,15 +29,71 @@
         /* ========== GAME CONTAINER ========== */
         #gameContainer {
             position: relative;
-            width: 900px;
-            height: 650px;
+            width: 960px;
+            height: 680px;
             background: #1a1a2e;
             border: 6px solid #4a4a6a;
             overflow: hidden;
             box-shadow: 0 0 60px rgba(100, 50, 200, 0.3);
+            transition: background 1s ease;
         }
 
-        /* ========== GAME SCREENS ========== */
+        /* ========== COLOR THEMES ========== */
+        .theme-normal { background: #1a1a2e; }
+        .theme-wonder { background: #1a0a2e; border-color: #6a3a8a; }
+        .theme-creepy { background: #0a0a0a; border-color: #3a1a1a; }
+        .theme-queen { background: #2a0a0a; border-color: #8a2a2a; box-shadow: 0 0 60px rgba(200, 50, 50, 0.3); }
+        .theme-ian { background: #0a1a0a; border-color: #4a7a2a; }
+        .theme-safe { background: #0a1a2a; border-color: #2a4a7a; }
+
+        /* ========== AMBIENT EFFECTS ========== */
+        .ambient-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 217, 61, 0.3);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100%) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100%) rotate(720deg); opacity: 0; }
+        }
+
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            animation: glitchFlash 8s infinite;
+        }
+
+        @keyframes glitchFlash {
+            0%, 90%, 100% { opacity: 0; }
+            92% { opacity: 0.1; background: rgba(255, 0, 255, 0.05); }
+            94% { opacity: 0; }
+            96% { opacity: 0.05; background: rgba(0, 255, 255, 0.05); }
+        }
+
+        /* ========== SCREENS ========== */
         .screen {
             position: absolute;
             top: 0;
@@ -44,10 +101,11 @@
             width: 100%;
             height: 100%;
             display: none;
-            padding: 30px;
+            padding: 25px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            z-index: 2;
         }
 
         .screen.active {
@@ -56,27 +114,49 @@
 
         /* ========== TEXT BOX ========== */
         .text-box {
-            background: #0a0a15;
+            background: rgba(10, 10, 21, 0.92);
             border: 4px solid #3a3a5a;
             padding: 20px 25px;
             color: #d4d4f0;
             font-size: 11px;
             line-height: 2;
             width: 100%;
-            max-width: 700px;
-            min-height: 120px;
+            max-width: 750px;
+            min-height: 130px;
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(4px);
+            transition: all 0.5s ease;
         }
 
         .text-box .speaker {
             color: #ffd93d;
             font-size: 9px;
             margin-bottom: 8px;
+            letter-spacing: 1px;
         }
+
+        .text-box .speaker.ian { color: #8aba4a; }
+        .text-box .speaker.queen { color: #ff4a4a; }
+        .text-box .speaker.resident { color: #6ab4ff; }
+        .text-box .speaker.narrator { color: #8888cc; }
+        .text-box .speaker.creepy { color: #aa4a4a; }
 
         .text-box .dialogue {
             color: #e8e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .text-box .dialogue .highlight {
+            color: #ffd93d;
+        }
+
+        .text-box .dialogue .creepy {
+            color: #ff6b6b;
+        }
+
+        .text-box .dialogue .wonder {
+            color: #a29bfe;
         }
 
         .text-box .continue {
@@ -92,23 +172,40 @@
             50% { opacity: 0; }
         }
 
+        /* ========== EMOTION INDICATORS ========== */
+        .emotion {
+            display: inline-block;
+            font-size: 20px;
+            margin-right: 8px;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
         /* ========== BUTTONS ========== */
         .game-btn {
             background: #2a2a4a;
             border: 3px solid #4a4a6a;
             color: #d4d4f0;
             font-family: 'Press Start 2P', monospace;
-            font-size: 11px;
-            padding: 12px 30px;
+            font-size: 10px;
+            padding: 10px 22px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin: 5px;
+            transition: all 0.3s ease;
+            margin: 4px;
+            position: relative;
+            overflow: hidden;
         }
 
         .game-btn:hover {
             background: #4a4a7a;
             border-color: #ffd93d;
             color: #ffd93d;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
         }
 
         .game-btn:active {
@@ -124,29 +221,58 @@
         .game-btn.primary:hover {
             background: #6a3a5a;
             border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+        }
+
+        .game-btn.success {
+            background: #2a4a2a;
+            border-color: #4a8a4a;
+            color: #8aff8a;
+        }
+
+        .game-btn.success:hover {
+            background: #3a6a3a;
+            border-color: #6aff6a;
+        }
+
+        .game-btn.danger {
+            background: #4a2a2a;
+            border-color: #8a4a4a;
+            color: #ff8a8a;
+        }
+
+        .game-btn.danger:hover {
+            background: #6a3a3a;
+            border-color: #ff6a6a;
+        }
+
+        .game-btn.wonder {
+            background: #2a2a4a;
+            border-color: #6a4a8a;
+            color: #c8a8ff;
+        }
+
+        .game-btn.wonder:hover {
+            background: #4a3a6a;
+            border-color: #a87aff;
+            box-shadow: 0 0 20px rgba(168, 122, 255, 0.2);
         }
 
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         /* ========== SCENE SPECIFIC ========== */
 
-        /* Room 303 Scene */
-        #room303 .description {
-            color: #8888aa;
-            font-size: 9px;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        #room303 .glow {
+        /* Room 303 */
+        #room303 .glow-text {
             color: #ffd93d;
             animation: pulse 2s infinite;
+            font-size: 14px;
         }
 
         @keyframes pulse {
@@ -154,73 +280,9 @@
             50% { opacity: 1; text-shadow: 0 0 30px rgba(255, 217, 61, 0.8); }
         }
 
-        /* Worn JN Hall Scene */
-        #wornHall {
-            background: linear-gradient(180deg, #0a0a1a 0%, #1a0a0a 100%);
-        }
-
-        .hall-description {
-            color: #8a6a6a;
-            font-size: 8px;
-            text-align: center;
-            line-height: 2.5;
-            margin: 10px 0;
-        }
-
-        .hall-description .creepy {
-            color: #aa4a4a;
-        }
-
-        /* ========== CHARACTER SPRITE IN GAME ========== */
-        .game-character {
-            width: 80px;
-            height: 100px;
-            margin: 10px auto;
-            image-rendering: pixelated;
-        }
-
-        .game-character .pixel-sprite {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-            gap: 1px;
-            width: 100%;
-            height: 100%;
-            padding: 2px;
-        }
-
-        .pixel {
-            width: 100%;
-            height: 100%;
-            background: transparent;
-        }
-
-        /* Skin tones */
-        .skin-light { background: #f5d0b8; }
-        .skin-medium { background: #d4a574; }
-        .skin-dark { background: #8d6b4b; }
-        .skin-olive { background: #c4a882; }
-
-        /* Hair colors */
-        .hair-blonde { background: #f5d742; }
-        .hair-brown { background: #8b6b4a; }
-        .hair-black { background: #2a2a2a; }
-        .hair-red { background: #c0392b; }
-        .hair-pink { background: #ff6b9d; }
-
-        /* Outfit colors */
-        .outfit-hoodie { background: #4a7a9c; }
-        .outfit-sweater { background: #8b5a2b; }
-        .outfit-jacket { background: #2d3d4a; }
-        .outfit-tshirt { background: #c0392b; }
-
-        .eye-white { background: #f0f0f0; }
-        .eye-pupil { background: #1a1a2e; }
-
-        /* ========== EXPLORATION MODE ========== */
+        /* ========== EXPLORATION ========== */
         #exploration {
-            background: #0a0a1a;
-            position: relative;
+            background: linear-gradient(180deg, #0a0a1a 0%, #1a0a0a 100%);
         }
 
         .exploration-view {
@@ -230,57 +292,87 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .hallway-view {
-            background: #0a0a1a;
+            background: rgba(10, 10, 26, 0.9);
             border: 3px solid #2a2a4a;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
+            backdrop-filter: blur(4px);
+            position: relative;
         }
 
         .hallway-view .location {
             color: #4a4a6a;
             font-size: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .hallway-view .location .highlight {
+            color: #ffd93d;
         }
 
         .hallway-view .scene-desc {
             color: #8888aa;
             font-size: 10px;
-            line-height: 2;
-            margin-bottom: 20px;
+            line-height: 2.2;
+            margin-bottom: 15px;
+            min-height: 60px;
         }
 
-        .direction-buttons {
+        /* ========== MINI-MAP / LOCATION INDICATOR ========== */
+        .location-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+            font-size: 7px;
+            color: #4a4a6a;
+        }
+
+        .location-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid #4a4a6a;
+            background: #1a1a2e;
+            transition: all 0.5s ease;
+        }
+
+        .location-indicator .dot.active {
+            background: #ffd93d;
+            border-color: #ffd93d;
+            box-shadow: 0 0 15px rgba(255, 217, 61, 0.3);
+        }
+
+        .location-indicator .dot.visited {
+            background: #4a4a6a;
+            border-color: #4a4a6a;
+        }
+
+        /* ========== DIRECTION BUTTONS ========== */
+        .direction-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            max-width: 300px;
-            margin: 0 auto;
+            gap: 6px;
+            max-width: 280px;
+            margin: 10px auto;
         }
 
-        .direction-buttons .game-btn {
-            font-size: 14px;
-            padding: 12px;
+        .direction-grid .game-btn {
+            font-size: 12px;
+            padding: 10px;
             text-align: center;
+            min-width: 60px;
         }
 
-        .direction-buttons .empty {
+        .direction-grid .empty {
             visibility: hidden;
-        }
-
-        /* ========== SCENE TRANSITIONS ========== */
-        .fade-transition {
-            animation: fadeIn 0.8s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
         }
 
         /* ========== STATS BAR ========== */
@@ -295,28 +387,105 @@
             color: #8888aa;
             text-align: right;
             line-height: 1.8;
+            z-index: 10;
+            backdrop-filter: blur(4px);
         }
 
-        .stats-bar .hp {
-            color: #ff6b6b;
+        .stats-bar .hp { color: #ff6b6b; }
+        .stats-bar .atk { color: #ff8a6b; }
+        .stats-bar .def { color: #6bb4ff; }
+        .stats-bar .wonder { color: #a29bfe; }
+        .stats-bar .location-label { color: #4a4a6a; font-size: 7px; }
+
+        /* ========== INVENTORY / ITEMS ========== */
+        .inventory-bar {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            background: rgba(10, 10, 21, 0.9);
+            border: 2px solid #2a2a4a;
+            padding: 8px 12px;
+            font-size: 7px;
+            color: #8888aa;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+            display: flex;
+            gap: 10px;
         }
-        .stats-bar .wonder {
-            color: #a29bfe;
+
+        .inventory-bar .item {
+            color: #ffd93d;
+            padding: 2px 6px;
+            border: 1px solid #2a2a4a;
+        }
+
+        /* ========== EVENT NOTIFICATIONS ========== */
+        .event-notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 4px solid #ffd93d;
+            padding: 20px 40px;
+            color: #ffd93d;
+            font-size: 14px;
+            z-index: 20;
+            display: none;
+            text-align: center;
+            animation: eventPop 0.5s ease;
+        }
+
+        @keyframes eventPop {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
         /* ========== RESPONSIVE ========== */
-        @media (max-width: 950px) {
+        @media (max-width: 1000px) {
             #gameContainer {
                 width: 95vw;
                 height: 90vh;
             }
             .text-box {
                 font-size: 9px;
-                padding: 15px;
+                padding: 12px 15px;
+                min-height: 100px;
             }
             .game-btn {
-                font-size: 9px;
-                padding: 8px 16px;
+                font-size: 8px;
+                padding: 6px 12px;
+            }
+            .stats-bar {
+                font-size: 7px;
+                padding: 6px 10px;
+            }
+            .inventory-bar {
+                font-size: 6px;
+                padding: 4px 8px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .text-box {
+                font-size: 7px;
+                padding: 10px 12px;
+                min-height: 80px;
+            }
+            .game-btn {
+                font-size: 7px;
+                padding: 5px 10px;
+            }
+            .direction-grid .game-btn {
+                font-size: 10px;
+                padding: 6px;
+                min-width: 40px;
+            }
+            .stats-bar {
+                font-size: 6px;
+                padding: 4px 8px;
+                bottom: 5px;
+                right: 5px;
             }
         }
     </style>
@@ -326,66 +495,95 @@
     <!-- ============================================================ -->
     <!-- GAME CONTAINER -->
     <!-- ============================================================ -->
-    <div id="gameContainer">
+    <div id="gameContainer" class="theme-normal">
+
+        <!-- Ambient Particles -->
+        <div class="ambient-particles" id="particles"></div>
+        <div class="glitch-overlay"></div>
+
+        <!-- Event Notification -->
+        <div class="event-notification" id="eventNotification">
+            <div id="eventText">⚡ SOMETHING HAPPENED!</div>
+        </div>
 
         <!-- ========== SCREEN 1: ROOM 303 ========== -->
-        <div id="room303" class="screen active fade-transition">
-            <div style="text-align: center; max-width: 700px;">
-                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 15px;">
+        <div id="room303" class="screen active">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 12px;">
                     ⚠️ ROOM 303 ⚠️
                 </div>
 
-                <div class="text-box">
-                    <div class="speaker">🎮 NARRATOR</div>
+                <div class="text-box" id="room303Box">
+                    <div class="speaker narrator">🎮 NARRATOR</div>
                     <div class="dialogue" id="room303Dialogue">
                         You walk down the familiar hallway of the third floor.<br>
                         The carpet is worn. The lights hum softly.<br>
                         Then you hear it...
                     </div>
-                    <div class="continue">▼ Press SPACE or click Continue</div>
+                    <div class="continue" id="room303Continue">▼ Press SPACE or click Continue</div>
                 </div>
 
                 <div id="room303Choices" style="display: none;">
-                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 15px;">
-                        You hear SCREAMING from Room 303. The door is slightly ajar.
+                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 12px;">
+                        You hear <span style="color: #ff6b6b;">SCREAMING</span> from Room 303.<br>
+                        The door is slightly ajar. A strange <span class="glow-text">GLOW</span> spills out.
                     </div>
                     <div class="btn-group">
                         <button class="game-btn primary" onclick="enterRoom303()">🚪 ENTER ROOM 303</button>
                         <button class="game-btn" onclick="knockRoom303()">👊 KNOCK FIRST</button>
+                        <button class="game-btn wonder" onclick="sneakRoom303()">👀 SNEAK A PEEK</button>
                     </div>
                 </div>
 
-                <div id="room303Residents" style="display: none; margin-top: 15px;">
-                    <div class="text-box" style="min-height: 80px;">
-                        <div class="speaker">👩 SHORT BLONDE</div>
-                        <div class="dialogue">
+                <div id="room303Residents" style="display: none; width: 100%;">
+                    <div class="text-box" style="min-height: 80px; border-color: #4a6a8a;">
+                        <div class="speaker resident">👩 SHORT BLONDE</div>
+                        <div class="dialogue" id="resident1Dialogue">
                             "Oh my god! You're here! Thank goodness!"<br>
                             <span style="color: #ff6b6b; font-size: 9px;">She's clutching her roommate's arm, frozen in fear.</span>
                         </div>
                     </div>
-                    <div class="text-box" style="min-height: 80px; margin-top: 10px;">
-                        <div class="speaker">👩 SHORT BRUNETTE</div>
-                        <div class="dialogue">
-                            "The closet... it GLOWED and then... it's not a closet anymore..."<br>
+                    <div class="text-box" style="min-height: 80px; border-color: #4a6a8a; margin-top: 8px;">
+                        <div class="speaker resident">👩 SHORT BRUNETTE</div>
+                        <div class="dialogue" id="resident2Dialogue">
+                            "The closet... it <span class="highlight">GLOWED</span> and then... it's not a closet anymore..."<br>
                             <span style="color: #8888aa; font-size: 9px;">She points a trembling finger at the closet door.</span>
                         </div>
                     </div>
-                    <div style="color: #ffd93d; font-size: 14px; margin: 15px 0; animation: pulse 1.5s infinite;">
+                    <div style="color: #ffd93d; font-size: 14px; margin: 12px 0; animation: pulse 1.5s infinite;">
                         ✦ THE CLOSET IS GLOWING ✦
+                    </div>
+                    <div class="btn-group">
+                        <button class="game-btn primary" onclick="enterCloset()">🌀 ENTER THE CLOSET</button>
+                        <button class="game-btn" onclick="askResidents()">💬 ASK QUESTIONS</button>
+                    </div>
+                </div>
+
+                <div id="room303Ask" style="display: none; width: 100%;">
+                    <div class="text-box" style="min-height: 80px; border-color: #6a4a8a;">
+                        <div class="speaker resident">💬 RESIDENTS</div>
+                        <div class="dialogue" id="askDialogue">
+                            <span style="color: #6ab4ff;">"We don't know what happened!"</span><br>
+                            <span style="color: #6ab4ff;">"One minute it was a normal closet, the next..."</span><br>
+                            <span style="color: #ff6b6b;">"It GLOWED and now it's a tunnel to somewhere else!"</span><br>
+                            <span style="color: #8888aa; font-size: 8px; margin-top: 5px; display: block;">
+                                ✦ They're terrified. They won't go near it. ✦
+                            </span>
+                        </div>
                     </div>
                     <button class="game-btn primary" onclick="enterCloset()">🌀 ENTER THE CLOSET</button>
                 </div>
             </div>
         </div>
 
-        <!-- ========== SCREEN 2: THE NARNIA WALK ========== -->
-        <div id="narniaWalk" class="screen">
-            <div style="text-align: center; max-width: 700px;">
-                <div style="font-size: 10px; color: #4a4a6a; margin-bottom: 10px;">
+        <!-- ========== SCREEN 2: NARNIA WALK ========== -->
+        <div id="narniaWalk" class="screen theme-wonder">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 10px; color: #6a4a8a; margin-bottom: 10px;">
                     ✦✦✦
                 </div>
-                <div class="text-box" style="min-height: 150px;">
-                    <div class="speaker">🌀 THE CLOSET</div>
+                <div class="text-box" style="min-height: 160px; border-color: #6a4a8a;">
+                    <div class="speaker creepy">🌀 THE CLOSET</div>
                     <div class="dialogue" id="narniaDialogue">
                         You step inside the closet.<br>
                         There's no back wall.<br>
@@ -393,16 +591,20 @@
                         <span style="color: #a29bfe; font-size: 10px; display: block; margin-top: 10px;">
                             You walk forward. And forward. And forward...
                         </span>
+                        <span style="color: #4a4a6a; font-size: 8px; display: block; margin-top: 8px;">
+                            The walls seem to breathe. You hear whispers.
+                        </span>
                     </div>
                     <div class="continue" id="narniaContinue">▼ Press SPACE or click Continue</div>
                 </div>
-                <div id="narniaExit" style="display: none;">
-                    <div style="color: #ffd93d; font-size: 14px; margin: 10px 0; animation: pulse 1.5s infinite;">
+                <div id="narniaExit" style="display: none; width: 100%;">
+                    <div style="color: #ffd93d; font-size: 16px; margin: 10px 0; animation: pulse 1.5s infinite;">
                         ✦✦✦ YOU EMERGE ✦✦✦
                     </div>
-                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 15px;">
+                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 12px;">
                         But this isn't JN Hall anymore...<br>
-                        <span style="color: #aa4a4a;">This is something else entirely.</span>
+                        <span style="color: #aa4a4a;">This is something else entirely.</span><br>
+                        <span style="color: #4a4a6a; font-size: 8px;">The air tastes like old paper and static.</span>
                     </div>
                     <button class="game-btn primary" onclick="enterWonderland()">🌀 STEP INTO WONDERLAND</button>
                 </div>
@@ -410,544 +612,161 @@
         </div>
 
         <!-- ========== SCREEN 3: WORN JN HALL ========== -->
-        <div id="wornHall" class="screen">
-            <div style="text-align: center; max-width: 700px; position: relative;">
+        <div id="wornHall" class="screen theme-creepy">
+            <div style="text-align: center; max-width: 750px; width: 100%; position: relative;">
                 <div style="font-size: 10px; color: #6a3a3a; margin-bottom: 10px;">
-                    ⚠️ JOHN NEUMAIER WONDERLAND ⚠️
+                    ⚠️ JOHN NEUMAIER <span style="color: #aa4a4a;">WONDERLAND</span> ⚠️
                 </div>
                 <div class="text-box" style="background: rgba(10, 5, 5, 0.95); border-color: #5a2a2a;">
-                    <div class="speaker" style="color: #aa4a4a;">🏚️ THE WORN HALL</div>
+                    <div class="speaker creepy">🏚️ THE WORN HALL</div>
                     <div class="dialogue" id="wornHallDialogue">
-                        The hallway stretches infinitely in both directions.<br>
+                        The hallway stretches <span class="creepy">infinitely</span> in both directions.<br>
                         The walls are cracked, pulsing like they're breathing.<br>
-                        The floor is made of shifting playing cards.<br>
-                        <span style="color: #aa4a4a; font-size: 10px; display: block; margin-top: 10px;">
+                        The floor is made of shifting <span class="highlight">playing cards</span>.<br>
+                        <span style="color: #aa4a4a; font-size: 10px; display: block; margin-top: 8px;">
                             ♦️ ♥️ ♣️ ♠️
                         </span>
-                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 10px;">
-                            The air smells like old paper and something metallic.
+                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 8px;">
+                            The air smells like old paper and something metallic.<br>
+                            <span style="color: #4a4a6a;">✦ You feel like you're being watched ✦</span>
                         </span>
                     </div>
                 </div>
 
-                <div style="color: #4a4a6a; font-size: 8px; margin: 10px 0;">
+                <div style="color: #4a4a6a; font-size: 8px; margin: 8px 0;">
                     What do you do?
                 </div>
 
-                <div class="btn-group">
+                <div class="btn-group" id="wornHallButtons">
                     <button class="game-btn" onclick="exploreHallway('left')">👈 GO LEFT</button>
                     <button class="game-btn" onclick="exploreHallway('right')">👉 GO RIGHT</button>
                     <button class="game-btn primary" onclick="encounterIan()">💪 INVESTIGATE NOISE</button>
+                    <button class="game-btn wonder" onclick="enterExploration()">🔍 EXPLORE MORE</button>
                 </div>
 
-                <div id="hallwayResult" style="margin-top: 15px; display: none;">
-                    <div class="text-box" style="min-height: 80px; background: rgba(10, 5, 5, 0.95);">
-                        <div class="dialogue" id="hallwayResultText"></div>
+                <div id="hallwayResult" style="margin-top: 12px; display: none; width: 100%;">
+                    <div class="text-box" style="min-height: 80px; background: rgba(10, 5, 5, 0.95); border-color: #3a2a2a;">
+                        <div class="dialogue" id="hallwayResultText" style="font-size: 10px;"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== SCREEN 4: MUSCLE MAN IAN ENCOUNTER ========== -->
-        <div id="ianEncounter" class="screen">
-            <div style="text-align: center; max-width: 700px;">
+        <!-- ========== SCREEN 4: IAN ENCOUNTER ========== -->
+        <div id="ianEncounter" class="screen theme-ian">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
                 <div style="font-size: 10px; color: #6a8a3a; margin-bottom: 10px;">
-                    💪 ENCOUNTER
+                    💪 <span style="color: #8aba4a;">ENCOUNTER</span>
                 </div>
 
                 <div class="text-box" style="background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a;">
-                    <div class="speaker" style="color: #8aba4a;">💪 MUSCLE MAN IAN</div>
+                    <div class="speaker ian">💪 MUSCLE MAN IAN</div>
                     <div class="dialogue" id="ianDialogue">
                         A massive figure rounds the corner.<br>
-                        It's Ian... but something's wrong.<br>
-                        His skin is GREEN. His muscles bulge impossibly.<br>
-                        He's wearing an RA shirt that says "I'M THE BOSS NOW."<br>
-                        <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 10px;">
+                        It's Ian... but something's <span class="creepy">wrong</span>.<br>
+                        His skin is <span style="color: #8aba4a;">GREEN</span>. His muscles bulge impossibly.<br>
+                        He's wearing an RA shirt that says <span style="color: #ffd93d;">"I'M THE BOSS NOW."</span><br>
+                        <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 8px;">
                             "YO! You're not supposed to be here, newbie!"
+                        </span>
+                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 5px;">
+                            He cracks his knuckles. The hallway shakes.
                         </span>
                     </div>
                 </div>
 
-                <div style="color: #4a4a6a; font-size: 8px; margin: 10px 0;">
+                <div style="color: #4a4a6a; font-size: 8px; margin: 8px 0;">
                     What do you do?
                 </div>
 
-                <div class="btn-group">
-                    <button class="game-btn" onclick="ianAct('fight')">⚔️ FIGHT</button>
+                <div class="btn-group" id="ianButtons">
+                    <button class="game-btn danger" onclick="ianAct('fight')">⚔️ FIGHT</button>
                     <button class="game-btn" onclick="ianAct('act')">💬 ACT (Talk)</button>
-                    <button class="game-btn" onclick="ianAct('prank')">🎭 PRANK</button>
-                    <button class="game-btn" onclick="ianAct('spare')">🕊️ SPARE</button>
+                    <button class="game-btn wonder" onclick="ianAct('prank')">🎭 PRANK</button>
+                    <button class="game-btn success" onclick="ianAct('spare')">🕊️ SPARE</button>
+                    <button class="game-btn" onclick="ianAct('flee')">🏃 FLEE</button>
                 </div>
 
-                <div id="ianResult" style="margin-top: 15px; display: none;">
+                <div id="ianResult" style="margin-top: 12px; display: none; width: 100%;">
                     <div class="text-box" style="min-height: 100px; background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a;">
-                        <div class="dialogue" id="ianResultText"></div>
+                        <div class="dialogue" id="ianResultText" style="font-size: 10px;"></div>
                     </div>
                     <div id="ianNextActions" style="display: none; margin-top: 10px;">
-                        <button class="game-btn primary" onclick="continueAfterIan()">▶ CONTINUE</button>
+                        <button class="game-btn success" onclick="continueAfterIan()">▶ CONTINUE</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- ========== SCREEN 5: EXPLORATION ========== -->
-        <div id="exploration" class="screen">
+        <div id="exploration" class="screen theme-wonder">
             <div class="exploration-view">
                 <div class="hallway-view">
-                    <div class="location" id="exploreLocation">📍 THE ENDLESS HALLWAY</div>
+                    <div class="location" id="exploreLocation">📍 <span class="highlight">THE ENDLESS HALLWAY</span></div>
+                    
+                    <!-- Mini-map / Location dots -->
+                    <div class="location-indicator" id="locationDots">
+                        <div class="dot active" data-index="0"></div>
+                        <div class="dot" data-index="1"></div>
+                        <div class="dot" data-index="2"></div>
+                        <div class="dot" data-index="3"></div>
+                        <div class="dot" data-index="4"></div>
+                    </div>
+
                     <div class="scene-desc" id="exploreDesc">
                         The hallway stretches before you.<br>
-                        Doors line the walls with impossible numbers: 301, 103, 330...<br>
-                        The carpet moves slightly, like it's alive.
+                        Doors line the walls with impossible numbers: <span class="highlight">301, 103, 330</span>...<br>
+                        The carpet moves slightly, like it's alive.<br>
+                        <span style="color: #aa4a4a; font-size: 8px;">✦ You hear whispers from behind the walls ✦</span>
                     </div>
 
-                    <div class="direction-buttons">
+                    <div class="direction-grid">
                         <div class="empty"></div>
-                        <button class="game-btn" onclick="moveDirection('north')">⬆️ NORTH</button>
+                        <button class="game-btn" onclick="moveDirection('north')">⬆️</button>
                         <div class="empty"></div>
-                        <button class="game-btn" onclick="moveDirection('west')">⬅️ WEST</button>
-                        <button class="game-btn" onclick="moveDirection('enter')">🚪 ENTER DOOR</button>
-                        <button class="game-btn" onclick="moveDirection('east')">➡️ EAST</button>
+                        <button class="game-btn" onclick="moveDirection('west')">⬅️</button>
+                        <button class="game-btn primary" onclick="moveDirection('enter')">🚪</button>
+                        <button class="game-btn" onclick="moveDirection('east')">➡️</button>
                         <div class="empty"></div>
-                        <button class="game-btn" onclick="moveDirection('south')">⬇️ SOUTH</button>
+                        <button class="game-btn" onclick="moveDirection('south')">⬇️</button>
                         <div class="empty"></div>
                     </div>
 
-                    <div style="margin-top: 20px;">
-                        <button class="game-btn" onclick="returnToHall()">🔙 BACK TO HALL</button>
+                    <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                        <button class="game-btn" onclick="returnToHall()">🔙 BACK</button>
                         <button class="game-btn primary" onclick="encounterQueen()">♠️ FIND THE QUEEN</button>
+                        <button class="game-btn wonder" onclick="triggerRandomEvent()">🎲 RANDOM EVENT</button>
                     </div>
                 </div>
 
-                <!-- Mini Stats Bar -->
-                <div class="stats-bar">
-                    <div class="hp">❤️ HP: 20/20</div>
-                    <div>⚔️ ATK: 5</div>
-                    <div>🛡️ DEF: 3</div>
-                    <div class="wonder">🌀 WONDER: 15%</div>
+                <!-- Stats Bar -->
+                <div class="stats-bar" id="gameStats">
+                    <div class="hp">❤️ HP: <span id="statHp">20</span>/<span id="statMaxHp">20</span></div>
+                    <div class="atk">⚔️ ATK: <span id="statAtk">5</span></div>
+                    <div class="def">🛡️ DEF: <span id="statDef">3</span></div>
+                    <div class="wonder">🌀 WONDER: <span id="statWonder">0</span>%</div>
+                    <div class="location-label">📍 <span id="statLocation">Hallway</span></div>
+                </div>
+
+                <!-- Inventory Bar -->
+                <div class="inventory-bar" id="inventoryBar">
+                    <span>📦 ITEMS:</span>
+                    <span class="item" id="item1">🔑 Key</span>
+                    <span class="item" id="item2">📜 Note</span>
+                    <span class="item" id="item3">💊 Candy</span>
                 </div>
             </div>
         </div>
 
-        <!-- ========== ENDING / QUEEN ENCOUNTER ========== -->
-        <div id="queenEncounter" class="screen">
-            <div style="text-align: center; max-width: 700px;">
-                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 15px;">
-                    ♠️ THE QUEEN OF THE DESK ♠️
+        <!-- ========== SCREEN 6: QUEEN ENCOUNTER ========== -->
+        <div id="queenEncounter" class="screen theme-queen">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 12px;">
+                    ♠️ <span style="color: #ff4a4a;">THE QUEEN OF THE DESK</span> ♠️
                 </div>
                 <div class="text-box" style="background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a;">
-                    <div class="speaker" style="color: #ff4a4a;">👑 QUEEN RYLEE</div>
+                    <div class="speaker queen">👑 QUEEN RYLEE</div>
                     <div class="dialogue" id="queenDialogue">
                         You enter the lobby.<br>
-                        Behind a massive, ornate desk sits a figure with impossible presence.<br>
-                        She's holding a gavel made of pure darkness.<br>
-                        <span style="color: #ff4a4a; font-size: 12px; display: block; margin-top: 10px;">
-                            "OFF WITH THEIR HOUSING!"
-                        </span>
-                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 10px;">
-                            The Queen of the Desk has judged you. Now you must face her.
-                        </span>
-                    </div>
-                </div>
-                <div style="color: #ffd93d; font-size: 10px; margin: 15px 0; animation: pulse 2s infinite;">
-                    ⚠️ THE FINAL BOSS AWAITS ⚠️
-                </div>
-                <div class="btn-group">
-                    <button class="game-btn primary" onclick="startFinalBattle()">⚔️ FACE THE QUEEN</button>
-                    <button class="game-btn" onclick="resetGame()">🔄 ESCAPE (Reset)</button>
-                </div>
-                <div id="finalResult" style="display: none; margin-top: 15px;">
-                    <div class="text-box" style="min-height: 100px; background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a;">
-                        <div class="dialogue" id="finalResultText">
-                            ⚠️ TO BE CONTINUED... ⚠️<br>
-                            <span style="color: #8888aa; font-size: 8px;">
-                                The full battle system is coming soon!
-                            </span>
-                        </div>
-                    </div>
-                    <button class="game-btn" onclick="resetGame()" style="margin-top: 10px;">🔄 START OVER</button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT - GAME LOGIC -->
-    <!-- ============================================================ -->
-    <script>
-        // ============================================================
-        //  PLAYER STATE (Loaded from localStorage)
-        // ============================================================
-
-        let player = {
-            name: 'PROTAGONIST',
-            hair: 'blonde',
-            skin: 'light',
-            outfit: 'hoodie',
-            hp: 20,
-            maxHp: 20,
-            atk: 5,
-            def: 3,
-            lvl: 1,
-            exp: 0,
-            wonder: 0
-        };
-
-        // Load saved data
-        function loadPlayer() {
-            const saved = localStorage.getItem('jnPlayerState');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    player.name = data.name || 'PROTAGONIST';
-                    player.hair = data.hair || 'blonde';
-                    player.skin = data.skin || 'light';
-                    player.outfit = data.outfit || 'hoodie';
-                } catch (e) { /* ignore */ }
-            }
-        }
-        loadPlayer();
-
-        // ============================================================
-        //  SCREEN MANAGEMENT
-        // ============================================================
-
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const screen = document.getElementById(screenId);
-            if (screen) {
-                screen.classList.add('active');
-                screen.classList.remove('fade-transition');
-                // Trigger reflow for animation
-                void screen.offsetWidth;
-                screen.classList.add('fade-transition');
-            }
-        }
-
-        // ============================================================
-        //  KEYBOARD SUPPORT
-        // ============================================================
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === ' ' || e.key === 'Space') {
-                e.preventDefault();
-                // Find any visible continue button or trigger
-                const continueBtn = document.querySelector('.screen.active .continue');
-                if (continueBtn) {
-                    // Check which scene we're in
-                    const active = document.querySelector('.screen.active');
-                    if (active && active.id === 'room303') {
-                        const choices = document.getElementById('room303Choices');
-                        if (choices.style.display === 'none') {
-                            choices.style.display = 'block';
-                            continueBtn.style.display = 'none';
-                        }
-                    } else if (active && active.id === 'narniaWalk') {
-                        const exit = document.getElementById('narniaExit');
-                        if (exit.style.display === 'none') {
-                            exit.style.display = 'block';
-                            continueBtn.style.display = 'none';
-                        }
-                    }
-                }
-            }
-        });
-
-        // ============================================================
-        //  ROOM 303 SCENE
-        // ============================================================
-
-        let room303Step = 0;
-
-        function enterRoom303() {
-            const dialogue = document.getElementById('room303Dialogue');
-            const choices = document.getElementById('room303Choices');
-            const residents = document.getElementById('room303Residents');
-
-            dialogue.innerHTML = `
-                You push the door open.<br>
-                Inside, two residents are frozen in fear.<br>
-                <span style="color: #ff6b6b;">They're staring at the closet.</span><br>
-                <span style="color: #ffd93d; font-size: 9px;">✦ It's GLOWING with an impossible light ✦</span>
-            `;
-            choices.style.display = 'none';
-            residents.style.display = 'block';
-        }
-
-        function knockRoom303() {
-            const dialogue = document.getElementById('room303Dialogue');
-            const choices = document.getElementById('room303Choices');
-
-            dialogue.innerHTML = `
-                You knock on the door.<br>
-                <span style="color: #ff6b6b;">"COME IN!"</span> a voice screams.<br>
-                You open the door. Two residents are clutching each other.<br>
-                <span style="color: #ffd93d;">"The closet... it GLOWED!"</span>
-            `;
-            choices.style.display = 'none';
-            document.getElementById('room303Residents').style.display = 'block';
-        }
-
-        function enterCloset() {
-            showScreen('narniaWalk');
-            // Start the Narnia walk sequence
-            setTimeout(() => {
-                const dialogue = document.getElementById('narniaDialogue');
-                dialogue.innerHTML = `
-                    You step inside the closet.<br>
-                    There's no back wall.<br>
-                    Just a long, dark tunnel that stretches into infinity...<br>
-                    <span style="color: #a29bfe; font-size: 10px; display: block; margin-top: 10px;">
-                        You walk forward. And forward. And forward...
-                    </span>
-                    <span style="color: #4a4a6a; font-size: 8px; display: block; margin-top: 8px;">
-                        The tunnel seems to go on forever...
-                    </span>
-                `;
-            }, 100);
-        }
-
-        function enterWonderland() {
-            showScreen('wornHall');
-        }
-
-        // ============================================================
-        //  WORN JN HALL
-        // ============================================================
-
-        let hallExplored = false;
-
-        function exploreHallway(direction) {
-            const resultDiv = document.getElementById('hallwayResult');
-            const resultText = document.getElementById('hallwayResultText');
-            resultDiv.style.display = 'block';
-
-            const encounters = [
-                'You walk down the endless hallway.<br>You pass door 301. Then 301 again. Then 301 again.<br><span style="color: #aa4a4a;">The hallways are looping.</span>',
-                'You see a door that says "MAINTENANCE."<br>You open it. It\'s just a brick wall.<br><span style="color: #8888aa;">The wall seems to breathe.</span>',
-                'A flickering light reveals a figure at the end of the hall.<br>It disappears when you blink.<br><span style="color: #aa4a4a;">Was it ever there?</span>',
-                'You find a coffee machine. It\'s still running.<br>The coffee is black as tar.<br><span style="color: #ffd93d;">✦ It glows slightly ✦</span>',
-                'You see a bulletin board. The notices are all about you.<br>"WELCOME TO WONDERLAND" "YOU CAN\'T ESCAPE"<br><span style="color: #aa4a4a;">Who put these here?</span>'
-            ];
-
-            const randomEncounter = encounters[Math.floor(Math.random() * encounters.length)];
-            resultText.innerHTML = randomEncounter + '<br><span style="color: #4a4a6a; font-size: 8px; display: block; margin-top: 8px;">You return to the main hallway.</span>';
-
-            if (!hallExplored) {
-                hallExplored = true;
-                // Unlock the "Investigate Noise" option
-                document.querySelector('#wornHall .btn-group').innerHTML = `
-                    <button class="game-btn" onclick="exploreHallway('left')">👈 GO LEFT</button>
-                    <button class="game-btn" onclick="exploreHallway('right')">👉 GO RIGHT</button>
-                    <button class="game-btn primary" onclick="encounterIan()">💪 INVESTIGATE NOISE</button>
-                    <button class="game-btn" onclick="enterExploration()">🔍 EXPLORE MORE</button>
-                `;
-            }
-
-            setTimeout(() => {
-                resultDiv.style.display = 'none';
-            }, 4000);
-        }
-
-        function enterExploration() {
-            showScreen('exploration');
-            document.getElementById('exploreLocation').textContent = '📍 THE ENDLESS HALLWAY';
-            document.getElementById('exploreDesc').innerHTML = `
-                The hallway stretches before you.<br>
-                Doors line the walls with impossible numbers: 301, 103, 330...<br>
-                The carpet moves slightly, like it's alive.<br>
-                <span style="color: #aa4a4a; font-size: 8px;">You feel like you're being watched.</span>
-            `;
-        }
-
-        function moveDirection(dir) {
-            const desc = document.getElementById('exploreDesc');
-            const locations = {
-                'north': 'You walk north. The hallway seems to stretch longer.<br>A door labeled "303" appears. Then disappears.',
-                'south': 'You walk south. You pass a window.<br>Outside is just darkness. Infinite darkness.',
-                'east': 'You walk east. The carpet changes to playing cards.<br>♥️ You step on a heart. It beats once.',
-                'west': 'You walk west. You find a strange mirror.<br>Your reflection is wearing a crown.<br><span style="color: #ffd93d;">✦ It waves at you ✦</span>',
-                'enter': 'You try a door. The knob is cold.<br>It opens to a room that\'s much larger inside.<br><span style="color: #aa4a4a;">A room that shouldn\'t exist.</span>'
-            };
-            desc.innerHTML = locations[dir] || 'You stand still. The hallway waits.';
-        }
-
-        function returnToHall() {
-            showScreen('wornHall');
-        }
-
-        function encounterQueen() {
-            showScreen('queenEncounter');
-        }
-
-        // ============================================================
-        //  MUSCLE MAN IAN ENCOUNTER
-        // ============================================================
-
-        let ianDefeated = false;
-
-        function encounterIan() {
-            showScreen('ianEncounter');
-            ianDefeated = false;
-            document.getElementById('ianResult').style.display = 'none';
-            document.getElementById('ianNextActions').style.display = 'none';
-
-            const dialogue = document.getElementById('ianDialogue');
-            dialogue.innerHTML = `
-                A massive figure rounds the corner.<br>
-                It's Ian... but something's wrong.<br>
-                His skin is GREEN. His muscles bulge impossibly.<br>
-                He's wearing an RA shirt that says "I'M THE BOSS NOW."<br>
-                <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 10px;">
-                    "YO! You're not supposed to be here, newbie!"
-                </span>
-                <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 5px;">
-                    He cracks his knuckles. The hallway shakes.
-                </span>
-            `;
-        }
-
-        function ianAct(action) {
-            const resultDiv = document.getElementById('ianResult');
-            const resultText = document.getElementById('ianResultText');
-            resultDiv.style.display = 'block';
-            document.getElementById('ianNextActions').style.display = 'none';
-
-            const responses = {
-                'fight': `
-                    You throw a punch!<br>
-                    Ian catches it with one finger.<br>
-                    <span style="color: #8aba4a;">"HAHA! That tickles, newbie!"</span><br>
-                    He flicks you. You fly back 10 feet.<br>
-                    <span style="color: #ff6b6b;">❤️ HP: ${player.hp - 5}/20</span>
-                `,
-                'act': `
-                    You try to talk to him.<br>
-                    <span style="color: #8aba4a;">"Yo, you think you can just WALK into Wonderland?"</span><br>
-                    He pauses. Something flickers in his eyes.<br>
-                    <span style="color: #ffd93d;">✦ He seems... almost sad ✦</span>
-                `,
-                'prank': `
-                    You yell "MY MOM!"<br>
-                    Ian freezes. Tears well up in his eyes.<br>
-                    <span style="color: #8aba4a;">"Bro... that's my mom's catchphrase..."</span><br>
-                    He's vulnerable now. You can feel it.
-                `,
-                'spare': `
-                    You put your hands up. "I don't want to fight."<br>
-                    Ian stares at you. His muscles deflate slightly.<br>
-                    <span style="color: #8aba4a;">"...You're not like the others."</span><br>
-                    He steps aside. <span style="color: #ffd93d;">✦ You found mercy ✦</span>
-                `
-            };
-
-            resultText.innerHTML = responses[action] || 'You do nothing. Ian laughs.';
-
-            // Check if this is the "spare" action - that's the "correct" way
-            if (action === 'spare') {
-                setTimeout(() => {
-                    resultText.innerHTML += `<br><br><span style="color: #ffd93d; font-size: 12px;">✦ IAN LETS YOU PASS ✦</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">"Go on, newbie. The Queen's waiting for you."</span>`;
-                    document.getElementById('ianNextActions').style.display = 'block';
-                    ianDefeated = true;
-                }, 1500);
-            } else if (action === 'prank') {
-                setTimeout(() => {
-                    resultText.innerHTML += `<br><br><span style="color: #ffd93d; font-size: 12px;">✦ IAN IS MOVED ✦</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">"Alright, alright. You got me. Go ahead."</span>`;
-                    document.getElementById('ianNextActions').style.display = 'block';
-                    ianDefeated = true;
-                }, 1500);
-            } else if (action === 'act') {
-                setTimeout(() => {
-                    resultText.innerHTML += `<br><br><span style="color: #ffd93d; font-size: 12px;">✦ YOU REACHED HIM ✦</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">"Just... get out of here before the Queen finds you."</span>`;
-                    document.getElementById('ianNextActions').style.display = 'block';
-                    ianDefeated = true;
-                }, 1500);
-            } else {
-                // Fight option - you need to try again
-                setTimeout(() => {
-                    resultText.innerHTML += `<br><br><span style="color: #ff6b6b; font-size: 10px;">💪 IAN IS STILL STANDING</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">Try a different approach...</span>`;
-                    document.getElementById('ianNextActions').style.display = 'none';
-                    // Enable buttons again (they're always enabled)
-                }, 1500);
-            }
-        }
-
-        function continueAfterIan() {
-            if (ianDefeated) {
-                // Unlock the exploration fully
-                showScreen('exploration');
-                document.getElementById('exploreLocation').textContent = '📍 THE ENDLESS HALLWAY (CLEARED)';
-                document.getElementById('exploreDesc').innerHTML = `
-                    Ian let you pass. The hallway is quieter now.<br>
-                    <span style="color: #ffd93d;">✦ You can feel the Queen's presence ahead ✦</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">The lobby is just ahead...</span>
-                `;
-                // Add the "Find the Queen" button if not already there
-                const btnGroup = document.querySelector('#exploration .direction-buttons').parentElement;
-                const existingBtn = btnGroup.querySelector('.btn-group');
-                if (existingBtn) {
-                    existingBtn.innerHTML = `
-                        <button class="game-btn" onclick="returnToHall()">🔙 BACK TO HALL</button>
-                        <button class="game-btn primary" onclick="encounterQueen()">♠️ FIND THE QUEEN</button>
-                    `;
-                }
-            }
-        }
-
-        // ============================================================
-        //  FINAL BATTLE (Teaser)
-        // ============================================================
-
-        function startFinalBattle() {
-            const result = document.getElementById('finalResult');
-            const resultText = document.getElementById('finalResultText');
-            result.style.display = 'block';
-            resultText.innerHTML = `
-                ⚠️ TO BE CONTINUED... ⚠️<br><br>
-                <span style="color: #ff6b6b; font-size: 12px;">THE QUEEN OF THE DESK</span><br>
-                <span style="color: #ffd93d; font-size: 10px;">✦ BATTLE SYSTEM COMING SOON ✦</span><br><br>
-                <span style="color: #8888aa; font-size: 8px;">
-                    For now, you've reached the end of the demo.<br>
-                    Thanks for playing JN Wonderland!
-                </span>
-            `;
-        }
-
-        // ============================================================
-        //  RESET GAME
-        // ============================================================
-
-        function resetGame() {
-            if (confirm('Reset the game and return to the character creator?')) {
-                localStorage.removeItem('jnPlayerState');
-                window.location.href = 'index.html';
-            }
-        }
-
-        // ============================================================
-        //  AUTO-START ROOM 303 SCENE
-        // ============================================================
-
-        // Show Room 303 first
-        showScreen('room303');
-
-        // Auto-show choices after a moment
-        setTimeout(() => {
-            const choices = document.getElementById('room303Choices');
-            if (choices) {
-                choices.style.display = 'block';
-            }
-        }, 3000);
-
-        console.log('%c✦ JN WONDERLAND - GAME LOADED ✦', 'font-size:16px; color:#ffd93d;');
-        console.log(`%cPlayer: ${player.name}`, 'color:#8888aa;');
-        console.log('%cRoom 303 is waiting...', 'color:#aa4a4a;');
-    </script>
-
-</body>
-</html>
+                        Behind a massive, ornate desk sits a figure with <span class="creepy">impossible presence</span>.<br>
+                        She
