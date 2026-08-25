@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - The Dark Tale</title>
+    <title>JN Wonderland - The Asylum</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -28,10 +28,9 @@
             border: 6px solid #4a4a6a;
             overflow: hidden;
             box-shadow: 0 0 60px rgba(100, 50, 200, 0.3);
-            transition: background 1s ease;
+            transition: background 2s ease, border-color 2s ease;
         }
 
-        /* ========== CANVAS LAYER ========== */
         #gameCanvas {
             position: absolute;
             top: 0;
@@ -44,17 +43,6 @@
         }
 
         /* ========== UI OVERLAY ========== */
-        #uiOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        /* ========== DIALOGUE BOX ========== */
         #dialogueBox {
             position: absolute;
             bottom: 20px;
@@ -102,7 +90,7 @@
         #dialogueBox .dialogue .good { color: #4aff8a; }
         #dialogueBox .dialogue .wonder { color: #a29bfe; }
         #dialogueBox .dialogue .dark { color: #6a4a7a; }
-        #dialogueBox .dialogue .blood { color: #aa2a2a; }
+        #dialogueBox .dialogue .insane { color: #ff6b9d; }
 
         #dialogueBox .continue {
             color: #4a4a6a;
@@ -147,52 +135,14 @@
             box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
         }
 
-        #dialogueBox .game-btn.primary {
-            background: #4a2a4a;
-            border-color: #8a4a6a;
-            color: #ff9d8a;
-        }
-        #dialogueBox .game-btn.primary:hover {
-            background: #6a3a5a;
-            border-color: #ff6b6b;
-        }
-        #dialogueBox .game-btn.danger {
-            background: #4a2a2a;
-            border-color: #8a2a2a;
-            color: #ff6a6a;
-        }
-        #dialogueBox .game-btn.danger:hover {
-            background: #6a3a3a;
-            border-color: #ff4a4a;
-        }
-        #dialogueBox .game-btn.success {
-            background: #2a4a2a;
-            border-color: #4a8a4a;
-            color: #8aff8a;
-        }
-        #dialogueBox .game-btn.success:hover {
-            background: #3a6a3a;
-            border-color: #6aff6a;
-        }
-        #dialogueBox .game-btn.wonder {
-            background: #2a2a4a;
-            border-color: #6a4a8a;
-            color: #c8a8ff;
-        }
-        #dialogueBox .game-btn.wonder:hover {
-            background: #4a3a6a;
-            border-color: #a87aff;
-        }
-        #dialogueBox .game-btn.dark {
-            background: #1a0a2a;
-            border-color: #4a2a6a;
-            color: #8a6aaa;
-        }
-        #dialogueBox .game-btn.dark:hover {
-            background: #2a1a3a;
-            border-color: #6a4a8a;
-            color: #a87aff;
-        }
+        #dialogueBox .game-btn.primary { background: #4a2a4a; border-color: #8a4a6a; color: #ff9d8a; }
+        #dialogueBox .game-btn.primary:hover { background: #6a3a5a; border-color: #ff6b6b; }
+        #dialogueBox .game-btn.danger { background: #4a2a2a; border-color: #8a2a2a; color: #ff6a6a; }
+        #dialogueBox .game-btn.danger:hover { background: #6a3a3a; border-color: #ff4a4a; }
+        #dialogueBox .game-btn.success { background: #2a4a2a; border-color: #4a8a4a; color: #8aff8a; }
+        #dialogueBox .game-btn.success:hover { background: #3a6a3a; border-color: #6aff6a; }
+        #dialogueBox .game-btn.wonder { background: #2a2a4a; border-color: #6a4a8a; color: #c8a8ff; }
+        #dialogueBox .game-btn.wonder:hover { background: #4a3a6a; border-color: #a87aff; }
 
         /* ========== HUD ========== */
         #hud {
@@ -217,6 +167,7 @@
         #hud .wonder { color: #a29bfe; }
         #hud .items { color: #6ab4ff; }
         #hud .step { color: #ff8a4a; }
+        #hud .sanity { color: #ff6b9d; }
 
         /* ========== QUEST LOG ========== */
         #questLog {
@@ -242,17 +193,10 @@
             letter-spacing: 1px;
         }
 
-        #questLog .step-done {
-            color: #4aff8a;
-        }
-
-        #questLog .step-active {
-            color: #ffd93d;
-        }
-
-        #questLog .step-hidden {
-            color: #2a2a4a;
-        }
+        #questLog .step-done { color: #4aff8a; }
+        #questLog .step-active { color: #ffd93d; }
+        #questLog .step-hidden { color: #2a2a4a; }
+        #questLog .step-insane { color: #ff6b9d; animation: blink 0.5s infinite; }
 
         /* ========== CHAPTER TITLE ========== */
         #chapterTitle {
@@ -261,20 +205,28 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #ffd93d;
-            font-size: 24px;
+            font-size: 28px;
             text-align: center;
             z-index: 25;
             pointer-events: none;
             opacity: 0;
-            text-shadow: 0 0 40px rgba(255, 217, 61, 0.3);
-            transition: opacity 1s ease;
+            text-shadow: 0 0 60px rgba(255, 217, 61, 0.3);
+            transition: opacity 1.5s ease;
         }
 
         #chapterTitle .sub {
-            font-size: 10px;
+            font-size: 11px;
             color: #8888aa;
             margin-top: 10px;
             letter-spacing: 4px;
+        }
+
+        #chapterTitle .insane-sub {
+            font-size: 11px;
+            color: #ff6b9d;
+            margin-top: 10px;
+            letter-spacing: 4px;
+            animation: blink 0.5s infinite;
         }
 
         /* ========== DARK OVERLAY ========== */
@@ -290,6 +242,23 @@
             transition: background 2s ease;
         }
 
+        /* ========== SANITY EFFECTS ========== */
+        @keyframes vignette {
+            0%, 100% { box-shadow: inset 0 0 100px rgba(0,0,0,0); }
+            50% { box-shadow: inset 0 0 100px rgba(100, 50, 150, 0.1); }
+        }
+
+        .sanity-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 6;
+            animation: vignette 3s infinite;
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1000px) {
             #gameContainer { width: 95vw; height: 90vh; }
@@ -298,8 +267,8 @@
             #dialogueBox .game-btn { font-size: 7px; padding: 6px 12px; min-width: 60px; }
             #hud { font-size: 6px; padding: 5px 10px; min-width: 100px; }
             #questLog { font-size: 5px; padding: 5px 10px; max-width: 180px; }
-            #chapterTitle { font-size: 18px; }
-            #chapterTitle .sub { font-size: 8px; }
+            #chapterTitle { font-size: 20px; }
+            #chapterTitle .sub { font-size: 9px; }
         }
 
         @media (max-width: 600px) {
@@ -308,8 +277,8 @@
             #dialogueBox .game-btn { font-size: 6px; padding: 4px 8px; min-width: 50px; }
             #hud { font-size: 5px; padding: 3px 6px; top: 5px; right: 6px; min-width: 80px; }
             #questLog { font-size: 4px; padding: 3px 6px; top: 5px; left: 6px; max-width: 140px; }
-            #chapterTitle { font-size: 14px; }
-            #chapterTitle .sub { font-size: 6px; }
+            #chapterTitle { font-size: 16px; }
+            #chapterTitle .sub { font-size: 7px; }
         }
     </style>
 </head>
@@ -318,7 +287,7 @@
     <div id="gameContainer">
 
         <canvas id="gameCanvas"></canvas>
-
+        <div class="sanity-effect" id="sanityEffect"></div>
         <div id="darkOverlay"></div>
 
         <div id="chapterTitle">
@@ -330,20 +299,21 @@
             <div class="hp">❤️ HP: <span id="hudHp">20</span>/20</div>
             <div class="act">📖 ACT: <span id="hudAct">I</span></div>
             <div class="wonder">🌀 WONDER: <span id="hudWonder">5</span>%</div>
+            <div class="sanity">🧠 SANITY: <span id="hudSanity">100</span>%</div>
             <div class="items">📦 ITEMS: <span id="hudItems">None</span></div>
             <div class="step">🐱 QUEST: <span id="hudStep">0</span>/<span id="hudMaxStep">8</span></div>
         </div>
 
         <div id="questLog">
-            <div class="title">📋 THE DARK TALE</div>
+            <div class="title">📋 THE ASYLUM</div>
             <div id="questList">
                 <div class="step-active">✦ The Scream</div>
                 <div>✦ The Fall</div>
-                <div>✦ The Wandering</div>
+                <div>✦ The Endless Hall</div>
                 <div>✦ The Memories</div>
+                <div>✦ The Mad Wing</div>
                 <div>✦ The Bodyguard</div>
                 <div>✦ The Queen</div>
-                <div>✦ The Choice</div>
                 <div>✦ The Escape</div>
             </div>
         </div>
@@ -359,7 +329,7 @@
 
     <script>
         // ============================================================
-        //  SETUP CANVAS
+        //  SETUP
         // ============================================================
 
         const canvas = document.getElementById('gameCanvas');
@@ -375,8 +345,8 @@
             canvas.height = rect.height;
             W = canvas.width;
             H = canvas.height;
-            tileSize = Math.min(W / 22, H / 16);
-            tileSize = Math.max(tileSize, 20);
+            tileSize = Math.min(W / 28, H / 20);
+            tileSize = Math.max(tileSize, 18);
             cols = Math.floor(W / tileSize);
             rows = Math.floor(H / tileSize);
         }
@@ -393,17 +363,15 @@
             hp: 20,
             maxHp: 20,
             wonder: 5,
+            sanity: 100,
             x: 5,
-            y: 8,
+            y: 7,
             facing: 'down',
-            // Quest
-            questStep: 0, // 0-8
+            questStep: 0,
             act: 1,
             // Story flags
             metCat: false,
-            talkedToCat: false,
             enteredCloset: false,
-            exploredHall: false,
             foundMemories: 0,
             foundResidents: 0,
             ianDefeated: false,
@@ -414,7 +382,6 @@
             hasWisdom: false,
             hasCourage: false,
             hasHope: false,
-            hasDespair: false,
             // Items
             hasKey: false,
             hasNote: false,
@@ -431,15 +398,14 @@
             hasDiary: false,
             // Combat
             enemiesDefeated: 0,
-            // Memories collected (story fragments)
-            memories: [],
-            residentsMet: [],
-            // Game state
+            // State
             inDialogue: false,
             gameState: 'exploring',
             ending: 0,
-            // Dialogue queue
-            dialogueQueue: []
+            // Map section tracking
+            mapSection: 0, // 0=room303, 1=hallway, 2=endless, 3=memories, 4=madwing, 5=ian, 6=queen
+            mapX: 0,
+            mapY: 0
         };
 
         // ============================================================
@@ -461,11 +427,12 @@
         loadPlayerData();
 
         // ============================================================
-        //  TILE MAP
+        //  TILE MAP - HUGE EXPANDED VERSION
         // ============================================================
 
-        let cols = 22, rows = 16;
+        let cols = 28, rows = 20;
         let map = [];
+        let mapOffsetX = 0, mapOffsetY = 0;
 
         const T = {
             FLOOR: 0,
@@ -480,108 +447,247 @@
             QUEEN: 9,
             IAN: 10,
             CHEST: 11,
-            STAIRS: 12,
-            MEMORY: 13,
-            LETTER: 14,
-            PHOTO: 15,
-            DIARY: 16,
-            SHADOW: 17
+            MEMORY: 12,
+            LETTER: 13,
+            PHOTO: 14,
+            DIARY: 15,
+            SHADOW: 16,
+            PORTAL: 17,
+            STAIRS: 18,
+            MIRROR: 19,
+            BLOOD: 20,
+            CRACK: 21,
+            EYE: 22
         };
 
+        // ============================================================
+        //  BUILD THE MASSIVE MAP
+        // ============================================================
+
         function buildMap() {
+            // We'll build a large map and then scroll through sections
+            // Each section is 28x20 tiles
+            // Section 0: Room 303 (normal)
+            // Section 1: Hallway (getting weird)
+            // Section 2: Endless Corridor (looping)
+            // Section 3: Memory Rooms
+            // Section 4: Mad Wing (insanity)
+            // Section 5: Ian's Chamber
+            // Section 6: Queen's Throne Room
+
             map = [];
             for (let r = 0; r < rows; r++) {
                 map[r] = [];
                 for (let c = 0; c < cols; c++) {
-                    if (r === 0 || r === rows - 1 || c === 0 || c === cols - 1) {
-                        map[r][c] = T.WALL;
+                    map[r][c] = T.WALL;
+                }
+            }
+
+            // ===== SECTION 0: ROOM 303 =====
+            // Room 303 area
+            for (let r = 2; r < 8; r++) {
+                for (let c = 2; c < 9; c++) {
+                    if (r === 2 || r === 7 || c === 2 || c === 8) {
+                        if (!(r === 2 && c === 4) && !(r === 2 && c === 5)) {
+                            map[r][c] = T.WALL;
+                        }
                     } else {
                         map[r][c] = T.FLOOR;
                     }
                 }
             }
+            map[2][5] = T.DOOR;
+            map[4][6] = T.CLOSET;
+            map[3][5] = T.CAT;
+            map[5][5] = T.ITEM;
 
-            // ===== ACT I: Room 303 Area =====
-            for (let r = 2; r < 7; r++) {
-                for (let c = 2; c < 8; c++) {
-                    if (r === 2 || r === 6 || c === 2 || c === 7) {
-                        if (!(r === 2 && c === 3) && !(r === 2 && c === 4)) {
-                            map[r][c] = T.WALL;
-                        }
-                    }
-                }
-            }
-            map[2][4] = T.DOOR;
-            map[4][5] = T.CLOSET;
-            map[3][4] = T.CAT;
-
-            // ===== ACT II: Hallway =====
-            for (let r = 3; r < 13; r++) {
+            // Hallway outside Room 303
+            for (let r = 2; r < 8; r++) {
                 for (let c = 9; c < 14; c++) {
-                    if (r === 3 || r === 12 || c === 9 || c === 13) {
-                        if (!(r === 3 && c === 11) && !(r === 12 && c === 11)) {
+                    map[r][c] = T.FLOOR;
+                }
+            }
+
+            // ===== SECTION 1: THE HALLWAY =====
+            for (let r = 2; r < 14; r++) {
+                for (let c = 14; c < 19; c++) {
+                    if (r === 2 || r === 13 || c === 14 || c === 18) {
+                        if (!(r === 2 && c === 16) && !(r === 13 && c === 16)) {
                             map[r][c] = T.WALL;
                         }
+                    } else {
+                        map[r][c] = T.FLOOR;
                     }
                 }
             }
-            map[3][11] = T.DOOR;
-            map[12][11] = T.DOOR;
+            map[2][16] = T.DOOR;
+            map[13][16] = T.DOOR;
 
-            // ===== ACT III: Memory Rooms =====
-            // Memory 1
-            map[5][15] = T.MEMORY;
-            // Memory 2
-            map[8][16] = T.MEMORY;
-            // Memory 3
-            map[10][14] = T.MEMORY;
-
-            // ===== ACT IV: Resident Rooms =====
-            for (let r = 8; r < 12; r++) {
-                for (let c = 16; c < 20; c++) {
-                    if (r === 8 || r === 11 || c === 16 || c === 19) {
-                        if (!(r === 8 && c === 17) && !(r === 8 && c === 18)) {
+            // ===== SECTION 2: ENDLESS CORRIDOR =====
+            // This section loops! Walking one way wraps around
+            for (let r = 2; r < 14; r++) {
+                for (let c = 19; c < 24; c++) {
+                    if (r === 2 || r === 13 || c === 19 || c === 23) {
+                        if (!(r === 2 && c === 21) && !(r === 13 && c === 21)) {
                             map[r][c] = T.WALL;
                         }
+                    } else {
+                        map[r][c] = T.FLOOR;
                     }
                 }
             }
-            map[9][17] = T.RESIDENT;
-            map[9][18] = T.RESIDENT;
-            map[10][17] = T.RESIDENT;
+            map[2][21] = T.DOOR;
+            map[13][21] = T.DOOR;
 
-            // ===== ACT V: Ian (Bodyguard) =====
-            map[7][15] = T.IAN;
+            // Loop indicators (cracks in walls)
+            map[3][19] = T.CRACK;
+            map[4][19] = T.CRACK;
+            map[5][19] = T.CRACK;
+            map[11][23] = T.CRACK;
+            map[12][23] = T.CRACK;
 
-            // ===== ACT VI: Queen's Chamber =====
-            for (let r = 11; r < 15; r++) {
-                for (let c = 17; c < 21; c++) {
-                    if (r === 11 || r === 14 || c === 17 || c === 20) {
-                        if (!(r === 11 && c === 18) && !(r === 11 && c === 19)) {
+            // ===== SECTION 3: MEMORY ROOMS =====
+            for (let r = 2; r < 14; r++) {
+                for (let c = 24; c < 28; c++) {
+                    if (r === 2 || r === 13 || c === 24 || c === 27) {
+                        if (!(r === 2 && c === 25) && !(r === 2 && c === 26) && !(r === 13 && c === 25) && !(r === 13 && c === 26)) {
                             map[r][c] = T.WALL;
                         }
+                    } else {
+                        map[r][c] = T.FLOOR;
                     }
                 }
             }
-            map[13][18] = T.QUEEN;
+            map[2][25] = T.DOOR;
+            map[2][26] = T.DOOR;
+            map[13][25] = T.DOOR;
+            map[13][26] = T.DOOR;
 
-            // ===== Act VI: Exit =====
-            map[1][cols - 2] = T.EXIT;
+            // Memory fragments
+            map[4][25] = T.MEMORY;
+            map[6][26] = T.MEMORY;
+            map[8][25] = T.MEMORY;
+            map[10][26] = T.MEMORY;
+            map[5][24] = T.LETTER;
+            map[9][27] = T.PHOTO;
+            map[7][26] = T.DIARY;
 
-            // ===== Scattered Items =====
-            map[4][12] = T.ITEM;
-            map[6][10] = T.ITEM;
-            map[3][16] = T.ITEM;
-            map[5][18] = T.CHEST;
-            map[8][13] = T.CHEST;
-            map[10][12] = T.LETTER;
-            map[6][14] = T.PHOTO;
-            map[4][17] = T.DIARY;
+            // ===== SECTION 4: MAD WING =====
+            // Reality breaks here - weird tile patterns
+            for (let r = 14; r < rows; r++) {
+                for (let c = 2; c < 14; c++) {
+                    if (r === 14 || r === rows - 1 || c === 2 || c === 13) {
+                        if (!(r === 14 && c === 7) && !(r === rows - 1 && c === 7)) {
+                            map[r][c] = T.WALL;
+                        }
+                    } else {
+                        map[r][c] = T.FLOOR;
+                    }
+                }
+            }
+            map[14][7] = T.DOOR;
+            map[19][7] = T.DOOR;
 
-            // ===== Shadows (random encounters) =====
-            map[9][10] = T.SHADOW;
-            map[11][12] = T.SHADOW;
-            map[7][17] = T.SHADOW;
+            // Madness tiles - eyes in the walls
+            map[15][3] = T.EYE;
+            map[16][12] = T.EYE;
+            map[17][5] = T.EYE;
+            map[18][10] = T.EYE;
+
+            // Blood trails
+            map[16][6] = T.BLOOD;
+            map[17][7] = T.BLOOD;
+            map[18][8] = T.BLOOD;
+
+            // Mirrors
+            map[15][8] = T.MIRROR;
+            map[17][9] = T.MIRROR;
+
+            // Shadows
+            map[16][9] = T.SHADOW;
+            map[18][11] = T.SHADOW;
+
+            // Items in mad wing
+            map[16][4] = T.ITEM;
+            map[18][6] = T.CHEST;
+
+            // ===== SECTION 5: IAN'S CHAMBER =====
+            for (let r = 14; r < rows; r++) {
+                for (let c = 14; c < 21; c++) {
+                    if (r === 14 || r === rows - 1 || c === 14 || c === 20) {
+                        if (!(r === 14 && c === 17) && !(r === rows - 1 && c === 17)) {
+                            map[r][c] = T.WALL;
+                        }
+                    } else {
+                        map[r][c] = T.FLOOR;
+                    }
+                }
+            }
+            map[14][17] = T.DOOR;
+            map[19][17] = T.DOOR;
+
+            // Ian
+            map[17][17] = T.IAN;
+
+            // Arena decorations
+            map[16][15] = T.CRACK;
+            map[16][19] = T.CRACK;
+            map[18][15] = T.CRACK;
+            map[18][19] = T.CRACK;
+
+            // ===== SECTION 6: QUEEN'S THRONE ROOM =====
+            for (let r = 14; r < rows; r++) {
+                for (let c = 21; c < cols; c++) {
+                    if (r === 14 || r === rows - 1 || c === 21 || c === cols - 1) {
+                        if (!(r === 14 && c === 24) && !(r === 14 && c === 25)) {
+                            map[r][c] = T.WALL;
+                        }
+                    } else {
+                        map[r][c] = T.FLOOR;
+                    }
+                }
+            }
+            map[14][24] = T.DOOR;
+            map[14][25] = T.DOOR;
+
+            // Queen's throne
+            map[17][24] = T.QUEEN;
+
+            // The exit back to Room 303 (behind the Queen)
+            map[18][25] = T.EXIT;
+
+            // Throne room decorations
+            map[15][22] = T.MIRROR;
+            map[15][26] = T.MIRROR;
+            map[16][23] = T.BLOOD;
+            map[16][25] = T.BLOOD;
+
+            // Portal effect tiles
+            map[17][23] = T.PORTAL;
+            map[17][25] = T.PORTAL;
+
+            // ============================================================
+            //  TRANSITION DOORS BETWEEN SECTIONS
+            // ============================================================
+
+            // Room 303 to Hallway (section 0 to 1)
+            map[4][9] = T.DOOR;
+
+            // Hallway to Endless (section 1 to 2)
+            map[7][19] = T.DOOR;
+
+            // Endless to Memories (section 2 to 3)
+            map[7][24] = T.DOOR;
+
+            // Memories to Mad Wing (section 3 to 4) - via stairs
+            map[13][3] = T.STAIRS;
+            map[14][3] = T.STAIRS;
+
+            // Mad Wing to Ian (section 4 to 5)
+            map[14][13] = T.DOOR;
+
+            // Ian to Queen (section 5 to 6)
+            map[14][21] = T.DOOR;
         }
 
         // ============================================================
@@ -590,9 +696,13 @@
 
         let cameraX = 0, cameraY = 0;
         let darkOpacity = 0;
+        let insanityLevel = 0;
 
         function render() {
             ctx.clearRect(0, 0, W, H);
+
+            // Calculate insanity level based on map section
+            insanityLevel = Math.min(1, player.mapSection / 5);
 
             // Camera follow
             const targetCamX = player.x * tileSize - W / 2 + tileSize / 2;
@@ -610,29 +720,26 @@
 
                     const tile = map[r][c];
 
-                    // Floor
-                    if (tile === T.FLOOR || tile === T.WALL || tile === T.DOOR || 
-                        tile === T.CLOSET || tile === T.CAT || tile === T.RESIDENT ||
-                        tile === T.ENEMY || tile === T.ITEM || tile === T.EXIT ||
-                        tile === T.QUEEN || tile === T.IAN || tile === T.CHEST ||
-                        tile === T.MEMORY || tile === T.LETTER || tile === T.PHOTO ||
-                        tile === T.DIARY || tile === T.SHADOW || tile === T.STAIRS) {
-                        
-                        // Dark floor with subtle pattern
-                        const dark = (r + c) % 2 === 0 ? 0.12 : 0.15;
-                        ctx.fillStyle = `rgba(20, 15, 30, ${dark})`;
+                    // Base floor
+                    if (tile !== T.WALL) {
+                        // Darkening floor based on section
+                        const dark = 0.1 + insanityLevel * 0.15;
+                        const color = Math.floor(15 + insanityLevel * 20);
+                        ctx.fillStyle = `rgb(${color}, ${Math.floor(color * 0.7)}, ${Math.floor(color * 0.8 + insanityLevel * 20)})`;
                         ctx.fillRect(x, y, tileSize, tileSize);
                     }
 
                     // Wall
                     if (tile === T.WALL) {
-                        ctx.fillStyle = '#1a1528';
+                        const dark = 0.2 + insanityLevel * 0.3;
+                        ctx.fillStyle = `rgba(20, 15, 30, ${dark})`;
                         ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#252040';
-                        ctx.fillRect(x + 1, y + 1, tileSize - 2, tileSize - 2);
-                        // Subtle cracks
-                        if ((r + c) % 3 === 0) {
-                            ctx.strokeStyle = 'rgba(60, 40, 80, 0.3)';
+                        // Wall texture
+                        ctx.fillStyle = `rgba(35, 25, 50, ${0.3 + insanityLevel * 0.4})`;
+                        ctx.fillRect(x + 2, y + 2, tileSize - 4, tileSize - 4);
+                        // Cracks appear with insanity
+                        if (insanityLevel > 0.3 && (r + c) % 4 === 0) {
+                            ctx.strokeStyle = `rgba(100, 50, 150, ${insanityLevel * 0.3})`;
                             ctx.lineWidth = 1;
                             ctx.beginPath();
                             ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.3);
@@ -648,14 +755,13 @@
                         ctx.fillRect(x, y, tileSize, tileSize);
                         ctx.fillStyle = '#3a2a2a';
                         ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        // Door handle
                         ctx.fillStyle = '#8a6a3a';
                         ctx.fillRect(x + tileSize * 0.7, y + tileSize * 0.4, tileSize * 0.1, tileSize * 0.2);
-                        // Glow if near
+                        // Door glow
                         const dist = Math.abs(player.x - c) + Math.abs(player.y - r);
                         if (dist <= 2) {
                             const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                            grad.addColorStop(0, 'rgba(255, 217, 61, 0.1)');
+                            grad.addColorStop(0, `rgba(255, 217, 61, ${0.1 + insanityLevel * 0.1})`);
                             grad.addColorStop(1, 'rgba(255, 217, 61, 0)');
                             ctx.fillStyle = grad;
                             ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
@@ -668,10 +774,8 @@
                         ctx.fillRect(x, y, tileSize, tileSize);
                         ctx.fillStyle = '#1a0a2a';
                         ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        // Glow
                         const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.8);
                         grad.addColorStop(0, 'rgba(100, 50, 200, 0.3)');
-                        grad.addColorStop(0.5, 'rgba(100, 50, 200, 0.1)');
                         grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
                         ctx.fillStyle = grad;
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -695,15 +799,14 @@
                         ctx.textAlign = 'center';
                         ctx.fillText('👤', x + tileSize/2, y + tileSize * 0.7);
                         ctx.fillStyle = '#8888aa';
-                        ctx.font = `${tileSize * 0.2}px monospace`;
-                        ctx.fillText('RESIDENT', x + tileSize/2, y + tileSize * 0.95);
+                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.fillText('RESIDENT', x + tileSize/2, y + tileSize * 0.92);
                     }
 
                     // Ian
                     if (tile === T.IAN) {
                         ctx.fillStyle = '#0a1a0a';
                         ctx.fillRect(x, y, tileSize, tileSize);
-                        // Green glow
                         const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
                         grad.addColorStop(0, 'rgba(100, 200, 50, 0.15)');
                         grad.addColorStop(1, 'rgba(100, 200, 50, 0)');
@@ -722,8 +825,8 @@
                     if (tile === T.QUEEN) {
                         ctx.fillStyle = '#2a0a0a';
                         ctx.fillRect(x, y, tileSize, tileSize);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 1.5);
-                        grad.addColorStop(0, 'rgba(255, 0, 0, 0.15)');
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 2);
+                        grad.addColorStop(0, 'rgba(255, 0, 0, 0.2)');
                         grad.addColorStop(1, 'rgba(255, 0, 0, 0)');
                         ctx.fillStyle = grad;
                         ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
@@ -764,7 +867,12 @@
 
                     // Memory
                     if (tile === T.MEMORY) {
-                        ctx.fillStyle = 'rgba(100, 50, 200, 0.1)';
+                        ctx.fillStyle = `rgba(100, 50, 200, ${0.1 + insanityLevel * 0.2})`;
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
+                        grad.addColorStop(0, `rgba(162, 155, 254, ${0.2 + insanityLevel * 0.2})`);
+                        grad.addColorStop(1, 'rgba(162, 155, 254, 0)');
+                        ctx.fillStyle = grad;
                         ctx.fillRect(x, y, tileSize, tileSize);
                         ctx.fillStyle = '#a29bfe';
                         ctx.font = `${tileSize * 0.4}px monospace`;
@@ -804,11 +912,11 @@
 
                     // Shadow
                     if (tile === T.SHADOW) {
-                        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                        ctx.fillStyle = `rgba(0, 0, 0, ${0.2 + insanityLevel * 0.2})`;
                         ctx.beginPath();
                         ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.35, 0, Math.PI * 2);
                         ctx.fill();
-                        ctx.fillStyle = 'rgba(100, 50, 150, 0.1)';
+                        ctx.fillStyle = `rgba(100, 50, 150, ${0.1 + insanityLevel * 0.2})`;
                         ctx.font = `${tileSize * 0.3}px monospace`;
                         ctx.textAlign = 'center';
                         ctx.fillText('👻', x + tileSize/2, y + tileSize * 0.65);
@@ -818,6 +926,11 @@
                     if (tile === T.EXIT) {
                         ctx.fillStyle = 'rgba(50, 200, 100, 0.05)';
                         ctx.fillRect(x, y, tileSize, tileSize);
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
+                        grad.addColorStop(0, 'rgba(74, 255, 138, 0.2)');
+                        grad.addColorStop(1, 'rgba(74, 255, 138, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
                         ctx.fillStyle = '#4aff8a';
                         ctx.font = `${tileSize * 0.5}px monospace`;
                         ctx.textAlign = 'center';
@@ -825,6 +938,103 @@
                         ctx.fillStyle = '#4aff8a';
                         ctx.font = `${tileSize * 0.15}px monospace`;
                         ctx.fillText('EXIT', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Blood
+                    if (tile === T.BLOOD) {
+                        ctx.fillStyle = `rgba(100, 20, 20, ${0.3 + insanityLevel * 0.3})`;
+                        ctx.beginPath();
+                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.4, tileSize * 0.2, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.ellipse(x + tileSize * 0.3, y + tileSize * 0.6, tileSize * 0.2, tileSize * 0.1, 0.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Crack
+                    if (tile === T.CRACK) {
+                        ctx.strokeStyle = `rgba(60, 40, 80, ${0.3 + insanityLevel * 0.4})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.1, y + tileSize * 0.2);
+                        ctx.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
+                        ctx.lineTo(x + tileSize * 0.2, y + tileSize * 0.8);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.9, y + tileSize * 0.3);
+                        ctx.lineTo(x + tileSize * 0.7, y + tileSize * 0.6);
+                        ctx.lineTo(x + tileSize * 0.8, y + tileSize * 0.9);
+                        ctx.stroke();
+                    }
+
+                    // Eye
+                    if (tile === T.EYE) {
+                        // White of eye
+                        ctx.fillStyle = `rgba(200, 200, 200, ${0.2 + insanityLevel * 0.3})`;
+                        ctx.beginPath();
+                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.3, tileSize * 0.2, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        // Pupil
+                        ctx.fillStyle = `rgba(100, 50, 150, ${0.4 + insanityLevel * 0.3})`;
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.1, 0, Math.PI * 2);
+                        ctx.fill();
+                        // Red veins
+                        ctx.strokeStyle = `rgba(150, 50, 50, ${0.2 + insanityLevel * 0.2})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.4);
+                        ctx.lineTo(x + tileSize * 0.4, y + tileSize * 0.45);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.8, y + tileSize * 0.6);
+                        ctx.lineTo(x + tileSize * 0.6, y + tileSize * 0.55);
+                        ctx.stroke();
+                    }
+
+                    // Mirror
+                    if (tile === T.MIRROR) {
+                        ctx.fillStyle = `rgba(100, 100, 150, ${0.1 + insanityLevel * 0.15})`;
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = `rgba(200, 200, 255, ${0.05 + insanityLevel * 0.1})`;
+                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
+                        ctx.fillStyle = '#a29bfe';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🪞', x + tileSize/2, y + tileSize * 0.7);
+                        // Reflection effect
+                        if (insanityLevel > 0.5) {
+                            ctx.fillStyle = `rgba(162, 155, 254, ${(insanityLevel - 0.5) * 0.2})`;
+                            ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.2, tileSize * 0.6, tileSize * 0.6);
+                        }
+                    }
+
+                    // Stairs
+                    if (tile === T.STAIRS) {
+                        ctx.fillStyle = '#1a1a2a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        for (let i = 0; i < 4; i++) {
+                            ctx.fillStyle = '#2a2a4a';
+                            ctx.fillRect(x + tileSize * 0.1, y + tileSize * (0.1 + i * 0.2), tileSize * 0.8, tileSize * 0.05);
+                        }
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.3}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('⬇', x + tileSize/2, y + tileSize * 0.75);
+                    }
+
+                    // Portal
+                    if (tile === T.PORTAL) {
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
+                        grad.addColorStop(0, `rgba(100, 50, 200, ${0.3 + insanityLevel * 0.3})`);
+                        grad.addColorStop(0.5, `rgba(255, 100, 200, ${0.2 + insanityLevel * 0.2})`);
+                        grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize * 0.5, y - tileSize * 0.5, tileSize * 2, tileSize * 2);
+                        ctx.fillStyle = '#a29bfe';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
                     }
                 }
             }
@@ -834,12 +1044,6 @@
             const py = player.y * tileSize - cameraY;
             if (px > -tileSize && px < W + tileSize && py > -tileSize && py < H + tileSize) {
                 drawPixelSprite(ctx, px, py, tileSize, player.hair, player.skin, player.outfit, player.facing);
-            }
-
-            // Draw dark overlay
-            if (darkOpacity > 0) {
-                ctx.fillStyle = `rgba(0, 0, 0, ${darkOpacity})`;
-                ctx.fillRect(0, 0, W, H);
             }
 
             // Draw interaction indicator
@@ -865,11 +1069,34 @@
                              nearby.tile === T.LETTER ? '✉️ READ' :
                              nearby.tile === T.PHOTO ? '🖼️ VIEW' :
                              nearby.tile === T.DIARY ? '📖 READ' :
-                             nearby.tile === T.SHADOW ? '👻 INVESTIGATE' : '🔹 INTERACT';
+                             nearby.tile === T.SHADOW ? '👻 INVESTIGATE' :
+                             nearby.tile === T.MIRROR ? '🪞 LOOK' :
+                             nearby.tile === T.BLOOD ? '🩸 INVESTIGATE' :
+                             nearby.tile === T.EYE ? '👁️ LOOK' :
+                             nearby.tile === T.STAIRS ? '⬇️ DESCEND' :
+                             nearby.tile === T.PORTAL ? '🌀 ENTER' : '🔹 INTERACT';
                 ctx.fillText('🔹 ' + label, nx + tileSize/2, ny - 6);
             }
 
-            // Update dark overlay
+            // Sanity overlay
+            if (insanityLevel > 0.3) {
+                // Vignette
+                const grad = ctx.createRadialGradient(W/2, H/2, W*0.3, W/2, H/2, W*0.8);
+                grad.addColorStop(0, `rgba(0,0,0,0)`);
+                grad.addColorStop(1, `rgba(0,0,0,${insanityLevel * 0.3})`);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+
+                // Static noise
+                if (insanityLevel > 0.6 && Math.random() < insanityLevel * 0.1) {
+                    for (let i = 0; i < 20; i++) {
+                        ctx.fillStyle = `rgba(100, 50, 150, ${Math.random() * 0.05})`;
+                        ctx.fillRect(Math.random() * W, Math.random() * H, Math.random() * 20, Math.random() * 2);
+                    }
+                }
+            }
+
+            // Dark overlay
             document.getElementById('darkOverlay').style.background = `rgba(0, 0, 0, ${darkOpacity})`;
         }
 
@@ -913,10 +1140,6 @@
             ctx.fillRect(x + s * 2, y + s * 0, s * 8, s * 2);
             ctx.fillRect(x + s * 1, y + s * 2, s * 2, s * 1);
             ctx.fillRect(x + s * 9, y + s * 2, s * 2, s * 1);
-            if (hair === 'blonde' || hair === 'pink') {
-                ctx.fillRect(x + s * 2, y + s * 3, s * 1, s * 0.5);
-                ctx.fillRect(x + s * 9, y + s * 3, s * 1, s * 0.5);
-            }
 
             // Eyes
             ctx.fillStyle = colors.eye;
@@ -1011,7 +1234,7 @@
             ctx.fillRect(x + s * 4.3, y + s * 2.5, s * 0.4, s * 1.5);
             ctx.fillRect(x + s * 7.3, y + s * 2.5, s * 0.4, s * 1.5);
 
-            // Glow around eyes
+            // Glow
             const grad = ctx.createRadialGradient(x + s * 4.5, y + s * 3, 0, x + s * 4.5, y + s * 3, s * 2);
             grad.addColorStop(0, 'rgba(74, 138, 74, 0.2)');
             grad.addColorStop(1, 'rgba(74, 138, 74, 0)');
@@ -1033,7 +1256,7 @@
             ctx.arc(x + s * 6, y + s * 3.8, s * 0.5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Mouth (grin)
+            // Mouth
             ctx.strokeStyle = '#0a0a1a';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
@@ -1071,7 +1294,9 @@
                         tile === T.CHEST || tile === T.EXIT || tile === T.QUEEN || 
                         tile === T.IAN || tile === T.RESIDENT || tile === T.CAT ||
                         tile === T.MEMORY || tile === T.LETTER || tile === T.PHOTO ||
-                        tile === T.DIARY || tile === T.SHADOW) {
+                        tile === T.DIARY || tile === T.SHADOW || tile === T.MIRROR ||
+                        tile === T.BLOOD || tile === T.EYE || tile === T.STAIRS ||
+                        tile === T.PORTAL) {
                         return { x: nx, y: ny, tile: tile };
                     }
                 }
@@ -1197,16 +1422,25 @@
             const tile = map[ny][nx];
             if (tile === T.WALL) return;
 
+            // Special: Endless Corridor looping
+            if (tile === T.CRACK && player.mapSection === 2) {
+                // Loop around
+                if (dx === -1) { player.x = cols - 2; }
+                else if (dx === 1) { player.x = 1; }
+                else if (dy === -1) { player.y = rows - 2; }
+                else if (dy === 1) { player.y = 1; }
+                updateUI();
+                return;
+            }
+
             // Don't move into NPC tiles unless interacting
             if (tile === T.CAT || tile === T.RESIDENT || tile === T.IAN || 
                 tile === T.QUEEN || tile === T.SHADOW) {
-                // Allow moving onto them to interact
                 player.x = nx;
                 player.y = ny;
                 player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
                                  dx === -1 ? 'left' : 'right';
                 updateUI();
-                // Auto-interact with NPCs
                 const nearby = getNearbyInteractive();
                 if (nearby && (nearby.tile === T.CAT || nearby.tile === T.RESIDENT || 
                               nearby.tile === T.IAN || nearby.tile === T.QUEEN ||
@@ -1223,11 +1457,36 @@
 
             updateUI();
 
-            // Check for item pickups
+            // Track map section
+            updateMapSection();
+
+            // Check for auto-interactions
             if (tile === T.ITEM || tile === T.CHEST || tile === T.MEMORY || 
-                tile === T.LETTER || tile === T.PHOTO || tile === T.DIARY) {
+                tile === T.LETTER || tile === T.PHOTO || tile === T.DIARY ||
+                tile === T.MIRROR || tile === T.BLOOD || tile === T.EYE ||
+                tile === T.STAIRS || tile === T.PORTAL) {
                 interact();
             }
+
+            // Sanity effects
+            if (player.mapSection >= 4) {
+                player.sanity = Math.max(0, player.sanity - 0.1);
+                if (Math.random() < 0.01) {
+                    showDialogue('🧠 YOUR MIND', '<span class="insane">"The walls are breathing..."</span>');
+                    setTimeout(closeDialogue, 1500);
+                }
+            }
+        }
+
+        function updateMapSection() {
+            // Determine which section the player is in based on position
+            if (player.x < 9 && player.y < 8) player.mapSection = 0; // Room 303
+            else if (player.x >= 9 && player.x < 14 && player.y < 14) player.mapSection = 1; // Hallway
+            else if (player.x >= 14 && player.x < 19 && player.y < 14) player.mapSection = 2; // Endless
+            else if (player.x >= 19 && player.x < 28 && player.y < 14) player.mapSection = 3; // Memories
+            else if (player.x < 14 && player.y >= 14) player.mapSection = 4; // Mad Wing
+            else if (player.x >= 14 && player.x < 21 && player.y >= 14) player.mapSection = 5; // Ian
+            else if (player.x >= 21 && player.y >= 14) player.mapSection = 6; // Queen
         }
 
         // Click to move
@@ -1278,6 +1537,7 @@
 
             const { x, y, tile } = nearby;
 
+            // Check map section for contextual interactions
             switch (tile) {
                 case T.CAT: meetCat(); break;
                 case T.CLOSET: enterCloset(); break;
@@ -1288,6 +1548,11 @@
                 case T.LETTER: readLetter(x, y); break;
                 case T.PHOTO: viewPhoto(x, y); break;
                 case T.DIARY: readDiary(x, y); break;
+                case T.MIRROR: lookInMirror(x, y); break;
+                case T.BLOOD: investigateBlood(x, y); break;
+                case T.EYE: lookAtEye(x, y); break;
+                case T.STAIRS: descendStairs(x, y); break;
+                case T.PORTAL: enterPortal(x, y); break;
                 case T.RESIDENT: talkToResident(x, y); break;
                 case T.SHADOW: investigateShadow(x, y); break;
                 case T.IAN: faceIan(); break;
@@ -1306,8 +1571,8 @@
         function meetCat() {
             if (player.metCat) {
                 showDialogue('🐱 THE CAT', 
-                    '"You\'re doing well, human. But the darkness is growing.<br>' +
-                    'You must hurry. The Queen feeds on despair."'
+                    '"You\'re getting closer, human. The Queen\'s throne room is at the end."<br>' +
+                    '"But beware... the madness grows with each step."'
                 );
                 setTimeout(closeDialogue, 2500);
                 return;
@@ -1321,14 +1586,16 @@
 
             showDialogue('🐱 THE CAT', 
                 '"You heard the scream, didn\'t you?"<br><br>' +
-                'The cat sits on the floor, its eyes glowing.<br>' +
+                'The cat sits on the floor, its eyes glowing in the dark.<br>' +
                 '"I\'ve been watching you. You\'re different from the others."<br>' +
                 '"This place... JN Hall... it\'s a doorway. A doorway to Wonderland."<br>' +
-                '"But this Wonderland is dark. It feeds on the sadness of trapped souls."<br>' +
-                '"The Queen... she was once a student here. She became the darkness."<br>' +
-                '"To escape, you must understand the story. You must find the memories."<br>' +
-                '"And you must face the Queen."<br>' +
-                '<span class="creepy">"Be careful, human. The shadows are watching."</span>',
+                '"But this Wonderland is a <span class="creepy">nightmare</span>."<br>' +
+                '"It feeds on the sadness of trapped souls. It grows with each step you take."<br>' +
+                '"The Queen... she was once a student here. Now she\'s the darkness itself."<br>' +
+                '"To escape, you must walk through the <span class="insane">madness</span>."<br>' +
+                '"You must find the memories. You must face the bodyguard."<br>' +
+                '"And you must confront the Queen on her throne."<br><br>' +
+                '<span class="creepy">"Be careful, human. The building is alive."</span>',
                 [{ label: '🐱 Continue', value: 'continue' }],
                 function() {
                     player.talkedToCat = true;
@@ -1338,10 +1605,11 @@
                     showDialogue('🐱 THE CAT', 
                         '"Remember: <span class="highlight">find the memories</span>. They hold the truth.<br>' +
                         '"And when you\'re ready, enter the closet. That\'s the way in."<br><br>' +
-                        'The cat vanishes with a flick of its tail.'
+                        'The cat vanishes with a flick of its tail.' +
+                        '<br><span class="dark">"Find me when you reach the Mad Wing..."</span>'
                     );
                     setTimeout(closeDialogue, 3000);
-                    map[3][4] = T.FLOOR;
+                    map[3][5] = T.FLOOR;
                     updateUI();
                 }
             );
@@ -1384,27 +1652,61 @@
                 [{ label: '🌀 Enter Wonderland', value: 'enter' }],
                 function() {
                     player.questStep = Math.max(player.questStep, 4);
-                    player.x = 8;
-                    player.y = 7;
-                    map[4][5] = T.FLOOR;
+                    player.x = 10;
+                    player.y = 5;
+                    map[4][6] = T.FLOOR;
+                    updateMapSection();
                     updateUI();
                     closeDialogue();
-                    showDialogue('🏚️ WONDERLAND',
-                        'The hallway stretches <span class="creepy">infinitely</span>.<br>' +
-                        'The walls are cracked. The lights flicker.<br>' +
-                        'You hear echoes of <span class="dark">distant screams</span>.<br><br>' +
-                        '<span class="highlight">✦ You must find the memories ✦</span><br>' +
-                        '<span class="highlight">✦ They hold the truth ✦</span><br>' +
-                        '<span style="color: #8888aa; font-size: 8px;">Explore the dark halls. Find the glowing memories.</span>'
+                    showDialogue('🏚️ THE HALLWAY',
+                        'The hallway stretches before you.<br>' +
+                        'It looks normal... but something feels <span class="creepy">wrong</span>.<br><br>' +
+                        '<span class="highlight">✦ You must find the Endless Corridor ✦</span><br>' +
+                        '<span style="color: #8888aa; font-size: 8px;">Explore the hallway to find the way forward.</span>'
                     );
-                    setTimeout(closeDialogue, 4000);
+                    setTimeout(closeDialogue, 3000);
                     updateUI();
                 }
             );
         }
 
         // ============================================================
-        //  ACT III: THE WANDERING - MEMORIES
+        //  ACT III: THE HALLWAY - DOORS
+        // ============================================================
+
+        function openDoor(x, y) {
+            const events = [
+                'You open the door. It\'s just a closet. Nothing special.',
+                'You open the door. A gust of wind blows through. <span class="creepy">✦ Strange ✦</span>',
+                'You open the door. You find a <span class="highlight">piece of candy</span> on the floor!',
+                'You open the door. A cat walks out. It looks at you, then walks away.',
+                'You open the door. It leads to another hallway. <span class="wonder">✦ This place is confusing ✦</span>',
+                'You open the door. You see a <span class="dark">shadow</span> move inside.',
+                'You open the door. <span class="insane">The room is upside down.</span>'
+            ];
+
+            const event = events[Math.floor(Math.random() * events.length)];
+            showDialogue('🚪 DOOR', event);
+            setTimeout(closeDialogue, 1500);
+
+            if (event.includes('candy')) {
+                player.hasCandy = true;
+                updateUI();
+            }
+            if (event.includes('shadow')) {
+                player.sanity -= 5;
+                updateUI();
+            }
+        }
+
+        // ============================================================
+        //  ACT III: ENDLESS CORRIDOR - LOOPING
+        // ============================================================
+
+        // Special handling in movement - already implemented
+
+        // ============================================================
+        //  ACT IV: MEMORIES
         // ============================================================
 
         const memoryData = [
@@ -1425,14 +1727,24 @@
                       'She was a student. She was sad. She was lonely.<br>' +
                       'The building fed on her sadness.<br>' +
                       'And then... she became part of it."'
+            },
+            {
+                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
+                      '"The building is alive. It remembers everything.<br>' +
+                      'It remembers the screams. It remembers the tears.<br>' +
+                      'And it remembers <span class="insane">you</span>."'
+            },
+            {
+                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
+                      '"To escape, you must understand.<br>' +
+                      'The Queen is not your enemy. She is a victim.<br>' +
+                      'The building is the real cage."'
             }
         ];
 
-        let memoryIndex = 0;
-
         function findMemory(x, y) {
             if (player.foundMemories >= memoryData.length) {
-                showDialogue('💭 MEMORY', 'You\'ve found all the memories. The truth is clear now.');
+                showDialogue('💭 MEMORY', 'You\'ve found all the memories. The truth is clear.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
@@ -1441,6 +1753,7 @@
             player.foundMemories++;
             player.wonder += 5;
             player.questStep = Math.max(player.questStep, 5);
+            player.sanity = Math.min(100, player.sanity + 2);
 
             showDialogue('💭 MEMORY FOUND', memory.text);
             map[y][x] = T.FLOOR;
@@ -1465,7 +1778,7 @@
         }
 
         // ============================================================
-        //  ACT III: LETTERS, PHOTOS, DIARIES
+        //  ACT IV: LETTERS, PHOTOS, DIARIES
         // ============================================================
 
         function readLetter(x, y) {
@@ -1502,6 +1815,7 @@
         function readDiary(x, y) {
             player.hasDiary = true;
             player.wonder += 5;
+            player.sanity -= 3;
             showDialogue('📖 A DIARY ENTRY',
                 '"Day 147. The walls are getting louder.<br>' +
                 'They whisper my name. They tell me I belong here.<br>' +
@@ -1516,7 +1830,166 @@
         }
 
         // ============================================================
-        //  ACT III: SHADOWS (Random Encounters)
+        //  ACT IV: MAD WING - INSANITY TILES
+        // ============================================================
+
+        function lookInMirror(x, y) {
+            player.sanity -= 5;
+            const reflections = [
+                'You look in the mirror. <span class="creepy">Your reflection is smiling at you.</span>',
+                'You look in the mirror. <span class="dark">Your reflection is crying.</span>',
+                'You look in the mirror. <span class="insane">Your reflection is wearing a crown.</span>',
+                'You look in the mirror. <span class="wonder">Your reflection waves at you.</span>'
+            ];
+            const reflection = reflections[Math.floor(Math.random() * reflections.length)];
+            showDialogue('🪞 MIRROR', reflection);
+            setTimeout(closeDialogue, 2000);
+            updateUI();
+        }
+
+        function investigateBlood(x, y) {
+            player.sanity -= 3;
+            showDialogue('🩸 BLOOD TRAIL',
+                '"You follow the blood trail.<br>' +
+                'It leads to a door. <span class="creepy">The door is locked.</span><br>' +
+                '<span class="dark">You hear breathing on the other side.</span>"'
+            );
+            setTimeout(closeDialogue, 2000);
+            updateUI();
+        }
+
+        function lookAtEye(x, y) {
+            player.sanity -= 3;
+            showDialogue('👁️ THE EYE',
+                '"You look at the eye in the wall.<br>' +
+                '<span class="insane">It looks back at you.</span><br>' +
+                'It blinks. <span class="creepy">You feel it watching you.</span>"'
+            );
+            setTimeout(closeDialogue, 2000);
+            updateUI();
+        }
+
+        function descendStairs(x, y) {
+            showDialogue('⬇️ THE STAIRS',
+                '"You descend the stairs.<br>' +
+                'The air gets colder. The walls get darker.<br>' +
+                '<span class="highlight">✦ You enter the Mad Wing ✦</span><br>' +
+                '<span class="creepy">"Welcome to the nightmare."</span>'
+            );
+            map[y][x] = T.FLOOR;
+            player.x = 8;
+            player.y = 15;
+            player.mapSection = 4;
+            updateMapSection();
+            updateUI();
+            setTimeout(closeDialogue, 2500);
+            // Mad Wing intro
+            setTimeout(() => {
+                showDialogue('🏚️ THE MAD WING',
+                    '"The walls are covered in <span class="insane">eyes</span>.<br>' +
+                    'The floor is stained with <span class="creepy">blood</span>.<br>' +
+                    'Mirrors show you things that aren\'t there.<br><br>' +
+                    '<span class="highlight">✦ Find the way to Ian\'s Chamber ✦</span><br>' +
+                    '<span style="color: #8888aa; font-size: 8px;">Your sanity is draining. Hurry.</span>'
+                );
+                setTimeout(closeDialogue, 4000);
+            }, 500);
+        }
+
+        function enterPortal(x, y) {
+            showDialogue('🌀 PORTAL',
+                '"You step into the portal.<br>' +
+                'The world spins. Colors bleed together.<br>' +
+                '<span class="insane">You feel yourself being pulled apart.</span><br><br>' +
+                '<span class="highlight">✦ You emerge in a different part of the building ✦</span>'
+            );
+            // Random teleport within the same section
+            const newX = 15 + Math.floor(Math.random() * 5);
+            const newY = 15 + Math.floor(Math.random() * 3);
+            player.x = newX;
+            player.y = newY;
+            updateMapSection();
+            updateUI();
+            setTimeout(closeDialogue, 2500);
+        }
+
+        // ============================================================
+        //  ACT V: RESIDENTS
+        // ============================================================
+
+        const residentData = [
+            {
+                name: '👻 SARAH',
+                room: '301',
+                story: '"I was a librarian. I loved the quiet. But the Queen... she took the quiet. She filled it with whispers."'
+            },
+            {
+                name: '🧙‍♂️ MARK',
+                room: '302',
+                story: '"I was a magician. I thought I could escape. I was wrong. But I learned the Queen\'s secret: she feeds on fear."'
+            },
+            {
+                name: '🎨 LISA',
+                room: '304',
+                story: '"I painted the walls. I made them beautiful. The Queen turned them dark. She hates beauty."'
+            },
+            {
+                name: '🎵 JAMES',
+                room: '305',
+                story: '"I played music. The Queen silenced the music. But I still hear it. I hear it in the walls."'
+            },
+            {
+                name: '🔧 TINA',
+                room: '306',
+                story: '"I tried to fix the building. I thought I could stop the madness. I was wrong."'
+            }
+        ];
+
+        function talkToResident(x, y) {
+            if (player.foundResidents >= residentData.length) {
+                showDialogue('🏠 RESIDENT', 
+                    '"You\'ve helped us all. Thank you.<br>' +
+                    'The Queen is weaker now. You can face her."'
+                );
+                setTimeout(closeDialogue, 2000);
+                return;
+            }
+
+            const resident = residentData[player.foundResidents];
+            player.foundResidents++;
+            player.wonder += 5;
+            player.questStep = Math.max(player.questStep, 6);
+            player.hasWisdom = true;
+            player.sanity = Math.min(100, player.sanity + 3);
+
+            showDialogue(`🏠 ${resident.name} (Room ${resident.room})`,
+                `${resident.story}<br><br>` +
+                `<span class="good">✦ You helped a former resident ✦</span><br>` +
+                `<span class="highlight">✦ +5 WONDER ✦</span><br>` +
+                `<span class="good">✦ +3 SANITY ✦</span><br>` +
+                `<span style="color: #8888aa; font-size: 8px;">The Queen's power weakens...</span>`
+            );
+            map[y][x] = T.FLOOR;
+            updateUI();
+            setTimeout(closeDialogue, 3500);
+
+            if (player.foundResidents >= residentData.length) {
+                setTimeout(() => {
+                    showDialogue('🏠 ALL RESIDENTS SAVED',
+                        'You\'ve helped every former resident.<br>' +
+                        '<span class="highlight">✦ Their memories strengthen you ✦</span><br>' +
+                        '<span class="good">✦ The Queen is vulnerable now ✦</span><br><br>' +
+                        'You feel a shift in the building. The darkness is lifting.<br>' +
+                        'You can face the Queen.<br><br>' +
+                        '<span style="color: #8888aa; font-size: 8px;">Find Ian\'s Chamber in the Mad Wing.</span>'
+                    );
+                    setTimeout(closeDialogue, 3000);
+                }, 500);
+            }
+        }
+
+        // ============================================================
+        //  ACT V: SHADOWS
         // ============================================================
 
         function investigateShadow(x, y) {
@@ -1549,10 +2022,12 @@
                     } else if (choice === 'wonder') {
                         if (player.wonder >= 20) {
                             player.wonder -= 10;
+                            player.sanity += 5;
                             showDialogue('🌀 WONDER POWER',
                                 'You channel Wonder energy!<br>' +
                                 'The shadow dissolves into light.<br>' +
-                                `<span class="good">✦ Shadow banished! ✦</span>`
+                                `<span class="good">✦ Shadow banished! ✦</span><br>` +
+                                `<span class="good">✦ +5 SANITY ✦</span>`
                             );
                             map[y][x] = T.FLOOR;
                             updateUI();
@@ -1571,6 +2046,7 @@
                                 '<span style="color: #8888aa;">You lose 2 HP from exhaustion.</span>'
                             );
                             player.hp -= 2;
+                            player.sanity -= 2;
                             updateUI();
                             setTimeout(closeDialogue, 1500);
                         } else {
@@ -1579,6 +2055,7 @@
                                 '<span class="creepy">You take 3 damage.</span>'
                             );
                             player.hp -= 3;
+                            player.sanity -= 3;
                             updateUI();
                             setTimeout(closeDialogue, 1500);
                         }
@@ -1588,74 +2065,7 @@
         }
 
         // ============================================================
-        //  ACT IV: RESIDENTS
-        // ============================================================
-
-        const residentData = [
-            {
-                name: '👻 SARAH',
-                room: '301',
-                story: '"I was a librarian. I loved the quiet. But the Queen... she took the quiet. She filled it with whispers."'
-            },
-            {
-                name: '🧙‍♂️ MARK',
-                room: '302',
-                story: '"I was a magician. I thought I could escape. I was wrong. But I learned the Queen\'s secret: she feeds on fear."'
-            },
-            {
-                name: '🎨 LISA',
-                room: '304',
-                story: '"I painted the walls. I made them beautiful. The Queen turned them dark. She hates beauty."'
-            },
-            {
-                name: '🎵 JAMES',
-                room: '305',
-                story: '"I played music. The Queen silenced the music. But I still hear it. I hear it in the walls."'
-            }
-        ];
-
-        function talkToResident(x, y) {
-            if (player.foundResidents >= residentData.length) {
-                showDialogue('🏠 RESIDENT', 
-                    '"You\'ve helped us all. Thank you.<br>' +
-                    'The Queen is weaker now. You can face her."'
-                );
-                setTimeout(closeDialogue, 2000);
-                return;
-            }
-
-            const resident = residentData[player.foundResidents];
-            player.foundResidents++;
-            player.wonder += 5;
-            player.questStep = Math.max(player.questStep, 6);
-            player.hasWisdom = true;
-
-            showDialogue(`🏠 ${resident.name} (Room ${resident.room})`,
-                `${resident.story}<br><br>` +
-                `<span class="good">✦ You helped a former resident ✦</span><br>` +
-                `<span class="highlight">✦ +5 WONDER ✦</span><br>` +
-                `<span style="color: #8888aa; font-size: 8px;">The Queen's power weakens...</span>`
-            );
-            map[y][x] = T.FLOOR;
-            updateUI();
-            setTimeout(closeDialogue, 3500);
-
-            if (player.foundResidents >= residentData.length) {
-                setTimeout(() => {
-                    showDialogue('🏠 ALL RESIDENTS SAVED',
-                        'You\'ve helped every former resident.<br>' +
-                        '<span class="highlight">✦ Their memories strengthen you ✦</span><br>' +
-                        '<span class="good">✦ The Queen is vulnerable now ✦</span><br><br>' +
-                        'You feel a shift in the building. The darkness is lifting.<br>' +
-                        'You can face the Queen.'
-                    );
-                    setTimeout(closeDialogue, 3000);
-                }, 500);
-            }
-        }
-
-        // ============================================================
-        //  ACT V: THE BODYGUARD (IAN)
+        //  ACT VI: IAN (BODYGUARD)
         // ============================================================
 
         function faceIan() {
@@ -1665,18 +2075,18 @@
                 return;
             }
 
-            if (player.questStep < 5) {
-                showDialogue('💪 IAN', '"You\'re not ready. Find the memories first."');
+            if (player.questStep < 6) {
+                showDialogue('💪 IAN', '"You\'re not ready. Find the memories and residents first."');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            player.act = 3;
-            showChapter('ACT V', 'The Bodyguard');
+            player.act = 5;
+            showChapter('ACT VI', 'The Bodyguard');
 
             showDialogue('💪 IAN - QUEEN\'S BODYGUARD',
                 '<span style="color: #8aba4a; font-size: 14px;">"YOU SHALL NOT PASS!"</span><br><br>' +
-                'Ian stands before you, massive and green.<br>' +
+                'Ian stands before you, massive and green, blocking the path to the Queen.<br>' +
                 '<span style="color: #8aba4a;">"The Queen said you\'d come. She said you\'d try to save her."</span><br>' +
                 '<span style="color: #8aba4a;">"But she doesn\'t want to be saved. She wants to be left alone."</span><br><br>' +
                 'His eyes are sad. <span class="dark">"I was a resident too, you know."</span><br>' +
@@ -1700,18 +2110,20 @@
 
             switch (choice) {
                 case 'fight':
-                    if (player.foundMemories >= 2 || player.foundResidents >= 2) {
+                    if (player.foundMemories >= 3 || player.foundResidents >= 3) {
                         player.ianDefeated = true;
                         player.questStep = Math.max(player.questStep, 7);
                         player.hasCourage = true;
+                        player.sanity += 5;
                         showDialogue('⚔️ BATTLE',
                             'You fight Ian with all your strength!<br>' +
                             'He\'s powerful, but you\'re fighting for more than yourself.<br>' +
                             '<span class="good">✦ IAN IS DEFEATED! ✦</span><br>' +
                             '<span style="color: #8aba4a;">"...You\'re stronger than I was. Go on."</span><br>' +
-                            'He steps aside, defeated but almost... relieved.'
+                            'He steps aside, defeated but almost... relieved.<br>' +
+                            `<span class="good">✦ +5 SANITY ✦</span>`
                         );
-                        map[7][15] = T.FLOOR;
+                        map[17][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('⚔️ BATTLE',
@@ -1720,6 +2132,7 @@
                             '<span style="color: #8888aa;">You need more memories and residents saved.</span>'
                         );
                         player.hp -= 5;
+                        player.sanity -= 5;
                         updateUI();
                         setTimeout(closeDialogue, 2000);
                     }
@@ -1730,14 +2143,16 @@
                         player.ianBefriended = true;
                         player.questStep = Math.max(player.questStep, 7);
                         player.hasMercy = true;
+                        player.sanity += 10;
                         showDialogue('💬 TALK',
                             'You talk to Ian. You tell him you understand.<br>' +
                             '<span style="color: #8aba4a;">"...You really get it, don\'t you?"</span><br>' +
                             '<span style="color: #8aba4a;">"She\'s not evil. She\'s just... broken."</span><br>' +
                             '<span class="good">✦ IAN LETS YOU PASS ✦</span><br>' +
-                            '"Tell her... tell her Ian misses her."'
+                            '"Tell her... tell her Ian misses her."<br>' +
+                            `<span class="good">✦ +10 SANITY ✦</span>`
                         );
-                        map[7][15] = T.FLOOR;
+                        map[17][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('💬 TALK',
@@ -1753,6 +2168,7 @@
                     player.ianBefriended = true;
                     player.questStep = Math.max(player.questStep, 7);
                     player.hasMercy = true;
+                    player.sanity += 5;
                     showDialogue('🎭 PRANK',
                         'You yell <span style="color: #ffd93d;">"MY MOM!"</span><br>' +
                         'Ian freezes. His eyes water.<br>' +
@@ -1760,7 +2176,7 @@
                         '<span style="color: #8aba4a;">"Alright, alright. You got me. Go on."</span><br>' +
                         '<span class="good">✦ IAN LETS YOU PASS ✦</span>'
                     );
-                    map[7][15] = T.FLOOR;
+                    map[17][17] = T.FLOOR;
                     setTimeout(closeDialogue, 2500);
                     break;
 
@@ -1768,15 +2184,17 @@
                     if (player.hasMercy) {
                         player.ianBefriended = true;
                         player.questStep = Math.max(player.questStep, 7);
+                        player.sanity += 10;
                         showDialogue('🕊️ SPARE',
                             'You put your hands up.<br>' +
                             '<span style="color: #ffd93d;">"I don\'t want to fight you, Ian."</span><br>' +
                             'He stares at you. His muscles deflate.<br>' +
                             '<span style="color: #8aba4a;">"...You\'re the first person to say that."</span><br>' +
                             '<span class="good">✦ IAN STEPS ASIDE ✦</span><br>' +
-                            '"Go on. But be careful. The Queen... she\'s not herself."'
+                            '"Go on. But be careful. The Queen... she\'s not herself."<br>' +
+                            `<span class="good">✦ +10 SANITY ✦</span>`
                         );
-                        map[7][15] = T.FLOOR;
+                        map[17][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('🕊️ SPARE',
@@ -1794,6 +2212,7 @@
                         player.questStep = Math.max(player.questStep, 7);
                         player.hasMercy = true;
                         player.hasHope = true;
+                        player.sanity += 15;
                         showDialogue('💔 HEAL',
                             'You reach out to Ian.<br>' +
                             'You place your hand on his chest.<br>' +
@@ -1801,9 +2220,10 @@
                             'Ian\'s eyes widen. The green fades slightly.<br>' +
                             '<span style="color: #8aba4a;">"...I forgot what it felt like."</span><br>' +
                             '<span class="good">✦ IAN IS HEALED ✦</span><br>' +
-                            '"Thank you. Go on. The Queen needs you."'
+                            '"Thank you. Go on. The Queen needs you."<br>' +
+                            `<span class="good">✦ +15 SANITY ✦</span>`
                         );
-                        map[7][15] = T.FLOOR;
+                        map[17][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('💔 HEAL',
@@ -1818,7 +2238,7 @@
         }
 
         // ============================================================
-        //  ACT VI: THE QUEEN
+        //  ACT VII: THE QUEEN
         // ============================================================
 
         function faceQueen() {
@@ -1828,7 +2248,7 @@
                 return;
             }
 
-            if (player.questStep < 6) {
+            if (player.questStep < 7) {
                 showDialogue('👑 THE QUEEN', '"You\'re not ready. Complete your quest."');
                 setTimeout(closeDialogue, 1500);
                 return;
@@ -1840,15 +2260,17 @@
                 return;
             }
 
-            player.act = 4;
-            showChapter('ACT VI', 'The Queen');
+            player.act = 6;
+            showChapter('ACT VII', 'The Queen\'s Throne');
 
             // Build dialogue based on what player has done
             let intro = '<span style="color: #ff4a4a; font-size: 14px;">"YOU DARE FACE ME?"</span><br><br>';
             if (player.foundMemories >= 3) intro += '"You found the memories. You know what I was."<br>';
             if (player.foundResidents >= 3) intro += '"You helped my former friends. They told you about me."<br>';
             if (player.hasWisdom) intro += '"You understand me. That\'s why you\'re dangerous."<br>';
-            intro += '<br><span style="color: #ff4a4a;">"I AM THE QUEEN OF THE DESK!"</span>';
+            if (player.sanity > 70) intro += '"Your mind is still intact. That won\'t last."<br>';
+            intro += '<br><span style="color: #ff4a4a;">"I AM THE QUEEN OF THE DESK!"</span><br><br>';
+            intro += '<span style="color: #8888aa; font-size: 8px;">Behind her, you see the EXIT back to Room 303.</span>';
 
             showDialogue('👑 QUEEN RYLEE', intro,
                 [
@@ -1872,6 +2294,7 @@
                     if (player.foundMemories >= 3 && player.hasCourage) {
                         player.queenDefeated = true;
                         player.questStep = 8;
+                        player.sanity += 20;
                         showDialogue('⚔️ FINAL BATTLE',
                             'You fight the Queen with everything you have.<br>' +
                             'The memories strengthen you. The residents\' hope empowers you.<br>' +
@@ -1879,7 +2302,8 @@
                             'She falls to her knees. The darkness around her fades.<br>' +
                             '<span style="color: #ff4a4a;">"...Thank you. I was so alone."</span><br>' +
                             '<span style="color: #ff4a4a;">"I forgot what it felt like to be free."</span><br><br>' +
-                            '<span class="highlight">✦ Wonderland is free ✦</span>'
+                            '<span class="highlight">✦ Wonderland is free ✦</span><br>' +
+                            `<span class="good">✦ +20 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
@@ -1897,6 +2321,7 @@
                             '<span style="color: #8888aa;">You need more memories and courage.</span>'
                         );
                         player.hp -= 5;
+                        player.sanity -= 5;
                         updateUI();
                         setTimeout(closeDialogue, 2000);
                     }
@@ -1906,6 +2331,7 @@
                     if (player.foundResidents >= 3 && player.hasWisdom) {
                         player.queenBefriended = true;
                         player.questStep = 8;
+                        player.sanity += 25;
                         showDialogue('💬 TALK',
                             'You talk to the Queen. You tell her about the residents.<br>' +
                             'You tell her they forgive her.<br><br>' +
@@ -1913,7 +2339,8 @@
                             'She starts to cry. The darkness fades.<br>' +
                             '<span style="color: #ff4a4a;">"I was so scared. I was so alone."</span><br>' +
                             '<span class="good">✦ THE QUEEN IS SAVED ✦</span><br><br>' +
-                            '<span class="highlight">✦ Wonderland is at peace ✦</span>'
+                            '<span class="highlight">✦ Wonderland is at peace ✦</span><br>' +
+                            `<span class="good">✦ +25 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
@@ -1939,13 +2366,15 @@
                         player.queenDefeated = true;
                         player.questStep = 8;
                         player.hasWonderPower = true;
+                        player.sanity += 30;
                         showDialogue('🌀 WONDER POWER',
                             'You channel the power of Wonderland itself!<br>' +
                             'The Queen\'s throne shatters.<br>' +
                             '<span style="color: #ff4a4a;">"WHAT ARE YOU?"</span><br><br>' +
                             'You are the embodiment of Wonderland\'s hope.<br>' +
                             '<span class="good">✦ THE QUEEN IS OVERWHELMED ✦</span><br><br>' +
-                            '<span class="highlight">✦ You are the bridge between worlds ✦</span>'
+                            '<span class="highlight">✦ You are the bridge between worlds ✦</span><br>' +
+                            `<span class="good">✦ +30 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
@@ -1970,6 +2399,7 @@
                         player.queenBefriended = true;
                         player.questStep = 8;
                         player.hasHope = true;
+                        player.sanity += 30;
                         showDialogue('🕊️ SPARE',
                             'You offer mercy to the Queen.<br>' +
                             'She stares at you, speechless.<br><br>' +
@@ -1977,7 +2407,8 @@
                             'She breaks down. The darkness around her fades.<br>' +
                             '<span class="good">✦ THE QUEEN IS MOVED ✦</span><br><br>' +
                             '<span class="highlight">✦ She steps down from her throne ✦</span><br>' +
-                            '<span style="color: #ff4a4a;">"I\'m sorry. I\'m so sorry for everything."</span>'
+                            '<span style="color: #ff4a4a;">"I\'m sorry. I\'m so sorry for everything."</span><br>' +
+                            `<span class="good">✦ +30 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
@@ -2004,6 +2435,7 @@
                         player.questStep = 8;
                         player.hasHope = true;
                         player.hasMercy = true;
+                        player.sanity += 40;
                         showDialogue('💔 HEAL',
                             'You reach out to the Queen.<br>' +
                             'You place the Heart and Rose in her hands.<br><br>' +
@@ -2012,7 +2444,8 @@
                             '<span style="color: #ff4a4a;">"...I remember what it felt like to be human."</span><br>' +
                             'She\'s crying. The darkness is gone.<br>' +
                             '<span class="good">✦ THE QUEEN IS HEALED ✦</span><br><br>' +
-                            '<span class="highlight">✦ You brought light back to Wonderland ✦</span>'
+                            '<span class="highlight">✦ You brought light back to Wonderland ✦</span><br>' +
+                            `<span class="good">✦ +40 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
@@ -2040,7 +2473,7 @@
         // ============================================================
 
         function escapeWonderland() {
-            if (player.questStep < 7) {
+            if (player.questStep < 8) {
                 showDialogue('🚪 EXIT',
                     'The exit is locked. You need to complete your quest.<br>' +
                     `<span style="color: #8888aa;">Progress: ${player.questStep}/8</span>`
@@ -2104,12 +2537,13 @@
         function showChapter(title, sub) {
             const el = document.getElementById('chapterTitle');
             document.getElementById('chapterTitleText').textContent = title;
-            document.getElementById('chapterSubText').textContent = sub;
+            const subEl = document.getElementById('chapterSubText');
+            subEl.textContent = sub;
+            subEl.className = player.mapSection >= 4 ? 'insane-sub' : 'sub';
             el.style.opacity = '1';
             setTimeout(() => {
                 el.style.opacity = '0';
             }, 2500);
-            // Dark overlay flash
             darkOpacity = 0.3;
             setTimeout(() => {
                 darkOpacity = 0;
@@ -2145,10 +2579,17 @@
 
         function updateUI() {
             document.getElementById('hudHp').textContent = player.hp;
-            document.getElementById('hudAct').textContent = ['I','II','III','IV','V','VI'][player.act - 1] || 'VI';
+            document.getElementById('hudAct').textContent = ['I','II','III','IV','V','VI','VII'][player.act - 1] || 'VII';
             document.getElementById('hudWonder').textContent = Math.min(100, Math.round(player.wonder));
+            document.getElementById('hudSanity').textContent = Math.round(player.sanity);
             document.getElementById('hudStep').textContent = Math.min(player.questStep, 8);
             document.getElementById('hudMaxStep').textContent = 8;
+
+            // Sanity color
+            const sanityEl = document.getElementById('hudSanity');
+            if (player.sanity > 70) sanityEl.style.color = '#4aff8a';
+            else if (player.sanity > 40) sanityEl.style.color = '#ffd93d';
+            else sanityEl.style.color = '#ff6b6b';
 
             const items = [];
             if (player.hasKey) items.push('🔑');
@@ -2166,15 +2607,15 @@
             if (player.hasDiary) items.push('📖');
             document.getElementById('hudItems').textContent = items.join(' ') || 'None';
 
-            // Update quest log
+            // Quest log
             const questSteps = [
                 { id: 'scream', label: 'The Scream' },
                 { id: 'fall', label: 'The Fall' },
-                { id: 'wander', label: 'The Wandering' },
+                { id: 'endless', label: 'The Endless Hall' },
                 { id: 'memories', label: 'The Memories' },
-                { id: 'bodyguard', label: 'The Bodyguard' },
+                { id: 'madwing', label: 'The Mad Wing' },
+                { id: 'ian', label: 'The Bodyguard' },
                 { id: 'queen', label: 'The Queen' },
-                { id: 'choice', label: 'The Choice' },
                 { id: 'escape', label: 'The Escape' }
             ];
 
@@ -2186,6 +2627,7 @@
                 if (i < player.questStep) cls = 'step-done';
                 else if (i === player.questStep) cls = 'step-active';
                 else cls = 'step-hidden';
+                if (i >= 4 && player.mapSection >= 4) cls += ' step-insane';
                 html += `<div class="${cls}">${i < player.questStep ? '✅' : '✦'} ${step.label}</div>`;
             }
             list.innerHTML = html;
@@ -2221,6 +2663,7 @@
             player.x = 4;
             player.y = 4;
             player.facing = 'down';
+            player.mapSection = 0;
             updateUI();
 
             // Welcome
@@ -2229,9 +2672,10 @@
                     '<span class="creepy">You wake up to a scream.</span><br><br>' +
                     'It\'s 3:03 AM. The scream came from Room 303.<br>' +
                     'Your heart is racing. You have to check it out.<br><br>' +
-                    '<span style="color: #8888aa; font-size: 8px;">Use WASD/Arrow Keys to move. Press SPACE to interact.</span>'
+                    '<span style="color: #8888aa; font-size: 8px;">Use WASD/Arrow Keys to move. Press SPACE to interact.</span><br>' +
+                    '<span style="color: #ff6b6b; font-size: 8px;">🧠 Your sanity drains in the Mad Wing. Find help.</span>'
                 );
-                setTimeout(closeDialogue, 4000);
+                setTimeout(closeDialogue, 4500);
             }, 500);
 
             gameLoop();
@@ -2241,11 +2685,12 @@
             });
         }
 
-        console.log('%c✦ JN WONDERLAND: THE DARK TALE ✦', 'font-size:20px; color:#ffd93d;');
-        console.log('%c📖 A dark story of memory, loss, and hope', 'color:#8888aa;');
+        console.log('%c✦ JN WONDERLAND: THE ASYLUM ✦', 'font-size:20px; color:#ffd93d;');
+        console.log('%c🏚️ A massive labyrinth with 6 distinct sections', 'color:#8888aa;');
+        console.log('%c🧠 Sanity mechanic - the deeper you go, the more you lose', 'color:#ff6b9d;');
         console.log(`%c🎮 Player: ${player.name}`, 'color:#6ac8ff;');
         console.log('%c🐱 Find the cat to begin your quest.', 'color:#ff8a4a;');
-        console.log('%c💭 Collect memories to uncover the truth.', 'color:#a29bfe;');
+        console.log('%c🌀 6 sections: Room 303 → Hallway → Endless → Memories → Mad Wing → Ian → Queen', 'color:#a29bfe;');
 
         init();
     </script>
