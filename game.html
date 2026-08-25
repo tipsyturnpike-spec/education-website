@@ -1095,4 +1095,1444 @@
                     targetArea: 'room303', 
                     targetX: 38, 
                     targetY: 8,
-                    transitionText
+                    transitionText: 'You step back into your room...'
+                },
+                { 
+                    x: 14, 
+                    y: 14, 
+                    targetArea: 'darkForest', 
+                    targetX: 25, 
+                    targetY: 38,
+                    transitionText: 'You jump through the portal...'
+                }
+            ];
+        }
+        
+        // Generate Dark Forest map
+        function generateDarkForest() {
+            const map = maps.darkForest;
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1;
+                map.collisionMap[map.height - 1][x] = 1;
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1;
+                map.collisionMap[y][map.width - 1] = 1;
+            }
+            
+            map.collisionMap[map.height - 1][25] = 0;
+            map.collisionMap[map.height - 2][25] = 0;
+            
+            const treePositions = [
+                [5, 5], [8, 12], [15, 8], [20, 15], [25, 5],
+                [30, 10], [35, 15], [40, 8], [10, 20], [18, 25],
+                [28, 20], [35, 25], [42, 20], [12, 30], [22, 32],
+                [32, 30], [38, 35], [45, 30], [5, 25], [15, 35]
+            ];
+            
+            treePositions.forEach(([x, y]) => {
+                map.collisionMap[y][x] = 1;
+                map.collisionMap[y][x + 1] = 1;
+                map.collisionMap[y + 1][x] = 1;
+                map.collisionMap[y + 1][x + 1] = 1;
+            });
+            
+            for (let y = 35; y < 40; y++) {
+                map.collisionMap[y][25] = 0;
+            }
+            
+            map.collisionMap[5][24] = 1;
+            map.collisionMap[5][25] = 1;
+            map.collisionMap[5][26] = 1;
+            
+            map.objects = [
+                { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
+                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted, dark tree. Something is carved into it...' },
+                { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms that pulse with an eerie light.' },
+                { x: 15, y: 28, type: 'note', name: 'Torn Note', description: 'A note that says "The key is hidden where the mushrooms glow..."', interactionType: 'note' },
+                { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key that might open the gate.', interactionType: 'forestKey' },
+                { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate blocking the path forward.', interactionType: 'gate' }
+            ];
+            
+            map.npcs = [
+                {
+                    x: 40,
+                    y: 35,
+                    name: 'Bekah',
+                    sprite: 'bekah',
+                    dialogue: [
+                        "BEKAH: Help! I'm trapped under these roots!",
+                        "BEKAH: Those shadow creatures dragged me here...",
+                        "BEKAH: Can you help me get free?",
+                        "BEKAH: Thank you! I'll join you to find Izzy!",
+                        "BEKAH: I'm good with PSI abilities. Let me help!"
+                    ],
+                    interactionType: 'bekah'
+                }
+            ];
+            
+            map.exits = [
+                { 
+                    x: 25, 
+                    y: 39, 
+                    targetArea: 'closet', 
+                    targetX: 14, 
+                    targetY: 14,
+                    transitionText: 'You return through the portal...'
+                },
+                { 
+                    x: 25, 
+                    y: 4, 
+                    targetArea: 'graveyard', 
+                    targetX: 25, 
+                    targetY: 35,
+                    transitionText: 'You unlock the gate and enter the graveyard...'
+                }
+            ];
+        }
+        
+        // Initialize game
+        function initGame() {
+            const characterData = localStorage.getItem('johnNeumaierCharacter');
+            
+            if (!characterData) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const charData = JSON.parse(characterData);
+            
+            // Set protagonist party member
+            gameState.party[0] = {
+                ...gameState.party[0],
+                name: charData.name || 'PROTAGONIST',
+                shirtColor: charData.shirtColor || '#ff0000',
+                skinTone: charData.skinTone || '#f0c8a0',
+                hairColor: charData.hairColor || '#4a3728',
+                pantsColor: charData.pantsColor || '#0000ff'
+            };
+            
+            gameState.character = gameState.party[0];
+            
+            // Initialize inventory
+            if (!charData.inventory) {
+                charData.inventory = [];
+            }
+            gameState.inventory = charData.inventory;
+            
+            // Give starting items
+            if (gameState.inventory.length === 0) {
+                addItem('ramen', 2);
+                addItem('coffee', 1);
+            }
+            
+            initMaps();
+            updateHUD();
+            gameLoop();
+            
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                startOpeningScene();
+            }, 2000);
+        }
+        
+        // Add item to inventory
+        function addItem(itemId, quantity = 1) {
+            const existingItem = gameState.inventory.find(item => item.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                gameState.inventory.push({
+                    id: itemId,
+                    quantity: quantity
+                });
+            }
+        }
+        
+        // Remove item from inventory
+        function removeItem(itemId, quantity = 1) {
+            const itemIndex = gameState.inventory.findIndex(item => item.id === itemId);
+            
+            if (itemIndex !== -1) {
+                gameState.inventory[itemIndex].quantity -= quantity;
+                if (gameState.inventory[itemIndex].quantity <= 0) {
+                    gameState.inventory.splice(itemIndex, 1);
+                }
+            }
+        }
+        
+        // Check if player has item
+        function hasItem(itemId) {
+            return gameState.inventory.some(item => item.id === itemId);
+        }
+        
+        // Get item quantity
+        function getItemQuantity(itemId) {
+            const item = gameState.inventory.find(item => item.id === itemId);
+            return item ? item.quantity : 0;
+        }
+        
+        // Use item
+        function useItem(itemId, targetPartyMember = null) {
+            const itemData = items[itemId];
+            const target = targetPartyMember || gameState.combat.activePartyMember;
+            const partyMember = gameState.party[target];
+            
+            if (!itemData || !itemData.usable) return false;
+            
+            if (itemData.healAmount) {
+                partyMember.hp = Math.min(partyMember.maxHp, partyMember.hp + itemData.healAmount);
+                removeItem(itemId);
+                updateHUD();
+                return true;
+            }
+            
+            if (itemData.ppRestore) {
+                partyMember.pp = Math.min(partyMember.maxPp, partyMember.pp + itemData.ppRestore);
+                removeItem(itemId);
+                updateHUD();
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Equip weapon
+        function equipWeapon(itemId) {
+            const itemData = items[itemId];
+            
+            if (!itemData || itemData.type !== 'weapon') return;
+            
+            gameState.equippedWeapon = itemId;
+            gameState.party[0].attack = 5 + itemData.attackBonus;
+            updateHUD();
+        }
+        
+        // Show inventory screen
+        function showInventory() {
+            document.getElementById('gameMenu').classList.remove('active');
+            gameState.paused = true;
+            gameState.inventoryTab = 'items';
+            document.getElementById('inventoryScreen').classList.add('active');
+            updateInventoryDisplay();
+        }
+        
+        // Close inventory
+        function closeInventory() {
+            document.getElementById('inventoryScreen').classList.remove('active');
+            gameState.paused = false;
+        }
+        
+        // Switch inventory tab
+        function switchInventoryTab(tab, button) {
+            gameState.inventoryTab = tab;
+            gameState.selectedItem = null;
+            
+            document.querySelectorAll('.inventory-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            updateInventoryDisplay();
+        }
+        
+        // Update inventory display
+        function updateInventoryDisplay() {
+            const listElement = document.getElementById('inventoryList');
+            const moneyElement = document.getElementById('inventoryMoney');
+            
+            moneyElement.textContent = gameState.party[0].money || 0;
+            listElement.innerHTML = '';
+            
+            let displayItems = [];
+            
+            switch(gameState.inventoryTab) {
+                case 'items':
+                    displayItems = gameState.inventory.filter(item => 
+                        items[item.id].type === 'item'
+                    );
+                    break;
+                case 'weapons':
+                    displayItems = gameState.inventory.filter(item => 
+                        items[item.id].type === 'weapon'
+                    );
+                    break;
+                case 'keyItems':
+                    displayItems = gameState.inventory.filter(item => 
+                        items[item.id].type === 'keyItem'
+                    );
+                    break;
+            }
+            
+            if (displayItems.length === 0) {
+                listElement.innerHTML = '<div style="text-align: center; color: #666;">NO ITEMS</div>';
+                return;
+            }
+            
+            displayItems.forEach(item => {
+                const itemData = items[item.id];
+                const itemElement = document.createElement('div');
+                itemElement.className = 'inventory-item';
+                
+                if (gameState.selectedItem === item.id) {
+                    itemElement.classList.add('selected');
+                }
+                
+                itemElement.innerHTML = `
+                    <div>
+                        <div class="item-name">${itemData.name}</div>
+                        <div class="item-description">${itemData.description}</div>
+                    </div>
+                    <div class="item-quantity">x${item.quantity}</div>
+                `;
+                
+                itemElement.addEventListener('click', () => {
+                    selectInventoryItem(item.id);
+                });
+                
+                listElement.appendChild(itemElement);
+            });
+        }
+        
+        // Select inventory item
+        function selectInventoryItem(itemId) {
+            gameState.selectedItem = itemId;
+            updateInventoryDisplay();
+            
+            const itemData = items[itemId];
+            
+            if (itemData.type === 'item' && itemData.usable) {
+                if (useItem(itemId, 0)) {
+                    showCombatMessage(`Used ${itemData.name}!`);
+                    updateInventoryDisplay();
+                }
+            } else if (itemData.type === 'weapon') {
+                equipWeapon(itemId);
+                showCombatMessage(`Equipped ${itemData.name}!`);
+                updateInventoryDisplay();
+            }
+        }
+        
+        // Show item menu in combat
+        function showItemMenu() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const itemMenu = document.getElementById('itemMenu');
+            itemMenu.innerHTML = '';
+            
+            const usableItems = gameState.inventory.filter(item => 
+                items[item.id].type === 'item' && items[item.id].usable
+            );
+            
+            if (usableItems.length === 0) {
+                showCombatMessage('No usable items!');
+                return;
+            }
+            
+            usableItems.forEach(item => {
+                const itemData = items[item.id];
+                const button = document.createElement('button');
+                button.className = 'combat-button';
+                button.textContent = `${itemData.name} (x${item.quantity})`;
+                button.addEventListener('click', () => {
+                    const target = gameState.combat.activePartyMember;
+                    if (useItem(item.id, target)) {
+                        showCombatMessage(`${gameState.party[target].name} uses ${itemData.name}!`);
+                        document.getElementById('combatMenu').style.display = 'flex';
+                        itemMenu.classList.remove('active');
+                        gameState.combat.turn = 'enemy';
+                        setTimeout(enemyTurn, 1500);
+                    } else {
+                        showCombatMessage('Can\'t use that right now!');
+                    }
+                });
+                itemMenu.appendChild(button);
+            });
+            
+            const backButton = document.createElement('button');
+            backButton.className = 'combat-button';
+            backButton.textContent = 'BACK';
+            backButton.addEventListener('click', () => {
+                document.getElementById('combatMenu').style.display = 'flex';
+                itemMenu.classList.remove('active');
+            });
+            itemMenu.appendChild(backButton);
+            
+            document.getElementById('combatMenu').style.display = 'none';
+            itemMenu.classList.add('active');
+        }
+        
+        // Game loop
+        function gameLoop() {
+            if (!gameState.paused && !gameState.inDialogue && !gameState.combat.active) {
+                updatePlayer();
+                checkInteractions();
+                checkRandomEncounter();
+                renderGame();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Check for random encounters
+        function checkRandomEncounter() {
+            const map = maps[gameState.currentArea];
+            
+            if (map.enemies && map.enemies.length > 0 && gameState.player.moving) {
+                if (Math.random() < gameState.combat.enemyEncounterChance) {
+                    const randomEnemy = map.enemies[Math.floor(Math.random() * map.enemies.length)];
+                    startCombat(randomEnemy);
+                }
+            }
+        }
+        
+        // Start combat
+        function startCombat(enemyType) {
+            gameState.combat.active = true;
+            gameState.combat.turn = 'player';
+            gameState.combat.playerDefending = false;
+            gameState.combat.enemy = { ...enemies[enemyType] };
+            gameState.combat.activePartyMember = 0;
+            
+            document.getElementById('combatScreen').classList.add('active');
+            document.getElementById('combatMenu').style.display = 'flex';
+            document.getElementById('psiMenu').classList.remove('active');
+            document.getElementById('itemMenu').classList.remove('active');
+            
+            drawCombatEnemy();
+            updateCombatPartyDisplay();
+            
+            showCombatMessage(`${gameState.combat.enemy.name} attacks!`);
+        }
+        
+        // Update combat party display
+        function updateCombatPartyDisplay() {
+            const partyArea = document.getElementById('combatPartyArea');
+            partyArea.innerHTML = '';
+            
+            gameState.party.forEach((member, index) => {
+                const memberElement = document.createElement('div');
+                memberElement.className = 'combat-party-member';
+                
+                if (index === gameState.combat.activePartyMember) {
+                    memberElement.classList.add('active');
+                }
+                
+                const canvas = document.createElement('canvas');
+                canvas.className = 'combat-player';
+                canvas.width = 50;
+                canvas.height = 50;
+                
+                // Draw party member
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = member.shirtColor;
+                ctx.fillRect(5, 15, 40, 35);
+                ctx.fillStyle = member.skinTone;
+                ctx.fillRect(10, 5, 30, 25);
+                ctx.fillStyle = member.hairColor;
+                ctx.fillRect(10, 2, 30, 8);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(20, 15, 5, 5);
+                ctx.fillRect(35, 15, 5, 5);
+                
+                memberElement.appendChild(canvas);
+                
+                const statsDiv = document.createElement('div');
+                statsDiv.className = 'combat-stats';
+                statsDiv.innerHTML = `
+                    <div>${member.name}</div>
+                    <div>HP: ${member.hp}/${member.maxHp}</div>
+                    <div>PP: ${member.pp}/${member.maxPp}</div>
+                `;
+                
+                memberElement.appendChild(statsDiv);
+                memberElement.addEventListener('click', () => {
+                    gameState.combat.activePartyMember = index;
+                    updateCombatPartyDisplay();
+                });
+                
+                partyArea.appendChild(memberElement);
+            });
+        }
+        
+        // Draw combat enemy
+        function drawCombatEnemy() {
+            const canvas = document.getElementById('combatEnemyCanvas');
+            const ctx = canvas.getContext('2d');
+            const enemy = gameState.combat.enemy;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            switch(enemy.sprite) {
+                case 'laundry':
+                    ctx.fillStyle = '#808080';
+                    ctx.fillRect(30, 50, 40, 30);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(25, 45, 15, 15);
+                    ctx.fillRect(60, 45, 15, 15);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 55, 10, 5);
+                    break;
+                case 'microwave':
+                    ctx.fillStyle = '#C0C0C0';
+                    ctx.fillRect(20, 30, 60, 40);
+                    ctx.fillStyle = '#808080';
+                    ctx.fillRect(30, 25, 40, 10);
+                    ctx.fillStyle = '#00FF00';
+                    ctx.fillRect(35, 35, 30, 5);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(45, 45, 10, 10);
+                    break;
+                case 'textbook':
+                    ctx.fillStyle = '#8B0000';
+                    ctx.fillRect(25, 30, 50, 40);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(30, 35, 40, 30);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(35, 40, 30, 3);
+                    ctx.fillRect(35, 50, 30, 3);
+                    ctx.fillRect(35, 60, 30, 3);
+                    break;
+                case 'coffee':
+                    ctx.fillStyle = '#6B4423';
+                    ctx.fillRect(30, 30, 40, 50);
+                    ctx.fillStyle = '#4A2F1A';
+                    ctx.fillRect(25, 25, 50, 15);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(40, 45, 5, 5);
+                    ctx.fillRect(55, 45, 5, 5);
+                    break;
+                case 'mold':
+                    ctx.fillStyle = '#556B2F';
+                    ctx.beginPath();
+                    ctx.arc(50, 50, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#6B8E23';
+                    ctx.beginPath();
+                    ctx.arc(40, 40, 8, 0, Math.PI * 2);
+                    ctx.arc(60, 40, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'imp':
+                    ctx.fillStyle = '#228B22';
+                    ctx.fillRect(25, 40, 50, 30);
+                    ctx.fillStyle = '#32CD32';
+                    ctx.fillRect(35, 25, 30, 20);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 35, 10, 5);
+                    break;
+                case 'mushroom':
+                    ctx.fillStyle = '#8B008B';
+                    ctx.fillRect(30, 30, 40, 40);
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(40, 20, 20, 20);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(45, 35, 5, 5);
+                    ctx.fillRect(55, 35, 5, 5);
+                    break;
+                case 'shadow':
+                    ctx.fillStyle = '#2F4F4F';
+                    ctx.fillRect(25, 25, 50, 50);
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.fillRect(35, 35, 30, 30);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 45, 10, 5);
+                    break;
+                default:
+                    ctx.fillStyle = enemy.color;
+                    ctx.fillRect(20, 20, 60, 60);
+            }
+        }
+        
+        // Show combat message
+        function showCombatMessage(message) {
+            const messageDiv = document.getElementById('combatMessage');
+            const messageText = document.getElementById('combatMessageText');
+            
+            messageText.textContent = message;
+            messageDiv.classList.add('active');
+            
+            setTimeout(() => {
+                messageDiv.classList.remove('active');
+            }, 1500);
+        }
+        
+        // Show PSI menu
+        function showPSIMenu() {
+            if (gameState.combat.turn !== 'player') return;
+            document.getElementById('combatMenu').style.display = 'none';
+            document.getElementById('psiMenu').classList.add('active');
+        }
+        
+        // Hide PSI menu
+        function hidePSIMenu() {
+            document.getElementById('combatMenu').style.display = 'flex';
+            document.getElementById('psiMenu').classList.remove('active');
+        }
+        
+        // Player actions
+        function playerAttack() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const partyMember = gameState.party[gameState.combat.activePartyMember];
+            const enemy = gameState.combat.enemy;
+            
+            const attackMessages = [
+                `${partyMember.name} throws a textbook at ${enemy.name}!`,
+                `${partyMember.name} hits ${enemy.name} with a laptop!`,
+                `${partyMember.name} attacks with a desk lamp!`,
+                `${partyMember.name} swings a backpack!`
+            ];
+            const message = attackMessages[Math.floor(Math.random() * attackMessages.length)];
+            
+            let damage = Math.max(1, partyMember.attack - enemy.defense + Math.floor(Math.random() * 3));
+            
+            if (gameState.combat.playerDefending) {
+                damage = Math.floor(damage * 0.5);
+                gameState.combat.playerDefending = false;
+            }
+            
+            enemy.hp -= damage;
+            showCombatMessage(`${message} ${damage} damage!`);
+            
+            if (enemy.hp <= 0) {
+                endCombat(true);
+            } else {
+                gameState.combat.turn = 'enemy';
+                setTimeout(enemyTurn, 1500);
+            }
+        }
+        
+        // Psychic abilities
+        function useCoffeeBreak() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const partyMember = gameState.party[gameState.combat.activePartyMember];
+            const ability = psychicAbilities.coffeeBreak;
+            
+            if (partyMember.pp < ability.cost) {
+                showCombatMessage('Not enough PP!');
+                return;
+            }
+            
+            const enemy = gameState.combat.enemy;
+            let damage = Math.floor(10 + partyMember.attack * 1.5);
+            
+            partyMember.pp -= ability.cost;
+            enemy.hp -= damage;
+            updateCombatPartyDisplay();
+            hidePSIMenu();
+            
+            showCombatMessage(`${partyMember.name} uses ${ability.name}! ${enemy.name} takes ${damage} psychic damage!`);
+            
+            if (enemy.hp <= 0) {
+                endCombat(true);
+            } else {
+                gameState.combat.turn = 'enemy';
+                setTimeout(enemyTurn, 1500);
+            }
+        }
+        
+        function useAllNighter() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const partyMember = gameState.party[gameState.combat.activePartyMember];
+            const ability = psychicAbilities.allNighter;
+            
+            if (partyMember.pp < ability.cost) {
+                showCombatMessage('Not enough PP!');
+                return;
+            }
+            
+            const enemy = gameState.combat.enemy;
+            let damage = Math.floor(15 + partyMember.attack * 2);
+            
+            partyMember.pp -= ability.cost;
+            enemy.hp -= damage;
+            updateCombatPartyDisplay();
+            hidePSIMenu();
+            
+            showCombatMessage(`${partyMember.name} pulls an ${ability.name}! ${enemy.name} takes ${damage} damage!`);
+            
+            if (enemy.hp <= 0) {
+                endCombat(true);
+            } else {
+                gameState.combat.turn = 'enemy';
+                setTimeout(enemyTurn, 1500);
+            }
+        }
+        
+        function useRamenHeal() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const partyMember = gameState.party[gameState.combat.activePartyMember];
+            const ability = psychicAbilities.ramenHeal;
+            
+            if (partyMember.pp < ability.cost) {
+                showCombatMessage('Not enough PP!');
+                return;
+            }
+            
+            partyMember.pp -= ability.cost;
+            partyMember.hp = Math.min(partyMember.maxHp, partyMember.hp + ability.healAmount);
+            updateCombatPartyDisplay();
+            hidePSIMenu();
+            
+            showCombatMessage(`${partyMember.name} eats instant ramen! Restored ${ability.healAmount} HP!`);
+            
+            gameState.combat.turn = 'enemy';
+            setTimeout(enemyTurn, 1500);
+        }
+        
+        function playerDefend() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            gameState.combat.playerDefending = true;
+            showCombatMessage(`${gameState.party[gameState.combat.activePartyMember].name} hides behind a desk!`);
+            gameState.combat.turn = 'enemy';
+            setTimeout(enemyTurn, 1000);
+        }
+        
+        function playerRun() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const escapeChance = 0.5;
+            if (Math.random() < escapeChance) {
+                endCombat(false);
+                showCombatMessage('You escaped!');
+            } else {
+                showCombatMessage('Couldn\'t escape!');
+                gameState.combat.turn = 'enemy';
+                setTimeout(enemyTurn, 1000);
+            }
+        }
+        
+        // Enemy turn
+        function enemyTurn() {
+            const enemy = gameState.combat.enemy;
+            
+            // Enemy attacks random party member
+            const alivePartyMembers = gameState.party.filter(member => member.hp > 0);
+            if (alivePartyMembers.length === 0) {
+                endCombat(false);
+                showCombatMessage('All party members are defeated...');
+                return;
+            }
+            
+            const target = alivePartyMembers[Math.floor(Math.random() * alivePartyMembers.length)];
+            const attack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
+            let damage = Math.max(1, Math.floor(enemy.attack * attack.power - target.defense));
+            
+            if (gameState.combat.playerDefending) {
+                damage = Math.floor(damage * 0.5);
+                gameState.combat.playerDefending = false;
+            }
+            
+            target.hp -= damage;
+            updateCombatPartyDisplay();
+            updateHUD();
+            
+            showCombatMessage(`${enemy.name} uses ${attack.name} on ${target.name}! ${damage} damage!`);
+            
+            // Check if all party members are defeated
+            const allDefeated = gameState.party.every(member => member.hp <= 0);
+            
+            if (allDefeated) {
+                endCombat(false);
+                showCombatMessage('Your party is defeated...');
+                setTimeout(() => {
+                    // Revive party
+                    gameState.party.forEach(member => {
+                        member.hp = member.maxHp;
+                        member.pp = member.maxPp;
+                    });
+                    gameState.currentArea = 'room303';
+                    gameState.player.x = 400;
+                    gameState.player.y = 300;
+                    updateHUD();
+                }, 3000);
+            } else {
+                gameState.combat.turn = 'player';
+            }
+        }
+        
+        // End combat
+        function endCombat(victory) {
+            gameState.combat.active = false;
+            document.getElementById('combatScreen').classList.remove('active');
+            
+            if (victory) {
+                const enemy = gameState.combat.enemy;
+                
+                // Give EXP and money to all alive party members
+                gameState.party.forEach(member => {
+                    if (member.hp > 0) {
+                        member.exp += enemy.exp;
+                        member.money = (member.money || 0) + enemy.money;
+                        
+                        const expNeeded = member.level * 10;
+                        if (member.exp >= expNeeded) {
+                            member.level++;
+                            member.exp -= expNeeded;
+                            member.maxHp += 5;
+                            member.hp = member.maxHp;
+                            member.maxPp += 3;
+                            member.pp = member.maxPp;
+                            member.attack += 2;
+                            member.defense += 1;
+                            member.speed += 1;
+                            
+                            showCombatMessage(`${member.name} reached level ${member.level}!`);
+                        }
+                    }
+                });
+                
+                updateHUD();
+            }
+        }
+        
+        // Update player position
+        function updatePlayer() {
+            const map = maps[gameState.currentArea];
+            const player = gameState.player;
+            
+            let dx = 0;
+            let dy = 0;
+            
+            if (gameState.keys.up) {
+                dy = -player.speed;
+                player.direction = 'up';
+            }
+            if (gameState.keys.down) {
+                dy = player.speed;
+                player.direction = 'down';
+            }
+            if (gameState.keys.left) {
+                dx = -player.speed;
+                player.direction = 'left';
+            }
+            if (gameState.keys.right) {
+                dx = player.speed;
+                player.direction = 'right';
+            }
+            
+            player.moving = dx !== 0 || dy !== 0;
+            
+            if (dx !== 0 && canMove(player.x + dx, player.y, map)) {
+                player.x += dx;
+            }
+            if (dy !== 0 && canMove(player.x, player.y + dy, map)) {
+                player.y += dy;
+            }
+            
+            checkAreaTransition();
+        }
+        
+        // Check if player can move to position
+        function canMove(x, y, map) {
+            const tileX = Math.floor(x / map.tileSize);
+            const tileY = Math.floor(y / map.tileSize);
+            
+            if (tileX < 0 || tileX >= map.width || tileY < 0 || tileY >= map.height) {
+                return false;
+            }
+            
+            return map.collisionMap[tileY][tileX] === 0;
+        }
+        
+        // Check for area transitions
+        function checkAreaTransition() {
+            const map = maps[gameState.currentArea];
+            const player = gameState.player;
+            
+            map.exits.forEach(exit => {
+                const exitTileX = exit.x * map.tileSize;
+                const exitTileY = exit.y * map.tileSize;
+                
+                if (Math.abs(player.x - exitTileX) < map.tileSize / 2 &&
+                    Math.abs(player.y - exitTileY) < map.tileSize / 2) {
+                    if (exit.targetArea === 'graveyard' && !gameState.flags.openedForestGate) {
+                        if (!gameState.flags.foundForestKey) {
+                            showDialogue('The gate is locked. You need to find the key...');
+                            gameState.inDialogue = true;
+                        }
+                        return;
+                    }
+                    
+                    if (exit.transitionText) {
+                        transitionWithDialogue(exit);
+                    } else {
+                        transitionArea(exit.targetArea, exit.targetX, exit.targetY);
+                    }
+                }
+            });
+        }
+        
+        // Transition with dialogue
+        function transitionWithDialogue(exit) {
+            gameState.inDialogue = true;
+            gameState.dialogueQueue = [
+                exit.transitionText,
+                null
+            ];
+            showDialogue(gameState.dialogueQueue.shift());
+            gameState.pendingExit = exit;
+        }
+        
+        // Transition to new area
+        function transitionArea(areaId, targetX, targetY) {
+            gameState.currentArea = areaId;
+            gameState.player.x = targetX * maps[areaId].tileSize;
+            gameState.player.y = targetY * maps[areaId].tileSize;
+            updateHUD();
+            
+            if (areaId === 'closet' && !gameState.flags.enteredCloset) {
+                gameState.flags.enteredCloset = true;
+                gameState.dialogueQueue = [
+                    "The closet is darker than it should be...",
+                    "The air is cold, and you hear whispers...",
+                    "A strange purple glow comes from deeper in...",
+                    "You feel something watching you..."
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+            
+            if (areaId === 'darkForest' && !gameState.flags.enteredForest) {
+                gameState.flags.enteredForest = true;
+                gameState.dialogueQueue = [
+                    "You emerge into a twisted, dark forest...",
+                    "The trees seem to move when you're not looking...",
+                    "You can hear Izzy's voice echoing in the distance...",
+                    "There's a gate at the north end, but it's locked...",
+                    "Maybe there's a key hidden somewhere in this forest..."
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+        }
+        
+        // Check for interactions
+        function checkInteractions() {
+            const map = maps[gameState.currentArea];
+            const player = gameState.player;
+            const interactRange = 30;
+            
+            let nearInteraction = false;
+            
+            map.npcs.forEach(npc => {
+                const npcX = npc.x * map.tileSize;
+                const npcY = npc.y * map.tileSize;
+                
+                if (Math.abs(player.x - npcX) < interactRange &&
+                    Math.abs(player.y - npcY) < interactRange) {
+                    nearInteraction = true;
+                    if (gameState.keys.interact) {
+                        interactWithNPC(npc);
+                    }
+                }
+            });
+            
+            map.objects.forEach(obj => {
+                const objX = obj.x * map.tileSize;
+                const objY = obj.y * map.tileSize;
+                
+                if (Math.abs(player.x - objX) < interactRange &&
+                    Math.abs(player.y - objY) < interactRange) {
+                    nearInteraction = true;
+                    if (gameState.keys.interact) {
+                        interactWithObject(obj);
+                    }
+                }
+            });
+            
+            const prompt = document.getElementById('interactionPrompt');
+            if (nearInteraction && !gameState.inDialogue) {
+                prompt.classList.add('active');
+            } else {
+                prompt.classList.remove('active');
+            }
+        }
+        
+        // Interact with NPC
+        function interactWithNPC(npc) {
+            gameState.keys.interact = false;
+            
+            if (npc.interactionType === 'izzy') {
+                gameState.flags.heardIzzyScream = true;
+                gameState.dialogueQueue = [...npc.dialogue];
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (npc.interactionType === 'bekah') {
+                if (!gameState.flags.metBekah) {
+                    gameState.flags.metBekah = true;
+                    gameState.party.push({...bekahStats});
+                    gameState.dialogueQueue = [...npc.dialogue];
+                } else {
+                    gameState.dialogueQueue = [
+                        "BEKAH: We need to find Izzy!",
+                        "BEKAH: Let me know if you need help in battle!"
+                    ];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
+            }
+        }
+        
+        // Interact with object
+        function interactWithObject(obj) {
+            gameState.keys.interact = false;
+            
+            if (obj.interactionType === 'portal') {
+                gameState.dialogueQueue = [
+                    "The portal swirls with dark energy...",
+                    "You can hear Izzy's voice echoing from within...",
+                    "This must be the entrance to the Dark Wonderland Forest."
+                ];
+                if (gameState.dialogueQueue.length > 0) {
+                    gameState.dialogueQueue.push(null);
+                    gameState.pendingExit = {
+                        targetArea: 'darkForest',
+                        targetX: 25,
+                        targetY: 38
+                    };
+                }
+            } else if (obj.interactionType === 'returnPortal') {
+                gameState.dialogueQueue = [
+                    "A portal back to the closet.",
+                    "Are you sure you want to go back?"
+                ];
+                gameState.dialogueQueue.push(null);
+                gameState.pendingExit = {
+                    targetArea: 'closet',
+                    targetX: 14,
+                    targetY: 14
+                };
+            } else if (obj.interactionType === 'note') {
+                gameState.dialogueQueue = [
+                    "You find a torn note...",
+                    "\"The key is hidden where the mushrooms glow...\"",
+                    "You should look for glowing mushrooms!"
+                ];
+            } else if (obj.interactionType === 'forestKey') {
+                if (!hasItem('forestKey')) {
+                    gameState.flags.foundForestKey = true;
+                    addItem('forestKey');
+                    gameState.dialogueQueue = [
+                        "You found the Forest Key!",
+                        "Added to Key Items!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        "You already have the Forest Key."
+                    ];
+                }
+            } else if (obj.interactionType === 'gate') {
+                if (gameState.flags.foundForestKey || hasItem('forestKey')) {
+                    gameState.flags.openedForestGate = true;
+                    gameState.dialogueQueue = [
+                        "You use the Forest Key...",
+                        "The gate creaks open!",
+                        "The path to the graveyard is clear!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        "The gate is locked.",
+                        "You need to find the key..."
+                    ];
+                }
+            } else if (obj.itemDrop) {
+                if (!hasItem(obj.itemDrop)) {
+                    addItem(obj.itemDrop);
+                    gameState.dialogueQueue = [
+                        `You found: ${items[obj.itemDrop].name}!`,
+                        items[obj.itemDrop].description,
+                        "Added to inventory!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        `${obj.name}: ${obj.description}`
+                    ];
+                }
+            } else {
+                gameState.dialogueQueue = [`${obj.name}: ${obj.description}`];
+            }
+            
+            showDialogue(gameState.dialogueQueue.shift());
+        }
+        
+        // Render game
+        function renderGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const map = maps[gameState.currentArea];
+            
+            ctx.fillStyle = map.backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if (map.collisionMap[y][x] === 0) {
+                        drawFloorTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.floorColor);
+                    }
+                }
+            }
+            
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if (map.collisionMap[y][x] === 1) {
+                        if (gameState.currentArea === 'darkForest') {
+                            drawTreeTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                        } else {
+                            drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
+                        }
+                    }
+                }
+            }
+            
+            map.objects.forEach(obj => {
+                drawObject(ctx, obj, map.tileSize);
+            });
+            
+            map.npcs.forEach(npc => {
+                drawNPC(ctx, npc, map.tileSize);
+            });
+            
+            drawPlayer(ctx);
+        }
+        
+        // Draw floor tile
+        function drawFloorTile(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
+        }
+        
+        // Draw wall tile
+        function drawWallTile(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, size, size);
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, size, size);
+            ctx.beginPath();
+            ctx.moveTo(x, y + size/2);
+            ctx.lineTo(x + size, y + size/2);
+            ctx.stroke();
+        }
+        
+        // Draw tree tile
+        function drawTreeTile(ctx, x, y, size) {
+            ctx.fillStyle = '#0a2a0a';
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = '#1a4a1a';
+            ctx.beginPath();
+            ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#0a3a0a';
+            ctx.beginPath();
+            ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw objects
+        function drawObject(ctx, obj, tileSize) {
+            const x = obj.x * tileSize;
+            const y = obj.y * tileSize;
+            
+            switch(obj.type) {
+                case 'bed':
+                    ctx.fillStyle = '#4169E1';
+                    ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x + 5, y + 5, tileSize * 2, tileSize);
+                    break;
+                case 'desk':
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(x, y, tileSize * 2, tileSize);
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y + tileSize, tileSize * 2, tileSize/2);
+                    break;
+                case 'bookshelf':
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y, tileSize, tileSize * 3);
+                    for (let i = 0; i < 3; i++) {
+                        ctx.fillStyle = ['#FF0000', '#00FF00', '#0000FF'][i];
+                        ctx.fillRect(x + 2, y + i * tileSize + 2, tileSize - 4, tileSize - 4);
+                    }
+                    break;
+                case 'clothes':
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = '#FF1493';
+                    ctx.fillRect(x + 5, y + 5, tileSize - 10, tileSize - 10);
+                    break;
+                case 'boxes':
+                    ctx.fillStyle = '#8B7355';
+                    ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+                    ctx.strokeStyle = '#654321';
+                    ctx.strokeRect(x, y, tileSize * 2, tileSize * 2);
+                    break;
+                case 'portal':
+                    const time = Date.now() / 1000;
+                    const pulse = Math.sin(time * 3) * 0.3 + 0.7;
+                    ctx.fillStyle = `rgba(255, 0, 255, ${pulse})`;
+                    ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+                    ctx.fillStyle = `rgba(0, 255, 255, ${pulse * 0.5})`;
+                    ctx.fillRect(x + 5, y + 5, tileSize * 2 - 10, tileSize * 2 - 10);
+                    break;
+                case 'tree':
+                    ctx.fillStyle = '#1a4a1a';
+                    ctx.beginPath();
+                    ctx.arc(x + tileSize/2, y + tileSize/2, tileSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'mushroom':
+                    ctx.fillStyle = '#8B008B';
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.beginPath();
+                    ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'note':
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.strokeStyle = '#000000';
+                    ctx.strokeRect(x, y, tileSize, tileSize);
+                    break;
+                case 'key':
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(x + 5, y + 8, 10, 4);
+                    ctx.fillRect(x + 12, y + 5, 3, 10);
+                    break;
+                case 'gate':
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i * tileSize, y);
+                        ctx.lineTo(x + i * tileSize, y + tileSize * 2);
+                        ctx.stroke();
+                    }
+                    break;
+            }
+        }
+        
+        // Draw NPCs
+        function drawNPC(ctx, npc, tileSize) {
+            const x = npc.x * tileSize;
+            const y = npc.y * tileSize;
+            
+            if (npc.sprite === 'bekah') {
+                ctx.fillStyle = '#FF69B4';
+                ctx.fillRect(x, y, tileSize, tileSize * 0.8);
+                ctx.fillStyle = '#FFC0CB';
+                ctx.fillRect(x + 3, y - 3, tileSize - 6, tileSize - 6);
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x + 3, y - 6, tileSize - 6, 5);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 3, 3, 3);
+                ctx.fillRect(x + 12, y + 3, 3, 3);
+            } else {
+                ctx.fillStyle = '#FFC0CB';
+                ctx.fillRect(x, y, tileSize, tileSize);
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x, y, tileSize, tileSize/3);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
+            }
+        }
+        
+        // Draw player
+        function drawPlayer(ctx) {
+            const player = gameState.player;
+            const tileSize = maps[gameState.currentArea].tileSize;
+            const partyLeader = gameState.party[0];
+            
+            ctx.fillStyle = partyLeader.shirtColor;
+            ctx.fillRect(player.x, player.y, tileSize, tileSize);
+            ctx.fillStyle = partyLeader.skinTone;
+            ctx.fillRect(player.x + 3, player.y - 5, tileSize - 6, tileSize - 6);
+            ctx.fillStyle = partyLeader.hairColor;
+            ctx.fillRect(player.x + 3, player.y - 8, tileSize - 6, 5);
+            ctx.fillStyle = '#000000';
+            if (player.direction === 'down') {
+                ctx.fillRect(player.x + 5, player.y + 3, 3, 3);
+                ctx.fillRect(player.x + 12, player.y + 3, 3, 3);
+            } else {
+                ctx.fillRect(player.x + 5, player.y + 2, 3, 3);
+                ctx.fillRect(player.x + 12, player.y + 2, 3, 3);
+            }
+            ctx.fillStyle = partyLeader.pantsColor;
+            ctx.fillRect(player.x + 3, player.y + tileSize - 5, 5, 5);
+            ctx.fillRect(player.x + 12, player.y + tileSize - 5, 5, 5);
+        }
+        
+        // Update HUD
+        function updateHUD() {
+            const partyLeader = gameState.party[0];
+            document.getElementById('hudName').textContent = partyLeader.name;
+            document.getElementById('hudLevel').textContent = partyLeader.level;
+            document.getElementById('hudHP').textContent = `${partyLeader.hp}/${partyLeader.maxHp}`;
+            document.getElementById('hudPP').textContent = `${partyLeader.pp}/${partyLeader.maxPp}`;
+            document.getElementById('hudEXP').textContent = partyLeader.exp;
+            document.getElementById('hudMoney').textContent = partyLeader.money || 0;
+            document.getElementById('hudLocation').textContent = getLocationName(gameState.currentArea);
+        }
+        
+        // Get location name
+        function getLocationName(areaId) {
+            const locations = {
+                'room303': 'Room 303',
+                'closet': 'The Closet',
+                'darkForest': 'Dark Wonderland Forest',
+                'graveyard': 'The Graveyard',
+                'village': 'The Village',
+                'upperVillage': 'Upper Village',
+                'castleWalls': 'Castle Walls',
+                'castle': 'The Castle'
+            };
+            return locations[areaId] || 'Unknown';
+        }
+        
+        // Dialogue system
+        function showDialogue(text) {
+            gameState.inDialogue = true;
+            document.getElementById('dialogueText').textContent = text;
+            document.getElementById('dialogueBox').classList.add('active');
+        }
+        
+        function closeDialogue() {
+            gameState.inDialogue = false;
+            document.getElementById('dialogueBox').classList.remove('active');
+            
+            if (gameState.dialogueQueue.length > 0) {
+                const nextDialogue = gameState.dialogueQueue.shift();
+                if (nextDialogue === null && gameState.pendingExit) {
+                    const exit = gameState.pendingExit;
+                    gameState.pendingExit = null;
+                    transitionArea(exit.targetArea, exit.targetX, exit.targetY);
+                } else if (nextDialogue) {
+                    setTimeout(() => showDialogue(nextDialogue), 500);
+                }
+            }
+        }
+        
+        // Opening scene
+        function startOpeningScene() {
+            const char = gameState.party[0];
+            
+            gameState.dialogueQueue = [
+                `${char.name}, you're in your dorm room at John Neumaier Hall.`,
+                "It's a quiet evening... or so you thought.",
+                "Suddenly, you hear a violent crash from the closet.",
+                "IZZY SCREAMS!",
+                "Something is terribly wrong...",
+                "You need to investigate the closet on the right side of the room!"
+            ];
+            
+            showDialogue(gameState.dialogueQueue.shift());
+        }
+        
+        // Menu functions
+        function toggleMenu() {
+            const menu = document.getElementById('gameMenu');
+            menu.classList.toggle('active');
+            gameState.paused = menu.classList.contains('active');
+        }
+        
+        function showStatus() {
+            console.log('Status screen coming soon!');
+        }
+        
+        function saveGame() {
+            localStorage.setItem('johnNeumaierSave', JSON.stringify(gameState));
+            showCombatMessage('Game saved!');
+        }
+        
+        function returnToTitle() {
+            if (confirm('Return to title screen?')) {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'arrowup':
+                case 'w':
+                    gameState.keys.up = true;
+                    e.preventDefault();
+                    break;
+                case 'arrowdown':
+                case 's':
+                    gameState.keys.down = true;
+                    e.preventDefault();
+                    break;
+                case 'arrowleft':
+                case 'a':
+                    gameState.keys.left = true;
+                    e.preventDefault();
+                    break;
+                case 'arrowright':
+                case 'd':
+                    gameState.keys.right = true;
+                    e.preventDefault();
+                    break;
+            }
+            
+            if (e.key.toLowerCase() === 'e') {
+                gameState.keys.interact = true;
+            }
+            
+            if (e.key === ' ' && gameState.inDialogue) {
+                e.preventDefault();
+                if (gameState.dialogueQueue.length > 0) {
+                    showDialogue(gameState.dialogueQueue.shift());
+                } else {
+                    closeDialogue();
+                }
+            }
+            
+            if (e.key === 'Escape' && !gameState.inDialogue && !gameState.combat.active) {
+                if (document.getElementById('inventoryScreen').classList.contains('active')) {
+                    closeInventory();
+                } else {
+                    toggleMenu();
+                }
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'arrowup':
+                case 'w':
+                    gameState.keys.up = false;
+                    break;
+                case 'arrowdown':
+                case 's':
+                    gameState.keys.down = false;
+                    break;
+                case 'arrowleft':
+                case 'a':
+                    gameState.keys.left = false;
+                    break;
+                case 'arrowright':
+                case 'd':
+                    gameState.keys.right = false;
+                    break;
+                case 'e':
+                    gameState.keys.interact = false;
+                    break;
+            }
+        });
+        
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
