@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - Character Creation</title>
+    <title>JN Wonderland - Branching Paths</title>
     <style>
-        /* ========== GLOBAL PIXEL STYLE ========== */
+        /* ========== IMPORTS & RESET ========== */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
         * {
@@ -22,566 +22,679 @@
             min-height: 100vh;
             font-family: 'Press Start 2P', monospace;
             image-rendering: pixelated;
+            overflow: hidden;
         }
 
-        /* ========== MAIN GAME CONTAINER ========== */
-        .game-container {
+        /* ========== GAME CONTAINER ========== */
+        #gameContainer {
+            position: relative;
+            width: 960px;
+            height: 680px;
             background: #1a1a2e;
             border: 6px solid #4a4a6a;
-            padding: 30px;
-            max-width: 900px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(100, 50, 200, 0.3);
+            transition: background 1s ease, border-color 1s ease;
+        }
+
+        /* ========== COLOR THEMES ========== */
+        .theme-normal { background: #1a1a2e; border-color: #4a4a6a; }
+        .theme-wonder { background: #1a0a2e; border-color: #6a3a8a; }
+        .theme-creepy { background: #0a0a0a; border-color: #3a1a1a; }
+        .theme-queen { background: #2a0a0a; border-color: #8a2a2a; box-shadow: 0 0 60px rgba(200, 50, 50, 0.3); }
+        .theme-ian { background: #0a1a0a; border-color: #4a7a2a; }
+        .theme-safe { background: #0a1a2a; border-color: #2a4a7a; }
+        .theme-dark { background: #050505; border-color: #1a1a1a; }
+        .theme-gold { background: #1a1a00; border-color: #8a8a2a; box-shadow: 0 0 60px rgba(200, 200, 50, 0.3); }
+        .theme-void { background: #000005; border-color: #1a0a2a; }
+        .theme-escape { background: #0a1a0a; border-color: #2a8a4a; box-shadow: 0 0 60px rgba(50, 200, 100, 0.3); }
+
+        /* ========== SCREENS ========== */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            box-shadow: 0 0 40px rgba(100, 50, 200, 0.3);
-            position: relative;
-        }
-
-        /* ========== HEADER ========== */
-        .game-title {
-            text-align: center;
-            color: #ff6b6b;
-            font-size: 20px;
-            letter-spacing: 4px;
-            text-shadow: 4px 4px 0 #2d2d4a;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 4px solid #4a4a6a;
-        }
-
-        .game-title span {
-            color: #ffd93d;
-        }
-
-        /* ========== MAIN LAYOUT ========== */
-        .stat-layout {
-            display: flex;
-            flex-direction: row;
-            gap: 30px;
-            flex-wrap: wrap;
+            height: 100%;
+            display: none;
+            padding: 25px;
+            flex-direction: column;
             justify-content: center;
-        }
-
-        /* ========== LEFT: CHARACTER DISPLAY ========== */
-        .character-display {
-            flex: 1;
-            min-width: 200px;
-            text-align: center;
-            background: #12121f;
-            border: 4px solid #3a3a5a;
-            padding: 20px;
-        }
-
-        .character-pixel {
-            width: 160px;
-            height: 200px;
-            margin: 0 auto 15px;
-            background: #1a1a2e;
-            border: 3px solid #4a4a6a;
-            position: relative;
-            image-rendering: pixelated;
-        }
-
-        /* ========== PIXEL CHARACTER SPRITE ========== */
-        /* Base body - changes with customization */
-        .pixel-sprite {
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-            gap: 1px;
-            padding: 4px;
-        }
-
-        .pixel {
-            width: 100%;
-            height: 100%;
-            background: transparent;
-        }
-
-        /* Skin tones */
-        .skin-light { background: #f5d0b8; }
-        .skin-medium { background: #d4a574; }
-        .skin-dark { background: #8d6b4b; }
-        .skin-olive { background: #c4a882; }
-
-        /* Hair colors */
-        .hair-blonde { background: #f5d742; }
-        .hair-brown { background: #8b6b4a; }
-        .hair-black { background: #2a2a2a; }
-        .hair-red { background: #c0392b; }
-        .hair-pink { background: #ff6b9d; }
-
-        /* Outfit colors */
-        .outfit-hoodie { background: #4a7a9c; }
-        .outfit-sweater { background: #8b5a2b; }
-        .outfit-jacket { background: #2d3d4a; }
-        .outfit-tshirt { background: #c0392b; }
-
-        /* Eyes (fixed) */
-        .eye-white { background: #f0f0f0; }
-        .eye-pupil { background: #1a1a2e; }
-
-        /* Mouth (fixed) */
-        .mouth { background: #8b6b4a; }
-
-        /* ========== CHARACTER NAME ========== */
-        .character-name {
-            color: #d4d4f0;
-            font-size: 12px;
-            margin-top: 10px;
-            background: #0a0a15;
-            padding: 8px;
-            border: 2px solid #3a3a5a;
-        }
-
-        .character-name input {
-            background: transparent;
-            border: none;
-            color: #ffd93d;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 12px;
-            text-align: center;
-            width: 120px;
-            outline: none;
-        }
-
-        .character-name input::placeholder {
-            color: #4a4a6a;
-        }
-
-        /* ========== RIGHT: STATS ========== */
-        .stats-panel {
-            flex: 1;
-            min-width: 250px;
-            background: #12121f;
-            border: 4px solid #3a3a5a;
-            padding: 20px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 2px solid #1a1a2e;
-            color: #c8c8e8;
-            font-size: 11px;
-        }
-
-        .stat-row .label {
-            color: #8888aa;
-        }
-
-        .stat-row .value {
-            color: #ffd93d;
-        }
-
-        .stat-row .value.hp {
-            color: #ff6b6b;
-        }
-        .stat-row .value.wonder {
-            color: #a29bfe;
-        }
-
-        /* ========== CUSTOMIZATION CONTROLS ========== */
-        .customization {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 4px solid #2a2a4a;
-        }
-
-        .custom-row {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin: 6px 0;
-            color: #8888aa;
-            font-size: 9px;
+            z-index: 2;
         }
 
-        .custom-row .controls {
+        .screen.active {
             display: flex;
-            gap: 8px;
         }
 
-        .custom-row .controls button {
+        /* ========== TEXT BOX ========== */
+        .text-box {
+            background: rgba(10, 10, 21, 0.92);
+            border: 4px solid #3a3a5a;
+            padding: 20px 25px;
+            color: #d4d4f0;
+            font-size: 11px;
+            line-height: 2.2;
+            width: 100%;
+            max-width: 750px;
+            min-height: 140px;
+            position: relative;
+            margin-bottom: 15px;
+            backdrop-filter: blur(4px);
+            transition: all 0.5s ease;
+        }
+
+        .text-box .speaker {
+            color: #ffd93d;
+            font-size: 9px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .text-box .speaker.ian { color: #8aba4a; }
+        .text-box .speaker.queen { color: #ff4a4a; }
+        .text-box .speaker.resident { color: #6ab4ff; }
+        .text-box .speaker.narrator { color: #8888cc; }
+        .text-box .speaker.creepy { color: #aa4a4a; }
+        .text-box .speaker.ending { color: #ffd93d; font-size: 14px; }
+        .text-box .speaker.escape { color: #4aff8a; }
+
+        .text-box .dialogue {
+            color: #e8e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .text-box .dialogue .highlight { color: #ffd93d; }
+        .text-box .dialogue .creepy { color: #ff6b6b; }
+        .text-box .dialogue .wonder { color: #a29bfe; }
+        .text-box .dialogue .good { color: #4aff8a; }
+        .text-box .dialogue .bad { color: #ff4a4a; }
+
+        .text-box .continue {
+            color: #4a4a6a;
+            font-size: 8px;
+            text-align: right;
+            margin-top: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ========== BUTTONS ========== */
+        .game-btn {
             background: #2a2a4a;
-            border: 2px solid #4a4a6a;
+            border: 3px solid #4a4a6a;
             color: #d4d4f0;
             font-family: 'Press Start 2P', monospace;
-            font-size: 12px;
-            padding: 4px 12px;
+            font-size: 10px;
+            padding: 10px 22px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            margin: 4px;
+            position: relative;
+            overflow: hidden;
+            min-width: 80px;
         }
 
-        .custom-row .controls button:hover {
+        .game-btn:hover {
             background: #4a4a7a;
             border-color: #ffd93d;
+            color: #ffd93d;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
         }
 
-        .custom-row .controls button:active {
+        .game-btn:active {
             transform: scale(0.95);
         }
 
-        .custom-row .current-value {
-            color: #ffd93d;
-            font-size: 9px;
-            min-width: 60px;
-            text-align: center;
+        .game-btn.primary {
+            background: #4a2a4a;
+            border-color: #8a4a6a;
+            color: #ff9d8a;
         }
 
-        /* ========== START BUTTON ========== */
-        .start-button {
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-            padding: 16px;
+        .game-btn.primary:hover {
+            background: #6a3a5a;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+        }
+
+        .game-btn.success {
+            background: #2a4a2a;
+            border-color: #4a8a4a;
+            color: #8aff8a;
+        }
+
+        .game-btn.success:hover {
+            background: #3a6a3a;
+            border-color: #6aff6a;
+            box-shadow: 0 0 20px rgba(74, 255, 74, 0.2);
+        }
+
+        .game-btn.danger {
+            background: #4a2a2a;
+            border-color: #8a4a4a;
+            color: #ff8a8a;
+        }
+
+        .game-btn.danger:hover {
+            background: #6a3a3a;
+            border-color: #ff6a6a;
+            box-shadow: 0 0 20px rgba(255, 74, 74, 0.2);
+        }
+
+        .game-btn.wonder {
             background: #2a2a4a;
-            border: 4px solid #4a4a6a;
+            border-color: #6a4a8a;
+            color: #c8a8ff;
+        }
+
+        .game-btn.wonder:hover {
+            background: #4a3a6a;
+            border-color: #a87aff;
+            box-shadow: 0 0 20px rgba(168, 122, 255, 0.2);
+        }
+
+        .game-btn.gold {
+            background: #2a2a00;
+            border-color: #8a8a2a;
             color: #ffd93d;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-shadow: 2px 2px 0 #1a1a2e;
-            letter-spacing: 2px;
         }
 
-        .start-button:hover {
-            background: #4a4a7a;
+        .game-btn.gold:hover {
+            background: #4a4a00;
             border-color: #ffd93d;
-            box-shadow: 0 0 30px rgba(255, 217, 61, 0.2);
+            box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
         }
 
-        .start-button:active {
-            transform: scale(0.98);
+        .game-btn.void {
+            background: #0a0a1a;
+            border-color: #3a2a4a;
+            color: #6a4a8a;
         }
 
-        /* ========== WONDERLAND CORRUPTION EFFECT ========== */
-        .glitch-text {
-            animation: glitch 3s infinite;
+        .game-btn.void:hover {
+            background: #1a1a2a;
+            border-color: #8a6aaa;
+            color: #a87aff;
         }
 
-        @keyframes glitch {
-            0%, 90%, 100% { opacity: 1; transform: translate(0); }
-            92% { opacity: 0.8; transform: translate(-2px, 1px); }
-            94% { opacity: 1; transform: translate(2px, -1px); }
-            96% { opacity: 0.9; transform: translate(-1px, 2px); }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+            width: 100%;
+            max-width: 750px;
         }
+
+        .btn-group.vertical {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-group .game-btn {
+            min-width: 140px;
+        }
+
+        /* ========== ENDING STYLES ========== */
+        .ending-banner {
+            font-size: 24px;
+            padding: 15px 30px;
+            border: 6px solid #ffd93d;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffd93d;
+            text-align: center;
+            margin: 10px 0;
+            animation: pulse 2s infinite;
+        }
+
+        .ending-banner.good { border-color: #4aff8a; color: #4aff8a; }
+        .ending-banner.bad { border-color: #ff4a4a; color: #ff4a4a; }
+        .ending-banner.neutral { border-color: #ffd93d; color: #ffd93d; }
+
+        /* ========== STATS BAR ========== */
+        .stats-bar {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            background: rgba(10, 10, 21, 0.9);
+            border: 2px solid #2a2a4a;
+            padding: 10px 15px;
+            font-size: 8px;
+            color: #8888aa;
+            text-align: right;
+            line-height: 1.8;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .stats-bar .hp { color: #ff6b6b; }
+        .stats-bar .wonder { color: #a29bfe; }
+        .stats-bar .path { color: #ffd93d; }
 
         /* ========== RESPONSIVE ========== */
-        @media (max-width: 700px) {
-            .game-container { padding: 15px; }
-            .stat-layout { flex-direction: column; align-items: center; }
-            .character-display, .stats-panel { width: 100%; }
-            .game-title { font-size: 14px; }
+        @media (max-width: 1000px) {
+            #gameContainer { width: 95vw; height: 90vh; }
+            .text-box { font-size: 9px; padding: 12px 15px; min-height: 100px; }
+            .game-btn { font-size: 8px; padding: 6px 12px; min-width: 60px; }
+            .stats-bar { font-size: 7px; padding: 6px 10px; }
+            .ending-banner { font-size: 18px; padding: 10px 20px; }
+        }
+
+        @media (max-width: 600px) {
+            .text-box { font-size: 7px; padding: 10px 12px; min-height: 80px; }
+            .game-btn { font-size: 7px; padding: 5px 10px; min-width: 50px; }
+            .stats-bar { font-size: 6px; padding: 4px 8px; bottom: 5px; right: 5px; }
+            .ending-banner { font-size: 14px; padding: 8px 15px; }
+            .btn-group .game-btn { min-width: 80px; }
+        }
+
+        /* ========== AMBIENT EFFECTS ========== */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            animation: glitchFlash 10s infinite;
+        }
+
+        @keyframes glitchFlash {
+            0%, 90%, 100% { opacity: 0; }
+            92% { opacity: 0.1; background: rgba(255, 0, 255, 0.05); }
+            94% { opacity: 0; }
+            96% { opacity: 0.05; background: rgba(0, 255, 255, 0.05); }
         }
     </style>
 </head>
 <body>
 
-    <div class="game-container">
-        <!-- ===== TITLE ===== -->
-        <div class="game-title">
-            ⚠️ JOHN <span>NEUMAIER</span> WONDERLAND ⚠️
-            <div style="font-size: 9px; color: #6666aa; margin-top: 6px; letter-spacing: 0;">
-                ✦ room 303 is waiting ✦
-            </div>
-        </div>
+    <!-- ============================================================ -->
+    <!-- GAME CONTAINER -->
+    <!-- ============================================================ -->
+    <div id="gameContainer" class="theme-normal">
+        <div class="glitch-overlay"></div>
 
-        <!-- ===== MAIN LAYOUT ===== -->
-        <div class="stat-layout">
-
-            <!-- ===== LEFT: CHARACTER ===== -->
-            <div class="character-display">
-                <div class="character-pixel" id="characterSprite">
-                    <!-- Sprite built by JavaScript -->
+        <!-- ========== SCREEN 1: ROOM 303 ========== -->
+        <div id="screen-room303" class="screen active">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 12px;">
+                    ⚠️ ROOM 303 ⚠️
                 </div>
-
-                <div class="character-name">
-                    ▶ NAME: 
-                    <input type="text" id="playerName" placeholder="PROTAGONIST" maxlength="12">
-                </div>
-
-                <!-- Customization Controls -->
-                <div class="customization">
-                    <div class="custom-row">
-                        <span>HAIR</span>
-                        <div class="controls">
-                            <button onclick="changeHair(-1)">◀</button>
-                            <span class="current-value" id="hairLabel">BLONDE</span>
-                            <button onclick="changeHair(1)">▶</button>
-                        </div>
+                <div class="text-box">
+                    <div class="speaker narrator">🎮 NARRATOR</div>
+                    <div class="dialogue" id="room303Text">
+                        You walk down the familiar hallway of the third floor.<br>
+                        The carpet is worn. The lights hum softly.<br>
+                        Then you hear it... <span class="creepy">screaming</span> from Room 303.
                     </div>
-                    <div class="custom-row">
-                        <span>SKIN</span>
-                        <div class="controls">
-                            <button onclick="changeSkin(-1)">◀</button>
-                            <span class="current-value" id="skinLabel">LIGHT</span>
-                            <button onclick="changeSkin(1)">▶</button>
-                        </div>
+                    <div class="continue" id="room303Continue">▼ Press SPACE or click Continue</div>
+                </div>
+                <div id="room303Choices" style="display: none; width: 100%;">
+                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 12px;">
+                        The door is slightly ajar. A strange <span class="highlight">GLOW</span> spills out.<br>
+                        <span style="color: #4a4a6a; font-size: 7px;">✦ Your choices will determine your fate ✦</span>
                     </div>
-                    <div class="custom-row">
-                        <span>OUTFIT</span>
-                        <div class="controls">
-                            <button onclick="changeOutfit(-1)">◀</button>
-                            <span class="current-value" id="outfitLabel">HOODIE</span>
-                            <button onclick="changeOutfit(1)">▶</button>
-                        </div>
+                    <div class="btn-group">
+                        <button class="game-btn primary" onclick="branchChoice('enter')">🚪 ENTER</button>
+                        <button class="game-btn" onclick="branchChoice('knock')">👊 KNOCK</button>
+                        <button class="game-btn wonder" onclick="branchChoice('sneak')">👀 SNEAK</button>
                     </div>
-                </div>
-            </div>
-
-            <!-- ===== RIGHT: STATS ===== -->
-            <div class="stats-panel">
-                <div class="stat-row">
-                    <span class="label">❤️ HP</span>
-                    <span class="value hp" id="hpStat">20 / 20</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">⚔️ ATK</span>
-                    <span class="value" id="atkStat">5</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">🛡️ DEF</span>
-                    <span class="value" id="defStat">3</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">⭐ LVL</span>
-                    <span class="value" id="lvlStat">1</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">✨ EXP</span>
-                    <span class="value" id="expStat">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">🌀 WONDER</span>
-                    <span class="value wonder" id="wonderStat">0%</span>
-                </div>
-
-                <!-- Subtitle / Flavor Text -->
-                <div style="margin-top: 20px; font-size: 8px; color: #555577; text-align: center; line-height: 1.8; border-top: 2px solid #1a1a2e; padding-top: 15px;">
-                    <span class="glitch-text">✦ the walls are breathing ✦</span><br>
-                    <span style="color: #3a3a5a;">third floor • room 303 • JN hall</span>
                 </div>
             </div>
         </div>
 
-        <!-- ===== START BUTTON ===== -->
-        <button class="start-button" id="startGameBtn">
-            ▶ ENTER ROOM 303 ◀
-        </button>
+        <!-- ========== SCREEN 2: RESIDENTS ========== -->
+        <div id="screen-residents" class="screen theme-wonder">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div class="text-box" style="border-color: #4a6a8a;">
+                    <div class="speaker resident">👩 RESIDENTS</div>
+                    <div class="dialogue" id="residentsText">
+                        Two residents are frozen in fear, staring at the closet.<br>
+                        <span style="color: #ff6b6b;">"The closet... it GLOWED!"</span>
+                    </div>
+                </div>
+                <div class="btn-group" id="residentsButtons">
+                    <button class="game-btn primary" onclick="branchChoice('closet')">🌀 ENTER CLOSET</button>
+                    <button class="game-btn" onclick="branchChoice('ask')">💬 ASK QUESTIONS</button>
+                    <button class="game-btn" onclick="branchChoice('comfort')">🤗 COMFORT THEM</button>
+                </div>
+                <div id="residentsResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="min-height: 80px; border-color: #6a4a8a;">
+                        <div class="dialogue" id="residentsResultText"></div>
+                    </div>
+                    <button class="game-btn primary" onclick="branchChoice('closet')">🌀 ENTER CLOSET</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SCREEN 3: NARNIA WALK ========== -->
+        <div id="screen-narnia" class="screen theme-wonder">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 10px; color: #6a4a8a; margin-bottom: 10px;">✦✦✦</div>
+                <div class="text-box" style="border-color: #6a4a8a;">
+                    <div class="speaker creepy">🌀 THE CLOSET</div>
+                    <div class="dialogue" id="narniaText">
+                        You step into the closet. There's no back wall.<br>
+                        Just a long, dark tunnel stretching into infinity...
+                    </div>
+                </div>
+                <div id="narniaChoices" style="display: none; width: 100%;">
+                    <div class="btn-group">
+                        <button class="game-btn primary" onclick="branchChoice('walk')">🚶 WALK FORWARD</button>
+                        <button class="game-btn wonder" onclick="branchChoice('wait')">⏳ WAIT AND WATCH</button>
+                        <button class="game-btn" onclick="branchChoice('run')">🏃 RUN THROUGH</button>
+                    </div>
+                </div>
+                <div id="narniaResult" style="display: none; width: 100%;">
+                    <div class="text-box" style="border-color: #6a4a8a; min-height: 80px;">
+                        <div class="dialogue" id="narniaResultText"></div>
+                    </div>
+                    <button class="game-btn primary" onclick="branchChoice('enterWonderland')">🌀 ENTER WONDERLAND</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SCREEN 4: WONDERLAND ENTRANCE ========== -->
+        <div id="screen-wonderland" class="screen theme-creepy">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 10px; color: #6a3a3a; margin-bottom: 10px;">
+                    ⚠️ JOHN NEUMAIER <span style="color: #aa4a4a;">WONDERLAND</span> ⚠️
+                </div>
+                <div class="text-box" style="background: rgba(10, 5, 5, 0.95); border-color: #5a2a2a;">
+                    <div class="speaker creepy">🏚️ THE WORN HALL</div>
+                    <div class="dialogue" id="wonderlandText">
+                        The hallway stretches <span class="creepy">infinitely</span> in both directions.<br>
+                        The walls pulse like they're breathing.<br>
+                        <span style="color: #8888aa; font-size: 8px;">✦ You feel the weight of your choices ✦</span>
+                    </div>
+                </div>
+                <div class="btn-group" id="wonderlandButtons">
+                    <button class="game-btn" onclick="branchChoice('explore')">🔍 EXPLORE</button>
+                    <button class="game-btn primary" onclick="branchChoice('fightIan')">💪 FIGHT IAN</button>
+                    <button class="game-btn wonder" onclick="branchChoice('sneakPast')">👀 SNEAK PAST</button>
+                    <button class="game-btn" onclick="branchChoice('flee')">🏃 FLEE</button>
+                </div>
+                <div id="wonderlandResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="background: rgba(10, 5, 5, 0.95); border-color: #3a2a2a; min-height: 80px;">
+                        <div class="dialogue" id="wonderlandResultText"></div>
+                    </div>
+                    <div id="wonderlandNext" style="display: none;">
+                        <button class="game-btn primary" onclick="branchChoice('continue')">▶ CONTINUE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SCREEN 5: IAN ENCOUNTER ========== -->
+        <div id="screen-ian" class="screen theme-ian">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 10px; color: #6a8a3a; margin-bottom: 10px;">💪 <span style="color: #8aba4a;">MUSCLE MAN IAN</span></div>
+                <div class="text-box" style="background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a;">
+                    <div class="speaker ian">💪 IAN</div>
+                    <div class="dialogue" id="ianText">
+                        A massive figure blocks your path.<br>
+                        His skin is <span style="color: #8aba4a;">GREEN</span>. His muscles bulge impossibly.<br>
+                        <span style="color: #8aba4a;">"YO! You're not supposed to be here!"</span>
+                    </div>
+                </div>
+                <div class="btn-group" id="ianButtons">
+                    <button class="game-btn danger" onclick="branchChoice('ianFight')">⚔️ FIGHT</button>
+                    <button class="game-btn" onclick="branchChoice('ianTalk')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="branchChoice('ianPrank')">🎭 PRANK</button>
+                    <button class="game-btn success" onclick="branchChoice('ianSpare')">🕊️ SPARE</button>
+                    <button class="game-btn" onclick="branchChoice('ianFlee')">🏃 FLEE</button>
+                </div>
+                <div id="ianResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a; min-height: 80px;">
+                        <div class="dialogue" id="ianResultText"></div>
+                    </div>
+                    <div id="ianNext" style="display: none;">
+                        <button class="game-btn success" onclick="branchChoice('ianContinue')">▶ CONTINUE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SCREEN 6: QUEEN BATTLE ========== -->
+        <div id="screen-queen" class="screen theme-queen">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 12px;">
+                    ♠️ <span style="color: #ff4a4a;">THE QUEEN OF THE DESK</span> ♠️
+                </div>
+                <div class="text-box" style="background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a;">
+                    <div class="speaker queen">👑 QUEEN RYLEE</div>
+                    <div class="dialogue" id="queenText">
+                        Behind a massive desk sits a figure of <span class="creepy">impossible presence</span>.<br>
+                        <span style="color: #ff4a4a; font-size: 12px;">"OFF WITH THEIR HOUSING!"</span>
+                    </div>
+                </div>
+                <div class="btn-group" id="queenButtons">
+                    <button class="game-btn danger" onclick="branchChoice('queenFight')">⚔️ FIGHT</button>
+                    <button class="game-btn" onclick="branchChoice('queenTalk')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="branchChoice('queenWonder')">🌀 USE WONDER</button>
+                    <button class="game-btn success" onclick="branchChoice('queenSpare')">🕊️ SPARE</button>
+                    <button class="game-btn" onclick="branchChoice('queenFlee')">🏃 FLEE</button>
+                </div>
+                <div id="queenResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a; min-height: 80px;">
+                        <div class="dialogue" id="queenResultText"></div>
+                    </div>
+                    <div id="queenNext" style="display: none;">
+                        <button class="game-btn primary" onclick="branchChoice('showEnding')">▶ VIEW ENDING</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SCREEN 7: ENDING ========== -->
+        <div id="screen-ending" class="screen">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div class="ending-banner" id="endingBanner">🏆 ENDING</div>
+                <div class="text-box" style="border-color: #ffd93d; min-height: 180px;">
+                    <div class="speaker ending" id="endingTitle">🎬 THE END</div>
+                    <div class="dialogue" id="endingText" style="font-size: 12px; line-height: 2.5;"></div>
+                </div>
+                <div class="btn-group">
+                    <button class="game-btn primary" onclick="resetGame()">🔄 PLAY AGAIN</button>
+                    <button class="game-btn" onclick="window.location.href='index.html'">🏠 MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== STATS BAR ========== -->
+        <div class="stats-bar" id="statsBar">
+            <div class="hp">❤️ HP: <span id="statHp">20</span>/20</div>
+            <div class="wonder">🌀 WONDER: <span id="statWonder">0</span>%</div>
+            <div class="path">🗺️ PATH: <span id="statPath">START</span></div>
+        </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT - BRANCHING NARRATIVE ENGINE -->
+    <!-- ============================================================ -->
     <script>
         // ============================================================
-        //  CHARACTER CUSTOMIZATION SYSTEM
+        //  PLAYER STATE
         // ============================================================
 
-        // Data
-        const hairOptions = ['blonde', 'brown', 'black', 'red', 'pink'];
-        const hairLabels = ['BLONDE', 'BROWN', 'BLACK', 'RED', 'PINK'];
-        const skinOptions = ['light', 'medium', 'dark', 'olive'];
-        const skinLabels = ['LIGHT', 'MEDIUM', 'DARK', 'OLIVE'];
-        const outfitOptions = ['hoodie', 'sweater', 'jacket', 'tshirt'];
-        const outfitLabels = ['HOODIE', 'SWEATER', 'JACKET', 'T-SHIRT'];
+        let player = {
+            name: 'PROTAGONIST',
+            hp: 20,
+            maxHp: 20,
+            wonder: 0,
+            path: 'START',
+            // Flags for branching
+            hasKey: false,
+            hasNote: false,
+            hasCandy: false,
+            ianDefeated: false,
+            ianSpared: false,
+            queenDefeated: false,
+            queenSpared: false,
+            hasWonderPower: false,
+            hasMercy: false,
+            hasCourage: false,
+            hasWisdom: false,
+            // Track choices
+            choiceHistory: []
+        };
 
-        let hairIndex = 0;
-        let skinIndex = 0;
-        let outfitIndex = 0;
+        let gameOver = false;
+        let endingType = 'neutral';
 
         // ============================================================
-        //  PIXEL SPRITE BUILDER
+        //  LOAD PLAYER DATA
         // ============================================================
 
-        function buildPixelSprite(hair, skin, outfit) {
-            // 12 columns x 15 rows pixel art character
-            // This is a simplified Undertale-style sprite
-            const rows = 15;
-            const cols = 12;
-            
-            // Define which cells get which class
-            // 0 = empty, 1 = skin, 2 = hair, 3 = outfit, 4 = eye-white, 5 = pupil, 6 = mouth
-            
-            // Simplified character map (12x15 grid)
-            // Row 0-1: Hair top
-            // Row 2: Hair + forehead
-            // Row 3-4: Eyes
-            // Row 5-8: Body (outfit)
-            // Row 9-11: Legs (outfit)
-            // Row 12-14: Feet (outfit)
-            
-            const map = [
-                // r0: top hair
-                [0,0,0,2,2,2,2,2,2,0,0,0],
-                // r1: hair sides
-                [0,0,2,2,2,2,2,2,2,2,0,0],
-                // r2: hair + forehead
-                [0,2,2,1,1,1,1,1,1,2,2,0],
-                // r3: eyes row 1
-                [2,2,1,4,5,1,1,4,5,1,2,2],
-                // r4: eyes row 2 + mouth
-                [2,2,1,4,5,1,1,4,5,1,2,2],
-                // r5: upper body start
-                [0,0,3,3,3,3,3,3,3,3,0,0],
-                // r6: body
-                [0,3,3,3,3,3,3,3,3,3,3,0],
-                // r7: body
-                [0,3,3,3,3,3,3,3,3,3,3,0],
-                // r8: body
-                [0,3,3,3,3,3,3,3,3,3,3,0],
-                // r9: legs start
-                [0,0,3,3,3,3,3,3,3,3,0,0],
-                // r10: legs
-                [0,0,3,3,3,3,3,3,3,3,0,0],
-                // r11: legs
-                [0,0,3,3,3,3,3,3,3,3,0,0],
-                // r12: feet
-                [0,0,0,3,3,3,3,3,3,0,0,0],
-                // r13: feet
-                [0,0,0,3,3,3,3,3,3,0,0,0],
-                // r14: feet bottom
-                [0,0,0,3,3,3,3,3,3,0,0,0]
-            ];
-
-            // Build the HTML
-            let html = '<div class="pixel-sprite">';
-            
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cell = map[r][c];
-                    let classes = 'pixel';
-                    
-                    if (cell === 1) classes += ` skin-${skin}`;
-                    else if (cell === 2) classes += ` hair-${hair}`;
-                    else if (cell === 3) classes += ` outfit-${outfit}`;
-                    else if (cell === 4) classes += ' eye-white';
-                    else if (cell === 5) classes += ' eye-pupil';
-                    else if (cell === 6) classes += ' mouth';
-                    
-                    html += `<div class="${classes}"></div>`;
-                }
+        function loadPlayer() {
+            const saved = localStorage.getItem('jnPlayerState');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    player.name = data.name || 'PROTAGONIST';
+                } catch (e) { /* ignore */ }
             }
-            
-            html += '</div>';
-            return html;
+        }
+        loadPlayer();
+
+        // ============================================================
+        //  SCREEN MANAGEMENT
+        // ============================================================
+
+        function showScreen(screenId, theme) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screen = document.getElementById(screenId);
+            if (screen) {
+                screen.classList.add('active');
+            }
+            const container = document.getElementById('gameContainer');
+            container.className = 'theme-' + (theme || 'normal');
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('statHp').textContent = player.hp;
+            document.getElementById('statWonder').textContent = Math.min(100, player.wonder);
+            document.getElementById('statPath').textContent = player.path;
         }
 
         // ============================================================
-        //  UPDATE FUNCTIONS
+        //  BRANCHING ENGINE
         // ============================================================
 
-        function updateCharacter() {
-            const hair = hairOptions[hairIndex];
-            const skin = skinOptions[skinIndex];
-            const outfit = outfitOptions[outfitIndex];
-            
-            document.getElementById('characterSprite').innerHTML = buildPixelSprite(hair, skin, outfit);
-            
-            // Update labels
-            document.getElementById('hairLabel').textContent = hairLabels[hairIndex];
-            document.getElementById('skinLabel').textContent = skinLabels[skinIndex];
-            document.getElementById('outfitLabel').textContent = outfitLabels[outfitIndex];
-        }
+        function branchChoice(choice) {
+            // Track the choice
+            player.choiceHistory.push(choice);
+            updateStats();
 
-        function changeHair(delta) {
-            hairIndex = (hairIndex + delta + hairOptions.length) % hairOptions.length;
-            updateCharacter();
-        }
-
-        function changeSkin(delta) {
-            skinIndex = (skinIndex + delta + skinOptions.length) % skinOptions.length;
-            updateCharacter();
-        }
-
-        function changeOutfit(delta) {
-            outfitIndex = (outfitIndex + delta + outfitOptions.length) % outfitOptions.length;
-            updateCharacter();
-        }
-
-        // ============================================================
-        //  SAVE / LOAD STATE
-        // ============================================================
-
-        function getPlayerState() {
-            return {
-                name: document.getElementById('playerName').value || 'PROTAGONIST',
-                hair: hairOptions[hairIndex],
-                skin: skinOptions[skinIndex],
-                outfit: outfitOptions[outfitIndex],
-                hp: 20,
-                maxHp: 20,
-                atk: 5,
-                def: 3,
-                lvl: 1,
-                exp: 0,
-                wonder: 0
+            // Route to the appropriate handler
+            const handlers = {
+                // Room 303
+                'enter': handleEnter,
+                'knock': handleKnock,
+                'sneak': handleSneak,
+                // Residents
+                'ask': handleAsk,
+                'comfort': handleComfort,
+                'closet': handleCloset,
+                // Narnia
+                'walk': handleWalk,
+                'wait': handleWait,
+                'run': handleRun,
+                'enterWonderland': handleEnterWonderland,
+                // Wonderland
+                'explore': handleExplore,
+                'fightIan': handleFightIan,
+                'sneakPast': handleSneakPast,
+                'flee': handleFlee,
+                'continue': handleContinue,
+                // Ian
+                'ianFight': handleIanFight,
+                'ianTalk': handleIanTalk,
+                'ianPrank': handleIanPrank,
+                'ianSpare': handleIanSpare,
+                'ianFlee': handleIanFlee,
+                'ianContinue': handleIanContinue,
+                // Queen
+                'queenFight': handleQueenFight,
+                'queenTalk': handleQueenTalk,
+                'queenWonder': handleQueenWonder,
+                'queenSpare': handleQueenSpare,
+                'queenFlee': handleQueenFlee,
+                'showEnding': showEnding
             };
+
+            if (handlers[choice]) {
+                handlers[choice]();
+            } else {
+                console.warn('Unknown choice:', choice);
+            }
         }
 
         // ============================================================
-        //  START GAME
+        //  ROOM 303 HANDLERS
         // ============================================================
 
-        document.getElementById('startGameBtn').addEventListener('click', function() {
-            const state = getPlayerState();
-            
-            // Save to localStorage so we can use it on the next page
-            localStorage.setItem('jnPlayerState', JSON.stringify(state));
-            
-            // For now, alert the player info
-            alert(`
-╔═══════════════════════════════╗
-║   🚪 ENTERING ROOM 303...    ║
-╠═══════════════════════════════╣
-║ NAME: ${state.name.padEnd(12)} ║
-║ HAIR: ${state.hair.toUpperCase().padEnd(8)} ║
-║ SKIN: ${state.skin.toUpperCase().padEnd(8)} ║
-║ OUTFIT: ${state.outfit.toUpperCase().padEnd(8)} ║
-║                               ║
-║  ⚠️ THE CLOSET IS GLOWING ⚠️  ║
-╚═══════════════════════════════╝
-
-🔮 You hear screaming from Room 303...
-   The door is slightly ajar...
-
-   ✦ Welcome to John Neumaier Wonderland ✦
-            `);
-            
-            // In the next phase, we'll transition to the actual game scene
-            // For now, we'll display the opening scene in the console
-            console.log('=== JN WONDERLAND ===');
-            console.log('Player:', state.name);
-            console.log('Entering Room 303...');
-            console.log('The closet is glowing...');
-            console.log('You step through into a twisted version of JN Hall.');
-            console.log('The walls are breathing. The hallways go on forever.');
-        });
-
-        // ============================================================
-        //  INIT
-        // ============================================================
-
-        // Check if there's saved state
-        const saved = localStorage.getItem('jnPlayerState');
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                hairIndex = hairOptions.indexOf(data.hair) || 0;
-                skinIndex = skinOptions.indexOf(data.skin) || 0;
-                outfitIndex = outfitOptions.indexOf(data.outfit) || 0;
-                document.getElementById('playerName').value = data.name;
-            } catch(e) { /* ignore */ }
+        function handleEnter() {
+            player.path = 'ENTERED';
+            updateStats();
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Text').innerHTML = `
+                You push the door open.<br>
+                Two residents are frozen in fear, staring at the closet.<br>
+                <span class="highlight">✦ The closet is GLOWING ✦</span>
+            `;
+            document.getElementById('room303Continue').style.display = 'none';
+            setTimeout(() => {
+                showScreen('screen-residents', 'wonder');
+                document.getElementById('residentsText').innerHTML = `
+                    <span class="resident">👩 SHORT BLONDE:</span> "Oh my god! You're here!"<br>
+                    <span class="resident">👩 SHORT BRUNETTE:</span> "The closet... it's not a closet anymore..."<br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ They're terrified ✦</span>
+                `;
+            }, 500);
         }
 
-        updateCharacter();
+        function handleKnock() {
+            player.path = 'KNOCKED';
+            player.wonder += 5;
+            updateStats();
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Text').innerHTML = `
+                You knock on the door.<br>
+                <span class="creepy">"COME IN!"</span> a voice screams.<br>
+                You open the door. Two residents are clutching each other.<br>
+                <span class="highlight">"The closet... it GLOWED!"</span>
+            `;
+            document.getElementById('room303Continue').style.display = 'none';
+            setTimeout(() => {
+                showScreen('screen-residents', 'wonder');
+                document.getElementById('residentsText').innerHTML = `
+                    <span class="resident">👩 SHORT BLONDE:</span> "You knocked! Thank goodness!"<br>
+                    <span class="resident">👩 SHORT BRUNETTE:</span> "We were so scared..."<br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ They feel safer with you here ✦</span>
+                `;
+            }, 500);
+        }
 
-        // Also update stats display with some random variation for flavor
-        // (In a real game, these would change based on gameplay)
-        console.log('%c✦ JN WONDERLAND - CHARACTER CREATION ✦', 'font-size:16px; color:#ffd93d;');
-        console.log('%cRoom 303 is waiting for you...', 'color:#8888aa;');
-    </script>
-
-</body>
-</html>
+        function handleSneak() {
+            player.path = 'SNEAKED';
+            player.wonder += 10;
+            updateStats();
+            document.getElementById('room303Choices').style.display
