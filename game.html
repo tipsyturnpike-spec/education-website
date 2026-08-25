@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - Adventure</title>
+    <title>JN Wonderland - The Dark Tale</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -61,42 +61,60 @@
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 750px;
-            background: rgba(10, 10, 21, 0.92);
-            border: 4px solid #4a4a6a;
-            padding: 15px 20px;
+            max-width: 800px;
+            background: rgba(5, 5, 15, 0.95);
+            border: 4px solid #3a2a4a;
+            padding: 18px 24px;
             color: #d4d4f0;
             font-size: 10px;
-            line-height: 2;
-            backdrop-filter: blur(4px);
+            line-height: 2.2;
+            backdrop-filter: blur(8px);
             pointer-events: auto;
             display: none;
             z-index: 20;
-            min-height: 100px;
+            min-height: 120px;
+            box-shadow: 0 0 40px rgba(100, 50, 150, 0.2);
         }
 
         #dialogueBox .speaker {
             color: #ffd93d;
             font-size: 8px;
             margin-bottom: 4px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
+
+        #dialogueBox .speaker.narrator { color: #8888cc; }
+        #dialogueBox .speaker.cat { color: #ff8a4a; }
+        #dialogueBox .speaker.queen { color: #ff4a4a; }
+        #dialogueBox .speaker.ian { color: #8aba4a; }
+        #dialogueBox .speaker.creepy { color: #aa4a4a; }
+        #dialogueBox .speaker.good { color: #4aff8a; }
 
         #dialogueBox .dialogue {
             color: #e8e8f0;
             font-size: 10px;
+            line-height: 2.2;
         }
 
         #dialogueBox .dialogue .highlight { color: #ffd93d; }
         #dialogueBox .dialogue .creepy { color: #ff6b6b; }
         #dialogueBox .dialogue .good { color: #4aff8a; }
+        #dialogueBox .dialogue .wonder { color: #a29bfe; }
+        #dialogueBox .dialogue .dark { color: #6a4a7a; }
+        #dialogueBox .dialogue .blood { color: #aa2a2a; }
 
         #dialogueBox .continue {
             color: #4a4a6a;
             font-size: 7px;
             text-align: right;
-            margin-top: 6px;
+            margin-top: 8px;
             animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         #dialogueBox .btn-group {
@@ -104,7 +122,7 @@
             gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 12px;
             pointer-events: auto;
         }
 
@@ -126,6 +144,7 @@
             border-color: #ffd93d;
             color: #ffd93d;
             transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
         }
 
         #dialogueBox .game-btn.primary {
@@ -133,26 +152,46 @@
             border-color: #8a4a6a;
             color: #ff9d8a;
         }
-
         #dialogueBox .game-btn.primary:hover {
             background: #6a3a5a;
             border-color: #ff6b6b;
         }
-
+        #dialogueBox .game-btn.danger {
+            background: #4a2a2a;
+            border-color: #8a2a2a;
+            color: #ff6a6a;
+        }
+        #dialogueBox .game-btn.danger:hover {
+            background: #6a3a3a;
+            border-color: #ff4a4a;
+        }
         #dialogueBox .game-btn.success {
             background: #2a4a2a;
             border-color: #4a8a4a;
             color: #8aff8a;
         }
-
         #dialogueBox .game-btn.success:hover {
             background: #3a6a3a;
             border-color: #6aff6a;
         }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        #dialogueBox .game-btn.wonder {
+            background: #2a2a4a;
+            border-color: #6a4a8a;
+            color: #c8a8ff;
+        }
+        #dialogueBox .game-btn.wonder:hover {
+            background: #4a3a6a;
+            border-color: #a87aff;
+        }
+        #dialogueBox .game-btn.dark {
+            background: #1a0a2a;
+            border-color: #4a2a6a;
+            color: #8a6aaa;
+        }
+        #dialogueBox .game-btn.dark:hover {
+            background: #2a1a3a;
+            border-color: #6a4a8a;
+            color: #a87aff;
         }
 
         /* ========== HUD ========== */
@@ -160,36 +199,39 @@
             position: absolute;
             top: 10px;
             right: 12px;
-            background: rgba(10, 10, 21, 0.85);
+            background: rgba(5, 5, 15, 0.85);
             border: 2px solid #2a2a4a;
-            padding: 8px 12px;
+            padding: 8px 14px;
             font-size: 7px;
             color: #8888aa;
             text-align: right;
-            line-height: 1.8;
+            line-height: 2;
             z-index: 15;
             pointer-events: none;
             backdrop-filter: blur(4px);
+            min-width: 120px;
         }
 
         #hud .hp { color: #ff6b6b; }
-        #hud .step { color: #ffd93d; }
+        #hud .act { color: #ffd93d; }
+        #hud .wonder { color: #a29bfe; }
         #hud .items { color: #6ab4ff; }
+        #hud .step { color: #ff8a4a; }
 
         /* ========== QUEST LOG ========== */
         #questLog {
             position: absolute;
             top: 10px;
             left: 12px;
-            background: rgba(10, 10, 21, 0.85);
-            border: 2px solid #2a4a4a;
-            padding: 8px 12px;
+            background: rgba(5, 5, 15, 0.85);
+            border: 2px solid #2a2a4a;
+            padding: 8px 14px;
             font-size: 6px;
             color: #6ac8ff;
             z-index: 15;
             pointer-events: none;
             backdrop-filter: blur(4px);
-            max-width: 200px;
+            max-width: 220px;
             line-height: 1.8;
         }
 
@@ -197,6 +239,7 @@
             color: #ffd93d;
             font-size: 7px;
             margin-bottom: 4px;
+            letter-spacing: 1px;
         }
 
         #questLog .step-done {
@@ -207,54 +250,104 @@
             color: #ffd93d;
         }
 
+        #questLog .step-hidden {
+            color: #2a2a4a;
+        }
+
+        /* ========== CHAPTER TITLE ========== */
+        #chapterTitle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffd93d;
+            font-size: 24px;
+            text-align: center;
+            z-index: 25;
+            pointer-events: none;
+            opacity: 0;
+            text-shadow: 0 0 40px rgba(255, 217, 61, 0.3);
+            transition: opacity 1s ease;
+        }
+
+        #chapterTitle .sub {
+            font-size: 10px;
+            color: #8888aa;
+            margin-top: 10px;
+            letter-spacing: 4px;
+        }
+
+        /* ========== DARK OVERLAY ========== */
+        #darkOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            z-index: 5;
+            pointer-events: none;
+            transition: background 2s ease;
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1000px) {
             #gameContainer { width: 95vw; height: 90vh; }
-            #dialogueBox { font-size: 8px; padding: 12px 15px; min-height: 80px; }
+            #dialogueBox { font-size: 8px; padding: 12px 16px; min-height: 100px; }
+            #dialogueBox .dialogue { font-size: 8px; }
             #dialogueBox .game-btn { font-size: 7px; padding: 6px 12px; min-width: 60px; }
-            #hud { font-size: 6px; padding: 5px 8px; }
-            #questLog { font-size: 5px; padding: 5px 8px; max-width: 150px; }
+            #hud { font-size: 6px; padding: 5px 10px; min-width: 100px; }
+            #questLog { font-size: 5px; padding: 5px 10px; max-width: 180px; }
+            #chapterTitle { font-size: 18px; }
+            #chapterTitle .sub { font-size: 8px; }
         }
 
         @media (max-width: 600px) {
-            #dialogueBox { font-size: 7px; padding: 10px 12px; min-height: 70px; bottom: 10px; }
+            #dialogueBox { font-size: 7px; padding: 10px 12px; min-height: 80px; bottom: 10px; }
+            #dialogueBox .dialogue { font-size: 7px; }
             #dialogueBox .game-btn { font-size: 6px; padding: 4px 8px; min-width: 50px; }
-            #hud { font-size: 5px; padding: 3px 6px; top: 5px; right: 6px; }
-            #questLog { font-size: 4px; padding: 3px 6px; top: 5px; left: 6px; max-width: 120px; }
+            #hud { font-size: 5px; padding: 3px 6px; top: 5px; right: 6px; min-width: 80px; }
+            #questLog { font-size: 4px; padding: 3px 6px; top: 5px; left: 6px; max-width: 140px; }
+            #chapterTitle { font-size: 14px; }
+            #chapterTitle .sub { font-size: 6px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================ -->
-    <!-- GAME CONTAINER -->
-    <!-- ============================================================ -->
     <div id="gameContainer">
 
-        <!-- Canvas for rendering -->
         <canvas id="gameCanvas"></canvas>
 
-        <!-- HUD -->
-        <div id="hud">
-            <div class="hp">❤️ HP: <span id="hudHp">20</span>/20</div>
-            <div class="step">📍 STEP: <span id="hudStep">0</span>/<span id="hudMaxStep">6</span></div>
-            <div class="items">📦 ITEMS: <span id="hudItems">None</span></div>
+        <div id="darkOverlay"></div>
+
+        <div id="chapterTitle">
+            <div id="chapterTitleText">CHAPTER I</div>
+            <div class="sub" id="chapterSubText">The Scream</div>
         </div>
 
-        <!-- Quest Log -->
+        <div id="hud">
+            <div class="hp">❤️ HP: <span id="hudHp">20</span>/20</div>
+            <div class="act">📖 ACT: <span id="hudAct">I</span></div>
+            <div class="wonder">🌀 WONDER: <span id="hudWonder">5</span>%</div>
+            <div class="items">📦 ITEMS: <span id="hudItems">None</span></div>
+            <div class="step">🐱 QUEST: <span id="hudStep">0</span>/<span id="hudMaxStep">8</span></div>
+        </div>
+
         <div id="questLog">
-            <div class="title">📋 YOUR QUEST</div>
+            <div class="title">📋 THE DARK TALE</div>
             <div id="questList">
-                <div class="step-active">✦ Find the Cat</div>
-                <div>✦ Listen to the Cat</div>
-                <div>✦ Enter the Closet</div>
-                <div>✦ Explore the Hall</div>
-                <div>✦ Find the Residents</div>
-                <div>✦ Reach the Queen</div>
+                <div class="step-active">✦ The Scream</div>
+                <div>✦ The Fall</div>
+                <div>✦ The Wandering</div>
+                <div>✦ The Memories</div>
+                <div>✦ The Bodyguard</div>
+                <div>✦ The Queen</div>
+                <div>✦ The Choice</div>
+                <div>✦ The Escape</div>
             </div>
         </div>
 
-        <!-- Dialogue Box -->
         <div id="dialogueBox">
             <div class="speaker" id="dialogueSpeaker">🎮 NARRATOR</div>
             <div class="dialogue" id="dialogueText">Welcome to JN Wonderland...</div>
@@ -264,9 +357,6 @@
 
     </div>
 
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT - COMPLETE ADVENTURE GAME -->
-    <!-- ============================================================ -->
     <script>
         // ============================================================
         //  SETUP CANVAS
@@ -285,10 +375,8 @@
             canvas.height = rect.height;
             W = canvas.width;
             H = canvas.height;
-            tileSize = Math.min(W / 20, H / 15);
-            // Ensure tileSize is at least 20px for pixel art
+            tileSize = Math.min(W / 22, H / 16);
             tileSize = Math.max(tileSize, 20);
-            // Recalculate grid
             cols = Math.floor(W / tileSize);
             rows = Math.floor(H / tileSize);
         }
@@ -305,15 +393,28 @@
             hp: 20,
             maxHp: 20,
             wonder: 5,
-            // Position (in tiles)
             x: 5,
             y: 8,
-            // Movement
-            moving: false,
-            targetX: 5,
-            targetY: 8,
-            moveProgress: 0,
-            facing: 'down', // up, down, left, right
+            facing: 'down',
+            // Quest
+            questStep: 0, // 0-8
+            act: 1,
+            // Story flags
+            metCat: false,
+            talkedToCat: false,
+            enteredCloset: false,
+            exploredHall: false,
+            foundMemories: 0,
+            foundResidents: 0,
+            ianDefeated: false,
+            ianBefriended: false,
+            queenDefeated: false,
+            queenBefriended: false,
+            hasMercy: false,
+            hasWisdom: false,
+            hasCourage: false,
+            hasHope: false,
+            hasDespair: false,
             // Items
             hasKey: false,
             hasNote: false,
@@ -325,36 +426,24 @@
             hasTea: false,
             hasCard: false,
             hasHeart: false,
-            // Quest progress
-            questStep: 0, // 0-6
-            metCat: false,
-            talkedToCat: false,
-            enteredCloset: false,
-            exploredHall: false,
-            foundResidents: false,
-            reachedQueen: false,
-            // Flags
-            ianDefeated: false,
-            ianBefriended: false,
-            queenDefeated: false,
-            queenBefriended: false,
-            hasMercy: false,
-            hasWisdom: false,
-            hasCourage: false,
-            // Dialogue state
-            inDialogue: false,
-            dialogueQueue: [],
-            // Enemies
+            hasLetter: false,
+            hasPhoto: false,
+            hasDiary: false,
+            // Combat
             enemiesDefeated: 0,
-            // Side characters met
+            // Memories collected (story fragments)
+            memories: [],
             residentsMet: [],
             // Game state
-            gameState: 'exploring', // 'exploring', 'dialogue', 'cutscene'
-            ending: 0
+            inDialogue: false,
+            gameState: 'exploring',
+            ending: 0,
+            // Dialogue queue
+            dialogueQueue: []
         };
 
         // ============================================================
-        //  LOAD PLAYER DATA
+        //  LOAD PLAYER
         // ============================================================
 
         function loadPlayerData() {
@@ -375,10 +464,9 @@
         //  TILE MAP
         // ============================================================
 
-        let cols = 20, rows = 15;
+        let cols = 22, rows = 16;
         let map = [];
 
-        // Tile types
         const T = {
             FLOOR: 0,
             WALL: 1,
@@ -392,17 +480,19 @@
             QUEEN: 9,
             IAN: 10,
             CHEST: 11,
-            STAIRS: 12
+            STAIRS: 12,
+            MEMORY: 13,
+            LETTER: 14,
+            PHOTO: 15,
+            DIARY: 16,
+            SHADOW: 17
         };
 
         function buildMap() {
-            // Create a simple building floor plan
-            // 0 = floor, 1 = wall, 2 = door, 3 = closet, 4 = cat spawn, 5 = resident, 9 = queen, 10 = ian
             map = [];
             for (let r = 0; r < rows; r++) {
                 map[r] = [];
                 for (let c = 0; c < cols; c++) {
-                    // Outer walls
                     if (r === 0 || r === rows - 1 || c === 0 || c === cols - 1) {
                         map[r][c] = T.WALL;
                     } else {
@@ -411,153 +501,383 @@
                 }
             }
 
-            // Interior walls - create rooms
-            // Room 303 area (top left)
-            for (let r = 2; r < 6; r++) {
-                for (let c = 2; c < 7; c++) {
-                    if (r === 2 || r === 5 || c === 2 || c === 6) {
-                        if (!(r === 2 && c === 2) && !(r === 2 && c === 3) && !(r === 5 && c === 6)) {
+            // ===== ACT I: Room 303 Area =====
+            for (let r = 2; r < 7; r++) {
+                for (let c = 2; c < 8; c++) {
+                    if (r === 2 || r === 6 || c === 2 || c === 7) {
+                        if (!(r === 2 && c === 3) && !(r === 2 && c === 4)) {
                             map[r][c] = T.WALL;
                         }
                     }
                 }
             }
-            // Door to Room 303
-            map[2][3] = T.DOOR;
-            // Closet in Room 303
-            map[4][4] = T.CLOSET;
+            map[2][4] = T.DOOR;
+            map[4][5] = T.CLOSET;
+            map[3][4] = T.CAT;
 
-            // Cat spawn location
-            map[3][5] = T.CAT;
-
-            // Hallway (center)
-            for (let r = 3; r < 12; r++) {
-                for (let c = 8; c < 12; c++) {
-                    if (r === 3 || r === 11 || c === 8 || c === 11) {
-                        if (!(r === 3 && c === 9) && !(r === 11 && c === 9)) {
+            // ===== ACT II: Hallway =====
+            for (let r = 3; r < 13; r++) {
+                for (let c = 9; c < 14; c++) {
+                    if (r === 3 || r === 12 || c === 9 || c === 13) {
+                        if (!(r === 3 && c === 11) && !(r === 12 && c === 11)) {
                             map[r][c] = T.WALL;
                         }
                     }
                 }
             }
-            // Hallway doors
-            map[3][9] = T.DOOR;
-            map[11][9] = T.DOOR;
+            map[3][11] = T.DOOR;
+            map[12][11] = T.DOOR;
 
-            // Resident rooms (bottom right)
+            // ===== ACT III: Memory Rooms =====
+            // Memory 1
+            map[5][15] = T.MEMORY;
+            // Memory 2
+            map[8][16] = T.MEMORY;
+            // Memory 3
+            map[10][14] = T.MEMORY;
+
+            // ===== ACT IV: Resident Rooms =====
             for (let r = 8; r < 12; r++) {
-                for (let c = 14; c < 18; c++) {
-                    if (r === 8 || r === 11 || c === 14 || c === 17) {
-                        if (!(r === 8 && c === 15) && !(r === 8 && c === 16)) {
+                for (let c = 16; c < 20; c++) {
+                    if (r === 8 || r === 11 || c === 16 || c === 19) {
+                        if (!(r === 8 && c === 17) && !(r === 8 && c === 18)) {
                             map[r][c] = T.WALL;
                         }
                     }
                 }
             }
-            // Resident spawn
-            map[10][15] = T.RESIDENT;
-            map[10][16] = T.RESIDENT;
+            map[9][17] = T.RESIDENT;
+            map[9][18] = T.RESIDENT;
+            map[10][17] = T.RESIDENT;
 
-            // Ian (bodyguard) location - blocks path to Queen
-            map[7][14] = T.IAN;
+            // ===== ACT V: Ian (Bodyguard) =====
+            map[7][15] = T.IAN;
 
-            // Queen's chamber (bottom right corner)
-            for (let r = 11; r < 14; r++) {
-                for (let c = 16; c < 19; c++) {
-                    if (r === 11 || r === 13 || c === 16 || c === 18) {
-                        if (!(r === 11 && c === 17)) {
+            // ===== ACT VI: Queen's Chamber =====
+            for (let r = 11; r < 15; r++) {
+                for (let c = 17; c < 21; c++) {
+                    if (r === 11 || r === 14 || c === 17 || c === 20) {
+                        if (!(r === 11 && c === 18) && !(r === 11 && c === 19)) {
                             map[r][c] = T.WALL;
                         }
                     }
                 }
             }
-            map[12][17] = T.QUEEN;
+            map[13][18] = T.QUEEN;
 
-            // Some items scattered
-            map[3][10] = T.ITEM;
-            map[5][12] = T.ITEM;
-            map[9][13] = T.ITEM;
-            map[6][16] = T.CHEST;
-
-            // Exit (top right)
+            // ===== Act VI: Exit =====
             map[1][cols - 2] = T.EXIT;
+
+            // ===== Scattered Items =====
+            map[4][12] = T.ITEM;
+            map[6][10] = T.ITEM;
+            map[3][16] = T.ITEM;
+            map[5][18] = T.CHEST;
+            map[8][13] = T.CHEST;
+            map[10][12] = T.LETTER;
+            map[6][14] = T.PHOTO;
+            map[4][17] = T.DIARY;
+
+            // ===== Shadows (random encounters) =====
+            map[9][10] = T.SHADOW;
+            map[11][12] = T.SHADOW;
+            map[7][17] = T.SHADOW;
         }
 
         // ============================================================
-        //  GAME OBJECTS
+        //  RENDER ENGINE
         // ============================================================
 
-        let objects = [];
-        let npcs = [];
-        let items = [];
+        let cameraX = 0, cameraY = 0;
+        let darkOpacity = 0;
 
-        // NPC definitions
-        const npcDefs = {
-            cat: {
-                name: '🐱 THE CAT',
-                x: 3,
-                y: 5,
-                sprite: 'cat',
-                dialogues: {
-                    first: [
-                        'You hear a soft meow behind you.',
-                        'A cat sits on the floor, watching you with bright eyes.',
-                        '"You look lost, human. Let me help you."',
-                        '"I\'m the guide of this place. I know all the secrets."',
-                        '"To escape Wonderland, you must complete 6 steps."',
-                        '"Step 1: Find the closet in Room 303 and enter it."',
-                        '"Step 2: Explore the endless hallway."',
-                        '"Step 3: Find the former residents and help them."',
-                        '"Step 4: Defeat or befriend the bodyguard, Ian."',
-                        '"Step 5: Face the Queen of the Desk."',
-                        '"Step 6: Choose your fate and escape."',
-                        '"Good luck, human. You\'ll need it."',
-                        'The cat vanishes with a flick of its tail.'
-                    ],
-                    later: [
-                        '"You\'re making progress! Keep going!"',
-                        '"Remember: be kind to the residents. They have stories to tell."',
-                        '"The Queen is powerful, but she has a weakness..."',
-                        '"Find the heart of Wonderland. It will guide you."'
-                    ]
-                }
-            },
-            residents: [
-                {
-                    id: 'sarah',
-                    name: '👻 SARAH',
-                    room: '301',
-                    x: 10,
-                    y: 15,
-                    dialogues: {
-                        first: '"Oh! A visitor! I\'m Sarah from Room 301."',
-                        help: '"I was a librarian before the Queen trapped us here."',
-                        gift: '📜 NOTE',
-                        giftDesc: 'Sarah\'s journal. It has clues about the Queen.'
+        function render() {
+            ctx.clearRect(0, 0, W, H);
+
+            // Camera follow
+            const targetCamX = player.x * tileSize - W / 2 + tileSize / 2;
+            const targetCamY = player.y * tileSize - H / 2 + tileSize / 2;
+            cameraX += (targetCamX - cameraX) * 0.08;
+            cameraY += (targetCamY - cameraY) * 0.08;
+
+            // Draw map
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const x = c * tileSize - cameraX;
+                    const y = r * tileSize - cameraY;
+
+                    if (x < -tileSize || x > W + tileSize || y < -tileSize || y > H + tileSize) continue;
+
+                    const tile = map[r][c];
+
+                    // Floor
+                    if (tile === T.FLOOR || tile === T.WALL || tile === T.DOOR || 
+                        tile === T.CLOSET || tile === T.CAT || tile === T.RESIDENT ||
+                        tile === T.ENEMY || tile === T.ITEM || tile === T.EXIT ||
+                        tile === T.QUEEN || tile === T.IAN || tile === T.CHEST ||
+                        tile === T.MEMORY || tile === T.LETTER || tile === T.PHOTO ||
+                        tile === T.DIARY || tile === T.SHADOW || tile === T.STAIRS) {
+                        
+                        // Dark floor with subtle pattern
+                        const dark = (r + c) % 2 === 0 ? 0.12 : 0.15;
+                        ctx.fillStyle = `rgba(20, 15, 30, ${dark})`;
+                        ctx.fillRect(x, y, tileSize, tileSize);
                     }
-                },
-                {
-                    id: 'mark',
-                    name: '🧙‍♂️ MARK',
-                    room: '302',
-                    x: 10,
-                    y: 16,
-                    dialogues: {
-                        first: '"I\'m Mark. I was a magician. Now I\'m just stuck."',
-                        help: '"I tried to escape and got trapped. But I learned things."',
-                        gift: '🪞 MIRROR',
-                        giftDesc: 'Mark\'s magic mirror. It reveals hidden truths.'
+
+                    // Wall
+                    if (tile === T.WALL) {
+                        ctx.fillStyle = '#1a1528';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#252040';
+                        ctx.fillRect(x + 1, y + 1, tileSize - 2, tileSize - 2);
+                        // Subtle cracks
+                        if ((r + c) % 3 === 0) {
+                            ctx.strokeStyle = 'rgba(60, 40, 80, 0.3)';
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.3);
+                            ctx.lineTo(x + tileSize * 0.4, y + tileSize * 0.6);
+                            ctx.lineTo(x + tileSize * 0.3, y + tileSize * 0.8);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // Door
+                    if (tile === T.DOOR) {
+                        ctx.fillStyle = '#2a1a1a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#3a2a2a';
+                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
+                        // Door handle
+                        ctx.fillStyle = '#8a6a3a';
+                        ctx.fillRect(x + tileSize * 0.7, y + tileSize * 0.4, tileSize * 0.1, tileSize * 0.2);
+                        // Glow if near
+                        const dist = Math.abs(player.x - c) + Math.abs(player.y - r);
+                        if (dist <= 2) {
+                            const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
+                            grad.addColorStop(0, 'rgba(255, 217, 61, 0.1)');
+                            grad.addColorStop(1, 'rgba(255, 217, 61, 0)');
+                            ctx.fillStyle = grad;
+                            ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
+                        }
+                    }
+
+                    // Closet
+                    if (tile === T.CLOSET) {
+                        ctx.fillStyle = '#0a0a1a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#1a0a2a';
+                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
+                        // Glow
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.8);
+                        grad.addColorStop(0, 'rgba(100, 50, 200, 0.3)');
+                        grad.addColorStop(0.5, 'rgba(100, 50, 200, 0.1)');
+                        grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Cat
+                    if (tile === T.CAT) {
+                        drawCat(ctx, x, y, tileSize);
+                    }
+
+                    // Resident
+                    if (tile === T.RESIDENT) {
+                        ctx.fillStyle = '#1a0a1a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#6ab4ff';
+                        ctx.font = `${tileSize * 0.5}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('👤', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#8888aa';
+                        ctx.font = `${tileSize * 0.2}px monospace`;
+                        ctx.fillText('RESIDENT', x + tileSize/2, y + tileSize * 0.95);
+                    }
+
+                    // Ian
+                    if (tile === T.IAN) {
+                        ctx.fillStyle = '#0a1a0a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        // Green glow
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
+                        grad.addColorStop(0, 'rgba(100, 200, 50, 0.15)');
+                        grad.addColorStop(1, 'rgba(100, 200, 50, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
+                        ctx.fillStyle = '#8aba4a';
+                        ctx.font = `${tileSize * 0.6}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('💪', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#8aba4a';
+                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.fillText('IAN', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Queen
+                    if (tile === T.QUEEN) {
+                        ctx.fillStyle = '#2a0a0a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 1.5);
+                        grad.addColorStop(0, 'rgba(255, 0, 0, 0.15)');
+                        grad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
+                        ctx.fillStyle = '#ff4a4a';
+                        ctx.font = `${tileSize * 0.6}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('👑', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#ff4a4a';
+                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.fillText('THE QUEEN', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Items
+                    if (tile === T.ITEM) {
+                        ctx.fillStyle = 'rgba(255, 217, 61, 0.15)';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.3, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('✨', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Chest
+                    if (tile === T.CHEST) {
+                        ctx.fillStyle = '#2a1a0a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#6a4a2a';
+                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.2, tileSize * 0.8, tileSize * 0.6);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.fillRect(x + tileSize * 0.35, y + tileSize * 0.15, tileSize * 0.3, tileSize * 0.1);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.35}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('📦', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Memory
+                    if (tile === T.MEMORY) {
+                        ctx.fillStyle = 'rgba(100, 50, 200, 0.1)';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#a29bfe';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('💭', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Letter
+                    if (tile === T.LETTER) {
+                        ctx.fillStyle = 'rgba(200, 180, 100, 0.15)';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('✉️', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Photo
+                    if (tile === T.PHOTO) {
+                        ctx.fillStyle = 'rgba(150, 100, 50, 0.15)';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#ff8a4a';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🖼️', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Diary
+                    if (tile === T.DIARY) {
+                        ctx.fillStyle = 'rgba(100, 50, 50, 0.15)';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#ff6b6b';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('📖', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
+                    // Shadow
+                    if (tile === T.SHADOW) {
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.35, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = 'rgba(100, 50, 150, 0.1)';
+                        ctx.font = `${tileSize * 0.3}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('👻', x + tileSize/2, y + tileSize * 0.65);
+                    }
+
+                    // Exit
+                    if (tile === T.EXIT) {
+                        ctx.fillStyle = 'rgba(50, 200, 100, 0.05)';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#4aff8a';
+                        ctx.font = `${tileSize * 0.5}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🚪', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#4aff8a';
+                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.fillText('EXIT', x + tileSize/2, y + tileSize * 0.92);
                     }
                 }
-            ]
-        };
+            }
+
+            // Draw player
+            const px = player.x * tileSize - cameraX;
+            const py = player.y * tileSize - cameraY;
+            if (px > -tileSize && px < W + tileSize && py > -tileSize && py < H + tileSize) {
+                drawPixelSprite(ctx, px, py, tileSize, player.hair, player.skin, player.outfit, player.facing);
+            }
+
+            // Draw dark overlay
+            if (darkOpacity > 0) {
+                ctx.fillStyle = `rgba(0, 0, 0, ${darkOpacity})`;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // Draw interaction indicator
+            const nearby = getNearbyInteractive();
+            if (nearby && player.gameState === 'exploring' && !player.inDialogue) {
+                const nx = nearby.x * tileSize - cameraX;
+                const ny = nearby.y * tileSize - cameraY;
+                ctx.fillStyle = 'rgba(255, 217, 61, 0.15)';
+                ctx.fillRect(nx, ny - 18, tileSize, 16);
+                ctx.fillStyle = '#ffd93d';
+                ctx.font = '7px monospace';
+                ctx.textAlign = 'center';
+                const label = nearby.tile === T.CAT ? '🐱 TALK' :
+                             nearby.tile === T.CLOSET ? '🌀 ENTER' :
+                             nearby.tile === T.DOOR ? '🚪 OPEN' :
+                             nearby.tile === T.ITEM ? '✨ PICK UP' :
+                             nearby.tile === T.CHEST ? '📦 OPEN' :
+                             nearby.tile === T.RESIDENT ? '💬 TALK' :
+                             nearby.tile === T.IAN ? '💪 FACE' :
+                             nearby.tile === T.QUEEN ? '👑 CHALLENGE' :
+                             nearby.tile === T.EXIT ? '🚪 ESCAPE' :
+                             nearby.tile === T.MEMORY ? '💭 REMEMBER' :
+                             nearby.tile === T.LETTER ? '✉️ READ' :
+                             nearby.tile === T.PHOTO ? '🖼️ VIEW' :
+                             nearby.tile === T.DIARY ? '📖 READ' :
+                             nearby.tile === T.SHADOW ? '👻 INVESTIGATE' : '🔹 INTERACT';
+                ctx.fillText('🔹 ' + label, nx + tileSize/2, ny - 6);
+            }
+
+            // Update dark overlay
+            document.getElementById('darkOverlay').style.background = `rgba(0, 0, 0, ${darkOpacity})`;
+        }
 
         // ============================================================
-        //  SPRITE RENDERER
+        //  SPRITE FUNCTIONS
         // ============================================================
 
         function drawPixelSprite(ctx, x, y, size, hair, skin, outfit, facing) {
-            // Simplified pixel character
             const s = size / 12;
             const colors = {
                 skin: skin === 'light' ? '#f5d0b8' :
@@ -574,70 +894,78 @@
                 pupil: '#1a1a2e'
             };
 
-            // Draw body
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(x + s * 6, y + s * 16, s * 4, s * 1.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body
             ctx.fillStyle = colors.outfit;
             ctx.fillRect(x + s * 2, y + s * 5, s * 8, s * 7);
 
-            // Draw head
+            // Head
             ctx.fillStyle = colors.skin;
             ctx.fillRect(x + s * 3, y + s * 1, s * 6, s * 4);
 
-            // Draw hair
+            // Hair
             ctx.fillStyle = colors.hair;
             ctx.fillRect(x + s * 2, y + s * 0, s * 8, s * 2);
             ctx.fillRect(x + s * 1, y + s * 2, s * 2, s * 1);
             ctx.fillRect(x + s * 9, y + s * 2, s * 2, s * 1);
+            if (hair === 'blonde' || hair === 'pink') {
+                ctx.fillRect(x + s * 2, y + s * 3, s * 1, s * 0.5);
+                ctx.fillRect(x + s * 9, y + s * 3, s * 1, s * 0.5);
+            }
 
-            // Draw eyes
+            // Eyes
             ctx.fillStyle = colors.eye;
-            ctx.fillRect(x + s * 4, y + s * 2, s * 1.5, s * 1.5);
-            ctx.fillRect(x + s * 6.5, y + s * 2, s * 1.5, s * 1.5);
+            ctx.fillRect(x + s * 4, y + s * 2.5, s * 1.5, s * 1.5);
+            ctx.fillRect(x + s * 6.5, y + s * 2.5, s * 1.5, s * 1.5);
             ctx.fillStyle = colors.pupil;
-            ctx.fillRect(x + s * 4.5, y + s * 2.5, s * 0.8, s * 0.8);
-            ctx.fillRect(x + s * 7, y + s * 2.5, s * 0.8, s * 0.8);
+            ctx.fillRect(x + s * 4.5, y + s * 3, s * 0.8, s * 0.8);
+            ctx.fillRect(x + s * 7, y + s * 3, s * 0.8, s * 0.8);
 
-            // Draw mouth (small smile)
+            // Mouth
             ctx.fillStyle = '#8b6b4a';
-            ctx.fillRect(x + s * 5, y + s * 3.5, s * 2, s * 0.5);
+            ctx.fillRect(x + s * 5, y + s * 4, s * 2, s * 0.5);
 
-            // Draw legs
+            // Legs
             ctx.fillStyle = colors.outfit;
-            ctx.fillRect(x + s * 3, y + s * 12, s * 2, s * 2);
-            ctx.fillRect(x + s * 7, y + s * 12, s * 2, s * 2);
+            ctx.fillRect(x + s * 3, y + s * 12, s * 2, s * 2.5);
+            ctx.fillRect(x + s * 7, y + s * 12, s * 2, s * 2.5);
 
-            // Draw shoes
-            ctx.fillStyle = '#2a2a2a';
-            ctx.fillRect(x + s * 2.5, y + s * 14, s * 3, s * 1);
-            ctx.fillRect(x + s * 6.5, y + s * 14, s * 3, s * 1);
+            // Shoes
+            ctx.fillStyle = '#1a1a2a';
+            ctx.fillRect(x + s * 2.5, y + s * 14.5, s * 3, s * 1.2);
+            ctx.fillRect(x + s * 6.5, y + s * 14.5, s * 3, s * 1.2);
 
-            // Direction indicator (tiny arrow)
+            // Direction indicator
+            ctx.fillStyle = 'rgba(255, 217, 61, 0.4)';
+            const dirSize = s * 2.5;
             if (facing === 'up') {
-                ctx.fillStyle = '#ffd93d';
                 ctx.beginPath();
-                ctx.moveTo(x + s * 6, y - s * 2);
-                ctx.lineTo(x + s * 4, y + s * 0);
-                ctx.lineTo(x + s * 8, y + s * 0);
+                ctx.moveTo(x + s * 6, y - dirSize * 0.8);
+                ctx.lineTo(x + s * 6 - dirSize * 0.6, y + dirSize * 0.2);
+                ctx.lineTo(x + s * 6 + dirSize * 0.6, y + dirSize * 0.2);
                 ctx.fill();
             } else if (facing === 'down') {
-                ctx.fillStyle = '#ffd93d';
                 ctx.beginPath();
-                ctx.moveTo(x + s * 6, y + s * 17);
-                ctx.lineTo(x + s * 4, y + s * 15);
-                ctx.lineTo(x + s * 8, y + s * 15);
+                ctx.moveTo(x + s * 6, y + s * 17 + dirSize * 0.8);
+                ctx.lineTo(x + s * 6 - dirSize * 0.6, y + s * 17 - dirSize * 0.2);
+                ctx.lineTo(x + s * 6 + dirSize * 0.6, y + s * 17 - dirSize * 0.2);
                 ctx.fill();
             } else if (facing === 'left') {
-                ctx.fillStyle = '#ffd93d';
                 ctx.beginPath();
-                ctx.moveTo(x - s * 2, y + s * 8);
-                ctx.lineTo(x + s * 0, y + s * 6);
-                ctx.lineTo(x + s * 0, y + s * 10);
+                ctx.moveTo(x - dirSize * 0.8, y + s * 8);
+                ctx.lineTo(x + dirSize * 0.2, y + s * 8 - dirSize * 0.6);
+                ctx.lineTo(x + dirSize * 0.2, y + s * 8 + dirSize * 0.6);
                 ctx.fill();
             } else {
-                ctx.fillStyle = '#ffd93d';
                 ctx.beginPath();
-                ctx.moveTo(x + s * 14, y + s * 8);
-                ctx.lineTo(x + s * 12, y + s * 6);
-                ctx.lineTo(x + s * 12, y + s * 10);
+                ctx.moveTo(x + s * 12 + dirSize * 0.8, y + s * 8);
+                ctx.lineTo(x + s * 12 - dirSize * 0.2, y + s * 8 - dirSize * 0.6);
+                ctx.lineTo(x + s * 12 - dirSize * 0.2, y + s * 8 + dirSize * 0.6);
                 ctx.fill();
             }
         }
@@ -669,8 +997,8 @@
             ctx.lineTo(x + s * 7.5, y + s * 0.5);
             ctx.fill();
 
-            // Eyes
-            ctx.fillStyle = '#1a1a2e';
+            // Eyes - glowing
+            ctx.fillStyle = '#4a8a4a';
             ctx.beginPath();
             ctx.ellipse(x + s * 4.5, y + s * 3, s * 0.8, s * 1.2, 0, 0, Math.PI * 2);
             ctx.fill();
@@ -678,10 +1006,26 @@
             ctx.ellipse(x + s * 7.5, y + s * 3, s * 0.8, s * 1.2, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Pupils (slits)
-            ctx.fillStyle = '#4a8a4a';
+            // Pupils
+            ctx.fillStyle = '#0a0a1a';
             ctx.fillRect(x + s * 4.3, y + s * 2.5, s * 0.4, s * 1.5);
             ctx.fillRect(x + s * 7.3, y + s * 2.5, s * 0.4, s * 1.5);
+
+            // Glow around eyes
+            const grad = ctx.createRadialGradient(x + s * 4.5, y + s * 3, 0, x + s * 4.5, y + s * 3, s * 2);
+            grad.addColorStop(0, 'rgba(74, 138, 74, 0.2)');
+            grad.addColorStop(1, 'rgba(74, 138, 74, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x + s * 4.5, y + s * 3, s * 2, 0, Math.PI * 2);
+            ctx.fill();
+            const grad2 = ctx.createRadialGradient(x + s * 7.5, y + s * 3, 0, x + s * 7.5, y + s * 3, s * 2);
+            grad2.addColorStop(0, 'rgba(74, 138, 74, 0.2)');
+            grad2.addColorStop(1, 'rgba(74, 138, 74, 0)');
+            ctx.fillStyle = grad2;
+            ctx.beginPath();
+            ctx.arc(x + s * 7.5, y + s * 3, s * 2, 0, Math.PI * 2);
+            ctx.fill();
 
             // Nose
             ctx.fillStyle = '#ff6b6b';
@@ -690,8 +1034,8 @@
             ctx.fill();
 
             // Mouth (grin)
-            ctx.strokeStyle = '#1a1a2e';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#0a0a1a';
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(x + s * 6, y + s * 4.2, s * 1.5, 0.1, Math.PI - 0.1);
             ctx.stroke();
@@ -706,194 +1050,16 @@
             ctx.stroke();
         }
 
-        function drawEnemy(ctx, x, y, size, type) {
-            const s = size / 12;
-            // Simple enemy sprite
-            ctx.fillStyle = '#ff2a2a';
-            ctx.beginPath();
-            ctx.arc(x + s * 6, y + s * 6, s * 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Eyes
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(x + s * 4, y + s * 4.5, s * 1.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x + s * 8, y + s * 4.5, s * 1.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = '#1a1a2e';
-            ctx.beginPath();
-            ctx.arc(x + s * 4.5, y + s * 4.5, s * 0.8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x + s * 8.5, y + s * 4.5, s * 0.8, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Mouth
-            ctx.fillStyle = '#1a1a2e';
-            ctx.fillRect(x + s * 4, y + s * 7, s * 4, s * 1);
-
-            // Label
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `${s * 1.5}px monospace`;
-            ctx.textAlign = 'center';
-            ctx.fillText(type || '!', x + s * 6, y + s * 11);
-        }
-
-        // ============================================================
-        //  RENDER GAME
-        // ============================================================
-
-        let cameraX = 0, cameraY = 0;
-
-        function render() {
-            ctx.clearRect(0, 0, W, H);
-
-            // Calculate camera to follow player
-            const targetCamX = player.x * tileSize - W / 2 + tileSize / 2;
-            const targetCamY = player.y * tileSize - H / 2 + tileSize / 2;
-            cameraX += (targetCamX - cameraX) * 0.1;
-            cameraY += (targetCamY - cameraY) * 0.1;
-
-            // Draw map
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const x = c * tileSize - cameraX;
-                    const y = r * tileSize - cameraY;
-
-                    // Skip if off screen
-                    if (x < -tileSize || x > W + tileSize || y < -tileSize || y > H + tileSize) continue;
-
-                    const tile = map[r][c];
-                    if (tile === T.WALL) {
-                        ctx.fillStyle = '#2a2a4a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.strokeStyle = '#3a3a5a';
-                        ctx.lineWidth = 1;
-                        ctx.strokeRect(x, y, tileSize, tileSize);
-                    } else if (tile === T.FLOOR) {
-                        // Floor pattern - subtle checker
-                        ctx.fillStyle = (r + c) % 2 === 0 ? '#1a1a2e' : '#1e1e32';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                    } else if (tile === T.DOOR) {
-                        ctx.fillStyle = '#4a3a2a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#8a7a5a';
-                        ctx.fillRect(x + tileSize * 0.3, y + tileSize * 0.1, tileSize * 0.4, tileSize * 0.8);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.fillRect(x + tileSize * 0.45, y + tileSize * 0.4, tileSize * 0.1, tileSize * 0.2);
-                    } else if (tile === T.CLOSET) {
-                        ctx.fillStyle = '#1a1a2e';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a2a4a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        // Glow effect
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
-                        grad.addColorStop(0, 'rgba(255, 217, 61, 0.3)');
-                        grad.addColorStop(1, 'rgba(255, 217, 61, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        // Closet text
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🚪', x + tileSize/2, y + tileSize * 0.7);
-                    } else if (tile === T.ITEM) {
-                        ctx.fillStyle = '#1a1a2e';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('✨', x + tileSize/2, y + tileSize * 0.7);
-                    } else if (tile === T.CHEST) {
-                        ctx.fillStyle = '#2a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#8a6a3a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.2, tileSize * 0.8, tileSize * 0.6);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('📦', x + tileSize/2, y + tileSize * 0.7);
-                    } else if (tile === T.EXIT) {
-                        ctx.fillStyle = '#0a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#4aff8a';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🚪', x + tileSize/2, y + tileSize * 0.7);
-                    } else if (tile === T.QUEEN) {
-                        ctx.fillStyle = '#2a0a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ff4a4a';
-                        ctx.font = `${tileSize * 0.6}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('👑', x + tileSize/2, y + tileSize * 0.7);
-                        // Red glow
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                        grad.addColorStop(0, 'rgba(255, 0, 0, 0.1)');
-                        grad.addColorStop(1, 'rgba(255, 0, 0, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                    } else if (tile === T.IAN) {
-                        ctx.fillStyle = '#0a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#8aba4a';
-                        ctx.font = `${tileSize * 0.6}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('💪', x + tileSize/2, y + tileSize * 0.7);
-                    } else if (tile === T.RESIDENT) {
-                        ctx.fillStyle = '#1a0a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#6ab4ff';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('👩', x + tileSize/2, y + tileSize * 0.7);
-                    } else if (tile === T.CAT) {
-                        // Draw cat
-                        drawCat(ctx, x, y, tileSize);
-                    }
-                }
-            }
-
-            // Draw player
-            const px = player.x * tileSize - cameraX;
-            const py = player.y * tileSize - cameraY;
-            if (px > -tileSize && px < W + tileSize && py > -tileSize && py < H + tileSize) {
-                drawPixelSprite(ctx, px, py, tileSize, player.hair, player.skin, player.outfit, player.facing);
-            }
-
-            // Draw UI labels
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(10, H - 30, 200, 20);
-            ctx.fillStyle = '#8888aa';
-            ctx.font = '10px monospace';
-            ctx.textAlign = 'left';
-            ctx.fillText(`📍 ${player.x}, ${player.y} | Step ${player.questStep}/6`, 15, H - 15);
-
-            // Draw interaction indicator (if near interactive tile)
-            const nearby = getNearbyInteractive();
-            if (nearby && player.gameState === 'exploring') {
-                ctx.fillStyle = 'rgba(255,217,61,0.3)';
-                ctx.fillRect(nearby.x * tileSize - cameraX, nearby.y * tileSize - cameraY - 20, tileSize, 20);
-                ctx.fillStyle = '#ffd93d';
-                ctx.font = '8px monospace';
-                ctx.textAlign = 'center';
-                ctx.fillText('🔹 Press SPACE', nearby.x * tileSize - cameraX + tileSize/2, nearby.y * tileSize - cameraY - 6);
-            }
-        }
-
         // ============================================================
         //  INTERACTION SYSTEM
         // ============================================================
 
         function getNearbyInteractive() {
             const directions = [
-                { dx: 0, dy: -1 }, // up
-                { dx: 0, dy: 1 },  // down
-                { dx: -1, dy: 0 }, // left
-                { dx: 1, dy: 0 }   // right
+                { dx: 0, dy: -1 },
+                { dx: 0, dy: 1 },
+                { dx: -1, dy: 0 },
+                { dx: 1, dy: 0 }
             ];
 
             for (const dir of directions) {
@@ -903,7 +1069,9 @@
                     const tile = map[ny][nx];
                     if (tile === T.DOOR || tile === T.CLOSET || tile === T.ITEM || 
                         tile === T.CHEST || tile === T.EXIT || tile === T.QUEEN || 
-                        tile === T.IAN || tile === T.RESIDENT || tile === T.CAT) {
+                        tile === T.IAN || tile === T.RESIDENT || tile === T.CAT ||
+                        tile === T.MEMORY || tile === T.LETTER || tile === T.PHOTO ||
+                        tile === T.DIARY || tile === T.SHADOW) {
                         return { x: nx, y: ny, tile: tile };
                     }
                 }
@@ -916,8 +1084,9 @@
         // ============================================================
 
         let dialogueCallback = null;
+        let dialogueTimer = null;
 
-        function showDialogue(speaker, text, choices = null, callback = null) {
+        function showDialogue(speaker, text, choices = null, callback = null, autoClose = 0) {
             const box = document.getElementById('dialogueBox');
             const speakerEl = document.getElementById('dialogueSpeaker');
             const textEl = document.getElementById('dialogueText');
@@ -952,7 +1121,13 @@
             player.inDialogue = true;
             player.gameState = 'dialogue';
 
-            // Click to continue
+            if (autoClose > 0) {
+                clearTimeout(dialogueTimer);
+                dialogueTimer = setTimeout(() => {
+                    closeDialogue();
+                }, autoClose);
+            }
+
             box.onclick = function(e) {
                 if (e.target === box || e.target === textEl || e.target === continueEl) {
                     if (continueEl.style.display !== 'none') {
@@ -977,10 +1152,11 @@
             player.inDialogue = false;
             player.gameState = 'exploring';
             dialogueCallback = null;
+            clearTimeout(dialogueTimer);
             updateUI();
         }
 
-        // Keyboard support
+        // Keyboard
         document.addEventListener('keydown', function(e) {
             if (e.key === ' ' || e.key === 'Space') {
                 e.preventDefault();
@@ -994,7 +1170,6 @@
                 }
             }
 
-            // Movement with arrow keys / WASD
             if (!player.inDialogue && player.gameState === 'exploring') {
                 let dx = 0, dy = 0;
                 if (e.key === 'ArrowUp' || e.key === 'w') { dy = -1; player.facing = 'up'; }
@@ -1010,31 +1185,37 @@
         });
 
         // ============================================================
-        //  MOVEMENT SYSTEM
+        //  MOVEMENT
         // ============================================================
 
-        let moveQueue = [];
-
         function tryMove(dx, dy) {
-            if (player.moving) {
-                moveQueue.push({ dx, dy });
-                return;
-            }
-
             const nx = player.x + dx;
             const ny = player.y + dy;
 
-            // Check bounds
             if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
 
-            // Check if walkable
             const tile = map[ny][nx];
-            if (tile === T.WALL) {
-                // Bump sound effect (visual only)
+            if (tile === T.WALL) return;
+
+            // Don't move into NPC tiles unless interacting
+            if (tile === T.CAT || tile === T.RESIDENT || tile === T.IAN || 
+                tile === T.QUEEN || tile === T.SHADOW) {
+                // Allow moving onto them to interact
+                player.x = nx;
+                player.y = ny;
+                player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
+                                 dx === -1 ? 'left' : 'right';
+                updateUI();
+                // Auto-interact with NPCs
+                const nearby = getNearbyInteractive();
+                if (nearby && (nearby.tile === T.CAT || nearby.tile === T.RESIDENT || 
+                              nearby.tile === T.IAN || nearby.tile === T.QUEEN ||
+                              nearby.tile === T.SHADOW)) {
+                    interact();
+                }
                 return;
             }
 
-            // Move player
             player.x = nx;
             player.y = ny;
             player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
@@ -1042,39 +1223,55 @@
 
             updateUI();
 
-            // Check for interactions after move
-            checkAutoInteract();
-        }
-
-        function checkAutoInteract() {
-            const nearby = getNearbyInteractive();
-            if (nearby) {
-                // Auto-trigger certain interactions
-                if (nearby.tile === T.CAT && !player.metCat) {
-                    meetCat();
-                }
-                if (nearby.tile === T.CLOSET && player.metCat && !player.enteredCloset) {
-                    // Show hint
-                    showDialogue('💡 HINT', 'Press SPACE to enter the closet.');
-                }
-                if (nearby.tile === T.RESIDENT && player.questStep >= 2) {
-                    // Will be handled by interact()
-                }
-                if (nearby.tile === T.IAN && player.questStep >= 3) {
-                    // Will be handled by interact()
-                }
-                if (nearby.tile === T.QUEEN && player.questStep >= 5) {
-                    // Will be handled by interact()
-                }
+            // Check for item pickups
+            if (tile === T.ITEM || tile === T.CHEST || tile === T.MEMORY || 
+                tile === T.LETTER || tile === T.PHOTO || tile === T.DIARY) {
+                interact();
             }
         }
+
+        // Click to move
+        canvas.addEventListener('click', function(e) {
+            if (player.inDialogue || player.gameState !== 'exploring') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            const tx = Math.floor((mx + cameraX) / tileSize);
+            const ty = Math.floor((my + cameraY) / tileSize);
+
+            if (tx >= 0 && tx < cols && ty >= 0 && ty < rows) {
+                const dx = Math.sign(tx - player.x);
+                const dy = Math.sign(ty - player.y);
+
+                if (dx !== 0 && dy !== 0) {
+                    if (map[player.y][player.x + dx] !== T.WALL) {
+                        tryMove(dx, 0);
+                        return;
+                    }
+                    if (map[player.y + dy][player.x] !== T.WALL) {
+                        tryMove(0, dy);
+                        return;
+                    }
+                } else if (dx !== 0) {
+                    tryMove(dx, 0);
+                } else if (dy !== 0) {
+                    tryMove(0, dy);
+                }
+            }
+        });
+
+        // ============================================================
+        //  INTERACT
+        // ============================================================
 
         function interact() {
             if (player.inDialogue) return;
 
             const nearby = getNearbyInteractive();
             if (!nearby) {
-                showDialogue('💡 HINT', 'There\'s nothing to interact with here. Try exploring!');
+                showDialogue('💡 HINT', 'There\'s nothing here. Try exploring.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
@@ -1082,274 +1279,385 @@
             const { x, y, tile } = nearby;
 
             switch (tile) {
-                case T.CAT:
-                    meetCat();
-                    break;
-                case T.CLOSET:
-                    enterCloset();
-                    break;
-                case T.DOOR:
-                    openDoor(x, y);
-                    break;
-                case T.ITEM:
-                    pickUpItem(x, y);
-                    break;
-                case T.CHEST:
-                    openChest(x, y);
-                    break;
-                case T.RESIDENT:
-                    talkToResident(x, y);
-                    break;
-                case T.IAN:
-                    faceIan();
-                    break;
-                case T.QUEEN:
-                    faceQueen();
-                    break;
-                case T.EXIT:
-                    escapeWonderland();
-                    break;
-                default:
-                    showDialogue('💡 HINT', 'You can\'t interact with that right now.');
+                case T.CAT: meetCat(); break;
+                case T.CLOSET: enterCloset(); break;
+                case T.DOOR: openDoor(x, y); break;
+                case T.ITEM: pickUpItem(x, y); break;
+                case T.CHEST: openChest(x, y); break;
+                case T.MEMORY: findMemory(x, y); break;
+                case T.LETTER: readLetter(x, y); break;
+                case T.PHOTO: viewPhoto(x, y); break;
+                case T.DIARY: readDiary(x, y); break;
+                case T.RESIDENT: talkToResident(x, y); break;
+                case T.SHADOW: investigateShadow(x, y); break;
+                case T.IAN: faceIan(); break;
+                case T.QUEEN: faceQueen(); break;
+                case T.EXIT: escapeWonderland(); break;
+                default: 
+                    showDialogue('💡 HINT', 'You can\'t interact with that.');
                     setTimeout(closeDialogue, 1500);
             }
         }
 
         // ============================================================
-        //  QUEST STEPS
+        //  ACT I: THE SCREAM
         // ============================================================
 
-        const questSteps = [
-            { id: 'meetCat', label: 'Find the Cat' },
-            { id: 'talkCat', label: 'Listen to the Cat' },
-            { id: 'enterCloset', label: 'Enter the Closet' },
-            { id: 'exploreHall', label: 'Explore the Hall' },
-            { id: 'findResidents', label: 'Find the Residents' },
-            { id: 'defeatIan', label: 'Face the Bodyguard' },
-            { id: 'defeatQueen', label: 'Reach the Queen' }
-        ];
-
-        function updateQuestLog() {
-            const list = document.getElementById('questList');
-            let html = '';
-            for (let i = 0; i < questSteps.length; i++) {
-                const step = questSteps[i];
-                let cls = '';
-                if (i < player.questStep) cls = 'step-done';
-                else if (i === player.questStep) cls = 'step-active';
-                html += `<div class="${cls}">${i < player.questStep ? '✅' : '✦'} ${step.label}</div>`;
-            }
-            list.innerHTML = html;
-        }
-
-        // ============================================================
-        //  STORY EVENTS
-        // ============================================================
-
-        // --- MEET THE CAT ---
         function meetCat() {
             if (player.metCat) {
-                showDialogue('🐱 THE CAT', '"You\'re doing well, human. Keep going!"');
-                setTimeout(closeDialogue, 1500);
+                showDialogue('🐱 THE CAT', 
+                    '"You\'re doing well, human. But the darkness is growing.<br>' +
+                    'You must hurry. The Queen feeds on despair."'
+                );
+                setTimeout(closeDialogue, 2500);
                 return;
             }
 
             player.metCat = true;
             player.questStep = Math.max(player.questStep, 1);
+            player.act = 1;
+
+            showChapter('ACT I', 'The Scream');
 
             showDialogue('🐱 THE CAT', 
-                '"You hear a soft meow. A cat sits on the floor, watching you with bright eyes."<br><br>' +
-                '"I\'m the guide of this place. To escape Wonderland, you must complete 6 steps."<br><br>' +
-                '<span class="highlight">Step 1: Find the closet in Room 303 and enter it.</span><br>' +
-                '<span class="highlight">Step 2: Explore the endless hallway.</span><br>' +
-                '<span class="highlight">Step 3: Find the former residents and help them.</span><br>' +
-                '<span class="highlight">Step 4: Defeat or befriend the bodyguard, Ian.</span><br>' +
-                '<span class="highlight">Step 5: Face the Queen of the Desk.</span><br>' +
-                '<span class="highlight">Step 6: Choose your fate and escape.</span><br><br>' +
-                '"Good luck, human. You\'ll need it."',
-                [{ label: '🐱 Thank you!', value: 'thanks' }],
+                '"You heard the scream, didn\'t you?"<br><br>' +
+                'The cat sits on the floor, its eyes glowing.<br>' +
+                '"I\'ve been watching you. You\'re different from the others."<br>' +
+                '"This place... JN Hall... it\'s a doorway. A doorway to Wonderland."<br>' +
+                '"But this Wonderland is dark. It feeds on the sadness of trapped souls."<br>' +
+                '"The Queen... she was once a student here. She became the darkness."<br>' +
+                '"To escape, you must understand the story. You must find the memories."<br>' +
+                '"And you must face the Queen."<br>' +
+                '<span class="creepy">"Be careful, human. The shadows are watching."</span>',
+                [{ label: '🐱 Continue', value: 'continue' }],
                 function() {
                     player.talkedToCat = true;
                     player.questStep = Math.max(player.questStep, 2);
                     updateUI();
                     closeDialogue();
-                    showDialogue('🐱 THE CAT', 'The cat vanishes with a flick of its tail.');
-                    setTimeout(closeDialogue, 1500);
-                    // Remove cat from map
-                    map[3][5] = T.FLOOR;
+                    showDialogue('🐱 THE CAT', 
+                        '"Remember: <span class="highlight">find the memories</span>. They hold the truth.<br>' +
+                        '"And when you\'re ready, enter the closet. That\'s the way in."<br><br>' +
+                        'The cat vanishes with a flick of its tail.'
+                    );
+                    setTimeout(closeDialogue, 3000);
+                    map[3][4] = T.FLOOR;
                     updateUI();
                 }
             );
         }
 
-        // --- ENTER CLOSET ---
+        // ============================================================
+        //  ACT II: THE FALL
+        // ============================================================
+
         function enterCloset() {
             if (player.enteredCloset) {
-                showDialogue('🌀 THE CLOSET', 'The closet is still glowing, but you\'ve already been through it.');
+                showDialogue('🌀 THE CLOSET', 'The closet is still glowing, but you\'ve already entered.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
             if (!player.metCat) {
-                showDialogue('💡 HINT', 'You should find the cat first. It might have answers.');
+                showDialogue('💡 HINT', 'The cat said to find it first. Where did it go?');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
             player.enteredCloset = true;
             player.questStep = Math.max(player.questStep, 3);
+            player.act = 2;
             player.wonder += 10;
+
+            showChapter('ACT II', 'The Fall');
 
             showDialogue('🌀 THE CLOSET',
                 'You step into the closet. There\'s no back wall.<br>' +
-                'Just a long, dark tunnel stretching into infinity...<br><br>' +
-                'You walk forward. And forward. And forward...<br><br>' +
-                '<span class="highlight">✦ You emerge into a strange hallway ✦</span><br>' +
+                '<span class="creepy">Just a long, dark tunnel.</span><br><br>' +
+                'You walk forward. The walls pulse like they\'re breathing.<br>' +
+                'You hear whispers. <span class="dark">"...help me..."</span><br>' +
+                '<span class="dark">"...don\'t trust the Queen..."</span><br>' +
+                '<span class="dark">"...she was one of us..."</span><br><br>' +
+                'You emerge into a <span class="creepy">dark hallway</span>.<br>' +
+                'This isn\'t JN Hall anymore.<br>' +
                 '<span class="good">✦ +10 WONDER ✦</span>',
                 [{ label: '🌀 Enter Wonderland', value: 'enter' }],
                 function() {
                     player.questStep = Math.max(player.questStep, 4);
-                    // Move player to hallway
                     player.x = 8;
                     player.y = 7;
-                    // Update map - closet is now just a closet
-                    map[4][4] = T.FLOOR;
+                    map[4][5] = T.FLOOR;
                     updateUI();
                     closeDialogue();
-                    showDialogue('🏚️ THE WORN HALL',
-                        'The hallway stretches <span class="creepy">infinitely</span> in both directions.<br>' +
-                        'The walls pulse like they\'re breathing.<br>' +
-                        '<span class="highlight">✦ You feel like you\'re being watched ✦</span><br><br>' +
-                        'The cat appears beside you.<br>' +
-                        '"Welcome to Wonderland proper. Your journey begins now."'
+                    showDialogue('🏚️ WONDERLAND',
+                        'The hallway stretches <span class="creepy">infinitely</span>.<br>' +
+                        'The walls are cracked. The lights flicker.<br>' +
+                        'You hear echoes of <span class="dark">distant screams</span>.<br><br>' +
+                        '<span class="highlight">✦ You must find the memories ✦</span><br>' +
+                        '<span class="highlight">✦ They hold the truth ✦</span><br>' +
+                        '<span style="color: #8888aa; font-size: 8px;">Explore the dark halls. Find the glowing memories.</span>'
                     );
-                    setTimeout(closeDialogue, 3000);
-                    // Add some items to the map
-                    map[3][10] = T.ITEM;
-                    map[5][12] = T.ITEM;
+                    setTimeout(closeDialogue, 4000);
                     updateUI();
                 }
             );
         }
 
-        // --- OPEN DOOR ---
-        function openDoor(x, y) {
-            // Random event when opening doors
-            const events = [
-                'You open the door. It\'s just a closet. Nothing special.',
-                'You open the door. A gust of wind blows through. <span class="creepy">✦ Strange ✦</span>',
-                'You open the door. You find a <span class="highlight">piece of candy</span> on the floor!',
-                'You open the door. A cat walks out. It looks at you, then walks away.',
-                'You open the door. It leads to another hallway. <span class="wonder">✦ This place is confusing ✦</span>'
-            ];
+        // ============================================================
+        //  ACT III: THE WANDERING - MEMORIES
+        // ============================================================
 
-            const event = events[Math.floor(Math.random() * events.length)];
-            showDialogue('🚪 DOOR', event);
-            setTimeout(closeDialogue, 1500);
-
-            if (event.includes('candy')) {
-                player.hasCandy = true;
-                updateUI();
+        const memoryData = [
+            {
+                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
+                      '"I remember moving into JN Hall. I was so excited.<br>' +
+                      'The building felt alive. I didn\'t know how true that was."'
+            },
+            {
+                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
+                      '"There was a girl. She lived in Room 303.<br>' +
+                      'She was always alone. Always writing in her diary.<br>' +
+                      'She said the walls talked to her."'
+            },
+            {
+                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
+                      '"The Queen wasn\'t always the Queen.<br>' +
+                      'She was a student. She was sad. She was lonely.<br>' +
+                      'The building fed on her sadness.<br>' +
+                      'And then... she became part of it."'
             }
-        }
+        ];
 
-        // --- PICK UP ITEM ---
-        function pickUpItem(x, y) {
-            const items = [
-                { name: '📜 Note', flag: 'hasNote' },
-                { name: '💊 Candy', flag: 'hasCandy' },
-                { name: '🔑 Key', flag: 'hasKey' },
-                { name: '🌹 Rose', flag: 'hasRose' },
-                { name: '🍵 Tea', flag: 'hasTea' }
-            ];
+        let memoryIndex = 0;
 
-            const item = items[Math.floor(Math.random() * items.length)];
-            if (!player[item.flag]) {
-                player[item.flag] = true;
-                showDialogue('✨ ITEM FOUND', `You found <span class="highlight">${item.name}</span>!`);
-                setTimeout(closeDialogue, 1500);
-                map[y][x] = T.FLOOR;
-                updateUI();
-            } else {
-                showDialogue('✨ ITEM', 'There\'s nothing here.');
-                setTimeout(closeDialogue, 1500);
-            }
-        }
-
-        // --- OPEN CHEST ---
-        function openChest(x, y) {
-            const chestItems = [
-                { name: '👑 Crown', flag: 'hasCrown' },
-                { name: '🪞 Mirror', flag: 'hasMirror' },
-                { name: '⏰ Clock', flag: 'hasClock' },
-                { name: '🃏 Card', flag: 'hasCard' },
-                { name: '❤️ Heart', flag: 'hasHeart' }
-            ];
-
-            const item = chestItems[Math.floor(Math.random() * chestItems.length)];
-            if (!player[item.flag]) {
-                player[item.flag] = true;
-                player.wonder += 5;
-                showDialogue('📦 CHEST', `You open the chest and find <span class="highlight">${item.name}</span>!<br><span class="good">✦ +5 WONDER ✦</span>`);
-                setTimeout(closeDialogue, 2000);
-                map[y][x] = T.FLOOR;
-                updateUI();
-            } else {
-                showDialogue('📦 CHEST', 'The chest is empty.');
-                setTimeout(closeDialogue, 1500);
-            }
-        }
-
-        // --- TALK TO RESIDENT ---
-        function talkToResident(x, y) {
-            if (player.residentsMet.length >= 2) {
-                showDialogue('🏠 RESIDENT', '"You\'ve helped all of us. Thank you."');
+        function findMemory(x, y) {
+            if (player.foundMemories >= memoryData.length) {
+                showDialogue('💭 MEMORY', 'You\'ve found all the memories. The truth is clear now.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            const residentData = [
-                { name: '👻 SARAH', room: '301', text: '"I was a librarian before the Queen trapped us here."' },
-                { name: '🧙‍♂️ MARK', room: '302', text: '"I tried to escape and got trapped. But I learned things."' },
-                { name: '🎨 LISA', room: '304', text: '"The colors here are alive. They remember who painted them."' },
-                { name: '🎵 JAMES', room: '305', text: '"Ian wasn\'t always like this. The Queen corrupted him."' }
-            ];
-
-            const available = residentData.filter(r => !player.residentsMet.includes(r.name));
-            if (available.length === 0) {
-                showDialogue('🏠 RESIDENT', '"You\'ve met everyone! Good luck with the Queen."');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            const resident = available[Math.floor(Math.random() * available.length)];
-            player.residentsMet.push(resident.name);
-            player.questStep = Math.max(player.questStep, 5);
+            const memory = memoryData[player.foundMemories];
+            player.foundMemories++;
             player.wonder += 5;
+            player.questStep = Math.max(player.questStep, 5);
+
+            showDialogue('💭 MEMORY FOUND', memory.text);
+            map[y][x] = T.FLOOR;
+            updateUI();
+
+            setTimeout(closeDialogue, 3500);
+
+            if (player.foundMemories >= memoryData.length) {
+                setTimeout(() => {
+                    showDialogue('📖 THE TRUTH',
+                        'You\'ve collected all the memories.<br><br>' +
+                        'The Queen was <span class="creepy">Rylee</span>.<br>' +
+                        'She lived in Room 303.<br>' +
+                        'She was lonely. The building filled her with darkness.<br>' +
+                        'Now she\'s trapped here, feeding on others\' despair.<br><br>' +
+                        '<span class="highlight">✦ You understand now ✦</span><br>' +
+                        '<span class="highlight">✦ You must free her... or stop her ✦</span>'
+                    );
+                    setTimeout(closeDialogue, 4000);
+                }, 500);
+            }
+        }
+
+        // ============================================================
+        //  ACT III: LETTERS, PHOTOS, DIARIES
+        // ============================================================
+
+        function readLetter(x, y) {
+            player.hasLetter = true;
+            player.wonder += 3;
+            showDialogue('✉️ A LETTER',
+                '"Dear Rylee,<br><br>' +
+                'I know you\'re scared. We all are.<br>' +
+                'But you don\'t have to face the darkness alone.<br>' +
+                'Please, talk to us. We\'re your friends.<br><br>' +
+                'We miss you."<br><br>' +
+                '<span style="color: #8888aa; font-size: 8px;">The letter is signed: "Your friends in 303"</span>'
+            );
+            map[y][x] = T.FLOOR;
+            updateUI();
+            setTimeout(closeDialogue, 4000);
+        }
+
+        function viewPhoto(x, y) {
+            player.hasPhoto = true;
+            player.wonder += 3;
+            showDialogue('🖼️ A PHOTOGRAPH',
+                '"It\'s a photo of a group of students.<br>' +
+                'They\'re smiling. They look happy.<br>' +
+                'In the corner, <span class="creepy">a girl stands alone</span>.<br>' +
+                'She\'s not smiling.<br><br>' +
+                '<span style="color: #8888aa; font-size: 8px;">Written on the back: "JN Hall, 2019"</span>'
+            );
+            map[y][x] = T.FLOOR;
+            updateUI();
+            setTimeout(closeDialogue, 4000);
+        }
+
+        function readDiary(x, y) {
+            player.hasDiary = true;
+            player.wonder += 5;
+            showDialogue('📖 A DIARY ENTRY',
+                '"Day 147. The walls are getting louder.<br>' +
+                'They whisper my name. They tell me I belong here.<br>' +
+                'I\'ve started writing back to them.<br>' +
+                '<span class="creepy">I think they\'re listening.</span><br>' +
+                '<span class="dark">I think they\'re becoming me.</span><br><br>' +
+                '<span style="color: #8888aa; font-size: 8px;">The handwriting gets messier. More desperate.</span>'
+            );
+            map[y][x] = T.FLOOR;
+            updateUI();
+            setTimeout(closeDialogue, 4000);
+        }
+
+        // ============================================================
+        //  ACT III: SHADOWS (Random Encounters)
+        // ============================================================
+
+        function investigateShadow(x, y) {
+            showDialogue('👻 A SHADOW',
+                '<span class="creepy">A dark figure emerges from the shadows.</span><br><br>' +
+                'It whispers: <span class="dark">"You shouldn\'t be here..."</span><br>' +
+                'It lunges at you!<br><br>' +
+                'What do you do?',
+                [
+                    { label: '⚔️ Fight', value: 'fight', class: 'danger' },
+                    { label: '🌀 Wonder', value: 'wonder', class: 'wonder' },
+                    { label: '🏃 Flee', value: 'flee' }
+                ],
+                function(choice) {
+                    closeDialogue();
+                    if (choice === 'fight') {
+                        const damage = 3 + Math.floor(Math.random() * 3);
+                        player.hp -= damage;
+                        player.enemiesDefeated++;
+                        player.wonder += 3;
+                        showDialogue('⚔️ BATTLE',
+                            `You fight the shadow!<br>` +
+                            `You deal <span class="damage">${damage}</span> damage!<br>` +
+                            `<span class="good">✦ Shadow defeated! ✦</span><br>` +
+                            `<span style="color: #8888aa;">You lose ${damage} HP</span>`
+                        );
+                        map[y][x] = T.FLOOR;
+                        updateUI();
+                        setTimeout(closeDialogue, 2500);
+                    } else if (choice === 'wonder') {
+                        if (player.wonder >= 20) {
+                            player.wonder -= 10;
+                            showDialogue('🌀 WONDER POWER',
+                                'You channel Wonder energy!<br>' +
+                                'The shadow dissolves into light.<br>' +
+                                `<span class="good">✦ Shadow banished! ✦</span>`
+                            );
+                            map[y][x] = T.FLOOR;
+                            updateUI();
+                            setTimeout(closeDialogue, 2000);
+                        } else {
+                            showDialogue('🌀 WONDER POWER',
+                                'You try to use Wonder, but it\'s not enough.<br>' +
+                                `<span style="color: #8888aa;">Need 20+ Wonder (current: ${player.wonder})</span>`
+                            );
+                            setTimeout(closeDialogue, 1500);
+                        }
+                    } else {
+                        if (Math.random() < 0.5) {
+                            showDialogue('🏃 FLEE',
+                                'You escape the shadow!<br>' +
+                                '<span style="color: #8888aa;">You lose 2 HP from exhaustion.</span>'
+                            );
+                            player.hp -= 2;
+                            updateUI();
+                            setTimeout(closeDialogue, 1500);
+                        } else {
+                            showDialogue('🏃 FLEE',
+                                'The shadow blocks your path!<br>' +
+                                '<span class="creepy">You take 3 damage.</span>'
+                            );
+                            player.hp -= 3;
+                            updateUI();
+                            setTimeout(closeDialogue, 1500);
+                        }
+                    }
+                }
+            );
+        }
+
+        // ============================================================
+        //  ACT IV: RESIDENTS
+        // ============================================================
+
+        const residentData = [
+            {
+                name: '👻 SARAH',
+                room: '301',
+                story: '"I was a librarian. I loved the quiet. But the Queen... she took the quiet. She filled it with whispers."'
+            },
+            {
+                name: '🧙‍♂️ MARK',
+                room: '302',
+                story: '"I was a magician. I thought I could escape. I was wrong. But I learned the Queen\'s secret: she feeds on fear."'
+            },
+            {
+                name: '🎨 LISA',
+                room: '304',
+                story: '"I painted the walls. I made them beautiful. The Queen turned them dark. She hates beauty."'
+            },
+            {
+                name: '🎵 JAMES',
+                room: '305',
+                story: '"I played music. The Queen silenced the music. But I still hear it. I hear it in the walls."'
+            }
+        ];
+
+        function talkToResident(x, y) {
+            if (player.foundResidents >= residentData.length) {
+                showDialogue('🏠 RESIDENT', 
+                    '"You\'ve helped us all. Thank you.<br>' +
+                    'The Queen is weaker now. You can face her."'
+                );
+                setTimeout(closeDialogue, 2000);
+                return;
+            }
+
+            const resident = residentData[player.foundResidents];
+            player.foundResidents++;
+            player.wonder += 5;
+            player.questStep = Math.max(player.questStep, 6);
+            player.hasWisdom = true;
 
             showDialogue(`🏠 ${resident.name} (Room ${resident.room})`,
-                `${resident.text}<br><br>` +
+                `${resident.story}<br><br>` +
                 `<span class="good">✦ You helped a former resident ✦</span><br>` +
-                `<span class="highlight">✦ +5 WONDER ✦</span>`,
-                [{ label: '🤝 Help them', value: 'help' }],
-                function() {
-                    player.hasMercy = true;
-                    player.wonder += 5;
-                    updateUI();
-                    closeDialogue();
-                    showDialogue(`🏠 ${resident.name}`, 
-                        '"Thank you! Here, take this."<br>' +
-                        `You receive <span class="highlight">a gift</span> from ${resident.name}.`
-                    );
-                    setTimeout(closeDialogue, 2000);
-                    // Remove resident from map
-                    map[y][x] = T.FLOOR;
-                    updateUI();
-                }
+                `<span class="highlight">✦ +5 WONDER ✦</span><br>` +
+                `<span style="color: #8888aa; font-size: 8px;">The Queen's power weakens...</span>`
             );
+            map[y][x] = T.FLOOR;
+            updateUI();
+            setTimeout(closeDialogue, 3500);
+
+            if (player.foundResidents >= residentData.length) {
+                setTimeout(() => {
+                    showDialogue('🏠 ALL RESIDENTS SAVED',
+                        'You\'ve helped every former resident.<br>' +
+                        '<span class="highlight">✦ Their memories strengthen you ✦</span><br>' +
+                        '<span class="good">✦ The Queen is vulnerable now ✦</span><br><br>' +
+                        'You feel a shift in the building. The darkness is lifting.<br>' +
+                        'You can face the Queen.'
+                    );
+                    setTimeout(closeDialogue, 3000);
+                }, 500);
+            }
         }
 
-        // --- FACE IAN (Bodyguard) ---
+        // ============================================================
+        //  ACT V: THE BODYGUARD (IAN)
+        // ============================================================
+
         function faceIan() {
             if (player.ianDefeated || player.ianBefriended) {
                 showDialogue('💪 IAN', '"You already dealt with me, human. Go on."');
@@ -1357,22 +1665,29 @@
                 return;
             }
 
-            if (player.questStep < 4) {
-                showDialogue('💪 IAN', '"You\'re not ready to face me yet, human. Complete your quest first."');
+            if (player.questStep < 5) {
+                showDialogue('💪 IAN', '"You\'re not ready. Find the memories first."');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
+            player.act = 3;
+            showChapter('ACT V', 'The Bodyguard');
+
             showDialogue('💪 IAN - QUEEN\'S BODYGUARD',
-                '<span style="color: #8aba4a; font-size: 14px;">"YOU SHALL NOT PASS!"</span><br>' +
-                'Ian blocks your path to the Queen.<br>' +
-                'His muscles bulge. He\'s ready for battle.<br><br>' +
+                '<span style="color: #8aba4a; font-size: 14px;">"YOU SHALL NOT PASS!"</span><br><br>' +
+                'Ian stands before you, massive and green.<br>' +
+                '<span style="color: #8aba4a;">"The Queen said you\'d come. She said you\'d try to save her."</span><br>' +
+                '<span style="color: #8aba4a;">"But she doesn\'t want to be saved. She wants to be left alone."</span><br><br>' +
+                'His eyes are sad. <span class="dark">"I was a resident too, you know."</span><br>' +
+                '<span class="dark">"I was in Room 306. I tried to fight her. She turned me into this."</span><br><br>' +
                 'How do you approach him?',
                 [
                     { label: '⚔️ Fight', value: 'fight', class: 'danger' },
                     { label: '💬 Talk', value: 'talk' },
                     { label: '🎭 Prank', value: 'prank', class: 'wonder' },
-                    { label: '🕊️ Spare', value: 'spare', class: 'success' }
+                    { label: '🕊️ Spare', value: 'spare', class: 'success' },
+                    { label: '💔 Heal', value: 'heal', class: 'good' }
                 ],
                 function(choice) {
                     handleIanChoice(choice);
@@ -1385,100 +1700,163 @@
 
             switch (choice) {
                 case 'fight':
-                    if (player.hasSword || player.hasCrown || player.enemiesDefeated > 3) {
+                    if (player.foundMemories >= 2 || player.foundResidents >= 2) {
                         player.ianDefeated = true;
-                        player.questStep = Math.max(player.questStep, 6);
+                        player.questStep = Math.max(player.questStep, 7);
+                        player.hasCourage = true;
                         showDialogue('⚔️ BATTLE',
-                            'You fight Ian with all your might!<br>' +
-                            'He\'s strong, but you\'re stronger.<br>' +
+                            'You fight Ian with all your strength!<br>' +
+                            'He\'s powerful, but you\'re fighting for more than yourself.<br>' +
                             '<span class="good">✦ IAN IS DEFEATED! ✦</span><br>' +
-                            '<span style="color: #8aba4a;">"You\'re stronger than you look, human. Go on."</span>'
+                            '<span style="color: #8aba4a;">"...You\'re stronger than I was. Go on."</span><br>' +
+                            'He steps aside, defeated but almost... relieved.'
                         );
+                        map[7][15] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
-                        map[7][14] = T.FLOOR;
                     } else {
                         showDialogue('⚔️ BATTLE',
                             'You fight Ian, but he\'s too strong!<br>' +
                             '<span class="creepy">✦ You lose 5 HP ✦</span><br>' +
-                            '<span style="color: #8888aa;">You need more power. Defeat enemies and find items.</span>'
+                            '<span style="color: #8888aa;">You need more memories and residents saved.</span>'
                         );
                         player.hp -= 5;
-                        setTimeout(closeDialogue, 3000);
+                        updateUI();
+                        setTimeout(closeDialogue, 2000);
                     }
                     break;
 
                 case 'talk':
-                    player.ianBefriended = true;
-                    player.questStep = Math.max(player.questStep, 6);
-                    showDialogue('💬 TALK',
-                        'You talk to Ian. He seems sad.<br>' +
-                        '<span style="color: #8aba4a;">"...The Queen corrupted me. But I see you\'re different."</span><br>' +
-                        '<span class="good">✦ IAN LETS YOU PASS ✦</span>'
-                    );
-                    setTimeout(closeDialogue, 3000);
-                    map[7][14] = T.FLOOR;
+                    if (player.hasWisdom) {
+                        player.ianBefriended = true;
+                        player.questStep = Math.max(player.questStep, 7);
+                        player.hasMercy = true;
+                        showDialogue('💬 TALK',
+                            'You talk to Ian. You tell him you understand.<br>' +
+                            '<span style="color: #8aba4a;">"...You really get it, don\'t you?"</span><br>' +
+                            '<span style="color: #8aba4a;">"She\'s not evil. She\'s just... broken."</span><br>' +
+                            '<span class="good">✦ IAN LETS YOU PASS ✦</span><br>' +
+                            '"Tell her... tell her Ian misses her."'
+                        );
+                        map[7][15] = T.FLOOR;
+                        setTimeout(closeDialogue, 3000);
+                    } else {
+                        showDialogue('💬 TALK',
+                            'You try to talk to Ian, but he\'s not listening.<br>' +
+                            '<span style="color: #8aba4a;">"You don\'t understand. You can\'t."</span><br>' +
+                            '<span style="color: #8888aa;">You need more wisdom.</span>'
+                        );
+                        setTimeout(closeDialogue, 2000);
+                    }
                     break;
 
                 case 'prank':
                     player.ianBefriended = true;
-                    player.questStep = Math.max(player.questStep, 6);
+                    player.questStep = Math.max(player.questStep, 7);
+                    player.hasMercy = true;
                     showDialogue('🎭 PRANK',
                         'You yell <span style="color: #ffd93d;">"MY MOM!"</span><br>' +
-                        'Ian freezes. Tears well up in his eyes.<br>' +
-                        '<span style="color: #8aba4a;">"Bro... that\'s my mom\'s catchphrase..."</span><br>' +
+                        'Ian freezes. His eyes water.<br>' +
+                        '<span style="color: #8aba4a;">"...My mom used to say that."</span><br>' +
+                        '<span style="color: #8aba4a;">"Alright, alright. You got me. Go on."</span><br>' +
                         '<span class="good">✦ IAN LETS YOU PASS ✦</span>'
                     );
-                    setTimeout(closeDialogue, 3000);
-                    map[7][14] = T.FLOOR;
+                    map[7][15] = T.FLOOR;
+                    setTimeout(closeDialogue, 2500);
                     break;
 
                 case 'spare':
-                    player.ianBefriended = true;
-                    player.questStep = Math.max(player.questStep, 6);
-                    player.hasMercy = true;
-                    showDialogue('🕊️ SPARE',
-                        'You put your hands up. <span style="color: #ffd93d;">"I don\'t want to fight."</span><br>' +
-                        'Ian stares at you. His muscles deflate.<br>' +
-                        '<span style="color: #8aba4a;">"...You\'re not like the others."</span><br>' +
-                        '<span class="good">✦ IAN LETS YOU PASS ✦</span>'
-                    );
-                    setTimeout(closeDialogue, 3000);
-                    map[7][14] = T.FLOOR;
+                    if (player.hasMercy) {
+                        player.ianBefriended = true;
+                        player.questStep = Math.max(player.questStep, 7);
+                        showDialogue('🕊️ SPARE',
+                            'You put your hands up.<br>' +
+                            '<span style="color: #ffd93d;">"I don\'t want to fight you, Ian."</span><br>' +
+                            'He stares at you. His muscles deflate.<br>' +
+                            '<span style="color: #8aba4a;">"...You\'re the first person to say that."</span><br>' +
+                            '<span class="good">✦ IAN STEPS ASIDE ✦</span><br>' +
+                            '"Go on. But be careful. The Queen... she\'s not herself."'
+                        );
+                        map[7][15] = T.FLOOR;
+                        setTimeout(closeDialogue, 3000);
+                    } else {
+                        showDialogue('🕊️ SPARE',
+                            'You try to spare Ian, but he doesn\'t believe you.<br>' +
+                            '<span style="color: #8aba4a;">"You don\'t mean that."</span><br>' +
+                            '<span style="color: #8888aa;">You need to show mercy first.</span>'
+                        );
+                        setTimeout(closeDialogue, 2000);
+                    }
+                    break;
+
+                case 'heal':
+                    if (player.hasHeart || player.hasRose) {
+                        player.ianBefriended = true;
+                        player.questStep = Math.max(player.questStep, 7);
+                        player.hasMercy = true;
+                        player.hasHope = true;
+                        showDialogue('💔 HEAL',
+                            'You reach out to Ian.<br>' +
+                            'You place your hand on his chest.<br>' +
+                            '<span class="wonder">✦ You share your hope with him ✦</span><br><br>' +
+                            'Ian\'s eyes widen. The green fades slightly.<br>' +
+                            '<span style="color: #8aba4a;">"...I forgot what it felt like."</span><br>' +
+                            '<span class="good">✦ IAN IS HEALED ✦</span><br>' +
+                            '"Thank you. Go on. The Queen needs you."'
+                        );
+                        map[7][15] = T.FLOOR;
+                        setTimeout(closeDialogue, 3000);
+                    } else {
+                        showDialogue('💔 HEAL',
+                            'You try to heal Ian, but you have nothing to give.<br>' +
+                            '<span style="color: #8888aa;">You need a Heart or a Rose.</span>'
+                        );
+                        setTimeout(closeDialogue, 1500);
+                    }
                     break;
             }
             updateUI();
         }
 
-        // --- FACE QUEEN ---
+        // ============================================================
+        //  ACT VI: THE QUEEN
+        // ============================================================
+
         function faceQueen() {
             if (player.queenDefeated || player.queenBefriended) {
-                showDialogue('👑 THE QUEEN', '"You\'ve already defeated me. What more do you want?"');
+                showDialogue('👑 THE QUEEN', '"You\'ve already shown me what I needed to see."');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            if (player.questStep < 5) {
-                showDialogue('👑 THE QUEEN', '"You\'re not ready to face me yet, human. Complete your quest first."');
+            if (player.questStep < 6) {
+                showDialogue('👑 THE QUEEN', '"You\'re not ready. Complete your quest."');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
             if (!player.ianDefeated && !player.ianBefriended) {
-                showDialogue('👑 THE QUEEN', '"You must defeat Ian first to reach me!"');
+                showDialogue('👑 THE QUEEN', '"You must face Ian first!"');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            showDialogue('👑 QUEEN RYLEE - FINAL BOSS',
-                '<span style="color: #ff4a4a; font-size: 14px;">"YOU DARE FACE ME?"</span><br>' +
-                'The Queen rises from her desk. The room shakes.<br>' +
-                'She\'s the most powerful being in Wonderland.<br><br>' +
-                'How do you approach her?',
+            player.act = 4;
+            showChapter('ACT VI', 'The Queen');
+
+            // Build dialogue based on what player has done
+            let intro = '<span style="color: #ff4a4a; font-size: 14px;">"YOU DARE FACE ME?"</span><br><br>';
+            if (player.foundMemories >= 3) intro += '"You found the memories. You know what I was."<br>';
+            if (player.foundResidents >= 3) intro += '"You helped my former friends. They told you about me."<br>';
+            if (player.hasWisdom) intro += '"You understand me. That\'s why you\'re dangerous."<br>';
+            intro += '<br><span style="color: #ff4a4a;">"I AM THE QUEEN OF THE DESK!"</span>';
+
+            showDialogue('👑 QUEEN RYLEE', intro,
                 [
                     { label: '⚔️ Fight', value: 'fight', class: 'danger' },
                     { label: '💬 Talk', value: 'talk' },
                     { label: '🌀 Wonder', value: 'wonder', class: 'wonder' },
-                    { label: '🕊️ Spare', value: 'spare', class: 'success' }
+                    { label: '🕊️ Spare', value: 'spare', class: 'success' },
+                    { label: '💔 Heal', value: 'heal', class: 'good' }
                 ],
                 function(choice) {
                     handleQueenChoice(choice);
@@ -1491,157 +1869,251 @@
 
             switch (choice) {
                 case 'fight':
-                    if (player.hasSword && player.hasCrown) {
+                    if (player.foundMemories >= 3 && player.hasCourage) {
                         player.queenDefeated = true;
-                        player.questStep = 7;
+                        player.questStep = 8;
                         showDialogue('⚔️ FINAL BATTLE',
-                            'You fight the Queen with all your power!<br>' +
-                            'Your sword glows. Your crown shines.<br>' +
-                            '<span class="good">✦ THE QUEEN IS DEFEATED! ✦</span><br>' +
-                            '<span style="color: #ffd93d;">Wonderland is free!</span>'
+                            'You fight the Queen with everything you have.<br>' +
+                            'The memories strengthen you. The residents\' hope empowers you.<br>' +
+                            '<span class="good">✦ THE QUEEN IS DEFEATED! ✦</span><br><br>' +
+                            'She falls to her knees. The darkness around her fades.<br>' +
+                            '<span style="color: #ff4a4a;">"...Thank you. I was so alone."</span><br>' +
+                            '<span style="color: #ff4a4a;">"I forgot what it felt like to be free."</span><br><br>' +
+                            '<span class="highlight">✦ Wonderland is free ✦</span>'
                         );
                         setTimeout(() => {
                             closeDialogue();
-                            showEnding('good', 'Warrior Ending',
-                                'You defeated the Queen through strength and courage.<br>' +
-                                'Wonderland is free from her tyranny.<br><br>' +
-                                '<span class="highlight">✦ You escaped, but you carry the lessons of Wonderland forever ✦</span>'
+                            showEnding('good', 'The Liberator',
+                                'You defeated the Queen and freed Wonderland.<br><br>' +
+                                'The darkness lifts. The former residents return.<br>' +
+                                'The building is no longer a prison.<br><br>' +
+                                '<span class="highlight">✦ You are the hero of JN Hall ✦</span>'
                             );
-                        }, 2000);
+                        }, 4000);
                     } else {
                         showDialogue('⚔️ FINAL BATTLE',
                             'You fight the Queen, but she\'s too powerful!<br>' +
                             '<span class="creepy">✦ You lose 5 HP ✦</span><br>' +
-                            '<span style="color: #8888aa;">You need the sword and crown to defeat her.</span>'
+                            '<span style="color: #8888aa;">You need more memories and courage.</span>'
                         );
                         player.hp -= 5;
-                        setTimeout(closeDialogue, 3000);
+                        updateUI();
+                        setTimeout(closeDialogue, 2000);
                     }
                     break;
 
                 case 'talk':
-                    if (player.hasWisdom) {
+                    if (player.foundResidents >= 3 && player.hasWisdom) {
                         player.queenBefriended = true;
-                        player.questStep = 7;
+                        player.questStep = 8;
                         showDialogue('💬 TALK',
                             'You talk to the Queen. You tell her about the residents.<br>' +
-                            'She listens. Her expression softens.<br>' +
-                            '<span style="color: #ff4a4a;">"...I forgot what it was like to be human."</span><br>' +
-                            '<span class="good">✦ THE QUEEN LETS YOU GO ✦</span>'
+                            'You tell her they forgive her.<br><br>' +
+                            '<span style="color: #ff4a4a;">"...They forgive me?"</span><br>' +
+                            'She starts to cry. The darkness fades.<br>' +
+                            '<span style="color: #ff4a4a;">"I was so scared. I was so alone."</span><br>' +
+                            '<span class="good">✦ THE QUEEN IS SAVED ✦</span><br><br>' +
+                            '<span class="highlight">✦ Wonderland is at peace ✦</span>'
                         );
                         setTimeout(() => {
                             closeDialogue();
-                            showEnding('good', 'Wisdom Ending',
-                                'You reached the Queen through wisdom and understanding.<br>' +
-                                'She remembers her humanity.<br><br>' +
-                                '<span class="highlight">✦ You escaped, and the Queen begins to heal ✦</span>'
+                            showEnding('good', 'The Redeemer',
+                                'You saved the Queen through understanding.<br><br>' +
+                                'She was never evil. She was just broken.<br>' +
+                                'Now she\'s healing.<br><br>' +
+                                '<span class="highlight">✦ You showed that mercy can conquer all ✦</span>'
                             );
-                        }, 3000);
+                        }, 4000);
                     } else {
                         showDialogue('💬 TALK',
-                            'You try to reason with the Queen.<br>' +
-                            '<span style="color: #ff4a4a;">"Reason? REASON? I AM THE LAW!"</span><br>' +
-                            '<span style="color: #8888aa;">You need more wisdom to reach her.</span>'
+                            'You try to talk to the Queen, but she won\'t listen.<br>' +
+                            '<span style="color: #ff4a4a;">"You don\'t understand. You CAN\'T understand!"</span><br>' +
+                            '<span style="color: #8888aa;">You need more wisdom and residents saved.</span>'
                         );
                         setTimeout(closeDialogue, 2000);
                     }
                     break;
 
                 case 'wonder':
-                    if (player.wonder >= 50) {
+                    if (player.wonder >= 60) {
                         player.queenDefeated = true;
-                        player.questStep = 7;
+                        player.questStep = 8;
+                        player.hasWonderPower = true;
                         showDialogue('🌀 WONDER POWER',
                             'You channel the power of Wonderland itself!<br>' +
-                            'The Queen\'s desk flickers. She looks uncertain.<br>' +
-                            '<span style="color: #ff4a4a;">"What... what are you?"</span><br>' +
-                            '<span class="good">✦ THE QUEEN IS DEFEATED BY WONDER ✦</span>'
+                            'The Queen\'s throne shatters.<br>' +
+                            '<span style="color: #ff4a4a;">"WHAT ARE YOU?"</span><br><br>' +
+                            'You are the embodiment of Wonderland\'s hope.<br>' +
+                            '<span class="good">✦ THE QUEEN IS OVERWHELMED ✦</span><br><br>' +
+                            '<span class="highlight">✦ You are the bridge between worlds ✦</span>'
                         );
                         setTimeout(() => {
                             closeDialogue();
-                            showEnding('good', 'Wonder Master Ending',
-                                'You mastered the power of Wonderland.<br>' +
-                                'The Queen bows to your wisdom.<br><br>' +
-                                '<span class="highlight">✦ You become the bridge between worlds ✦</span>'
+                            showEnding('good', 'The Wonder Master',
+                                'You mastered the power of Wonderland.<br><br>' +
+                                'The Queen bows to your wisdom.<br>' +
+                                'You can travel between worlds freely.<br><br>' +
+                                '<span class="highlight">✦ You become the guardian of Wonderland ✦</span>'
                             );
-                        }, 3000);
+                        }, 4000);
                     } else {
                         showDialogue('🌀 WONDER POWER',
                             'You try to use Wonder, but it\'s not enough.<br>' +
-                            '<span style="color: #ff4a4a;">"Your soul is weak!"</span><br>' +
-                            `<span style="color: #8888aa;">You need 50+ Wonder (current: ${player.wonder})</span>`
+                            `<span style="color: #8888aa;">Need 60+ Wonder (current: ${player.wonder})</span>`
+                        );
+                        setTimeout(closeDialogue, 1500);
+                    }
+                    break;
+
+                case 'spare':
+                    if (player.hasMercy && player.foundResidents >= 2) {
+                        player.queenBefriended = true;
+                        player.questStep = 8;
+                        player.hasHope = true;
+                        showDialogue('🕊️ SPARE',
+                            'You offer mercy to the Queen.<br>' +
+                            'She stares at you, speechless.<br><br>' +
+                            '<span style="color: #ff4a4a;">"...No one has ever shown me mercy."</span><br>' +
+                            'She breaks down. The darkness around her fades.<br>' +
+                            '<span class="good">✦ THE QUEEN IS MOVED ✦</span><br><br>' +
+                            '<span class="highlight">✦ She steps down from her throne ✦</span><br>' +
+                            '<span style="color: #ff4a4a;">"I\'m sorry. I\'m so sorry for everything."</span>'
+                        );
+                        setTimeout(() => {
+                            closeDialogue();
+                            showEnding('good', 'The Merciful One',
+                                'You showed mercy to the Queen.<br><br>' +
+                                'She remembers what it\'s like to be loved.<br>' +
+                                'Wonderland is at peace because of your kindness.<br><br>' +
+                                '<span class="highlight">✦ You proved that mercy is the greatest strength ✦</span>'
+                            );
+                        }, 4000);
+                    } else {
+                        showDialogue('🕊️ SPARE',
+                            'You try to spare the Queen.<br>' +
+                            '<span style="color: #ff4a4a;">"You think you can SPARE ME?"</span><br>' +
+                            '<span style="color: #8888aa;">You need more mercy and residents saved.</span>'
                         );
                         setTimeout(closeDialogue, 2000);
                     }
                     break;
 
-                case 'spare':
-                    if (player.hasMercy && player.residentsMet.length >= 2) {
+                case 'heal':
+                    if (player.hasHeart && player.hasRose) {
                         player.queenBefriended = true;
-                        player.questStep = 7;
-                        showDialogue('🕊️ SPARE',
-                            'You offer mercy to the Queen.<br>' +
-                            'She stares at you, speechless.<br>' +
-                            '<span style="color: #ff4a4a;">"No one has ever... spared me..."</span><br>' +
-                            '<span class="good">✦ THE QUEEN IS MOVED ✦</span><br>' +
-                            '<span style="color: #ffd93d;">She steps down from her throne.</span>'
+                        player.questStep = 8;
+                        player.hasHope = true;
+                        player.hasMercy = true;
+                        showDialogue('💔 HEAL',
+                            'You reach out to the Queen.<br>' +
+                            'You place the Heart and Rose in her hands.<br><br>' +
+                            '<span class="wonder">✦ The Heart pulses with life ✦</span><br>' +
+                            '<span class="wonder">✦ The Rose blooms with hope ✦</span><br><br>' +
+                            '<span style="color: #ff4a4a;">"...I remember what it felt like to be human."</span><br>' +
+                            'She\'s crying. The darkness is gone.<br>' +
+                            '<span class="good">✦ THE QUEEN IS HEALED ✦</span><br><br>' +
+                            '<span class="highlight">✦ You brought light back to Wonderland ✦</span>'
                         );
                         setTimeout(() => {
                             closeDialogue();
-                            showEnding('good', 'Mercy Ending',
-                                'You showed mercy to the Queen.<br>' +
-                                'She remembers what it\'s like to be loved.<br><br>' +
-                                '<span class="highlight">✦ Wonderland is at peace because of your kindness ✦</span>'
+                            showEnding('good', 'The Healer',
+                                'You healed the Queen\'s broken heart.<br><br>' +
+                                'She was never evil. She was just wounded.<br>' +
+                                'Now she\'s free. And so is Wonderland.<br><br>' +
+                                '<span class="highlight">✦ You are the greatest healer of all ✦</span>'
                             );
-                        }, 3000);
+                        }, 4000);
                     } else {
-                        showDialogue('🕊️ SPARE',
-                            'You try to spare the Queen.<br>' +
-                            '<span style="color: #ff4a4a;">"You think you can SPARE ME?"</span><br>' +
-                            '<span style="color: #8888aa;">You need more mercy and more residents saved.</span>'
+                        showDialogue('💔 HEAL',
+                            'You try to heal the Queen, but you have nothing to give.<br>' +
+                            '<span style="color: #8888aa;">You need a Heart and a Rose.</span>'
                         );
-                        setTimeout(closeDialogue, 2000);
+                        setTimeout(closeDialogue, 1500);
                     }
                     break;
             }
             updateUI();
         }
 
-        // --- ESCAPE ---
+        // ============================================================
+        //  ESCAPE
+        // ============================================================
+
         function escapeWonderland() {
-            if (player.questStep < 6) {
+            if (player.questStep < 7) {
                 showDialogue('🚪 EXIT',
-                    'The exit is locked. You need to complete your quest first.<br>' +
-                    `<span style="color: #8888aa;">Quest progress: ${player.questStep}/6</span>`
+                    'The exit is locked. You need to complete your quest.<br>' +
+                    `<span style="color: #8888aa;">Progress: ${player.questStep}/8</span>`
                 );
                 setTimeout(closeDialogue, 2000);
                 return;
             }
 
-            showDialogue('🚪 ESCAPE',
-                'You stand before the exit. The door glows with warm light.<br><br>' +
-                'Do you want to leave Wonderland?',
+            showDialogue('🚪 THE EXIT',
+                'You stand before the glowing exit.<br><br>' +
+                'The cat appears beside you.<br>' +
+                '"You\'ve done it, human. You\'ve completed your quest."<br>' +
+                '"The Queen is free. The residents are free."<br>' +
+                '"Now it\'s time for you to choose your fate."<br><br>' +
+                'What do you do?',
                 [
-                    { label: '🚪 Yes, escape', value: 'escape', class: 'success' },
-                    { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' }
+                    { label: '🚪 Escape', value: 'escape', class: 'success' },
+                    { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' },
+                    { label: '💔 Stay with the Queen', value: 'queen', class: 'primary' }
                 ],
                 function(choice) {
                     closeDialogue();
                     if (choice === 'escape') {
-                        showEnding('good', 'Escape Ending',
-                            'You escaped Wonderland!<br>' +
-                            'You return to JN Hall, forever changed by your adventure.<br><br>' +
-                            '<span class="highlight">✦ You carry the wonder of the journey in your heart ✦</span>'
+                        showEnding('good', 'The Escape',
+                            'You step through the exit.<br><br>' +
+                            'You\'re back in JN Hall. The sun is rising.<br>' +
+                            'You\'re forever changed by your journey.<br><br>' +
+                            '<span class="highlight">✦ You carry the wonder of the adventure in your heart ✦</span>'
+                        );
+                    } else if (choice === 'stay') {
+                        showEnding('neutral', 'The Guardian',
+                            'You choose to stay in Wonderland.<br><br>' +
+                            'The cat smiles. "I knew you would."<br>' +
+                            'You become the new guardian of Wonderland.<br><br>' +
+                            '<span class="highlight">✦ You protect the memories forever ✦</span>'
                         );
                     } else {
-                        showEnding('neutral', 'Wonderland Resident',
-                            'You choose to stay in Wonderland.<br>' +
-                            'The cat appears beside you. "You belong here now."<br><br>' +
-                            '<span class="highlight">✦ You become a part of Wonderland forever ✦</span>'
-                        );
+                        if (player.queenBefriended) {
+                            showEnding('good', 'The Companion',
+                                'You stay with the Queen.<br><br>' +
+                                'She\'s no longer dark. She\'s healing.<br>' +
+                                'Together, you rebuild Wonderland.<br><br>' +
+                                '<span class="highlight">✦ You found love in the darkness ✦</span>'
+                            );
+                        } else {
+                            showEnding('neutral', 'The Watcher',
+                                'You stay with the Queen, watching over her.<br><br>' +
+                                'She\'s still healing, but she\'s not alone anymore.<br><br>' +
+                                '<span class="highlight">✦ You are her hope ✦</span>'
+                            );
+                        }
                     }
                 }
             );
+        }
+
+        // ============================================================
+        //  CHAPTER TITLE
+        // ============================================================
+
+        function showChapter(title, sub) {
+            const el = document.getElementById('chapterTitle');
+            document.getElementById('chapterTitleText').textContent = title;
+            document.getElementById('chapterSubText').textContent = sub;
+            el.style.opacity = '1';
+            setTimeout(() => {
+                el.style.opacity = '0';
+            }, 2500);
+            // Dark overlay flash
+            darkOpacity = 0.3;
+            setTimeout(() => {
+                darkOpacity = 0;
+            }, 2500);
         }
 
         // ============================================================
@@ -1662,8 +2134,9 @@
             `;
             player.gameState = 'dialogue';
             player.inDialogue = true;
-            player.questStep = 7;
+            player.questStep = 8;
             updateUI();
+            darkOpacity = 0.2;
         }
 
         // ============================================================
@@ -1672,8 +2145,10 @@
 
         function updateUI() {
             document.getElementById('hudHp').textContent = player.hp;
-            document.getElementById('hudStep').textContent = Math.min(player.questStep, 6);
-            document.getElementById('hudMaxStep').textContent = 6;
+            document.getElementById('hudAct').textContent = ['I','II','III','IV','V','VI'][player.act - 1] || 'VI';
+            document.getElementById('hudWonder').textContent = Math.min(100, Math.round(player.wonder));
+            document.getElementById('hudStep').textContent = Math.min(player.questStep, 8);
+            document.getElementById('hudMaxStep').textContent = 8;
 
             const items = [];
             if (player.hasKey) items.push('🔑');
@@ -1686,13 +2161,38 @@
             if (player.hasTea) items.push('🍵');
             if (player.hasCard) items.push('🃏');
             if (player.hasHeart) items.push('❤️');
+            if (player.hasLetter) items.push('✉️');
+            if (player.hasPhoto) items.push('🖼️');
+            if (player.hasDiary) items.push('📖');
             document.getElementById('hudItems').textContent = items.join(' ') || 'None';
 
-            updateQuestLog();
+            // Update quest log
+            const questSteps = [
+                { id: 'scream', label: 'The Scream' },
+                { id: 'fall', label: 'The Fall' },
+                { id: 'wander', label: 'The Wandering' },
+                { id: 'memories', label: 'The Memories' },
+                { id: 'bodyguard', label: 'The Bodyguard' },
+                { id: 'queen', label: 'The Queen' },
+                { id: 'choice', label: 'The Choice' },
+                { id: 'escape', label: 'The Escape' }
+            ];
+
+            const list = document.getElementById('questList');
+            let html = '';
+            for (let i = 0; i < questSteps.length; i++) {
+                const step = questSteps[i];
+                let cls = '';
+                if (i < player.questStep) cls = 'step-done';
+                else if (i === player.questStep) cls = 'step-active';
+                else cls = 'step-hidden';
+                html += `<div class="${cls}">${i < player.questStep ? '✅' : '✦'} ${step.label}</div>`;
+            }
+            list.innerHTML = html;
         }
 
         // ============================================================
-        //  RESET GAME
+        //  RESET
         // ============================================================
 
         function resetGame() {
@@ -1718,76 +2218,34 @@
         function init() {
             resizeCanvas();
             buildMap();
-            // Place player in Room 303
             player.x = 4;
             player.y = 4;
             player.facing = 'down';
             updateUI();
 
-            // Show intro dialogue
+            // Welcome
             setTimeout(() => {
                 showDialogue('🎮 NARRATOR',
-                    'You wake up in your dorm room at JN Hall.<br>' +
-                    'You heard a scream from Room 303.<br><br>' +
-                    '<span class="highlight">✦ You decide to investigate ✦</span><br>' +
-                    '<span style="color: #8888aa; font-size: 8px;">Use Arrow Keys/WASD to move. Press SPACE to interact.</span>'
+                    '<span class="creepy">You wake up to a scream.</span><br><br>' +
+                    'It\'s 3:03 AM. The scream came from Room 303.<br>' +
+                    'Your heart is racing. You have to check it out.<br><br>' +
+                    '<span style="color: #8888aa; font-size: 8px;">Use WASD/Arrow Keys to move. Press SPACE to interact.</span>'
                 );
                 setTimeout(closeDialogue, 4000);
             }, 500);
 
-            // Start game loop
             gameLoop();
 
-            // Handle resize
             window.addEventListener('resize', function() {
                 resizeCanvas();
             });
         }
 
-        // Handle click on canvas to move
-        canvas.addEventListener('click', function(e) {
-            if (player.inDialogue || player.gameState !== 'exploring') return;
-
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-
-            // Convert to tile coordinates
-            const tx = Math.floor((mx + cameraX) / tileSize);
-            const ty = Math.floor((my + cameraY) / tileSize);
-
-            if (tx >= 0 && tx < cols && ty >= 0 && ty < rows) {
-                // Simple pathfinding - move towards click
-                const dx = Math.sign(tx - player.x);
-                const dy = Math.sign(ty - player.y);
-
-                if (dx !== 0 && dy !== 0) {
-                    // Try horizontal first
-                    if (map[player.y][player.x + dx] !== T.WALL) {
-                        tryMove(dx, 0);
-                        return;
-                    }
-                    // Then vertical
-                    if (map[player.y + dy][player.x] !== T.WALL) {
-                        tryMove(0, dy);
-                        return;
-                    }
-                } else if (dx !== 0) {
-                    tryMove(dx, 0);
-                } else if (dy !== 0) {
-                    tryMove(0, dy);
-                }
-            }
-        });
-
-        // ============================================================
-        //  START
-        // ============================================================
-
-        console.log('%c✦ JN WONDERLAND - ADVENTURE ✦', 'font-size:20px; color:#ffd93d;');
-        console.log(`%cPlayer: ${player.name}`, 'color:#8888aa;');
-        console.log('%c🎮 Use WASD/Arrow Keys to move, SPACE to interact!', 'color:#6ac8ff;');
-        console.log('%c🐱 Find the cat to begin your quest!', 'color:#ff8a4a;');
+        console.log('%c✦ JN WONDERLAND: THE DARK TALE ✦', 'font-size:20px; color:#ffd93d;');
+        console.log('%c📖 A dark story of memory, loss, and hope', 'color:#8888aa;');
+        console.log(`%c🎮 Player: ${player.name}`, 'color:#6ac8ff;');
+        console.log('%c🐱 Find the cat to begin your quest.', 'color:#ff8a4a;');
+        console.log('%c💭 Collect memories to uncover the truth.', 'color:#a29bfe;');
 
         init();
     </script>
