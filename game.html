@@ -305,7 +305,6 @@
             display: block;
         }
         
-        /* Psychedelic combat background */
         .combat-background {
             position: absolute;
             top: 0;
@@ -320,6 +319,16 @@
         @keyframes psychedelic-shift {
             0% { filter: hue-rotate(0deg); }
             100% { filter: hue-rotate(360deg); }
+        }
+        
+        .psi-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .psi-menu.active {
+            display: flex;
         }
     </style>
 </head>
@@ -377,10 +386,16 @@
                     </div>
                 </div>
                 <div class="combat-menu" id="combatMenu">
-                    <button class="combat-button" onclick="playerAttack()">ATTACK</button>
-                    <button class="combat-button" onclick="playerPSI()">PSI</button>
-                    <button class="combat-button" onclick="playerDefend()">DEFEND</button>
+                    <button class="combat-button" onclick="playerAttack()">FIGHT</button>
+                    <button class="combat-button" onclick="showPSIMenu()">PSYCH</button>
+                    <button class="combat-button" onclick="playerDefend()">GUARD</button>
                     <button class="combat-button" onclick="playerRun()">RUN</button>
+                </div>
+                <div class="psi-menu" id="psiMenu">
+                    <button class="combat-button" onclick="useCoffeeBreak()">COFFEE BREAK (5 PP)</button>
+                    <button class="combat-button" onclick="useAllNighter()">ALL-NIGHTER (8 PP)</button>
+                    <button class="combat-button" onclick="useRamenHeal()">RAMEN BREAK (5 PP)</button>
+                    <button class="combat-button" onclick="hidePSIMenu()">BACK</button>
                 </div>
             </div>
             
@@ -429,14 +444,14 @@
                 turn: 'player',
                 playerDefending: false,
                 messageQueue: [],
-                enemyEncounterChance: 0.1 // 10% chance per step in dangerous areas
+                enemyEncounterChance: 0.1
             }
         };
         
-        // Enemy definitions
+        // Dorm-themed enemies
         const enemies = {
-            shadowRat: {
-                name: 'Shadow Rat',
+            laundryGoblin: {
+                name: 'Laundry Goblin',
                 hp: 15,
                 maxHp: 15,
                 pp: 0,
@@ -444,16 +459,17 @@
                 defense: 1,
                 speed: 5,
                 exp: 5,
-                money: 10,
-                color: '#800080',
-                sprite: 'rat',
+                money: 5,
+                color: '#808080',
+                sprite: 'laundry',
                 attacks: [
-                    { name: 'Bite', power: 1, type: 'physical' },
-                    { name: 'Scratch', power: 1.2, type: 'physical' }
-                ]
+                    { name: 'Sock Attack', power: 1, type: 'physical' },
+                    { name: 'Static Cling', power: 1.2, type: 'physical' }
+                ],
+                description: 'A creature made of lost socks and dryer lint'
             },
-            darkSprite: {
-                name: 'Dark Sprite',
+            microwaveWraith: {
+                name: 'Microwave Wraith',
                 hp: 20,
                 maxHp: 20,
                 pp: 5,
@@ -461,16 +477,17 @@
                 defense: 2,
                 speed: 6,
                 exp: 8,
-                money: 15,
-                color: '#4B0082',
-                sprite: 'sprite',
+                money: 8,
+                color: '#C0C0C0',
+                sprite: 'microwave',
                 attacks: [
-                    { name: 'Shadow Bolt', power: 1.5, type: 'magical' },
-                    { name: 'Dark Touch', power: 1, type: 'physical' }
-                ]
+                    { name: 'Hot Pocket', power: 1.5, type: 'magical' },
+                    { name: 'Radiation', power: 1, type: 'physical' }
+                ],
+                description: 'Haunted by every burnt popcorn incident'
             },
-            lostSoul: {
-                name: 'Lost Soul',
+            textbookTitan: {
+                name: 'Textbook Titan',
                 hp: 25,
                 maxHp: 25,
                 pp: 10,
@@ -478,41 +495,76 @@
                 defense: 3,
                 speed: 4,
                 exp: 12,
-                money: 20,
-                color: '#708090',
-                sprite: 'soul',
+                money: 12,
+                color: '#8B0000',
+                sprite: 'textbook',
                 attacks: [
-                    { name: 'Wail', power: 1.3, type: 'magical' },
-                    { name: 'Cold Grasp', power: 1.4, type: 'physical' }
-                ]
+                    { name: 'Knowledge Drop', power: 1.3, type: 'magical' },
+                    { name: 'Paper Cut', power: 1.4, type: 'physical' }
+                ],
+                description: 'A sentient stack of overpriced textbooks'
+            },
+            coffeeGolem: {
+                name: 'Coffee Golem',
+                hp: 30,
+                maxHp: 30,
+                pp: 15,
+                attack: 6,
+                defense: 4,
+                speed: 3,
+                exp: 15,
+                money: 15,
+                color: '#6B4423',
+                sprite: 'coffee',
+                attacks: [
+                    { name: 'Caffeine Rush', power: 1.6, type: 'magical' },
+                    { name: 'Hot Splash', power: 1.2, type: 'physical' }
+                ],
+                description: 'Manifestation of finals week desperation'
+            },
+            showerMold: {
+                name: 'Shower Mold',
+                hp: 18,
+                maxHp: 18,
+                pp: 0,
+                attack: 3,
+                defense: 2,
+                speed: 2,
+                exp: 7,
+                money: 3,
+                color: '#556B2F',
+                sprite: 'mold',
+                attacks: [
+                    { name: 'Spore Cloud', power: 1.1, type: 'physical' },
+                    { name: 'Slimy Touch', power: 1.3, type: 'physical' }
+                ],
+                description: 'The thing growing in the communal shower'
             }
         };
         
-        // PSI abilities
-        const psiAbilities = {
-            pkFreeze: {
-                name: 'PK Freeze α',
+        // Dorm-themed psychic abilities
+        const psychicAbilities = {
+            coffeeBreak: {
+                name: 'Coffee Break',
                 cost: 5,
                 power: 1.8,
                 type: 'magical',
-                element: 'ice',
-                description: 'Chills the enemy with psychic ice'
+                description: 'Channel caffeine into psychic damage'
             },
-            pkThunder: {
-                name: 'PK Thunder α',
+            allNighter: {
+                name: 'All-Nighter',
                 cost: 8,
                 power: 2.2,
                 type: 'magical',
-                element: 'electric',
-                description: 'Strikes the enemy with psychic lightning'
+                description: 'Unleash the power of sleep deprivation'
             },
-            lifeup: {
-                name: 'Lifeup α',
+            ramenHeal: {
+                name: 'Ramen Break',
                 cost: 5,
                 power: 0,
                 type: 'healing',
                 healAmount: 30,
-                description: 'Restores your HP'
+                description: 'Restore HP with instant noodles'
             }
         };
         
@@ -532,7 +584,7 @@
                 backgroundColor: '#2d1b4e',
                 floorColor: '#8B7355',
                 wallColor: '#4A4A4A',
-                enemies: [] // No enemies in room 303
+                enemies: []
             };
             
             maps.closet = {
@@ -546,7 +598,7 @@
                 backgroundColor: '#1a0a2e',
                 floorColor: '#6B5B45',
                 wallColor: '#3A2A1A',
-                enemies: ['shadowRat', 'darkSprite'] // Enemies in closet
+                enemies: ['laundryGoblin', 'microwaveWraith', 'showerMold']
             };
             
             generateRoom303();
@@ -746,6 +798,7 @@
             
             document.getElementById('combatScreen').classList.add('active');
             document.getElementById('combatMenu').style.display = 'flex';
+            document.getElementById('psiMenu').classList.remove('active');
             drawCombatEnemy();
             drawCombatPlayer();
             updateCombatUI();
@@ -762,42 +815,58 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             switch(enemy.sprite) {
-                case 'rat':
-                    // Draw shadow rat
-                    ctx.fillStyle = enemy.color;
-                    ctx.fillRect(20, 40, 60, 40);
-                    ctx.fillRect(10, 30, 20, 20);
+                case 'laundry':
+                    // Draw laundry goblin
+                    ctx.fillStyle = '#808080';
+                    ctx.fillRect(30, 50, 40, 30);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(25, 45, 15, 15);
+                    ctx.fillRect(60, 45, 15, 15);
                     ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(15, 45, 5, 5);
+                    ctx.fillRect(45, 55, 10, 5);
+                    break;
+                case 'microwave':
+                    // Draw microwave wraith
+                    ctx.fillStyle = '#C0C0C0';
+                    ctx.fillRect(20, 30, 60, 40);
+                    ctx.fillStyle = '#808080';
+                    ctx.fillRect(30, 25, 40, 10);
+                    ctx.fillStyle = '#00FF00';
+                    ctx.fillRect(35, 35, 30, 5);
                     ctx.fillStyle = '#000000';
-                    ctx.fillRect(35, 55, 10, 10);
+                    ctx.fillRect(45, 45, 10, 10);
                     break;
-                case 'sprite':
-                    // Draw dark sprite
-                    ctx.fillStyle = enemy.color;
-                    ctx.beginPath();
-                    ctx.arc(50, 50, 30, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#FF00FF';
-                    ctx.beginPath();
-                    ctx.arc(40, 40, 5, 0, Math.PI * 2);
-                    ctx.arc(60, 40, 5, 0, Math.PI * 2);
-                    ctx.fill();
+                case 'textbook':
+                    // Draw textbook titan
+                    ctx.fillStyle = '#8B0000';
+                    ctx.fillRect(25, 30, 50, 40);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(30, 35, 40, 30);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(35, 40, 30, 3);
+                    ctx.fillRect(35, 50, 30, 3);
+                    ctx.fillRect(35, 60, 30, 3);
                     break;
-                case 'soul':
-                    // Draw lost soul
-                    ctx.fillStyle = enemy.color;
+                case 'coffee':
+                    // Draw coffee golem
+                    ctx.fillStyle = '#6B4423';
+                    ctx.fillRect(30, 30, 40, 50);
+                    ctx.fillStyle = '#4A2F1A';
+                    ctx.fillRect(25, 25, 50, 15);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(40, 45, 5, 5);
+                    ctx.fillRect(55, 45, 5, 5);
+                    break;
+                case 'mold':
+                    // Draw shower mold
+                    ctx.fillStyle = '#556B2F';
                     ctx.beginPath();
                     ctx.arc(50, 50, 25, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillStyle = '#6B8E23';
                     ctx.beginPath();
-                    ctx.arc(40, 45, 5, 0, Math.PI * 2);
-                    ctx.arc(60, 45, 5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#000000';
-                    ctx.beginPath();
-                    ctx.arc(50, 60, 10, 0, Math.PI);
+                    ctx.arc(40, 40, 8, 0, Math.PI * 2);
+                    ctx.arc(60, 40, 8, 0, Math.PI * 2);
                     ctx.fill();
                     break;
                 default:
@@ -814,16 +883,12 @@
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw player sprite
             ctx.fillStyle = char.shirtColor;
             ctx.fillRect(10, 20, 40, 40);
-            
             ctx.fillStyle = char.skinTone;
             ctx.fillRect(15, 10, 30, 30);
-            
             ctx.fillStyle = char.hairColor;
             ctx.fillRect(15, 5, 30, 10);
-            
             ctx.fillStyle = '#000000';
             ctx.fillRect(25, 25, 5, 5);
             ctx.fillRect(40, 25, 5, 5);
@@ -852,6 +917,19 @@
             }, 1500);
         }
         
+        // Show PSI menu
+        function showPSIMenu() {
+            if (gameState.combat.turn !== 'player') return;
+            document.getElementById('combatMenu').style.display = 'none';
+            document.getElementById('psiMenu').classList.add('active');
+        }
+        
+        // Hide PSI menu
+        function hidePSIMenu() {
+            document.getElementById('combatMenu').style.display = 'flex';
+            document.getElementById('psiMenu').classList.remove('active');
+        }
+        
         // Player actions
         function playerAttack() {
             if (gameState.combat.turn !== 'player') return;
@@ -859,7 +937,15 @@
             const char = gameState.character;
             const enemy = gameState.combat.enemy;
             
-            // Calculate damage
+            // More creative attack messages
+            const attackMessages = [
+                `${char.name} throws a textbook at ${enemy.name}!`,
+                `${char.name} hits ${enemy.name} with a laptop!`,
+                `${char.name} attacks with a desk lamp!`,
+                `${char.name} swings a backpack!`
+            ];
+            const message = attackMessages[Math.floor(Math.random() * attackMessages.length)];
+            
             let damage = Math.max(1, char.attack - enemy.defense + Math.floor(Math.random() * 3));
             
             if (gameState.combat.playerDefending) {
@@ -868,7 +954,7 @@
             }
             
             enemy.hp -= damage;
-            showCombatMessage(`${char.name} attacks! ${enemy.name} takes ${damage} damage!`);
+            showCombatMessage(`${message} ${damage} damage!`);
             
             if (enemy.hp <= 0) {
                 endCombat(true);
@@ -878,25 +964,27 @@
             }
         }
         
-        function playerPSI() {
+        // Psychic abilities
+        function useCoffeeBreak() {
             if (gameState.combat.turn !== 'player') return;
             
-            // Simple PSI menu
             const char = gameState.character;
-            if (char.pp < 5) {
+            const ability = psychicAbilities.coffeeBreak;
+            
+            if (char.pp < ability.cost) {
                 showCombatMessage('Not enough PP!');
                 return;
             }
             
-            // Use PK Freeze for now
             const enemy = gameState.combat.enemy;
             let damage = Math.floor(10 + char.attack * 1.5);
             
-            char.pp -= psiAbilities.pkFreeze.cost;
+            char.pp -= ability.cost;
             enemy.hp -= damage;
             updateCombatUI();
+            hidePSIMenu();
             
-            showCombatMessage(`${char.name} uses ${psiAbilities.pkFreeze.name}! ${enemy.name} takes ${damage} damage!`);
+            showCombatMessage(`${char.name} uses ${ability.name}! ${enemy.name} takes ${damage} psychic damage!`);
             
             if (enemy.hp <= 0) {
                 endCombat(true);
@@ -904,13 +992,64 @@
                 gameState.combat.turn = 'enemy';
                 setTimeout(enemyTurn, 1500);
             }
+        }
+        
+        function useAllNighter() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const char = gameState.character;
+            const ability = psychicAbilities.allNighter;
+            
+            if (char.pp < ability.cost) {
+                showCombatMessage('Not enough PP!');
+                return;
+            }
+            
+            const enemy = gameState.combat.enemy;
+            let damage = Math.floor(15 + char.attack * 2);
+            
+            char.pp -= ability.cost;
+            enemy.hp -= damage;
+            updateCombatUI();
+            hidePSIMenu();
+            
+            showCombatMessage(`${char.name} pulls an ${ability.name}! ${enemy.name} takes ${damage} damage!`);
+            
+            if (enemy.hp <= 0) {
+                endCombat(true);
+            } else {
+                gameState.combat.turn = 'enemy';
+                setTimeout(enemyTurn, 1500);
+            }
+        }
+        
+        function useRamenHeal() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const char = gameState.character;
+            const ability = psychicAbilities.ramenHeal;
+            
+            if (char.pp < ability.cost) {
+                showCombatMessage('Not enough PP!');
+                return;
+            }
+            
+            char.pp -= ability.cost;
+            char.hp = Math.min(char.maxHp, char.hp + ability.healAmount);
+            updateCombatUI();
+            hidePSIMenu();
+            
+            showCombatMessage(`${char.name} eats instant ramen! Restored ${ability.healAmount} HP!`);
+            
+            gameState.combat.turn = 'enemy';
+            setTimeout(enemyTurn, 1500);
         }
         
         function playerDefend() {
             if (gameState.combat.turn !== 'player') return;
             
             gameState.combat.playerDefending = true;
-            showCombatMessage(`${gameState.character.name} defends!`);
+            showCombatMessage(`${gameState.character.name} hides behind a desk!`);
             gameState.combat.turn = 'enemy';
             setTimeout(enemyTurn, 1000);
         }
@@ -921,7 +1060,7 @@
             const escapeChance = 0.5;
             if (Math.random() < escapeChance) {
                 endCombat(false);
-                showCombatMessage('You escaped!');
+                showCombatMessage('You escaped to your dorm room!');
             } else {
                 showCombatMessage('Couldn\'t escape!');
                 gameState.combat.turn = 'enemy';
@@ -934,7 +1073,6 @@
             const char = gameState.character;
             const enemy = gameState.combat.enemy;
             
-            // Enemy attacks
             const attack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
             let damage = Math.max(1, Math.floor(enemy.attack * attack.power - char.defense));
             
@@ -953,7 +1091,6 @@
                 char.hp = 0;
                 endCombat(false);
                 showCombatMessage('You are defeated...');
-                // Respawn at room 303
                 setTimeout(() => {
                     char.hp = char.maxHp;
                     gameState.currentArea = 'room303';
@@ -975,11 +1112,9 @@
                 const char = gameState.character;
                 const enemy = gameState.combat.enemy;
                 
-                // Gain exp and money
                 char.exp += enemy.exp;
                 char.money += enemy.money;
                 
-                // Level up check (simplified)
                 const expNeeded = char.level * 10;
                 if (char.exp >= expNeeded) {
                     char.level++;
