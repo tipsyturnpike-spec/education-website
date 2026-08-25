@@ -117,12 +117,135 @@
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 12px;
         }
         
         .menu button:hover {
             background: #ff00ff;
             border-color: #fff;
             transform: scale(1.05);
+        }
+        
+        /* Inventory UI */
+        .inventory-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 4px solid #ff00ff;
+            padding: 30px;
+            color: #fff;
+            display: none;
+            z-index: 250;
+            width: 600px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .inventory-screen.active {
+            display: block;
+        }
+        
+        .inventory-screen h2 {
+            color: #ff00ff;
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .inventory-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .inventory-tab {
+            padding: 8px 15px;
+            background: #2d1b4e;
+            border: 2px solid #00ffff;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+        }
+        
+        .inventory-tab.active {
+            background: #ff00ff;
+        }
+        
+        .inventory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 200px;
+        }
+        
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.3s;
+        }
+        
+        .inventory-item:hover {
+            background: rgba(255, 0, 255, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .inventory-item.selected {
+            background: #ff00ff;
+            border-color: #fff;
+        }
+        
+        .item-name {
+            flex: 1;
+        }
+        
+        .item-quantity {
+            color: #00ffff;
+            margin-left: 10px;
+        }
+        
+        .item-description {
+            font-size: 10px;
+            color: #cccccc;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+        
+        .inventory-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .inventory-actions button {
+            padding: 10px 20px;
+            background: #2d1b4e;
+            border: 2px solid #00ffff;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+        }
+        
+        .inventory-actions button:hover {
+            background: #ff00ff;
+        }
+        
+        .money-display {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #FFD700;
+            font-size: 14px;
         }
         
         .hud {
@@ -330,6 +453,18 @@
         .psi-menu.active {
             display: flex;
         }
+        
+        .item-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .item-menu.active {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -371,6 +506,23 @@
                 <button onclick="returnToTitle()">TITLE SCREEN</button>
             </div>
             
+            <!-- Inventory Screen -->
+            <div class="inventory-screen" id="inventoryScreen">
+                <h2>INVENTORY</h2>
+                <div class="money-display">MONEY: $<span id="inventoryMoney">0</span></div>
+                <div class="inventory-tabs">
+                    <button class="inventory-tab active" onclick="switchInventoryTab('items', this)">ITEMS</button>
+                    <button class="inventory-tab" onclick="switchInventoryTab('weapons', this)">WEAPONS</button>
+                    <button class="inventory-tab" onclick="switchInventoryTab('keyItems', this)">KEY ITEMS</button>
+                </div>
+                <div class="inventory-list" id="inventoryList">
+                    <!-- Items will be displayed here -->
+                </div>
+                <div class="inventory-actions">
+                    <button onclick="closeInventory()">CLOSE</button>
+                </div>
+            </div>
+            
             <!-- Combat Screen -->
             <div class="combat-screen" id="combatScreen">
                 <div class="combat-background"></div>
@@ -388,6 +540,7 @@
                 <div class="combat-menu" id="combatMenu">
                     <button class="combat-button" onclick="playerAttack()">FIGHT</button>
                     <button class="combat-button" onclick="showPSIMenu()">PSYCH</button>
+                    <button class="combat-button" onclick="showItemMenu()">ITEM</button>
                     <button class="combat-button" onclick="playerDefend()">GUARD</button>
                     <button class="combat-button" onclick="playerRun()">RUN</button>
                 </div>
@@ -396,6 +549,9 @@
                     <button class="combat-button" onclick="useAllNighter()">ALL-NIGHTER (8 PP)</button>
                     <button class="combat-button" onclick="useRamenHeal()">RAMEN BREAK (5 PP)</button>
                     <button class="combat-button" onclick="hidePSIMenu()">BACK</button>
+                </div>
+                <div class="item-menu" id="itemMenu">
+                    <!-- Combat items will be displayed here -->
                 </div>
             </div>
             
@@ -411,6 +567,81 @@
     </div>
     
     <script>
+        // Item definitions
+        const items = {
+            ramen: {
+                name: 'Instant Ramen',
+                type: 'item',
+                healAmount: 20,
+                description: 'Cheap instant noodles. Restores 20 HP.',
+                price: 5,
+                usable: true
+            },
+            energyDrink: {
+                name: 'Energy Drink',
+                type: 'item',
+                healAmount: 50,
+                description: 'Highly caffeinated. Restores 50 HP.',
+                price: 15,
+                usable: true
+            },
+            coffee: {
+                name: 'Coffee',
+                type: 'item',
+                ppRestore: 10,
+                description: 'Restores 10 PP. Essential for college students.',
+                price: 8,
+                usable: true
+            },
+            pizza: {
+                name: 'Cold Pizza',
+                type: 'item',
+                healAmount: 100,
+                description: 'Leftover pizza. Restores 100 HP.',
+                price: 20,
+                usable: true
+            },
+            textbook: {
+                name: 'Textbook',
+                type: 'weapon',
+                attackBonus: 5,
+                description: 'Heavy textbook. +5 Attack.',
+                price: 30,
+                usable: false
+            },
+            laptop: {
+                name: 'Laptop',
+                type: 'weapon',
+                attackBonus: 10,
+                description: 'Can be used as a weapon. +10 Attack.',
+                price: 75,
+                usable: false
+            },
+            deskLamp: {
+                name: 'Desk Lamp',
+                type: 'weapon',
+                attackBonus: 3,
+                description: 'A sturdy desk lamp. +3 Attack.',
+                price: 15,
+                usable: false
+            },
+            backpack: {
+                name: 'Heavy Backpack',
+                type: 'weapon',
+                attackBonus: 8,
+                description: 'Full of textbooks. +8 Attack.',
+                price: 50,
+                usable: false
+            },
+            forestKey: {
+                name: 'Forest Key',
+                type: 'keyItem',
+                description: 'A rusted key that opens the Forest Gate.',
+                price: 0,
+                usable: false
+            }
+        };
+        
         // Game state
         let gameState = {
             character: null,
@@ -450,7 +681,11 @@
                 messageQueue: [],
                 enemyEncounterChance: 0.1
             },
-            party: []
+            party: [],
+            inventory: [],
+            equippedWeapon: null,
+            inventoryTab: 'items',
+            selectedItem: null
         };
         
         // Dorm-themed enemies
@@ -713,8 +948,8 @@
             
             map.objects = [
                 { x: 8, y: 5, type: 'bed', name: 'Your Bed', description: 'A messy college dorm bed.' },
-                { x: 28, y: 15, type: 'desk', name: 'Your Desk', description: 'Covered in textbooks and energy drinks.' },
-                { x: 31, y: 8, type: 'bookshelf', name: 'Bookshelf', description: 'Full of textbooks you haven\'t opened yet.' }
+                { x: 28, y: 15, type: 'desk', name: 'Your Desk', description: 'Covered in textbooks and energy drinks.', itemDrop: 'deskLamp' },
+                { x: 31, y: 8, type: 'bookshelf', name: 'Bookshelf', description: 'Full of textbooks you haven\'t opened yet.', itemDrop: 'textbook' }
             ];
             
             map.npcs = [
@@ -785,7 +1020,7 @@
             map.objects = [
                 { x: 10, y: 5, type: 'clothes', name: 'Old Clothes', description: 'Dusty clothes from students long gone...' },
                 { x: 15, y: 22, type: 'clothes', name: 'Winter Coat', description: 'A heavy winter coat. It smells like mothballs.' },
-                { x: 25, y: 26, type: 'boxes', name: 'Cardboard Boxes', description: 'Old moving boxes. One says "FRAGILE" but it\'s been opened.' },
+                { x: 25, y: 26, type: 'boxes', name: 'Cardboard Boxes', description: 'Old moving boxes. One says "FRAGILE" but it\'s been opened.', itemDrop: 'ramen' },
                 {
                     x: 14,
                     y: 14,
@@ -823,7 +1058,6 @@
             const map = maps.darkForest;
             map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
             
-            // Forest boundaries
             for (let x = 0; x < map.width; x++) {
                 map.collisionMap[0][x] = 1;
                 map.collisionMap[map.height - 1][x] = 1;
@@ -833,11 +1067,9 @@
                 map.collisionMap[y][map.width - 1] = 1;
             }
             
-            // Portal entrance at bottom
             map.collisionMap[map.height - 1][25] = 0;
             map.collisionMap[map.height - 2][25] = 0;
             
-            // Create trees (obstacles)
             const treePositions = [
                 [5, 5], [8, 12], [15, 8], [20, 15], [25, 5],
                 [30, 10], [35, 15], [40, 8], [10, 20], [18, 25],
@@ -852,17 +1084,14 @@
                 map.collisionMap[y + 1][x + 1] = 1;
             });
             
-            // Path to the gate
             for (let y = 35; y < 40; y++) {
                 map.collisionMap[y][25] = 0;
             }
             
-            // Gate at top
             map.collisionMap[5][24] = 1;
             map.collisionMap[5][25] = 1;
             map.collisionMap[5][26] = 1;
             
-            // Add objects
             map.objects = [
                 { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
                 { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted, dark tree. Something is carved into it...' },
@@ -872,7 +1101,6 @@
                 { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate blocking the path forward.', interactionType: 'gate' }
             ];
             
-            // Add NPCs
             map.npcs = [
                 {
                     x: 40,
@@ -890,7 +1118,6 @@
                 }
             ];
             
-            // Add exits
             map.exits = [
                 { 
                     x: 25, 
@@ -922,6 +1149,18 @@
             
             gameState.character = JSON.parse(characterData);
             
+            // Initialize inventory
+            if (!gameState.character.inventory) {
+                gameState.character.inventory = [];
+            }
+            gameState.inventory = gameState.character.inventory;
+            
+            // Give starting items
+            if (gameState.inventory.length === 0) {
+                addItem('ramen', 2);
+                addItem('coffee', 1);
+            }
+            
             initMaps();
             updateHUD();
             gameLoop();
@@ -930,6 +1169,232 @@
                 document.getElementById('loadingScreen').style.display = 'none';
                 startOpeningScene();
             }, 2000);
+        }
+        
+        // Add item to inventory
+        function addItem(itemId, quantity = 1) {
+            const existingItem = gameState.inventory.find(item => item.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                gameState.inventory.push({
+                    id: itemId,
+                    quantity: quantity
+                });
+            }
+        }
+        
+        // Remove item from inventory
+        function removeItem(itemId, quantity = 1) {
+            const itemIndex = gameState.inventory.findIndex(item => item.id === itemId);
+            
+            if (itemIndex !== -1) {
+                gameState.inventory[itemIndex].quantity -= quantity;
+                if (gameState.inventory[itemIndex].quantity <= 0) {
+                    gameState.inventory.splice(itemIndex, 1);
+                }
+            }
+        }
+        
+        // Check if player has item
+        function hasItem(itemId) {
+            return gameState.inventory.some(item => item.id === itemId);
+        }
+        
+        // Get item quantity
+        function getItemQuantity(itemId) {
+            const item = gameState.inventory.find(item => item.id === itemId);
+            return item ? item.quantity : 0;
+        }
+        
+        // Use item
+        function useItem(itemId) {
+            const itemData = items[itemId];
+            const char = gameState.character;
+            
+            if (!itemData || !itemData.usable) return false;
+            
+            if (itemData.healAmount) {
+                char.hp = Math.min(char.maxHp, char.hp + itemData.healAmount);
+                removeItem(itemId);
+                updateHUD();
+                return true;
+            }
+            
+            if (itemData.ppRestore) {
+                char.pp = Math.min(char.maxPp, char.pp + itemData.ppRestore);
+                removeItem(itemId);
+                updateHUD();
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Equip weapon
+        function equipWeapon(itemId) {
+            const itemData = items[itemId];
+            
+            if (!itemData || itemData.type !== 'weapon') return;
+            
+            gameState.equippedWeapon = itemId;
+            gameState.character.attack = 5 + itemData.attackBonus; // Base attack + weapon bonus
+            updateHUD();
+        }
+        
+        // Show inventory screen
+        function showInventory() {
+            document.getElementById('gameMenu').classList.remove('active');
+            gameState.paused = true;
+            gameState.inventoryTab = 'items';
+            document.getElementById('inventoryScreen').classList.add('active');
+            updateInventoryDisplay();
+        }
+        
+        // Close inventory
+        function closeInventory() {
+            document.getElementById('inventoryScreen').classList.remove('active');
+            gameState.paused = false;
+        }
+        
+        // Switch inventory tab
+        function switchInventoryTab(tab, button) {
+            gameState.inventoryTab = tab;
+            gameState.selectedItem = null;
+            
+            // Update tab buttons
+            document.querySelectorAll('.inventory-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            updateInventoryDisplay();
+        }
+        
+        // Update inventory display
+        function updateInventoryDisplay() {
+            const listElement = document.getElementById('inventoryList');
+            const moneyElement = document.getElementById('inventoryMoney');
+            
+            moneyElement.textContent = gameState.character.money;
+            listElement.innerHTML = '';
+            
+            let displayItems = [];
+            
+            switch(gameState.inventoryTab) {
+                case 'items':
+                    displayItems = gameState.inventory.filter(item => 
+                        items[item.id].type === 'item'
+                    );
+                    break;
+                case 'weapons':
+                    displayItems = gameState.inventory.filter(item => 
+                        items[item.id].type === 'weapon'
+                    );
+                    break;
+                case 'keyItems':
+                    displayItems = gameState.inventory.filter(item => 
+                        items[item.id].type === 'keyItem'
+                    );
+                    break;
+            }
+            
+            if (displayItems.length === 0) {
+                listElement.innerHTML = '<div style="text-align: center; color: #666;">NO ITEMS</div>';
+                return;
+            }
+            
+            displayItems.forEach(item => {
+                const itemData = items[item.id];
+                const itemElement = document.createElement('div');
+                itemElement.className = 'inventory-item';
+                
+                if (gameState.selectedItem === item.id) {
+                    itemElement.classList.add('selected');
+                }
+                
+                itemElement.innerHTML = `
+                    <div>
+                        <div class="item-name">${itemData.name}</div>
+                        <div class="item-description">${itemData.description}</div>
+                    </div>
+                    <div class="item-quantity">x${item.quantity}</div>
+                `;
+                
+                itemElement.addEventListener('click', () => {
+                    selectInventoryItem(item.id);
+                });
+                
+                listElement.appendChild(itemElement);
+            });
+        }
+        
+        // Select inventory item
+        function selectInventoryItem(itemId) {
+            gameState.selectedItem = itemId;
+            updateInventoryDisplay();
+            
+            const itemData = items[itemId];
+            
+            if (itemData.type === 'item' && itemData.usable) {
+                if (useItem(itemId)) {
+                    showCombatMessage(`Used ${itemData.name}!`);
+                    updateInventoryDisplay();
+                }
+            } else if (itemData.type === 'weapon') {
+                equipWeapon(itemId);
+                showCombatMessage(`Equipped ${itemData.name}!`);
+                updateInventoryDisplay();
+            }
+        }
+        
+        // Show item menu in combat
+        function showItemMenu() {
+            if (gameState.combat.turn !== 'player') return;
+            
+            const itemMenu = document.getElementById('itemMenu');
+            itemMenu.innerHTML = '';
+            
+            const usableItems = gameState.inventory.filter(item => 
+                items[item.id].type === 'item' && items[item.id].usable
+            );
+            
+            if (usableItems.length === 0) {
+                showCombatMessage('No usable items!');
+                return;
+            }
+            
+            usableItems.forEach(item => {
+                const itemData = items[item.id];
+                const button = document.createElement('button');
+                button.className = 'combat-button';
+                button.textContent = `${itemData.name} (x${item.quantity})`;
+                button.addEventListener('click', () => {
+                    if (useItem(item.id)) {
+                        showCombatMessage(`${gameState.character.name} uses ${itemData.name}!`);
+                        document.getElementById('combatMenu').style.display = 'flex';
+                        itemMenu.classList.remove('active');
+                        gameState.combat.turn = 'enemy';
+                        setTimeout(enemyTurn, 1500);
+                    } else {
+                        showCombatMessage('Can\'t use that right now!');
+                    }
+                });
+                itemMenu.appendChild(button);
+            });
+            
+            const backButton = document.createElement('button');
+            backButton.className = 'combat-button';
+            backButton.textContent = 'BACK';
+            backButton.addEventListener('click', () => {
+                document.getElementById('combatMenu').style.display = 'flex';
+                itemMenu.classList.remove('active');
+            });
+            itemMenu.appendChild(backButton);
+            
+            document.getElementById('combatMenu').style.display = 'none';
+            itemMenu.classList.add('active');
         }
         
         // Game loop
@@ -966,6 +1431,7 @@
             document.getElementById('combatScreen').classList.add('active');
             document.getElementById('combatMenu').style.display = 'flex';
             document.getElementById('psiMenu').classList.remove('active');
+            document.getElementById('itemMenu').classList.remove('active');
             drawCombatEnemy();
             drawCombatPlayer();
             updateCombatUI();
@@ -1381,7 +1847,6 @@
                 if (Math.abs(player.x - exitTileX) < map.tileSize / 2 &&
                     Math.abs(player.y - exitTileY) < map.tileSize / 2) {
                     if (exit.targetArea === 'graveyard' && !gameState.flags.openedForestGate) {
-                        // Gate is locked
                         if (!gameState.flags.foundForestKey) {
                             showDialogue('The gate is locked. You need to find the key...');
                             gameState.inDialogue = true;
@@ -1516,7 +1981,6 @@
                     "This must be the entrance to the Dark Wonderland Forest."
                 ];
                 if (gameState.dialogueQueue.length > 0) {
-                    // Trigger transition after dialogue
                     gameState.dialogueQueue.push(null);
                     gameState.pendingExit = {
                         targetArea: 'darkForest',
@@ -1542,13 +2006,20 @@
                     "You should look for glowing mushrooms!"
                 ];
             } else if (obj.interactionType === 'forestKey') {
-                gameState.flags.foundForestKey = true;
-                gameState.dialogueQueue = [
-                    "You found the Forest Key!",
-                    "This should unlock the gate to the graveyard!"
-                ];
+                if (!hasItem('forestKey')) {
+                    gameState.flags.foundForestKey = true;
+                    addItem('forestKey');
+                    gameState.dialogueQueue = [
+                        "You found the Forest Key!",
+                        "Added to Key Items!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        "You already have the Forest Key."
+                    ];
+                }
             } else if (obj.interactionType === 'gate') {
-                if (gameState.flags.foundForestKey) {
+                if (gameState.flags.foundForestKey || hasItem('forestKey')) {
                     gameState.flags.openedForestGate = true;
                     gameState.dialogueQueue = [
                         "You use the Forest Key...",
@@ -1559,6 +2030,19 @@
                     gameState.dialogueQueue = [
                         "The gate is locked.",
                         "You need to find the key..."
+                    ];
+                }
+            } else if (obj.itemDrop) {
+                if (!hasItem(obj.itemDrop)) {
+                    addItem(obj.itemDrop);
+                    gameState.dialogueQueue = [
+                        `You found: ${items[obj.itemDrop].name}!`,
+                        items[obj.itemDrop].description,
+                        "Added to inventory!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        `${obj.name}: ${obj.description}`
                     ];
                 }
             } else {
@@ -1735,7 +2219,6 @@
             const y = npc.y * tileSize;
             
             if (npc.sprite === 'bekah') {
-                // Draw Bekah (short brunette)
                 ctx.fillStyle = '#FF69B4';
                 ctx.fillRect(x, y, tileSize, tileSize * 0.8);
                 ctx.fillStyle = '#FFC0CB';
@@ -1853,17 +2336,16 @@
             gameState.paused = menu.classList.contains('active');
         }
         
-        function showInventory() {
-            console.log('Inventory system coming soon!');
-        }
-        
         function showStatus() {
             console.log('Status screen coming soon!');
         }
         
         function saveGame() {
+            // Save character with inventory
+            gameState.character.inventory = gameState.inventory;
+            localStorage.setItem('johnNeumaierCharacter', JSON.stringify(gameState.character));
             localStorage.setItem('johnNeumaierSave', JSON.stringify(gameState));
-            console.log('Game saved!');
+            showCombatMessage('Game saved!');
         }
         
         function returnToTitle() {
@@ -1911,7 +2393,11 @@
             }
             
             if (e.key === 'Escape' && !gameState.inDialogue && !gameState.combat.active) {
-                toggleMenu();
+                if (document.getElementById('inventoryScreen').classList.contains('active')) {
+                    closeInventory();
+                } else {
+                    toggleMenu();
+                }
             }
         });
         
