@@ -769,4 +769,647 @@
                     <div class="dialogue" id="queenDialogue">
                         You enter the lobby.<br>
                         Behind a massive, ornate desk sits a figure with <span class="creepy">impossible presence</span>.<br>
-                        She
+                        She's holding a gavel made of pure darkness.<br>
+                        <span style="color: #ff4a4a; font-size: 12px; display: block; margin-top: 8px;">
+                            "OFF WITH THEIR HOUSING!"
+                        </span>
+                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 8px;">
+                            The Queen of the Desk has judged you.<br>
+                            <span style="color: #aa4a4a;">✦ She's been waiting for you ✦</span>
+                        </span>
+                    </div>
+                </div>
+                <div style="color: #ffd93d; font-size: 10px; margin: 12px 0; animation: pulse 2s infinite;">
+                    ⚠️ THE FINAL BOSS AWAITS ⚠️
+                </div>
+                <div class="btn-group">
+                    <button class="game-btn danger" onclick="startFinalBattle()">⚔️ FACE THE QUEEN</button>
+                    <button class="game-btn" onclick="queenAct('talk')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="queenAct('wonder')">🌀 USE WONDER</button>
+                    <button class="game-btn" onclick="resetGame()">🔄 ESCAPE</button>
+                </div>
+                <div id="finalResult" style="display: none; margin-top: 12px; width: 100%;">
+                    <div class="text-box" style="min-height: 100px; background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a;">
+                        <div class="dialogue" id="finalResultText" style="font-size: 10px;"></div>
+                    </div>
+                    <button class="game-btn" onclick="resetGame()" style="margin-top: 10px;">🔄 START OVER</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT - ENHANCED GAME LOGIC -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        //  PLAYER STATE
+        // ============================================================
+
+        let player = {
+            name: 'PROTAGONIST',
+            hair: 'blonde',
+            skin: 'light',
+            outfit: 'hoodie',
+            hp: 20,
+            maxHp: 20,
+            atk: 5,
+            def: 3,
+            lvl: 1,
+            exp: 0,
+            wonder: 0
+        };
+
+        let inventory = ['🔑 Key', '📜 Note'];
+        let locationIndex = 0;
+        let visitedLocations = [true, false, false, false, false];
+        let eventCooldown = 0;
+        let ianDefeated = false;
+        let queenDefeated = false;
+        let gameState = 'intro';
+
+        // Load saved data
+        function loadPlayer() {
+            const saved = localStorage.getItem('jnPlayerState');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    player.name = data.name || 'PROTAGONIST';
+                    player.hair = data.hair || 'blonde';
+                    player.skin = data.skin || 'light';
+                    player.outfit = data.outfit || 'hoodie';
+                } catch (e) { /* ignore */ }
+            }
+        }
+        loadPlayer();
+
+        // ============================================================
+        //  AMBIENT PARTICLES
+        // ============================================================
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (2 + Math.random() * 4) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (10 + Math.random() * 20) + 's';
+                particle.style.animationDelay = (Math.random() * 10) + 's';
+                particle.style.opacity = 0.1 + Math.random() * 0.3;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ============================================================
+        //  SCREEN MANAGEMENT
+        // ============================================================
+
+        function showScreen(screenId, theme) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screen = document.getElementById(screenId);
+            if (screen) {
+                screen.classList.add('active');
+                screen.classList.remove('fade-transition');
+                void screen.offsetWidth;
+                screen.classList.add('fade-transition');
+            }
+
+            // Update theme
+            const container = document.getElementById('gameContainer');
+            container.className = 'theme-' + (theme || 'normal');
+            
+            // Update stats
+            updateStats();
+        }
+
+        // ============================================================
+        //  STATS UPDATE
+        // ============================================================
+
+        function updateStats() {
+            document.getElementById('statHp').textContent = player.hp;
+            document.getElementById('statMaxHp').textContent = player.maxHp;
+            document.getElementById('statAtk').textContent = player.atk;
+            document.getElementById('statDef').textContent = player.def;
+            document.getElementById('statWonder').textContent = player.wonder;
+        }
+
+        // ============================================================
+        //  EVENT NOTIFICATIONS
+        // ============================================================
+
+        function showEvent(text, duration = 2000) {
+            const el = document.getElementById('eventNotification');
+            document.getElementById('eventText').textContent = text;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, duration);
+        }
+
+        // ============================================================
+        //  KEYBOARD SUPPORT
+        // ============================================================
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.key === 'Space') {
+                e.preventDefault();
+                const active = document.querySelector('.screen.active');
+                if (!active) return;
+
+                // Room 303 continue
+                if (active.id === 'room303') {
+                    const choices = document.getElementById('room303Choices');
+                    if (choices.style.display === 'none') {
+                        choices.style.display = 'block';
+                        document.getElementById('room303Continue').style.display = 'none';
+                    }
+                }
+                // Narnia walk continue
+                else if (active.id === 'narniaWalk') {
+                    const exit = document.getElementById('narniaExit');
+                    if (exit.style.display === 'none') {
+                        exit.style.display = 'block';
+                        document.getElementById('narniaContinue').style.display = 'none';
+                    }
+                }
+            }
+        });
+
+        // ============================================================
+        //  ROOM 303 SCENE
+        // ============================================================
+
+        function enterRoom303() {
+            document.getElementById('room303Dialogue').innerHTML = `
+                You push the door open.<br>
+                Inside, two residents are frozen in fear.<br>
+                <span style="color: #ff6b6b;">They're staring at the closet.</span><br>
+                <span class="highlight">✦ It's GLOWING with an impossible light ✦</span>
+            `;
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Residents').style.display = 'block';
+            showEvent('🚪 You enter Room 303...', 1500);
+        }
+
+        function knockRoom303() {
+            document.getElementById('room303Dialogue').innerHTML = `
+                You knock on the door.<br>
+                <span style="color: #ff6b6b;">"COME IN!"</span> a voice screams.<br>
+                You open the door. Two residents are clutching each other.<br>
+                <span class="highlight">"The closet... it GLOWED!"</span>
+            `;
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Residents').style.display = 'block';
+            showEvent('👊 You knocked first...', 1500);
+        }
+
+        function sneakRoom303() {
+            document.getElementById('room303Dialogue').innerHTML = `
+                You peer through the crack in the door.<br>
+                Two residents are frozen, staring at the closet.<br>
+                <span style="color: #a29bfe;">The closet is GLOWING with an ethereal light.</span><br>
+                <span style="color: #8888aa; font-size: 8px;">✦ You feel a strange pull toward it ✦</span>
+            `;
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Residents').style.display = 'block';
+            showEvent('👀 You sneak a peek...', 1500);
+            player.wonder += 5;
+            updateStats();
+        }
+
+        function askResidents() {
+            document.getElementById('room303Residents').style.display = 'none';
+            document.getElementById('room303Ask').style.display = 'block';
+            showEvent('💬 You ask questions...', 1500);
+        }
+
+        function enterCloset() {
+            showScreen('narniaWalk', 'wonder');
+            showEvent('🌀 Entering the closet...', 1500);
+            setTimeout(() => {
+                document.getElementById('narniaDialogue').innerHTML = `
+                    You step inside the closet.<br>
+                    There's no back wall.<br>
+                    Just a long, dark tunnel that stretches into infinity...<br>
+                    <span style="color: #a29bfe; font-size: 10px; display: block; margin-top: 8px;">
+                        You walk forward. And forward. And forward...
+                    </span>
+                    <span style="color: #4a4a6a; font-size: 8px; display: block; margin-top: 8px;">
+                        The walls seem to breathe. You hear whispers.<br>
+                        <span style="color: #aa4a4a;">✦ Something is waiting for you ✦</span>
+                    </span>
+                `;
+            }, 300);
+        }
+
+        function enterWonderland() {
+            showScreen('wornHall', 'creepy');
+            player.wonder += 10;
+            updateStats();
+            showEvent('🌀 Welcome to WONDERLAND!', 2000);
+        }
+
+        // ============================================================
+        //  WORN JN HALL
+        // ============================================================
+
+        let hallExplored = false;
+        let hallEvents = [
+            'You walk down the endless hallway. You pass door 301. Then 301 again. Then 301 again. <span class="creepy">The hallways are looping.</span>',
+            'You see a door that says "MAINTENANCE." You open it. It\'s just a brick wall. <span style="color: #8888aa;">The wall seems to breathe.</span>',
+            'A flickering light reveals a figure at the end of the hall. It disappears when you blink. <span class="creepy">Was it ever there?</span>',
+            'You find a coffee machine. It\'s still running. The coffee is black as tar. <span class="highlight">✦ It glows slightly ✦</span>',
+            'You see a bulletin board. The notices are all about you. "WELCOME TO WONDERLAND" "YOU CAN\'T ESCAPE" <span class="creepy">Who put these here?</span>',
+            'You find a playing card on the floor. It\'s the Queen of Hearts. It\'s warm to the touch. <span style="color: #ff4a4a;">✦ She\'s watching ✦</span>',
+            'A door opens on its own. Inside is a room full of clocks. They\'re all stopped at 3:03. <span style="color: #a29bfe;">✦ Time is strange here ✦</span>',
+            'You hear singing from behind a wall. It\'s the dorm theme song, but distorted. <span class="creepy">The walls have memories.</span>'
+        ];
+
+        function exploreHallway(direction) {
+            const resultDiv = document.getElementById('hallwayResult');
+            const resultText = document.getElementById('hallwayResultText');
+            resultDiv.style.display = 'block';
+
+            const randomEvent = hallEvents[Math.floor(Math.random() * hallEvents.length)];
+            resultText.innerHTML = randomEvent + 
+                '<br><span style="color: #4a4a6a; font-size: 7px; display: block; margin-top: 8px;">You return to the main hallway.</span>';
+
+            // Random chance to find items
+            if (Math.random() < 0.2) {
+                setTimeout(() => {
+                    resultText.innerHTML += '<br><span class="highlight">✦ You found a piece of candy! ✦</span>';
+                    inventory.push('💊 Candy');
+                    updateInventory();
+                }, 1000);
+            }
+
+            // Random chance for wonder increase
+            if (Math.random() < 0.15) {
+                player.wonder = Math.min(100, player.wonder + 3);
+                updateStats();
+            }
+
+            if (!hallExplored) {
+                hallExplored = true;
+                document.getElementById('wornHallButtons').innerHTML = `
+                    <button class="game-btn" onclick="exploreHallway('left')">👈 GO LEFT</button>
+                    <button class="game-btn" onclick="exploreHallway('right')">👉 GO RIGHT</button>
+                    <button class="game-btn primary" onclick="encounterIan()">💪 INVESTIGATE NOISE</button>
+                    <button class="game-btn wonder" onclick="enterExploration()">🔍 EXPLORE MORE</button>
+                `;
+            }
+
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 4000);
+        }
+
+        function enterExploration() {
+            showScreen('exploration', 'wonder');
+            document.getElementById('exploreLocation').innerHTML = '📍 <span class="highlight">THE ENDLESS HALLWAY</span>';
+            document.getElementById('exploreDesc').innerHTML = `
+                The hallway stretches before you.<br>
+                Doors line the walls with impossible numbers: <span class="highlight">301, 103, 330</span>...<br>
+                The carpet moves slightly, like it's alive.<br>
+                <span style="color: #aa4a4a; font-size: 8px;">✦ You hear whispers from behind the walls ✦</span>
+            `;
+            updateLocationDots();
+            updateStats();
+            updateInventory();
+        }
+
+        // ============================================================
+        //  EXPLORATION - LOCATION SYSTEM
+        // ============================================================
+
+        function updateLocationDots() {
+            const dots = document.querySelectorAll('.location-indicator .dot');
+            dots.forEach((dot, i) => {
+                dot.className = 'dot';
+                if (i === locationIndex) dot.classList.add('active');
+                else if (visitedLocations[i]) dot.classList.add('visited');
+            });
+        }
+
+        function moveDirection(dir) {
+            const desc = document.getElementById('exploreDesc');
+            const locations = {
+                'north': {
+                    text: 'You walk north. The hallway seems to stretch longer.<br>A door labeled <span class="highlight">"303"</span> appears. Then disappears.',
+                    index: 1
+                },
+                'south': {
+                    text: 'You walk south. You pass a window.<br>Outside is just darkness. <span class="creepy">Infinite darkness.</span>',
+                    index: 3
+                },
+                'east': {
+                    text: 'You walk east. The carpet changes to playing cards.<br>♥️ You step on a heart. It beats once.',
+                    index: 2
+                },
+                'west': {
+                    text: 'You walk west. You find a strange mirror.<br>Your reflection is wearing a crown.<br><span class="highlight">✦ It waves at you ✦</span>',
+                    index: 4
+                },
+                'enter': {
+                    text: 'You try a door. The knob is cold.<br>It opens to a room that\'s much larger inside.<br><span class="creepy">A room that shouldn\'t exist.</span><br><span style="color: #8888aa; font-size: 8px;">✦ You find a strange note ✦</span>',
+                    index: -1
+                }
+            };
+
+            const result = locations[dir];
+            if (result) {
+                desc.innerHTML = result.text;
+                if (result.index >= 0 && result.index < 5) {
+                    locationIndex = result.index;
+                    visitedLocations[result.index] = true;
+                    updateLocationDots();
+                }
+                if (dir === 'enter' && Math.random() < 0.3) {
+                    setTimeout(() => {
+                        desc.innerHTML += '<br><span class="highlight">✦ You found a KEY! ✦</span>';
+                        inventory.push('🔑 Key');
+                        updateInventory();
+                    }, 1000);
+                }
+                // Random events in exploration
+                if (Math.random() < 0.1) {
+                    setTimeout(() => {
+                        showEvent('⚡ Something stirs in the shadows...', 1500);
+                    }, 500);
+                }
+            }
+        }
+
+        function updateInventory() {
+            const items = document.querySelectorAll('.inventory-bar .item');
+            const itemList = inventory.slice(0, 3);
+            items.forEach((el, i) => {
+                el.textContent = itemList[i] || '—';
+                el.style.color = itemList[i] ? '#ffd93d' : '#4a4a6a';
+            });
+        }
+
+        function triggerRandomEvent() {
+            const desc = document.getElementById('exploreDesc');
+            const events = [
+                'The lights flicker. A shadow passes by.<br><span class="creepy">✦ You\'re not alone ✦</span>',
+                'You hear a voice whisper: <span style="color: #a29bfe;">"Find the Queen..."</span>',
+                'A card falls from the ceiling. It\'s the <span style="color: #ff4a4a;">Queen of Hearts</span>.',
+                'The hallway shifts. You\'re in a different part of the building now.<br><span class="highlight">✦ Location changed ✦</span>',
+                'You feel a strange warmth. <span style="color: #ffd93d;">✦ Wonder fills you ✦</span>'
+            ];
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            desc.innerHTML = randomEvent;
+            player.wonder = Math.min(100, player.wonder + 2);
+            updateStats();
+            showEvent('🎲 Random Event!', 1500);
+        }
+
+        function returnToHall() {
+            showScreen('wornHall', 'creepy');
+        }
+
+        // ============================================================
+        //  MUSCLE MAN IAN ENCOUNTER
+        // ============================================================
+
+        function encounterIan() {
+            showScreen('ianEncounter', 'ian');
+            ianDefeated = false;
+            document.getElementById('ianResult').style.display = 'none';
+            document.getElementById('ianNextActions').style.display = 'none';
+            document.getElementById('ianButtons').style.display = 'flex';
+
+            const dialogue = document.getElementById('ianDialogue');
+            dialogue.innerHTML = `
+                A massive figure rounds the corner.<br>
+                It's Ian... but something's <span class="creepy">wrong</span>.<br>
+                His skin is <span style="color: #8aba4a;">GREEN</span>. His muscles bulge impossibly.<br>
+                He's wearing an RA shirt that says <span style="color: #ffd93d;">"I'M THE BOSS NOW."</span><br>
+                <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 8px;">
+                    "YO! You're not supposed to be here, newbie!"
+                </span>
+                <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 5px;">
+                    He cracks his knuckles. The hallway shakes.
+                </span>
+            `;
+            showEvent('💪 MUSCLE MAN IAN APPEARS!', 1500);
+        }
+
+        function ianAct(action) {
+            const resultDiv = document.getElementById('ianResult');
+            const resultText = document.getElementById('ianResultText');
+            resultDiv.style.display = 'block';
+            document.getElementById('ianNextActions').style.display = 'none';
+
+            const responses = {
+                'fight': `
+                    You throw a punch!<br>
+                    Ian catches it with one finger.<br>
+                    <span style="color: #8aba4a;">"HAHA! That tickles, newbie!"</span><br>
+                    He flicks you. You fly back 10 feet.<br>
+                    <span style="color: #ff6b6b;">❤️ HP: ${Math.max(0, player.hp - 5)}/20</span>
+                `,
+                'act': `
+                    You try to talk to him.<br>
+                    <span style="color: #8aba4a;">"Yo, you think you can just WALK into Wonderland?"</span><br>
+                    He pauses. Something flickers in his eyes.<br>
+                    <span class="highlight">✦ He seems... almost sad ✦</span>
+                `,
+                'prank': `
+                    You yell <span style="color: #ffd93d;">"MY MOM!"</span><br>
+                    Ian freezes. Tears well up in his eyes.<br>
+                    <span style="color: #8aba4a;">"Bro... that's my mom's catchphrase..."</span><br>
+                    He's vulnerable now. You can feel it.<br>
+                    <span class="highlight">✦ He lowers his guard ✦</span>
+                `,
+                'spare': `
+                    You put your hands up. <span style="color: #ffd93d;">"I don't want to fight."</span><br>
+                    Ian stares at you. His muscles deflate slightly.<br>
+                    <span style="color: #8aba4a;">"...You're not like the others."</span><br>
+                    He steps aside. <span class="highlight">✦ You found mercy ✦</span>
+                `,
+                'flee': `
+                    You try to run!<br>
+                    Ian laughs. <span style="color: #8aba4a;">"Nice try, newbie!"</span><br>
+                    He grabs your shirt. You're not going anywhere.<br>
+                    <span style="color: #8888aa;">✦ There's no escape from Wonderland ✦</span>
+                `
+            };
+
+            resultText.innerHTML = responses[action] || 'You do nothing. Ian laughs.';
+
+            // Check outcomes
+            if (action === 'spare' || action === 'prank' || action === 'act') {
+                setTimeout(() => {
+                    resultText.innerHTML += `<br><br><span class="highlight" style="font-size: 12px;">✦ IAN LETS YOU PASS ✦</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">"Go on, newbie. The Queen's waiting for you."</span>`;
+                    document.getElementById('ianNextActions').style.display = 'block';
+                    document.getElementById('ianButtons').style.display = 'none';
+                    ianDefeated = true;
+                    player.wonder += 10;
+                    updateStats();
+                    showEvent('💪 Ian defeated through mercy!', 2000);
+                }, 1500);
+            } else if (action === 'fight') {
+                player.hp = Math.max(0, player.hp - 5);
+                updateStats();
+                if (player.hp <= 0) {
+                    setTimeout(() => {
+                        resultText.innerHTML += `<br><br><span style="color: #ff6b6b; font-size: 14px;">💀 YOU FELL...</span><br>
+                        <span style="color: #8888aa; font-size: 8px;">But in Wonderland, death isn't permanent...</span>`;
+                        setTimeout(() => {
+                            player.hp = 20;
+                            updateStats();
+                            showEvent('🔄 You wake up at the start of the hallway...', 2000);
+                            showScreen('wornHall', 'creepy');
+                        }, 2000);
+                    }, 1500);
+                } else {
+                    setTimeout(() => {
+                        resultText.innerHTML += `<br><br><span style="color: #ff6b6b; font-size: 10px;">💪 IAN IS STILL STANDING</span><br>
+                        <span style="color: #8888aa; font-size: 8px;">Try a different approach...</span>`;
+                    }, 1500);
+                }
+            } else if (action === 'flee') {
+                setTimeout(() => {
+                    resultText.innerHTML += `<br><br><span style="color: #8888aa; font-size: 8px;">You can't run from Wonderland.</span>`;
+                }, 1500);
+            }
+        }
+
+        function continueAfterIan() {
+            if (ianDefeated) {
+                showScreen('exploration', 'wonder');
+                document.getElementById('exploreLocation').innerHTML = '📍 <span class="highlight">THE ENDLESS HALLWAY (CLEARED)</span>';
+                document.getElementById('exploreDesc').innerHTML = `
+                    Ian let you pass. The hallway is quieter now.<br>
+                    <span class="highlight">✦ You can feel the Queen's presence ahead ✦</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">The lobby is just ahead...</span><br>
+                    <span style="color: #4a4a6a; font-size: 7px;">✦ You've earned the right to face her ✦</span>
+                `;
+                // Update the buttons
+                const btnGroup = document.querySelector('#exploration .direction-grid').parentElement;
+                const existing = btnGroup.querySelector('.btn-group') || btnGroup.querySelector('div:last-child');
+                if (existing) {
+                    existing.innerHTML = `
+                        <button class="game-btn" onclick="returnToHall()">🔙 BACK</button>
+                        <button class="game-btn primary" onclick="encounterQueen()">♠️ FIND THE QUEEN</button>
+                        <button class="game-btn wonder" onclick="triggerRandomEvent()">🎲 RANDOM EVENT</button>
+                    `;
+                }
+                updateStats();
+                updateInventory();
+            }
+        }
+
+        // ============================================================
+        //  QUEEN ENCOUNTER
+        // ============================================================
+
+        function encounterQueen() {
+            showScreen('queenEncounter', 'queen');
+            document.getElementById('finalResult').style.display = 'none';
+            showEvent('♠️ THE QUEEN AWAITS!', 2000);
+        }
+
+        function queenAct(action) {
+            const resultDiv = document.getElementById('finalResult');
+            const resultText = document.getElementById('finalResultText');
+            resultDiv.style.display = 'block';
+
+            if (action === 'talk') {
+                resultText.innerHTML = `
+                    You try to reason with the Queen.<br>
+                    <span style="color: #ff4a4a;">"Reason? REASON?"</span><br>
+                    She slams her gavel. The room shakes.<br>
+                    <span style="color: #ff4a4a;">"I AM THE LAW HERE!"</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ She's not listening ✦</span>
+                `;
+            } else if (action === 'wonder') {
+                if (player.wonder >= 50) {
+                    resultText.innerHTML = `
+                        You channel the power of Wonderland itself.<br>
+                        The Queen's desk flickers. She looks... <span style="color: #ffd93d;">uncertain</span>.<br>
+                        <span style="color: #ff4a4a;">"What... what are you?"</span><br>
+                        <span class="highlight">✦ Your Wonder is strong ✦</span>
+                    `;
+                    setTimeout(() => {
+                        resultText.innerHTML += `<br><br><span class="highlight" style="font-size: 14px;">✦ THE QUEEN IS WEAKENED ✦</span>`;
+                        document.getElementById('finalResult').style.display = 'block';
+                    }, 1500);
+                } else {
+                    resultText.innerHTML = `
+                        You try to use Wonder, but it's not enough.<br>
+                        <span style="color: #ff4a4a;">"Your soul is weak!"</span><br>
+                        <span style="color: #8888aa; font-size: 8px;">✦ You need more Wonder to face her ✦</span>
+                    `;
+                }
+            }
+        }
+
+        function startFinalBattle() {
+            const resultDiv = document.getElementById('finalResult');
+            const resultText = document.getElementById('finalResultText');
+            resultDiv.style.display = 'block';
+            resultText.innerHTML = `
+                ⚔️ <span style="color: #ff6b6b; font-size: 16px;">THE FINAL BATTLE BEGINS!</span> ⚔️<br><br>
+                <span style="color: #ff4a4a; font-size: 12px;">QUEEN RYLEE</span><br>
+                <span style="color: #ffd93d; font-size: 10px;">✦ BATTLE SYSTEM COMING SOON ✦</span><br><br>
+                <span style="color: #8888aa; font-size: 8px;">
+                    For now, you've reached the end of the demo.<br>
+                    Thanks for playing <span class="highlight">JN Wonderland</span>!<br><br>
+                    <span style="color: #4a4a6a; font-size: 7px;">
+                        🏆 Stats:<br>
+                        ❤️ HP: ${player.hp}/${player.maxHp}<br>
+                        🌀 Wonder: ${player.wonder}%<br>
+                        📦 Items: ${inventory.join(', ')}
+                    </span>
+                </span>
+            `;
+            showEvent('⚔️ FINAL BOSS: QUEEN RYLEE!', 3000);
+        }
+
+        // ============================================================
+        //  RESET GAME
+        // ============================================================
+
+        function resetGame() {
+            if (confirm('Reset the game and return to the character creator?')) {
+                localStorage.removeItem('jnPlayerState');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+
+        // Show Room 303 first
+        showScreen('room303', 'normal');
+
+        // Auto-show choices after a moment
+        setTimeout(() => {
+            const choices = document.getElementById('room303Choices');
+            if (choices) {
+                choices.style.display = 'block';
+            }
+        }, 2500);
+
+        // Update inventory
+        updateInventory();
+
+        console.log('%c✦ JN WONDERLAND - ENHANCED ✦', 'font-size:16px; color:#ffd93d;');
+        console.log(`%cPlayer: ${player.name}`, 'color:#8888aa;');
+        console.log(`%cWonder: ${player.wonder}%`, 'color:#a29bfe;');
+        console.log(`%cInventory: ${inventory.join(', ')}`, 'color:#ffd93d;');
+        console.log('%cRoom 303 is waiting...', 'color:#aa4a4a;');
+    </script>
+
+</body>
+</html>
