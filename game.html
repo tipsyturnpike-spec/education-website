@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - Enhanced</title>
+    <title>JN Wonderland - 50 Endings</title>
     <style>
-        /* ========== IMPORTS ========== */
+        /* ========== COMPLETE STYLES ========== */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
-        /* ========== RESET ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: #0a0a0a;
@@ -26,7 +21,6 @@
             overflow: hidden;
         }
 
-        /* ========== GAME CONTAINER ========== */
         #gameContainer {
             position: relative;
             width: 960px;
@@ -35,65 +29,25 @@
             border: 6px solid #4a4a6a;
             overflow: hidden;
             box-shadow: 0 0 60px rgba(100, 50, 200, 0.3);
-            transition: background 1s ease;
+            transition: background 1s ease, border-color 1s ease;
         }
 
-        /* ========== COLOR THEMES ========== */
-        .theme-normal { background: #1a1a2e; }
+        /* Themes */
+        .theme-normal { background: #1a1a2e; border-color: #4a4a6a; }
         .theme-wonder { background: #1a0a2e; border-color: #6a3a8a; }
         .theme-creepy { background: #0a0a0a; border-color: #3a1a1a; }
-        .theme-queen { background: #2a0a0a; border-color: #8a2a2a; box-shadow: 0 0 60px rgba(200, 50, 50, 0.3); }
+        .theme-queen { background: #2a0a0a; border-color: #8a2a2a; }
         .theme-ian { background: #0a1a0a; border-color: #4a7a2a; }
-        .theme-safe { background: #0a1a2a; border-color: #2a4a7a; }
+        .theme-gold { background: #1a1a00; border-color: #8a8a2a; }
+        .theme-void { background: #000005; border-color: #1a0a2a; }
+        .theme-escape { background: #0a1a0a; border-color: #2a8a4a; }
+        .theme-party { background: #1a0a1a; border-color: #8a4a8a; }
+        .theme-ice { background: #0a1a2a; border-color: #4a8aaa; }
+        .theme-fire { background: #2a1a0a; border-color: #8a4a2a; }
+        .theme-forest { background: #0a1a0a; border-color: #2a6a3a; }
+        .theme-candy { background: #1a0a1a; border-color: #8a4a6a; }
+        .theme-clock { background: #0a0a1a; border-color: #4a4a8a; }
 
-        /* ========== AMBIENT EFFECTS ========== */
-        .ambient-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 0;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 217, 61, 0.3);
-            border-radius: 50%;
-            animation: floatParticle linear infinite;
-        }
-
-        @keyframes floatParticle {
-            0% { transform: translateY(100%) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100%) rotate(720deg); opacity: 0; }
-        }
-
-        .glitch-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0;
-            animation: glitchFlash 8s infinite;
-        }
-
-        @keyframes glitchFlash {
-            0%, 90%, 100% { opacity: 0; }
-            92% { opacity: 0.1; background: rgba(255, 0, 255, 0.05); }
-            94% { opacity: 0; }
-            96% { opacity: 0.05; background: rgba(0, 255, 255, 0.05); }
-        }
-
-        /* ========== SCREENS ========== */
         .screen {
             position: absolute;
             top: 0;
@@ -101,69 +55,58 @@
             width: 100%;
             height: 100%;
             display: none;
-            padding: 25px;
+            padding: 20px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2;
         }
 
-        .screen.active {
-            display: flex;
-        }
+        .screen.active { display: flex; }
 
-        /* ========== TEXT BOX ========== */
         .text-box {
             background: rgba(10, 10, 21, 0.92);
             border: 4px solid #3a3a5a;
-            padding: 20px 25px;
+            padding: 18px 22px;
             color: #d4d4f0;
-            font-size: 11px;
-            line-height: 2;
+            font-size: 10px;
+            line-height: 2.2;
             width: 100%;
             max-width: 750px;
             min-height: 130px;
-            position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             backdrop-filter: blur(4px);
             transition: all 0.5s ease;
         }
 
         .text-box .speaker {
             color: #ffd93d;
-            font-size: 9px;
-            margin-bottom: 8px;
+            font-size: 8px;
+            margin-bottom: 6px;
             letter-spacing: 1px;
         }
-
         .text-box .speaker.ian { color: #8aba4a; }
         .text-box .speaker.queen { color: #ff4a4a; }
         .text-box .speaker.resident { color: #6ab4ff; }
         .text-box .speaker.narrator { color: #8888cc; }
         .text-box .speaker.creepy { color: #aa4a4a; }
+        .text-box .speaker.ending { color: #ffd93d; font-size: 14px; }
+        .text-box .speaker.side { color: #ff8a8a; }
+        .text-box .speaker.wonder { color: #a29bfe; }
+        .text-box .speaker.gold { color: #ffd93d; }
 
-        .text-box .dialogue {
-            color: #e8e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .text-box .dialogue .highlight {
-            color: #ffd93d;
-        }
-
-        .text-box .dialogue .creepy {
-            color: #ff6b6b;
-        }
-
-        .text-box .dialogue .wonder {
-            color: #a29bfe;
-        }
+        .text-box .dialogue { color: #e8e8f0; }
+        .text-box .dialogue .highlight { color: #ffd93d; }
+        .text-box .dialogue .creepy { color: #ff6b6b; }
+        .text-box .dialogue .wonder { color: #a29bfe; }
+        .text-box .dialogue .good { color: #4aff8a; }
+        .text-box .dialogue .bad { color: #ff4a4a; }
 
         .text-box .continue {
             color: #4a4a6a;
-            font-size: 8px;
+            font-size: 7px;
             text-align: right;
-            margin-top: 10px;
+            margin-top: 8px;
             animation: blink 1s infinite;
         }
 
@@ -172,32 +115,22 @@
             50% { opacity: 0; }
         }
 
-        /* ========== EMOTION INDICATORS ========== */
-        .emotion {
-            display: inline-block;
-            font-size: 20px;
-            margin-right: 8px;
-            animation: bounce 0.5s ease;
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        /* ========== BUTTONS ========== */
         .game-btn {
             background: #2a2a4a;
             border: 3px solid #4a4a6a;
             color: #d4d4f0;
             font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            padding: 10px 22px;
+            font-size: 9px;
+            padding: 8px 18px;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin: 4px;
-            position: relative;
-            overflow: hidden;
+            margin: 3px;
+            min-width: 70px;
         }
 
         .game-btn:hover {
@@ -208,285 +141,100 @@
             box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
         }
 
-        .game-btn:active {
-            transform: scale(0.95);
-        }
-
-        .game-btn.primary {
-            background: #4a2a4a;
-            border-color: #8a4a6a;
-            color: #ff9d8a;
-        }
-
-        .game-btn.primary:hover {
-            background: #6a3a5a;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
-        }
-
-        .game-btn.success {
-            background: #2a4a2a;
-            border-color: #4a8a4a;
-            color: #8aff8a;
-        }
-
-        .game-btn.success:hover {
-            background: #3a6a3a;
-            border-color: #6aff6a;
-        }
-
-        .game-btn.danger {
-            background: #4a2a2a;
-            border-color: #8a4a4a;
-            color: #ff8a8a;
-        }
-
-        .game-btn.danger:hover {
-            background: #6a3a3a;
-            border-color: #ff6a6a;
-        }
-
-        .game-btn.wonder {
-            background: #2a2a4a;
-            border-color: #6a4a8a;
-            color: #c8a8ff;
-        }
-
-        .game-btn.wonder:hover {
-            background: #4a3a6a;
-            border-color: #a87aff;
-            box-shadow: 0 0 20px rgba(168, 122, 255, 0.2);
-        }
+        .game-btn:active { transform: scale(0.95); }
+        .game-btn.primary { background: #4a2a4a; border-color: #8a4a6a; color: #ff9d8a; }
+        .game-btn.primary:hover { background: #6a3a5a; border-color: #ff6b6b; }
+        .game-btn.success { background: #2a4a2a; border-color: #4a8a4a; color: #8aff8a; }
+        .game-btn.success:hover { background: #3a6a3a; border-color: #6aff6a; }
+        .game-btn.danger { background: #4a2a2a; border-color: #8a4a4a; color: #ff8a8a; }
+        .game-btn.danger:hover { background: #6a3a3a; border-color: #ff6a6a; }
+        .game-btn.wonder { background: #2a2a4a; border-color: #6a4a8a; color: #c8a8ff; }
+        .game-btn.wonder:hover { background: #4a3a6a; border-color: #a87aff; }
+        .game-btn.gold { background: #2a2a00; border-color: #8a8a2a; color: #ffd93d; }
+        .game-btn.gold:hover { background: #4a4a00; border-color: #ffd93d; }
+        .game-btn.void { background: #0a0a1a; border-color: #3a2a4a; color: #6a4a8a; }
+        .game-btn.void:hover { background: #1a1a2a; border-color: #8a6aaa; color: #a87aff; }
+        .game-btn.ice { background: #0a1a2a; border-color: #2a6a8a; color: #6ac8ff; }
+        .game-btn.ice:hover { background: #1a2a3a; border-color: #6ac8ff; color: #8ad4ff; }
+        .game-btn.fire { background: #2a1a0a; border-color: #8a4a2a; color: #ff8a4a; }
+        .game-btn.fire:hover { background: #3a2a1a; border-color: #ff8a4a; color: #ffaa6a; }
+        .game-btn.candy { background: #1a0a1a; border-color: #8a4a6a; color: #ff8ac8; }
+        .game-btn.candy:hover { background: #2a1a2a; border-color: #ff8ac8; color: #ffaad4; }
 
         .btn-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 8px;
+            margin-top: 6px;
+            width: 100%;
+            max-width: 750px;
         }
 
-        /* ========== SCENE SPECIFIC ========== */
+        .btn-group .game-btn { min-width: 100px; }
 
-        /* Room 303 */
-        #room303 .glow-text {
+        .ending-banner {
+            font-size: 22px;
+            padding: 12px 25px;
+            border: 5px solid #ffd93d;
+            background: rgba(0, 0, 0, 0.8);
             color: #ffd93d;
+            text-align: center;
+            margin: 8px 0;
             animation: pulse 2s infinite;
-            font-size: 14px;
         }
+        .ending-banner.good { border-color: #4aff8a; color: #4aff8a; }
+        .ending-banner.bad { border-color: #ff4a4a; color: #ff4a4a; }
+        .ending-banner.neutral { border-color: #ffd93d; color: #ffd93d; }
+        .ending-banner.void { border-color: #6a4a8a; color: #6a4a8a; }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; text-shadow: 0 0 10px rgba(255, 217, 61, 0.3); }
-            50% { opacity: 1; text-shadow: 0 0 30px rgba(255, 217, 61, 0.8); }
-        }
-
-        /* ========== EXPLORATION ========== */
-        #exploration {
-            background: linear-gradient(180deg, #0a0a1a 0%, #1a0a0a 100%);
-        }
-
-        .exploration-view {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-        }
-
-        .hallway-view {
-            background: rgba(10, 10, 26, 0.9);
-            border: 3px solid #2a2a4a;
-            padding: 25px;
-            text-align: center;
-            width: 100%;
-            max-width: 650px;
-            backdrop-filter: blur(4px);
-            position: relative;
-        }
-
-        .hallway-view .location {
-            color: #4a4a6a;
-            font-size: 8px;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-        }
-
-        .hallway-view .location .highlight {
-            color: #ffd93d;
-        }
-
-        .hallway-view .scene-desc {
-            color: #8888aa;
-            font-size: 10px;
-            line-height: 2.2;
-            margin-bottom: 15px;
-            min-height: 60px;
-        }
-
-        /* ========== MINI-MAP / LOCATION INDICATOR ========== */
-        .location-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
-            font-size: 7px;
-            color: #4a4a6a;
-        }
-
-        .location-indicator .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            border: 1px solid #4a4a6a;
-            background: #1a1a2e;
-            transition: all 0.5s ease;
-        }
-
-        .location-indicator .dot.active {
-            background: #ffd93d;
-            border-color: #ffd93d;
-            box-shadow: 0 0 15px rgba(255, 217, 61, 0.3);
-        }
-
-        .location-indicator .dot.visited {
-            background: #4a4a6a;
-            border-color: #4a4a6a;
-        }
-
-        /* ========== DIRECTION BUTTONS ========== */
-        .direction-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            max-width: 280px;
-            margin: 10px auto;
-        }
-
-        .direction-grid .game-btn {
-            font-size: 12px;
-            padding: 10px;
-            text-align: center;
-            min-width: 60px;
-        }
-
-        .direction-grid .empty {
-            visibility: hidden;
-        }
-
-        /* ========== STATS BAR ========== */
         .stats-bar {
             position: absolute;
-            bottom: 10px;
-            right: 15px;
+            bottom: 8px;
+            right: 12px;
             background: rgba(10, 10, 21, 0.9);
             border: 2px solid #2a2a4a;
-            padding: 10px 15px;
-            font-size: 8px;
+            padding: 8px 12px;
+            font-size: 7px;
             color: #8888aa;
             text-align: right;
             line-height: 1.8;
             z-index: 10;
             backdrop-filter: blur(4px);
         }
-
         .stats-bar .hp { color: #ff6b6b; }
-        .stats-bar .atk { color: #ff8a6b; }
-        .stats-bar .def { color: #6bb4ff; }
         .stats-bar .wonder { color: #a29bfe; }
-        .stats-bar .location-label { color: #4a4a6a; font-size: 7px; }
+        .stats-bar .path { color: #ffd93d; }
+        .stats-bar .items { color: #6ab4ff; }
 
-        /* ========== INVENTORY / ITEMS ========== */
-        .inventory-bar {
-            position: absolute;
-            bottom: 10px;
-            left: 15px;
-            background: rgba(10, 10, 21, 0.9);
-            border: 2px solid #2a2a4a;
-            padding: 8px 12px;
-            font-size: 7px;
+        .side-character {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 2px solid #4a4a6a;
+            background: rgba(0, 0, 0, 0.5);
+            margin: 5px;
+            font-size: 8px;
             color: #8888aa;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-            display: flex;
-            gap: 10px;
         }
 
-        .inventory-bar .item {
-            color: #ffd93d;
-            padding: 2px 6px;
-            border: 1px solid #2a2a4a;
-        }
+        .side-character .name { color: #ffd93d; }
+        .side-character .desc { color: #8888aa; font-size: 7px; }
 
-        /* ========== EVENT NOTIFICATIONS ========== */
-        .event-notification {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            border: 4px solid #ffd93d;
-            padding: 20px 40px;
-            color: #ffd93d;
-            font-size: 14px;
-            z-index: 20;
-            display: none;
-            text-align: center;
-            animation: eventPop 0.5s ease;
-        }
-
-        @keyframes eventPop {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        /* ========== RESPONSIVE ========== */
         @media (max-width: 1000px) {
-            #gameContainer {
-                width: 95vw;
-                height: 90vh;
-            }
-            .text-box {
-                font-size: 9px;
-                padding: 12px 15px;
-                min-height: 100px;
-            }
-            .game-btn {
-                font-size: 8px;
-                padding: 6px 12px;
-            }
-            .stats-bar {
-                font-size: 7px;
-                padding: 6px 10px;
-            }
-            .inventory-bar {
-                font-size: 6px;
-                padding: 4px 8px;
-            }
+            #gameContainer { width: 95vw; height: 90vh; }
+            .text-box { font-size: 8px; padding: 10px 14px; min-height: 100px; }
+            .game-btn { font-size: 7px; padding: 6px 12px; min-width: 60px; }
+            .stats-bar { font-size: 6px; padding: 5px 8px; }
+            .ending-banner { font-size: 16px; padding: 8px 15px; }
+            .btn-group .game-btn { min-width: 70px; }
         }
 
         @media (max-width: 600px) {
-            .text-box {
-                font-size: 7px;
-                padding: 10px 12px;
-                min-height: 80px;
-            }
-            .game-btn {
-                font-size: 7px;
-                padding: 5px 10px;
-            }
-            .direction-grid .game-btn {
-                font-size: 10px;
-                padding: 6px;
-                min-width: 40px;
-            }
-            .stats-bar {
-                font-size: 6px;
-                padding: 4px 8px;
-                bottom: 5px;
-                right: 5px;
-            }
+            .text-box { font-size: 7px; padding: 8px 10px; min-height: 80px; }
+            .game-btn { font-size: 6px; padding: 4px 8px; min-width: 50px; }
+            .stats-bar { font-size: 5px; padding: 3px 6px; bottom: 4px; right: 6px; }
+            .ending-banner { font-size: 12px; padding: 6px 10px; }
+            .btn-group .game-btn { min-width: 50px; }
         }
     </style>
 </head>
@@ -497,310 +245,217 @@
     <!-- ============================================================ -->
     <div id="gameContainer" class="theme-normal">
 
-        <!-- Ambient Particles -->
-        <div class="ambient-particles" id="particles"></div>
-        <div class="glitch-overlay"></div>
-
-        <!-- Event Notification -->
-        <div class="event-notification" id="eventNotification">
-            <div id="eventText">⚡ SOMETHING HAPPENED!</div>
-        </div>
-
-        <!-- ========== SCREEN 1: ROOM 303 ========== -->
-        <div id="room303" class="screen active">
+        <!-- ========== SCREEN: ROOM 303 ========== -->
+        <div id="s-room303" class="screen active">
             <div style="text-align: center; max-width: 750px; width: 100%;">
-                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 12px;">
-                    ⚠️ ROOM 303 ⚠️
-                </div>
-
-                <div class="text-box" id="room303Box">
+                <div style="font-size: 11px; color: #ff6b6b; margin-bottom: 10px;">⚠️ ROOM 303 ⚠️</div>
+                <div class="text-box">
                     <div class="speaker narrator">🎮 NARRATOR</div>
-                    <div class="dialogue" id="room303Dialogue">
+                    <div class="dialogue" id="room303Text">
                         You walk down the familiar hallway of the third floor.<br>
                         The carpet is worn. The lights hum softly.<br>
-                        Then you hear it...
+                        Then you hear it... <span class="creepy">screaming</span> from Room 303.
                     </div>
                     <div class="continue" id="room303Continue">▼ Press SPACE or click Continue</div>
                 </div>
-
-                <div id="room303Choices" style="display: none;">
-                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 12px;">
-                        You hear <span style="color: #ff6b6b;">SCREAMING</span> from Room 303.<br>
-                        The door is slightly ajar. A strange <span class="glow-text">GLOW</span> spills out.
+                <div id="room303Choices" style="display: none; width: 100%;">
+                    <div style="color: #8888aa; font-size: 8px; margin-bottom: 10px;">
+                        The door is slightly ajar. A strange <span class="highlight">GLOW</span> spills out.
                     </div>
                     <div class="btn-group">
-                        <button class="game-btn primary" onclick="enterRoom303()">🚪 ENTER ROOM 303</button>
-                        <button class="game-btn" onclick="knockRoom303()">👊 KNOCK FIRST</button>
-                        <button class="game-btn wonder" onclick="sneakRoom303()">👀 SNEAK A PEEK</button>
+                        <button class="game-btn primary" onclick="branch('enter')">🚪 ENTER</button>
+                        <button class="game-btn" onclick="branch('knock')">👊 KNOCK</button>
+                        <button class="game-btn wonder" onclick="branch('sneak')">👀 SNEAK</button>
+                        <button class="game-btn ice" onclick="branch('listen')">👂 LISTEN</button>
                     </div>
-                </div>
-
-                <div id="room303Residents" style="display: none; width: 100%;">
-                    <div class="text-box" style="min-height: 80px; border-color: #4a6a8a;">
-                        <div class="speaker resident">👩 SHORT BLONDE</div>
-                        <div class="dialogue" id="resident1Dialogue">
-                            "Oh my god! You're here! Thank goodness!"<br>
-                            <span style="color: #ff6b6b; font-size: 9px;">She's clutching her roommate's arm, frozen in fear.</span>
-                        </div>
-                    </div>
-                    <div class="text-box" style="min-height: 80px; border-color: #4a6a8a; margin-top: 8px;">
-                        <div class="speaker resident">👩 SHORT BRUNETTE</div>
-                        <div class="dialogue" id="resident2Dialogue">
-                            "The closet... it <span class="highlight">GLOWED</span> and then... it's not a closet anymore..."<br>
-                            <span style="color: #8888aa; font-size: 9px;">She points a trembling finger at the closet door.</span>
-                        </div>
-                    </div>
-                    <div style="color: #ffd93d; font-size: 14px; margin: 12px 0; animation: pulse 1.5s infinite;">
-                        ✦ THE CLOSET IS GLOWING ✦
-                    </div>
-                    <div class="btn-group">
-                        <button class="game-btn primary" onclick="enterCloset()">🌀 ENTER THE CLOSET</button>
-                        <button class="game-btn" onclick="askResidents()">💬 ASK QUESTIONS</button>
-                    </div>
-                </div>
-
-                <div id="room303Ask" style="display: none; width: 100%;">
-                    <div class="text-box" style="min-height: 80px; border-color: #6a4a8a;">
-                        <div class="speaker resident">💬 RESIDENTS</div>
-                        <div class="dialogue" id="askDialogue">
-                            <span style="color: #6ab4ff;">"We don't know what happened!"</span><br>
-                            <span style="color: #6ab4ff;">"One minute it was a normal closet, the next..."</span><br>
-                            <span style="color: #ff6b6b;">"It GLOWED and now it's a tunnel to somewhere else!"</span><br>
-                            <span style="color: #8888aa; font-size: 8px; margin-top: 5px; display: block;">
-                                ✦ They're terrified. They won't go near it. ✦
-                            </span>
-                        </div>
-                    </div>
-                    <button class="game-btn primary" onclick="enterCloset()">🌀 ENTER THE CLOSET</button>
                 </div>
             </div>
         </div>
 
-        <!-- ========== SCREEN 2: NARNIA WALK ========== -->
-        <div id="narniaWalk" class="screen theme-wonder">
+        <!-- ========== SCREEN: RESIDENTS ========== -->
+        <div id="s-residents" class="screen theme-wonder">
             <div style="text-align: center; max-width: 750px; width: 100%;">
-                <div style="font-size: 10px; color: #6a4a8a; margin-bottom: 10px;">
-                    ✦✦✦
+                <div class="text-box" style="border-color: #4a6a8a;">
+                    <div class="speaker resident">👩 RESIDENTS</div>
+                    <div class="dialogue" id="residentsText"></div>
                 </div>
-                <div class="text-box" style="min-height: 160px; border-color: #6a4a8a;">
-                    <div class="speaker creepy">🌀 THE CLOSET</div>
-                    <div class="dialogue" id="narniaDialogue">
-                        You step inside the closet.<br>
-                        There's no back wall.<br>
-                        Just a long, dark tunnel that stretches into infinity...<br>
-                        <span style="color: #a29bfe; font-size: 10px; display: block; margin-top: 10px;">
-                            You walk forward. And forward. And forward...
-                        </span>
-                        <span style="color: #4a4a6a; font-size: 8px; display: block; margin-top: 8px;">
-                            The walls seem to breathe. You hear whispers.
-                        </span>
-                    </div>
-                    <div class="continue" id="narniaContinue">▼ Press SPACE or click Continue</div>
+                <div class="btn-group" id="residentsButtons">
+                    <button class="game-btn primary" onclick="branch('closet')">🌀 ENTER CLOSET</button>
+                    <button class="game-btn" onclick="branch('ask')">💬 ASK</button>
+                    <button class="game-btn success" onclick="branch('comfort')">🤗 COMFORT</button>
+                    <button class="game-btn wonder" onclick="branch('investigate')">🔍 INVESTIGATE</button>
                 </div>
-                <div id="narniaExit" style="display: none; width: 100%;">
-                    <div style="color: #ffd93d; font-size: 16px; margin: 10px 0; animation: pulse 1.5s infinite;">
-                        ✦✦✦ YOU EMERGE ✦✦✦
+                <div id="residentsResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="min-height: 80px; border-color: #6a4a8a;">
+                        <div class="dialogue" id="residentsResultText"></div>
                     </div>
-                    <div style="color: #8888aa; font-size: 9px; margin-bottom: 12px;">
-                        But this isn't JN Hall anymore...<br>
-                        <span style="color: #aa4a4a;">This is something else entirely.</span><br>
-                        <span style="color: #4a4a6a; font-size: 8px;">The air tastes like old paper and static.</span>
-                    </div>
-                    <button class="game-btn primary" onclick="enterWonderland()">🌀 STEP INTO WONDERLAND</button>
+                    <button class="game-btn primary" onclick="branch('closet')">🌀 ENTER CLOSET</button>
                 </div>
             </div>
         </div>
 
-        <!-- ========== SCREEN 3: WORN JN HALL ========== -->
-        <div id="wornHall" class="screen theme-creepy">
-            <div style="text-align: center; max-width: 750px; width: 100%; position: relative;">
-                <div style="font-size: 10px; color: #6a3a3a; margin-bottom: 10px;">
-                    ⚠️ JOHN NEUMAIER <span style="color: #aa4a4a;">WONDERLAND</span> ⚠️
+        <!-- ========== SCREEN: NARNIA ========== -->
+        <div id="s-narnia" class="screen theme-wonder">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 9px; color: #6a4a8a; margin-bottom: 8px;">✦✦✦</div>
+                <div class="text-box" style="border-color: #6a4a8a;">
+                    <div class="speaker creepy">🌀 THE CLOSET</div>
+                    <div class="dialogue" id="narniaText">
+                        You step into the closet. There's no back wall.<br>
+                        Just a long, dark tunnel stretching into infinity...
+                    </div>
                 </div>
+                <div id="narniaChoices" style="display: none; width: 100%;">
+                    <div class="btn-group">
+                        <button class="game-btn primary" onclick="branch('walk')">🚶 WALK</button>
+                        <button class="game-btn wonder" onclick="branch('wait')">⏳ WAIT</button>
+                        <button class="game-btn" onclick="branch('run')">🏃 RUN</button>
+                        <button class="game-btn ice" onclick="branch('touch')">✋ TOUCH WALL</button>
+                    </div>
+                </div>
+                <div id="narniaResult" style="display: none; width: 100%;">
+                    <div class="text-box" style="border-color: #6a4a8a; min-height: 80px;">
+                        <div class="dialogue" id="narniaResultText"></div>
+                    </div>
+                    <button class="game-btn primary" onclick="branch('enterWonderland')">🌀 ENTER WONDERLAND</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SCREEN: WONDERLAND ========== -->
+        <div id="s-wonderland" class="screen theme-creepy">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 9px; color: #6a3a3a; margin-bottom: 8px;">⚠️ JOHN NEUMAIER <span style="color: #aa4a4a;">WONDERLAND</span></div>
                 <div class="text-box" style="background: rgba(10, 5, 5, 0.95); border-color: #5a2a2a;">
                     <div class="speaker creepy">🏚️ THE WORN HALL</div>
-                    <div class="dialogue" id="wornHallDialogue">
-                        The hallway stretches <span class="creepy">infinitely</span> in both directions.<br>
-                        The walls are cracked, pulsing like they're breathing.<br>
-                        The floor is made of shifting <span class="highlight">playing cards</span>.<br>
-                        <span style="color: #aa4a4a; font-size: 10px; display: block; margin-top: 8px;">
-                            ♦️ ♥️ ♣️ ♠️
-                        </span>
-                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 8px;">
-                            The air smells like old paper and something metallic.<br>
-                            <span style="color: #4a4a6a;">✦ You feel like you're being watched ✦</span>
-                        </span>
+                    <div class="dialogue" id="wonderlandText">
+                        The hallway stretches <span class="creepy">infinitely</span>.<br>
+                        The walls pulse like they're breathing.<br>
+                        <span style="color: #8888aa; font-size: 8px;">✦ You feel the weight of your choices ✦</span>
                     </div>
                 </div>
-
-                <div style="color: #4a4a6a; font-size: 8px; margin: 8px 0;">
-                    What do you do?
+                <div class="btn-group" id="wonderlandButtons">
+                    <button class="game-btn" onclick="branch('explore')">🔍 EXPLORE</button>
+                    <button class="game-btn primary" onclick="branch('fightIan')">💪 FIGHT IAN</button>
+                    <button class="game-btn wonder" onclick="branch('sneakPast')">👀 SNEAK</button>
+                    <button class="game-btn" onclick="branch('flee')">🏃 FLEE</button>
+                    <button class="game-btn gold" onclick="branch('findItems')">🎁 FIND ITEMS</button>
                 </div>
-
-                <div class="btn-group" id="wornHallButtons">
-                    <button class="game-btn" onclick="exploreHallway('left')">👈 GO LEFT</button>
-                    <button class="game-btn" onclick="exploreHallway('right')">👉 GO RIGHT</button>
-                    <button class="game-btn primary" onclick="encounterIan()">💪 INVESTIGATE NOISE</button>
-                    <button class="game-btn wonder" onclick="enterExploration()">🔍 EXPLORE MORE</button>
-                </div>
-
-                <div id="hallwayResult" style="margin-top: 12px; display: none; width: 100%;">
-                    <div class="text-box" style="min-height: 80px; background: rgba(10, 5, 5, 0.95); border-color: #3a2a2a;">
-                        <div class="dialogue" id="hallwayResultText" style="font-size: 10px;"></div>
+                <div id="wonderlandResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="background: rgba(10, 5, 5, 0.95); border-color: #3a2a2a; min-height: 80px;">
+                        <div class="dialogue" id="wonderlandResultText"></div>
+                    </div>
+                    <div id="wonderlandNext" style="display: none;">
+                        <button class="game-btn primary" onclick="branch('continue')">▶ CONTINUE</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== SCREEN 4: IAN ENCOUNTER ========== -->
-        <div id="ianEncounter" class="screen theme-ian">
+        <!-- ========== SCREEN: SIDE CHARACTERS ========== -->
+        <div id="s-side" class="screen theme-party">
             <div style="text-align: center; max-width: 750px; width: 100%;">
-                <div style="font-size: 10px; color: #6a8a3a; margin-bottom: 10px;">
-                    💪 <span style="color: #8aba4a;">ENCOUNTER</span>
+                <div style="font-size: 9px; color: #8a4a8a; margin-bottom: 8px;">✦ SIDE CHARACTERS ✦</div>
+                <div class="text-box" style="border-color: #8a4a8a;">
+                    <div class="speaker side">🎭 A STRANGER APPEARS</div>
+                    <div class="dialogue" id="sideText"></div>
                 </div>
+                <div class="btn-group" id="sideButtons">
+                    <button class="game-btn" onclick="branch('talkSide')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="branch('helpSide')">🤝 HELP</button>
+                    <button class="game-btn gold" onclick="branch('tradeSide')">🔄 TRADE</button>
+                    <button class="game-btn" onclick="branch('ignoreSide')">🙈 IGNORE</button>
+                </div>
+                <div id="sideResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="border-color: #8a4a8a; min-height: 80px;">
+                        <div class="dialogue" id="sideResultText"></div>
+                    </div>
+                    <button class="game-btn primary" onclick="branch('continueSide')">▶ CONTINUE</button>
+                </div>
+            </div>
+        </div>
 
+        <!-- ========== SCREEN: IAN ========== -->
+        <div id="s-ian" class="screen theme-ian">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div style="font-size: 9px; color: #6a8a3a; margin-bottom: 8px;">💪 <span style="color: #8aba4a;">MUSCLE MAN IAN</span></div>
                 <div class="text-box" style="background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a;">
-                    <div class="speaker ian">💪 MUSCLE MAN IAN</div>
-                    <div class="dialogue" id="ianDialogue">
-                        A massive figure rounds the corner.<br>
-                        It's Ian... but something's <span class="creepy">wrong</span>.<br>
-                        His skin is <span style="color: #8aba4a;">GREEN</span>. His muscles bulge impossibly.<br>
-                        He's wearing an RA shirt that says <span style="color: #ffd93d;">"I'M THE BOSS NOW."</span><br>
-                        <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 8px;">
-                            "YO! You're not supposed to be here, newbie!"
-                        </span>
-                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 5px;">
-                            He cracks his knuckles. The hallway shakes.
-                        </span>
-                    </div>
+                    <div class="speaker ian">💪 IAN</div>
+                    <div class="dialogue" id="ianText"></div>
                 </div>
-
-                <div style="color: #4a4a6a; font-size: 8px; margin: 8px 0;">
-                    What do you do?
-                </div>
-
                 <div class="btn-group" id="ianButtons">
-                    <button class="game-btn danger" onclick="ianAct('fight')">⚔️ FIGHT</button>
-                    <button class="game-btn" onclick="ianAct('act')">💬 ACT (Talk)</button>
-                    <button class="game-btn wonder" onclick="ianAct('prank')">🎭 PRANK</button>
-                    <button class="game-btn success" onclick="ianAct('spare')">🕊️ SPARE</button>
-                    <button class="game-btn" onclick="ianAct('flee')">🏃 FLEE</button>
+                    <button class="game-btn danger" onclick="branch('ianFight')">⚔️ FIGHT</button>
+                    <button class="game-btn" onclick="branch('ianTalk')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="branch('ianPrank')">🎭 PRANK</button>
+                    <button class="game-btn success" onclick="branch('ianSpare')">🕊️ SPARE</button>
+                    <button class="game-btn" onclick="branch('ianFlee')">🏃 FLEE</button>
+                    <button class="game-btn gold" onclick="branch('ianBribe')">💰 BRIBE</button>
                 </div>
-
-                <div id="ianResult" style="margin-top: 12px; display: none; width: 100%;">
-                    <div class="text-box" style="min-height: 100px; background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a;">
-                        <div class="dialogue" id="ianResultText" style="font-size: 10px;"></div>
+                <div id="ianResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="background: rgba(5, 10, 5, 0.95); border-color: #4a6a2a; min-height: 80px;">
+                        <div class="dialogue" id="ianResultText"></div>
                     </div>
-                    <div id="ianNextActions" style="display: none; margin-top: 10px;">
-                        <button class="game-btn success" onclick="continueAfterIan()">▶ CONTINUE</button>
+                    <div id="ianNext" style="display: none;">
+                        <button class="game-btn success" onclick="branch('ianContinue')">▶ CONTINUE</button>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========== SCREEN 5: EXPLORATION ========== -->
-        <div id="exploration" class="screen theme-wonder">
-            <div class="exploration-view">
-                <div class="hallway-view">
-                    <div class="location" id="exploreLocation">📍 <span class="highlight">THE ENDLESS HALLWAY</span></div>
-                    
-                    <!-- Mini-map / Location dots -->
-                    <div class="location-indicator" id="locationDots">
-                        <div class="dot active" data-index="0"></div>
-                        <div class="dot" data-index="1"></div>
-                        <div class="dot" data-index="2"></div>
-                        <div class="dot" data-index="3"></div>
-                        <div class="dot" data-index="4"></div>
-                    </div>
-
-                    <div class="scene-desc" id="exploreDesc">
-                        The hallway stretches before you.<br>
-                        Doors line the walls with impossible numbers: <span class="highlight">301, 103, 330</span>...<br>
-                        The carpet moves slightly, like it's alive.<br>
-                        <span style="color: #aa4a4a; font-size: 8px;">✦ You hear whispers from behind the walls ✦</span>
-                    </div>
-
-                    <div class="direction-grid">
-                        <div class="empty"></div>
-                        <button class="game-btn" onclick="moveDirection('north')">⬆️</button>
-                        <div class="empty"></div>
-                        <button class="game-btn" onclick="moveDirection('west')">⬅️</button>
-                        <button class="game-btn primary" onclick="moveDirection('enter')">🚪</button>
-                        <button class="game-btn" onclick="moveDirection('east')">➡️</button>
-                        <div class="empty"></div>
-                        <button class="game-btn" onclick="moveDirection('south')">⬇️</button>
-                        <div class="empty"></div>
-                    </div>
-
-                    <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
-                        <button class="game-btn" onclick="returnToHall()">🔙 BACK</button>
-                        <button class="game-btn primary" onclick="encounterQueen()">♠️ FIND THE QUEEN</button>
-                        <button class="game-btn wonder" onclick="triggerRandomEvent()">🎲 RANDOM EVENT</button>
-                    </div>
-                </div>
-
-                <!-- Stats Bar -->
-                <div class="stats-bar" id="gameStats">
-                    <div class="hp">❤️ HP: <span id="statHp">20</span>/<span id="statMaxHp">20</span></div>
-                    <div class="atk">⚔️ ATK: <span id="statAtk">5</span></div>
-                    <div class="def">🛡️ DEF: <span id="statDef">3</span></div>
-                    <div class="wonder">🌀 WONDER: <span id="statWonder">0</span>%</div>
-                    <div class="location-label">📍 <span id="statLocation">Hallway</span></div>
-                </div>
-
-                <!-- Inventory Bar -->
-                <div class="inventory-bar" id="inventoryBar">
-                    <span>📦 ITEMS:</span>
-                    <span class="item" id="item1">🔑 Key</span>
-                    <span class="item" id="item2">📜 Note</span>
-                    <span class="item" id="item3">💊 Candy</span>
                 </div>
             </div>
         </div>
 
-        <!-- ========== SCREEN 6: QUEEN ENCOUNTER ========== -->
-        <div id="queenEncounter" class="screen theme-queen">
+        <!-- ========== SCREEN: QUEEN ========== -->
+        <div id="s-queen" class="screen theme-queen">
             <div style="text-align: center; max-width: 750px; width: 100%;">
-                <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 12px;">
-                    ♠️ <span style="color: #ff4a4a;">THE QUEEN OF THE DESK</span> ♠️
-                </div>
+                <div style="font-size: 11px; color: #ff6b6b; margin-bottom: 10px;">♠️ <span style="color: #ff4a4a;">THE QUEEN OF THE DESK</span></div>
                 <div class="text-box" style="background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a;">
                     <div class="speaker queen">👑 QUEEN RYLEE</div>
-                    <div class="dialogue" id="queenDialogue">
-                        You enter the lobby.<br>
-                        Behind a massive, ornate desk sits a figure with <span class="creepy">impossible presence</span>.<br>
-                        She's holding a gavel made of pure darkness.<br>
-                        <span style="color: #ff4a4a; font-size: 12px; display: block; margin-top: 8px;">
-                            "OFF WITH THEIR HOUSING!"
-                        </span>
-                        <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 8px;">
-                            The Queen of the Desk has judged you.<br>
-                            <span style="color: #aa4a4a;">✦ She's been waiting for you ✦</span>
-                        </span>
+                    <div class="dialogue" id="queenText"></div>
+                </div>
+                <div class="btn-group" id="queenButtons">
+                    <button class="game-btn danger" onclick="branch('queenFight')">⚔️ FIGHT</button>
+                    <button class="game-btn" onclick="branch('queenTalk')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="branch('queenWonder')">🌀 WONDER</button>
+                    <button class="game-btn success" onclick="branch('queenSpare')">🕊️ SPARE</button>
+                    <button class="game-btn" onclick="branch('queenFlee')">🏃 FLEE</button>
+                    <button class="game-btn gold" onclick="branch('queenBribe')">💰 BRIBE</button>
+                    <button class="game-btn ice" onclick="branch('queenChallenge')">♟️ CHALLENGE</button>
+                </div>
+                <div id="queenResult" style="display: none; width: 100%; margin-top: 10px;">
+                    <div class="text-box" style="background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a; min-height: 80px;">
+                        <div class="dialogue" id="queenResultText"></div>
                     </div>
-                </div>
-                <div style="color: #ffd93d; font-size: 10px; margin: 12px 0; animation: pulse 2s infinite;">
-                    ⚠️ THE FINAL BOSS AWAITS ⚠️
-                </div>
-                <div class="btn-group">
-                    <button class="game-btn danger" onclick="startFinalBattle()">⚔️ FACE THE QUEEN</button>
-                    <button class="game-btn" onclick="queenAct('talk')">💬 TALK</button>
-                    <button class="game-btn wonder" onclick="queenAct('wonder')">🌀 USE WONDER</button>
-                    <button class="game-btn" onclick="resetGame()">🔄 ESCAPE</button>
-                </div>
-                <div id="finalResult" style="display: none; margin-top: 12px; width: 100%;">
-                    <div class="text-box" style="min-height: 100px; background: rgba(20, 5, 5, 0.95); border-color: #8a2a2a;">
-                        <div class="dialogue" id="finalResultText" style="font-size: 10px;"></div>
+                    <div id="queenNext" style="display: none;">
+                        <button class="game-btn primary" onclick="branch('showEnding')">▶ VIEW ENDING</button>
                     </div>
-                    <button class="game-btn" onclick="resetGame()" style="margin-top: 10px;">🔄 START OVER</button>
                 </div>
             </div>
         </div>
 
+        <!-- ========== SCREEN: ENDING ========== -->
+        <div id="s-ending" class="screen theme-gold">
+            <div style="text-align: center; max-width: 750px; width: 100%;">
+                <div class="ending-banner" id="endingBanner">🏆 ENDING</div>
+                <div class="text-box" style="border-color: #ffd93d; min-height: 180px;">
+                    <div class="speaker ending" id="endingTitle">🎬 THE END</div>
+                    <div class="dialogue" id="endingText" style="font-size: 11px; line-height: 2.5;"></div>
+                </div>
+                <div class="btn-group">
+                    <button class="game-btn primary" onclick="resetGame()">🔄 PLAY AGAIN</button>
+                    <button class="game-btn" onclick="window.location.href='index.html'">🏠 MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== STATS BAR ========== -->
+        <div class="stats-bar">
+            <div class="hp">❤️ HP: <span id="statHp">20</span>/20</div>
+            <div class="wonder">🌀 WONDER: <span id="statWonder">0</span>%</div>
+            <div class="path">🗺️ PATH: <span id="statPath">START</span></div>
+            <div class="items">📦 ITEMS: <span id="statItems">None</span></div>
+        </div>
     </div>
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT - ENHANCED GAME LOGIC -->
+    <!-- JAVASCRIPT - COMPLETE BRANCHING ENGINE WITH 50 ENDINGS -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -809,570 +464,1621 @@
 
         let player = {
             name: 'PROTAGONIST',
-            hair: 'blonde',
-            skin: 'light',
-            outfit: 'hoodie',
             hp: 20,
             maxHp: 20,
-            atk: 5,
-            def: 3,
-            lvl: 1,
-            exp: 0,
-            wonder: 0
+            wonder: 0,
+            path: 'START',
+            // Items
+            hasKey: false,
+            hasNote: false,
+            hasCandy: false,
+            hasCrown: false,
+            hasMirror: false,
+            hasClock: false,
+            hasRose: false,
+            hasTea: false,
+            hasCard: false,
+            hasHeart: false,
+            // Flags
+            ianDefeated: false,
+            ianSpared: false,
+            ianBefriended: false,
+            queenDefeated: false,
+            queenSpared: false,
+            queenBefriended: false,
+            hasWonderPower: false,
+            hasMercy: false,
+            hasCourage: false,
+            hasWisdom: false,
+            hasDeceit: false,
+            hasLoyalty: false,
+            hasFreedom: false,
+            // Side characters met
+            metCheshire: false,
+            metHatter: false,
+            metRabbit: false,
+            metCaterpillar: false,
+            metDuchess: false,
+            metKnave: false,
+            metTweedle: false,
+            // Counters
+            sideEncounters: 0,
+            choices: [],
+            ending: 0
         };
 
-        let inventory = ['🔑 Key', '📜 Note'];
-        let locationIndex = 0;
-        let visitedLocations = [true, false, false, false, false];
-        let eventCooldown = 0;
-        let ianDefeated = false;
-        let queenDefeated = false;
-        let gameState = 'intro';
+        // ============================================================
+        //  LOAD PLAYER
+        // ============================================================
 
-        // Load saved data
         function loadPlayer() {
             const saved = localStorage.getItem('jnPlayerState');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
                     player.name = data.name || 'PROTAGONIST';
-                    player.hair = data.hair || 'blonde';
-                    player.skin = data.skin || 'light';
-                    player.outfit = data.outfit || 'hoodie';
                 } catch (e) { /* ignore */ }
             }
         }
         loadPlayer();
 
         // ============================================================
-        //  AMBIENT PARTICLES
-        // ============================================================
-
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = (2 + Math.random() * 4) + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDuration = (10 + Math.random() * 20) + 's';
-                particle.style.animationDelay = (Math.random() * 10) + 's';
-                particle.style.opacity = 0.1 + Math.random() * 0.3;
-                container.appendChild(particle);
-            }
-        }
-        createParticles();
-
-        // ============================================================
         //  SCREEN MANAGEMENT
         // ============================================================
 
-        function showScreen(screenId, theme) {
+        function showScreen(id, theme) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const screen = document.getElementById(screenId);
-            if (screen) {
-                screen.classList.add('active');
-                screen.classList.remove('fade-transition');
-                void screen.offsetWidth;
-                screen.classList.add('fade-transition');
-            }
-
-            // Update theme
+            const screen = document.getElementById(id);
+            if (screen) screen.classList.add('active');
             const container = document.getElementById('gameContainer');
             container.className = 'theme-' + (theme || 'normal');
-            
-            // Update stats
             updateStats();
         }
-
-        // ============================================================
-        //  STATS UPDATE
-        // ============================================================
 
         function updateStats() {
             document.getElementById('statHp').textContent = player.hp;
-            document.getElementById('statMaxHp').textContent = player.maxHp;
-            document.getElementById('statAtk').textContent = player.atk;
-            document.getElementById('statDef').textContent = player.def;
-            document.getElementById('statWonder').textContent = player.wonder;
+            document.getElementById('statWonder').textContent = Math.min(100, player.wonder);
+            document.getElementById('statPath').textContent = player.path;
+            const items = [];
+            if (player.hasKey) items.push('🔑');
+            if (player.hasNote) items.push('📜');
+            if (player.hasCandy) items.push('💊');
+            if (player.hasCrown) items.push('👑');
+            if (player.hasMirror) items.push('🪞');
+            if (player.hasClock) items.push('⏰');
+            if (player.hasRose) items.push('🌹');
+            if (player.hasTea) items.push('🍵');
+            if (player.hasCard) items.push('🃏');
+            if (player.hasHeart) items.push('❤️');
+            document.getElementById('statItems').textContent = items.join(' ') || 'None';
         }
 
         // ============================================================
-        //  EVENT NOTIFICATIONS
+        //  BRANCHING ENGINE
         // ============================================================
 
-        function showEvent(text, duration = 2000) {
-            const el = document.getElementById('eventNotification');
-            document.getElementById('eventText').textContent = text;
-            el.style.display = 'block';
-            setTimeout(() => {
-                el.style.display = 'none';
-            }, duration);
-        }
+        let currentChoice = '';
 
-        // ============================================================
-        //  KEYBOARD SUPPORT
-        // ============================================================
+        function branch(choice) {
+            currentChoice = choice;
+            player.choices.push(choice);
+            updateStats();
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === ' ' || e.key === 'Space') {
-                e.preventDefault();
-                const active = document.querySelector('.screen.active');
-                if (!active) return;
+            const handlers = {
+                // Room 303
+                'enter': handleEnter,
+                'knock': handleKnock,
+                'sneak': handleSneak,
+                'listen': handleListen,
+                // Residents
+                'ask': handleAsk,
+                'comfort': handleComfort,
+                'investigate': handleInvestigate,
+                'closet': handleCloset,
+                // Narnia
+                'walk': handleWalk,
+                'wait': handleWait,
+                'run': handleRun,
+                'touch': handleTouch,
+                'enterWonderland': handleEnterWonderland,
+                // Wonderland
+                'explore': handleExplore,
+                'fightIan': handleFightIan,
+                'sneakPast': handleSneakPast,
+                'flee': handleFlee,
+                'findItems': handleFindItems,
+                'continue': handleContinue,
+                // Side characters
+                'talkSide': handleTalkSide,
+                'helpSide': handleHelpSide,
+                'tradeSide': handleTradeSide,
+                'ignoreSide': handleIgnoreSide,
+                'continueSide': handleContinueSide,
+                // Ian
+                'ianFight': handleIanFight,
+                'ianTalk': handleIanTalk,
+                'ianPrank': handleIanPrank,
+                'ianSpare': handleIanSpare,
+                'ianFlee': handleIanFlee,
+                'ianBribe': handleIanBribe,
+                'ianContinue': handleIanContinue,
+                // Queen
+                'queenFight': handleQueenFight,
+                'queenTalk': handleQueenTalk,
+                'queenWonder': handleQueenWonder,
+                'queenSpare': handleQueenSpare,
+                'queenFlee': handleQueenFlee,
+                'queenBribe': handleQueenBribe,
+                'queenChallenge': handleQueenChallenge,
+                'showEnding': handleShowEnding
+            };
 
-                // Room 303 continue
-                if (active.id === 'room303') {
-                    const choices = document.getElementById('room303Choices');
-                    if (choices.style.display === 'none') {
-                        choices.style.display = 'block';
-                        document.getElementById('room303Continue').style.display = 'none';
-                    }
-                }
-                // Narnia walk continue
-                else if (active.id === 'narniaWalk') {
-                    const exit = document.getElementById('narniaExit');
-                    if (exit.style.display === 'none') {
-                        exit.style.display = 'block';
-                        document.getElementById('narniaContinue').style.display = 'none';
-                    }
-                }
+            if (handlers[choice]) {
+                handlers[choice]();
+            } else {
+                console.warn('Unknown choice:', choice);
+                showScreen('s-wonderland', 'creepy');
             }
-        });
+        }
 
         // ============================================================
-        //  ROOM 303 SCENE
+        //  ROOM 303 HANDLERS
         // ============================================================
 
-        function enterRoom303() {
-            document.getElementById('room303Dialogue').innerHTML = `
+        function handleEnter() {
+            player.path = 'ENTERED';
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Text').innerHTML = `
                 You push the door open.<br>
-                Inside, two residents are frozen in fear.<br>
-                <span style="color: #ff6b6b;">They're staring at the closet.</span><br>
-                <span class="highlight">✦ It's GLOWING with an impossible light ✦</span>
+                Two residents are frozen in fear, staring at the closet.<br>
+                <span class="highlight">✦ The closet is GLOWING ✦</span>
             `;
-            document.getElementById('room303Choices').style.display = 'none';
-            document.getElementById('room303Residents').style.display = 'block';
-            showEvent('🚪 You enter Room 303...', 1500);
+            document.getElementById('room303Continue').style.display = 'none';
+            setTimeout(() => {
+                showScreen('s-residents', 'wonder');
+                document.getElementById('residentsText').innerHTML = `
+                    <span class="resident">👩 SHORT BLONDE:</span> "Oh my god! You're here!"<br>
+                    <span class="resident">👩 SHORT BRUNETTE:</span> "The closet... it's not a closet anymore..."<br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ They're terrified ✦</span>
+                `;
+            }, 500);
         }
 
-        function knockRoom303() {
-            document.getElementById('room303Dialogue').innerHTML = `
+        function handleKnock() {
+            player.path = 'KNOCKED';
+            player.wonder += 5;
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Text').innerHTML = `
                 You knock on the door.<br>
-                <span style="color: #ff6b6b;">"COME IN!"</span> a voice screams.<br>
-                You open the door. Two residents are clutching each other.<br>
-                <span class="highlight">"The closet... it GLOWED!"</span>
+                <span class="creepy">"COME IN!"</span> a voice screams.<br>
+                You open the door. Two residents are clutching each other.
             `;
-            document.getElementById('room303Choices').style.display = 'none';
-            document.getElementById('room303Residents').style.display = 'block';
-            showEvent('👊 You knocked first...', 1500);
+            document.getElementById('room303Continue').style.display = 'none';
+            setTimeout(() => {
+                showScreen('s-residents', 'wonder');
+                document.getElementById('residentsText').innerHTML = `
+                    <span class="resident">👩 SHORT BLONDE:</span> "You knocked! Thank goodness!"<br>
+                    <span class="resident">👩 SHORT BRUNETTE:</span> "We were so scared..."<br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ They feel safer with you ✦</span>
+                `;
+            }, 500);
         }
 
-        function sneakRoom303() {
-            document.getElementById('room303Dialogue').innerHTML = `
+        function handleSneak() {
+            player.path = 'SNEAKED';
+            player.wonder += 10;
+            document.getElementById('room303Choices').style.display = 'none';
+            document.getElementById('room303Text').innerHTML = `
                 You peer through the crack in the door.<br>
                 Two residents are frozen, staring at the closet.<br>
-                <span style="color: #a29bfe;">The closet is GLOWING with an ethereal light.</span><br>
-                <span style="color: #8888aa; font-size: 8px;">✦ You feel a strange pull toward it ✦</span>
+                <span class="wonder">✦ The closet GLOWS with ethereal light ✦</span>
             `;
+            document.getElementById('room303Continue').style.display = 'none';
+            setTimeout(() => {
+                showScreen('s-residents', 'wonder');
+                document.getElementById('residentsText').innerHTML = `
+                    <span class="resident">👩 SHORT BLONDE:</span> "You saw it too?"<br>
+                    <span class="resident">👩 SHORT BRUNETTE:</span> "It's been glowing for hours..."<br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ They've been too scared to go near it ✦</span>
+                `;
+            }, 500);
+        }
+
+        function handleListen() {
+            player.path = 'LISTENED';
+            player.wonder += 8;
+            player.hasWisdom = true;
             document.getElementById('room303Choices').style.display = 'none';
-            document.getElementById('room303Residents').style.display = 'block';
-            showEvent('👀 You sneak a peek...', 1500);
+            document.getElementById('room303Text').innerHTML = `
+                You press your ear against the door.<br>
+                You hear whispers...<br>
+                <span class="wonder">✦ "Find the Queen..." ✦</span><br>
+                <span class="wonder">✦ "She's waiting..." ✦</span>
+            `;
+            document.getElementById('room303Continue').style.display = 'none';
+            setTimeout(() => {
+                showScreen('s-residents', 'wonder');
+                document.getElementById('residentsText').innerHTML = `
+                    <span class="resident">👩 SHORT BLONDE:</span> "You heard it too? The whispers?"<br>
+                    <span class="resident">👩 SHORT BRUNETTE:</span> "They've been getting louder..."<br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ You sense this is important ✦</span>
+                `;
+            }, 500);
+        }
+
+        // ============================================================
+        //  RESIDENTS HANDLERS
+        // ============================================================
+
+        function handleAsk() {
+            document.getElementById('residentsResult').style.display = 'block';
+            document.getElementById('residentsButtons').style.display = 'none';
+            document.getElementById('residentsResultText').innerHTML = `
+                <span class="resident">👩 SHORT BLONDE:</span> "We were just hanging out..."<br>
+                <span class="resident">👩 SHORT BRUNETTE:</span> "And then the closet started GLOWING!"<br>
+                <span style="color: #8888aa; font-size: 8px;">✦ They don't know how it happened ✦</span>
+            `;
+            player.hasWisdom += 5;
+            updateStats();
+        }
+
+        function handleComfort() {
+            document.getElementById('residentsResult').style.display = 'block';
+            document.getElementById('residentsButtons').style.display = 'none';
+            document.getElementById('residentsResultText').innerHTML = `
+                You put a hand on their shoulders.<br>
+                <span class="resident">👩 SHORT BLONDE:</span> "Thanks... we needed that."<br>
+                <span class="resident">👩 SHORT BRUNETTE:</span> "You're braver than us."<br>
+                <span style="color: #4aff8a;">✦ You gain +5 HP from kindness ✦</span>
+            `;
+            player.hp = Math.min(20, player.hp + 5);
+            player.hasMercy = true;
+            updateStats();
+        }
+
+        function handleInvestigate() {
+            document.getElementById('residentsResult').style.display = 'block';
+            document.getElementById('residentsButtons').style.display = 'none';
+            document.getElementById('residentsResultText').innerHTML = `
+                You look around the room.<br>
+                You find a <span class="highlight">note</span> on the desk.<br>
+                <span style="color: #8888aa; font-size: 8px;">✦ "The Queen's desk is in the lobby. Beware her rule." ✦</span>
+                <br><span class="highlight">📜 NOTE ADDED TO INVENTORY</span>
+            `;
+            player.hasNote = true;
+            player.hasWisdom = true;
+            updateStats();
+        }
+
+        function handleCloset() {
+            showScreen('s-narnia', 'wonder');
+            document.getElementById('narniaChoices').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('narniaChoices').style.display = 'block';
+            }, 800);
+        }
+
+        // ============================================================
+        //  NARNIA HANDLERS
+        // ============================================================
+
+        function handleWalk() {
+            player.path = 'WALKED';
+            player.hasCourage = true;
+            document.getElementById('narniaChoices').style.display = 'none';
+            document.getElementById('narniaText').innerHTML = `
+                You walk forward with purpose.<br>
+                The tunnel seems to stretch, but you keep going.<br>
+                <span class="highlight">✦ Your courage grows ✦</span>
+            `;
+            setTimeout(() => {
+                document.getElementById('narniaResult').style.display = 'block';
+                document.getElementById('narniaResultText').innerHTML = `
+                    After what feels like hours, you see light ahead.<br>
+                    <span class="wonder">✦ You're emerging into something... strange ✦</span>
+                `;
+            }, 1000);
+        }
+
+        function handleWait() {
+            player.path = 'WAITED';
+            player.wonder += 10;
+            document.getElementById('narniaChoices').style.display = 'none';
+            document.getElementById('narniaText').innerHTML = `
+                You stand still and watch.<br>
+                The tunnel pulses with light.<br>
+                <span class="wonder">✦ You see patterns in the darkness ✦</span>
+            `;
+            setTimeout(() => {
+                document.getElementById('narniaResult').style.display = 'block';
+                document.getElementById('narniaResultText').innerHTML = `
+                    You've learned to read the Wonderland energy.<br>
+                    <span class="highlight">✦ +10 WONDER ✦</span><br>
+                    The path ahead is clearer now.
+                `;
+            }, 1000);
+        }
+
+        function handleRun() {
+            player.path = 'RAN';
+            player.hp -= 2;
+            document.getElementById('narniaChoices').style.display = 'none';
+            document.getElementById('narniaText').innerHTML = `
+                You sprint through the tunnel!<br>
+                The walls blur past you.<br>
+                <span class="creepy">✦ You stumble and lose 2 HP ✦</span>
+            `;
+            setTimeout(() => {
+                document.getElementById('narniaResult').style.display = 'block';
+                document.getElementById('narniaResultText').innerHTML = `
+                    You burst out into a strange hallway.<br>
+                    <span class="highlight">✦ You made it, but you're winded ✦</span>
+                `;
+            }, 1000);
+        }
+
+        function handleTouch() {
+            player.path = 'TOUCHED';
+            player.wonder += 15;
+            player.hasWisdom = true;
+            document.getElementById('narniaChoices').style.display = 'none';
+            document.getElementById('narniaText').innerHTML = `
+                You reach out and touch the wall.<br>
+                It's warm. It pulses like a heartbeat.<br>
+                <span class="wonder">✦ The Wonderland recognizes you ✦</span>
+            `;
+            setTimeout(() => {
+                document.getElementById('narniaResult').style.display = 'block';
+                document.getElementById('narniaResultText').innerHTML = `
+                    You feel connected to this place now.<br>
+                    <span class="highlight">✦ +15 WONDER ✦</span><br>
+                    The path opens before you.
+                `;
+            }, 1000);
+        }
+
+        function handleEnterWonderland() {
+            showScreen('s-wonderland', 'creepy');
+            // Check if player has enough wonder to get special dialogue
+            if (player.wonder > 20) {
+                document.getElementById('wonderlandText').innerHTML = `
+                    The hallway stretches <span class="creepy">infinitely</span>.<br>
+                    The walls pulse like they're breathing.<br>
+                    <span class="wonder">✦ Your high Wonder makes the place feel almost... welcoming ✦</span>
+                `;
+            }
+        }
+
+        // ============================================================
+        //  WONDERLAND HANDLERS
+        // ============================================================
+
+        function handleExplore() {
+            player.path = 'EXPLORING';
+            document.getElementById('wonderlandResult').style.display = 'block';
+            document.getElementById('wonderlandButtons').style.display = 'none';
+            
+            const exploreEvents = [
+                `You find a <span class="highlight">mirror</span> on the wall.<br>Your reflection waves at you.<br><span class="highlight">🪞 MIRROR ADDED</span>`,
+                `You discover a hidden room with a <span class="highlight">crown</span> on a pillow.<br><span class="highlight">👑 CROWN ADDED</span>`,
+                `You hear voices from behind a door.<br>It sounds like a party. <span class="wonder">✦ A tea party? ✦</span>`,
+                `You find a <span class="highlight">clock</span> that's stopped at 3:03.<br><span class="highlight">⏰ CLOCK ADDED</span>`,
+                `You see a <span class="highlight">rose</span> growing from a crack in the wall.<br><span class="highlight">🌹 ROSE ADDED</span>`
+            ];
+            
+            const result = exploreEvents[Math.floor(Math.random() * exploreEvents.length)];
+            document.getElementById('wonderlandResultText').innerHTML = result;
+            
+            // Randomly add items
+            if (result.includes('mirror')) player.hasMirror = true;
+            if (result.includes('crown')) player.hasCrown = true;
+            if (result.includes('clock')) player.hasClock = true;
+            if (result.includes('rose')) player.hasRose = true;
             player.wonder += 5;
             updateStats();
+            
+            document.getElementById('wonderlandNext').style.display = 'block';
         }
 
-        function askResidents() {
-            document.getElementById('room303Residents').style.display = 'none';
-            document.getElementById('room303Ask').style.display = 'block';
-            showEvent('💬 You ask questions...', 1500);
-        }
-
-        function enterCloset() {
-            showScreen('narniaWalk', 'wonder');
-            showEvent('🌀 Entering the closet...', 1500);
-            setTimeout(() => {
-                document.getElementById('narniaDialogue').innerHTML = `
-                    You step inside the closet.<br>
-                    There's no back wall.<br>
-                    Just a long, dark tunnel that stretches into infinity...<br>
-                    <span style="color: #a29bfe; font-size: 10px; display: block; margin-top: 8px;">
-                        You walk forward. And forward. And forward...
-                    </span>
-                    <span style="color: #4a4a6a; font-size: 8px; display: block; margin-top: 8px;">
-                        The walls seem to breathe. You hear whispers.<br>
-                        <span style="color: #aa4a4a;">✦ Something is waiting for you ✦</span>
-                    </span>
-                `;
-            }, 300);
-        }
-
-        function enterWonderland() {
-            showScreen('wornHall', 'creepy');
-            player.wonder += 10;
+        function handleFindItems() {
+            player.path = 'FOUND ITEMS';
+            document.getElementById('wonderlandResult').style.display = 'block';
+            document.getElementById('wonderlandButtons').style.display = 'none';
+            
+            const items = [];
+            if (!player.hasKey) { player.hasKey = true; items.push('🔑 Key'); }
+            if (!player.hasCandy) { player.hasCandy = true; items.push('💊 Candy'); }
+            if (!player.hasTea) { player.hasTea = true; items.push('🍵 Tea'); }
+            
+            document.getElementById('wonderlandResultText').innerHTML = `
+                You search the hallway and find:<br>
+                ${items.map(i => `<span class="highlight">✦ ${i} ✦</span>`).join('<br>')}
+                <br><span style="color: #8888aa; font-size: 8px;">✦ These might help you later ✦</span>
+            `;
+            player.wonder += 5;
             updateStats();
-            showEvent('🌀 Welcome to WONDERLAND!', 2000);
+            document.getElementById('wonderlandNext').style.display = 'block';
+        }
+
+        function handleFightIan() {
+            // Check if player has items that help
+            let bonus = '';
+            if (player.hasKey) { bonus = 'Your key glows. Ian hesitates.'; }
+            if (player.hasCandy) { bonus = 'You offer candy. Ian\'s eyes soften.'; }
+            if (player.hasTea) { bonus = 'You offer tea. Ian\'s guard drops.'; }
+            
+            showScreen('s-ian', 'ian');
+            document.getElementById('ianText').innerHTML = `
+                A massive figure blocks your path.<br>
+                His skin is <span style="color: #8aba4a;">GREEN</span>. His muscles bulge impossibly.<br>
+                <span style="color: #8aba4a;">"YO! You're not supposed to be here!"</span><br>
+                ${bonus ? `<span style="color: #8888aa; font-size: 8px;">✦ ${bonus} ✦</span>` : ''}
+            `;
+        }
+
+        function handleSneakPast() {
+            player.path = 'SNEAKED PAST';
+            player.wonder += 8;
+            document.getElementById('wonderlandResult').style.display = 'block';
+            document.getElementById('wonderlandButtons').style.display = 'none';
+            document.getElementById('wonderlandResultText').innerHTML = `
+                You slip through the shadows.<br>
+                Ian is too busy flexing to notice you.<br>
+                <span class="highlight">✦ You sneak past successfully! ✦</span>
+                <br><span style="color: #8888aa; font-size: 8px;">✦ You avoided a fight... for now ✦</span>
+            `;
+            player.hasDeceit = true;
+            updateStats();
+            document.getElementById('wonderlandNext').style.display = 'block';
+        }
+
+        function handleFlee() {
+            player.path = 'FLED';
+            document.getElementById('wonderlandResult').style.display = 'block';
+            document.getElementById('wonderlandButtons').style.display = 'none';
+            document.getElementById('wonderlandResultText').innerHTML = `
+                You run back the way you came.<br>
+                But the hallway loops you back to where you started.<br>
+                <span class="creepy">✦ There's no escape from Wonderland ✦</span>
+            `;
+            document.getElementById('wonderlandNext').style.display = 'block';
+        }
+
+        function handleContinue() {
+            // Randomly trigger side character encounters
+            if (player.sideEncounters < 4 && Math.random() < 0.5) {
+                triggerSideCharacter();
+            } else {
+                showScreen('s-wonderland', 'creepy');
+                document.getElementById('wonderlandButtons').style.display = 'flex';
+                document.getElementById('wonderlandResult').style.display = 'none';
+                document.getElementById('wonderlandNext').style.display = 'none';
+            }
         }
 
         // ============================================================
-        //  WORN JN HALL
+        //  SIDE CHARACTER SYSTEM
         // ============================================================
 
-        let hallExplored = false;
-        let hallEvents = [
-            'You walk down the endless hallway. You pass door 301. Then 301 again. Then 301 again. <span class="creepy">The hallways are looping.</span>',
-            'You see a door that says "MAINTENANCE." You open it. It\'s just a brick wall. <span style="color: #8888aa;">The wall seems to breathe.</span>',
-            'A flickering light reveals a figure at the end of the hall. It disappears when you blink. <span class="creepy">Was it ever there?</span>',
-            'You find a coffee machine. It\'s still running. The coffee is black as tar. <span class="highlight">✦ It glows slightly ✦</span>',
-            'You see a bulletin board. The notices are all about you. "WELCOME TO WONDERLAND" "YOU CAN\'T ESCAPE" <span class="creepy">Who put these here?</span>',
-            'You find a playing card on the floor. It\'s the Queen of Hearts. It\'s warm to the touch. <span style="color: #ff4a4a;">✦ She\'s watching ✦</span>',
-            'A door opens on its own. Inside is a room full of clocks. They\'re all stopped at 3:03. <span style="color: #a29bfe;">✦ Time is strange here ✦</span>',
-            'You hear singing from behind a wall. It\'s the dorm theme song, but distorted. <span class="creepy">The walls have memories.</span>'
+        const sideCharacters = [
+            {
+                id: 'cheshire',
+                name: '😺 CHESHIRE CAT',
+                desc: 'A floating cat with a wide grin. It disappears and reappears at will.',
+                dialog: '"You\'re new here. Everyone\'s mad in Wonderland. But you... you might be the maddest of all."',
+                gift: 'hasMirror',
+                giftText: '🪞 A MIRROR',
+                giftDesc: 'You can see the truth in this mirror.'
+            },
+            {
+                id: 'hatter',
+                name: '🎩 MAD HATTER',
+                desc: 'A wild-haired figure with mismatched clothes and a teacup.',
+                dialog: '"A visitor! It\'s ALWAYS tea time! Sit down! Sit down!"',
+                gift: 'hasTea',
+                giftText: '🍵 TEA',
+                giftDesc: 'Wonderland tea. It gives +5 HP.'
+            },
+            {
+                id: 'rabbit',
+                name: '🐇 WHITE RABBIT',
+                desc: 'A frantic rabbit in a vest, always looking at his pocket watch.',
+                dialog: '"Late! I\'m late! The Queen will have my head!"',
+                gift: 'hasClock',
+                giftText: '⏰ A CLOCK',
+                giftDesc: 'Time is strange in Wonderland. This clock might help.'
+            },
+            {
+                id: 'caterpillar',
+                name: '🐛 CATERPILLAR',
+                desc: 'A wise caterpillar sitting on a mushroom, smoking a hookah.',
+                dialog: '"Who... are... you...?"',
+                gift: 'hasWisdom',
+                giftText: '🧠 WISDOM',
+                giftDesc: '+10 Wonder. Knowledge is power.'
+            },
+            {
+                id: 'duchess',
+                name: '👑 DUCHESS',
+                desc: 'A stern woman who smells of pepper. She holds a screaming baby.',
+                dialog: '"Everything has a moral. If only you could find it."',
+                gift: 'hasRose',
+                giftText: '🌹 A ROSE',
+                giftDesc: 'A black rose that glows with power.'
+            },
+            {
+                id: 'knave',
+                name: '♠️ KNAVE OF HEARTS',
+                desc: 'A nervous soldier with painted hearts on his uniform.',
+                dialog: '"The Queen is angry today. She\'s always angry."',
+                gift: 'hasCard',
+                giftText: '🃏 A CARD',
+                giftDesc: 'A playing card. It has the Queen\'s symbol.'
+            },
+            {
+                id: 'tweedle',
+                name: '👬 TWEEDLE DEE & DUM',
+                desc: 'Two brothers who finish each other\'s sentences.',
+                dialog: '"If you think you\'re clever... you\'re not." "...But you might be."',
+                gift: 'hasCandy',
+                giftText: '💊 CANDY',
+                giftDesc: 'Wonderland candy. Restores 5 HP.'
+            }
         ];
 
-        function exploreHallway(direction) {
-            const resultDiv = document.getElementById('hallwayResult');
-            const resultText = document.getElementById('hallwayResultText');
-            resultDiv.style.display = 'block';
+        let currentSideChar = null;
 
-            const randomEvent = hallEvents[Math.floor(Math.random() * hallEvents.length)];
-            resultText.innerHTML = randomEvent + 
-                '<br><span style="color: #4a4a6a; font-size: 7px; display: block; margin-top: 8px;">You return to the main hallway.</span>';
+        function triggerSideCharacter() {
+            const available = sideCharacters.filter(c => {
+                if (c.id === 'cheshire' && player.metCheshire) return false;
+                if (c.id === 'hatter' && player.metHatter) return false;
+                if (c.id === 'rabbit' && player.metRabbit) return false;
+                if (c.id === 'caterpillar' && player.metCaterpillar) return false;
+                if (c.id === 'duchess' && player.metDuchess) return false;
+                if (c.id === 'knave' && player.metKnave) return false;
+                if (c.id === 'tweedle' && player.metTweedle) return false;
+                return true;
+            });
 
-            // Random chance to find items
-            if (Math.random() < 0.2) {
+            if (available.length === 0) {
+                showScreen('s-wonderland', 'creepy');
+                document.getElementById('wonderlandButtons').style.display = 'flex';
+                document.getElementById('wonderlandResult').style.display = 'none';
+                return;
+            }
+
+            currentSideChar = available[Math.floor(Math.random() * available.length)];
+            player.sideEncounters++;
+            
+            // Mark as met
+            if (currentSideChar.id === 'cheshire') player.metCheshire = true;
+            if (currentSideChar.id === 'hatter') player.metHatter = true;
+            if (currentSideChar.id === 'rabbit') player.metRabbit = true;
+            if (currentSideChar.id === 'caterpillar') player.metCaterpillar = true;
+            if (currentSideChar.id === 'duchess') player.metDuchess = true;
+            if (currentSideChar.id === 'knave') player.metKnave = true;
+            if (currentSideChar.id === 'tweedle') player.metTweedle = true;
+
+            showScreen('s-side', 'party');
+            document.getElementById('sideText').innerHTML = `
+                <div class="side-character">
+                    <div class="name">${currentSideChar.name}</div>
+                    <div class="desc">${currentSideChar.desc}</div>
+                </div>
+                <br>${currentSideChar.dialog}
+            `;
+            // Add gift info to buttons
+            document.querySelector('#sideButtons .game-btn.gold').textContent = `🎁 GET ${currentSideChar.giftText}`;
+        }
+
+        function handleTalkSide() {
+            document.getElementById('sideButtons').style.display = 'none';
+            document.getElementById('sideResult').style.display = 'block';
+            document.getElementById('sideResultText').innerHTML = `
+                You talk with ${currentSideChar.name}.<br>
+                They share a secret with you.<br>
+                <span class="highlight">✦ +5 WONDER ✦</span>
+            `;
+            player.wonder += 5;
+            updateStats();
+            setTimeout(() => {
+                document.getElementById('sideResult').innerHTML += `
+                    <br><button class="game-btn primary" onclick="branch('continueSide')">▶ CONTINUE</button>
+                `;
+            }, 500);
+        }
+
+        function handleHelpSide() {
+            document.getElementById('sideButtons').style.display = 'none';
+            document.getElementById('sideResult').style.display = 'block';
+            document.getElementById('sideResultText').innerHTML = `
+                You help ${currentSideChar.name}.<br>
+                They give you a gift!<br>
+                <span class="highlight">✦ ${currentSideChar.giftText} ADDED TO INVENTORY ✦</span>
+            `;
+            // Add the gift
+            if (currentSideChar.gift === 'hasMirror') player.hasMirror = true;
+            if (currentSideChar.gift === 'hasTea') player.hasTea = true;
+            if (currentSideChar.gift === 'hasClock') player.hasClock = true;
+            if (currentSideChar.gift === 'hasWisdom') player.wonder += 10;
+            if (currentSideChar.gift === 'hasRose') player.hasRose = true;
+            if (currentSideChar.gift === 'hasCard') player.hasCard = true;
+            if (currentSideChar.gift === 'hasCandy') player.hasCandy = true;
+            player.hasMercy = true;
+            updateStats();
+            setTimeout(() => {
+                document.getElementById('sideResult').innerHTML += `
+                    <br><button class="game-btn primary" onclick="branch('continueSide')">▶ CONTINUE</button>
+                `;
+            }, 500);
+        }
+
+        function handleTradeSide() {
+            document.getElementById('sideButtons').style.display = 'none';
+            document.getElementById('sideResult').style.display = 'block';
+            document.getElementById('sideResultText').innerHTML = `
+                You trade with ${currentSideChar.name}.<br>
+                They give you ${currentSideChar.giftText} in exchange for a story.<br>
+                <span class="highlight">✦ ${currentSideChar.giftText} ADDED ✦</span>
+            `;
+            if (currentSideChar.gift === 'hasMirror') player.hasMirror = true;
+            if (currentSideChar.gift === 'hasTea') player.hasTea = true;
+            if (currentSideChar.gift === 'hasClock') player.hasClock = true;
+            if (currentSideChar.gift === 'hasWisdom') player.wonder += 10;
+            if (currentSideChar.gift === 'hasRose') player.hasRose = true;
+            if (currentSideChar.gift === 'hasCard') player.hasCard = true;
+            if (currentSideChar.gift === 'hasCandy') player.hasCandy = true;
+            player.hasDeceit = true;
+            updateStats();
+            setTimeout(() => {
+                document.getElementById('sideResult').innerHTML += `
+                    <br><button class="game-btn primary" onclick="branch('continueSide')">▶ CONTINUE</button>
+                `;
+            }, 500);
+        }
+
+        function handleIgnoreSide() {
+            document.getElementById('sideButtons').style.display = 'none';
+            document.getElementById('sideResult').style.display = 'block';
+            document.getElementById('sideResultText').innerHTML = `
+                You ignore ${currentSideChar.name}.<br>
+                They look hurt but fade away.<br>
+                <span style="color: #8888aa; font-size: 8px;">✦ You wonder if that was a mistake ✦</span>
+            `;
+            setTimeout(() => {
+                document.getElementById('sideResult').innerHTML += `
+                    <br><button class="game-btn primary" onclick="branch('continueSide')">▶ CONTINUE</button>
+                `;
+            }, 500);
+        }
+
+        function handleContinueSide() {
+            // Go back to wonderland
+            showScreen('s-wonderland', 'creepy');
+            document.getElementById('wonderlandButtons').style.display = 'flex';
+            document.getElementById('wonderlandResult').style.display = 'none';
+            document.getElementById('wonderlandNext').style.display = 'none';
+        }
+
+        // ============================================================
+        //  IAN HANDLERS
+        // ============================================================
+
+        function handleIanFight() {
+            document.getElementById('ianButtons').style.display = 'none';
+            document.getElementById('ianResult').style.display = 'block';
+            
+            // Check if player has items that help
+            let damage = 5;
+            let bonus = '';
+            if (player.hasKey) { damage += 3; bonus = 'Your key glows, dealing extra damage!'; }
+            if (player.hasCrown) { damage += 5; bonus = 'The crown empowers you!'; }
+            if (player.hasMirror) { damage += 2; bonus = 'The mirror reflects his attack!'; }
+            
+            player.hp = Math.max(0, player.hp - 3);
+            document.getElementById('ianResultText').innerHTML = `
+                You attack Ian!<br>
+                He's strong, but you're determined.<br>
+                ${bonus ? `<span class="highlight">✦ ${bonus} ✦</span><br>` : ''}
+                You deal ${damage} damage!<br>
+                <span style="color: #ff6b6b;">❤️ Ian is weakened! You lose 3 HP.</span>
+            `;
+            
+            // Check if Ian is defeated
+            if (damage >= 10 || player.hasCrown) {
+                player.ianDefeated = true;
+                document.getElementById('ianResultText').innerHTML += `
+                    <br><span class="good">✦ IAN IS DEFEATED! ✦</span>
+                    <br>He steps aside, beaten but impressed.
+                    <br><span style="color: #8888aa; font-size: 8px;">✦ You can pass ✦</span>
+                `;
+                document.getElementById('ianNext').style.display = 'block';
+                player.hasCourage = true;
+            } else {
+                document.getElementById('ianResultText').innerHTML += `
+                    <br><span style="color: #8aba4a;">"Not bad, newbie! But I'm not done yet!"</span>
+                    <br><span style="color: #8888aa; font-size: 8px;">✦ You need more power ✦</span>
+                `;
+                // Show buttons again with fewer options
+                document.getElementById('ianButtons').style.display = 'flex';
+                document.getElementById('ianButtons').innerHTML = `
+                    <button class="game-btn danger" onclick="branch('ianFight')">⚔️ FIGHT AGAIN</button>
+                    <button class="game-btn" onclick="branch('ianTalk')">💬 TALK</button>
+                    <button class="game-btn wonder" onclick="branch('ianPrank')">🎭 PRANK</button>
+                    <button class="game-btn success" onclick="branch('ianSpare')">🕊️ SPARE</button>
+                `;
+            }
+            updateStats();
+        }
+
+        function handleIanTalk() {
+            document.getElementById('ianButtons').style.display = 'none';
+            document.getElementById('ianResult').style.display = 'block';
+            document.getElementById('ianResultText').innerHTML = `
+                You try to talk to Ian.<br>
+                <span style="color: #8aba4a;">"Yo, you think you can just WALK into Wonderland?"</span><br>
+                He pauses. Something flickers in his eyes.<br>
+                <span class="highlight">✦ He seems... almost sad ✦</span>
+                <br><span style="color: #8888aa; font-size: 8px;">✦ You sense he's not truly evil ✦</span>
+            `;
+            player.hasWisdom += 10;
+            document.getElementById('ianNext').style.display = 'block';
+            player.ianBefriended = true;
+            updateStats();
+        }
+
+        function handleIanPrank() {
+            document.getElementById('ianButtons').style.display = 'none';
+            document.getElementById('ianResult').style.display = 'block';
+            document.getElementById('ianResultText').innerHTML = `
+                You yell <span style="color: #ffd93d;">"MY MOM!"</span><br>
+                Ian freezes. Tears well up in his eyes.<br>
+                <span style="color: #8aba4a;">"Bro... that's my mom's catchphrase..."</span><br>
+                He's vulnerable now. You can feel it.<br>
+                <span class="highlight">✦ He lowers his guard ✦</span>
+            `;
+            document.getElementById('ianNext').style.display = 'block';
+            player.ianBefriended = true;
+            player.hasMercy = true;
+        }
+
+        function handleIanSpare() {
+            document.getElementById('ianButtons').style.display = 'none';
+            document.getElementById('ianResult').style.display = 'block';
+            document.getElementById('ianResultText').innerHTML = `
+                You put your hands up. <span style="color: #ffd93d;">"I don't want to fight."</span><br>
+                Ian stares at you. His muscles deflate slightly.<br>
+                <span style="color: #8aba4a;">"...You're not like the others."</span><br>
+                He steps aside. <span class="highlight">✦ You found mercy ✦</span>
+            `;
+            document.getElementById('ianNext').style.display = 'block';
+            player.ianSpared = true;
+            player.hasMercy = true;
+        }
+
+        function handleIanFlee() {
+            document.getElementById('ianButtons').style.display = 'none';
+            document.getElementById('ianResult').style.display = 'block';
+            document.getElementById('ianResultText').innerHTML = `
+                You try to run!<br>
+                Ian laughs. <span style="color: #8aba4a;">"Nice try, newbie!"</span><br>
+                He grabs your shirt. You're not going anywhere.<br>
+                <span style="color: #8888aa; font-size: 8px;">✦ There's no escape from Wonderland ✦</span>
+            `;
+            // Offer another chance
+            setTimeout(() => {
+                document.getElementById('ianResultText').innerHTML += `
+                    <br><span style="color: #8888aa; font-size: 8px;">You'll have to face him.</span>
+                    <br><button class="game-btn primary" onclick="branch('fightIan')">💪 FACE IAN</button>
+                `;
+            }, 1000);
+        }
+
+        function handleIanBribe() {
+            document.getElementById('ianButtons').style.display = 'none';
+            document.getElementById('ianResult').style.display = 'block';
+            
+            let bribe = '';
+            if (player.hasCandy) { bribe = 'You offer candy. Ian takes it. "Alright, you pass."'; }
+            else if (player.hasTea) { bribe = 'You offer tea. Ian sips it. "Not bad... go ahead."'; }
+            else if (player.hasKey) { bribe = 'You offer the key. Ian looks confused. "I don\'t need that." He takes it anyway.'; }
+            else { bribe = 'You have nothing to offer. Ian laughs. "Nice try!"'; }
+            
+            document.getElementById('ianResultText').innerHTML = `
+                You try to bribe Ian.<br>
+                ${bribe}
+                ${bribe.includes('pass') || bribe.includes('go ahead') ? 
+                    `<br><span class="good">✦ IAN LETS YOU PASS ✦</span>` : 
+                    `<br><span class="creepy">✦ Ian is not impressed ✦</span>`
+                }
+            `;
+            if (bribe.includes('pass') || bribe.includes('go ahead')) {
+                document.getElementById('ianNext').style.display = 'block';
+                player.ianBefriended = true;
+            } else {
                 setTimeout(() => {
-                    resultText.innerHTML += '<br><span class="highlight">✦ You found a piece of candy! ✦</span>';
-                    inventory.push('💊 Candy');
-                    updateInventory();
+                    document.getElementById('ianResultText').innerHTML += `
+                        <br><button class="game-btn primary" onclick="branch('fightIan')">💪 FACE IAN</button>
+                    `;
                 }, 1000);
             }
+            updateStats();
+        }
 
-            // Random chance for wonder increase
-            if (Math.random() < 0.15) {
-                player.wonder = Math.min(100, player.wonder + 3);
-                updateStats();
-            }
-
-            if (!hallExplored) {
-                hallExplored = true;
-                document.getElementById('wornHallButtons').innerHTML = `
-                    <button class="game-btn" onclick="exploreHallway('left')">👈 GO LEFT</button>
-                    <button class="game-btn" onclick="exploreHallway('right')">👉 GO RIGHT</button>
-                    <button class="game-btn primary" onclick="encounterIan()">💪 INVESTIGATE NOISE</button>
-                    <button class="game-btn wonder" onclick="enterExploration()">🔍 EXPLORE MORE</button>
+        function handleIanContinue() {
+            // Check if Ian was defeated or befriended
+            if (player.ianDefeated || player.ianBefriended || player.ianSpared) {
+                showScreen('s-wonderland', 'creepy');
+                document.getElementById('wonderlandButtons').style.display = 'flex';
+                document.getElementById('wonderlandResult').style.display = 'none';
+                document.getElementById('wonderlandNext').style.display = 'none';
+                document.getElementById('wonderlandText').innerHTML = `
+                    Ian steps aside. The path to the Queen is open.<br>
+                    <span class="highlight">✦ You face the lobby ahead ✦</span>
                 `;
+                // Add Queen button if not there
+                const btns = document.getElementById('wonderlandButtons');
+                if (!document.getElementById('queenBtn')) {
+                    btns.innerHTML += `
+                        <button id="queenBtn" class="game-btn primary" onclick="branch('queenFight')">♠️ FACE QUEEN</button>
+                    `;
+                }
+            } else {
+                // Go back to Ian
+                showScreen('s-ian', 'ian');
+                document.getElementById('ianButtons').style.display = 'flex';
+                document.getElementById('ianResult').style.display = 'none';
+                document.getElementById('ianNext').style.display = 'none';
             }
+        }
 
+        // ============================================================
+        //  QUEEN HANDLERS
+        // ============================================================
+
+        function handleQueenFight() {
+            showScreen('s-queen', 'queen');
+            let queenText = `
+                <span style="color: #ff4a4a;">"OFF WITH THEIR HOUSING!"</span><br>
+                The Queen slams her gavel. The room shakes.<br>
+                She's more powerful than Ian. Much more powerful.
+            `;
+            
+            // Check for items
+            if (player.hasCrown) queenText += `<br><span class="highlight">✦ Your crown glows. The Queen notices. ✦</span>`;
+            if (player.hasMirror) queenText += `<br><span class="highlight">✦ The mirror reflects her power. ✦</span>`;
+            if (player.hasCard) queenText += `<br><span class="highlight">✦ The card has her symbol. She's confused. ✦</span>`;
+            
+            document.getElementById('queenText').innerHTML = queenText;
+            document.getElementById('queenButtons').style.display = 'flex';
+            document.getElementById('queenResult').style.display = 'none';
+        }
+
+        function handleQueenTalk() {
+            document.getElementById('queenButtons').style.display = 'none';
+            document.getElementById('queenResult').style.display = 'block';
+            document.getElementById('queenResultText').innerHTML = `
+                You try to reason with the Queen.<br>
+                <span style="color: #ff4a4a;">"Reason? REASON?"</span><br>
+                She slams her gavel. The room shakes.<br>
+                <span style="color: #ff4a4a;">"I AM THE LAW HERE!"</span><br>
+                <span style="color: #8888aa; font-size: 8px;">✦ She's not listening ✦</span>
+                <br><span style="color: #8888aa; font-size: 8px;">✦ You'll need another approach ✦</span>
+            `;
             setTimeout(() => {
-                resultDiv.style.display = 'none';
-            }, 4000);
+                document.getElementById('queenResultText').innerHTML += `
+                    <br><button class="game-btn primary" onclick="branch('queenFight')">⚔️ FIGHT</button>
+                    <button class="game-btn wonder" onclick="branch('queenWonder')">🌀 WONDER</button>
+                    <button class="game-btn success" onclick="branch('queenSpare')">🕊️ SPARE</button>
+                `;
+            }, 1000);
         }
 
-        function enterExploration() {
-            showScreen('exploration', 'wonder');
-            document.getElementById('exploreLocation').innerHTML = '📍 <span class="highlight">THE ENDLESS HALLWAY</span>';
-            document.getElementById('exploreDesc').innerHTML = `
-                The hallway stretches before you.<br>
-                Doors line the walls with impossible numbers: <span class="highlight">301, 103, 330</span>...<br>
-                The carpet moves slightly, like it's alive.<br>
-                <span style="color: #aa4a4a; font-size: 8px;">✦ You hear whispers from behind the walls ✦</span>
-            `;
-            updateLocationDots();
+        function handleQueenWonder() {
+            document.getElementById('queenButtons').style.display = 'none';
+            document.getElementById('queenResult').style.display = 'block';
+            
+            if (player.wonder >= 40) {
+                document.getElementById('queenResultText').innerHTML = `
+                    You channel the power of Wonderland itself.<br>
+                    The Queen's desk flickers. She looks... <span style="color: #ffd93d;">uncertain</span>.<br>
+                    <span style="color: #ff4a4a;">"What... what are you?"</span><br>
+                    <span class="highlight">✦ Your Wonder is strong ✦</span>
+                    <br><span class="good">✦ THE QUEEN IS WEAKENED ✦</span>
+                `;
+                player.queenDefeated = true;
+                document.getElementById('queenNext').style.display = 'block';
+            } else {
+                document.getElementById('queenResultText').innerHTML = `
+                    You try to use Wonder, but it's not enough.<br>
+                    <span style="color: #ff4a4a;">"Your soul is weak!"</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ You need more Wonder to face her ✦</span>
+                    <br><span style="color: #8888aa; font-size: 8px;">✦ Explore more to gain Wonder ✦</span>
+                `;
+                setTimeout(() => {
+                    document.getElementById('queenResultText').innerHTML += `
+                        <br><button class="game-btn primary" onclick="branch('queenFight')">⚔️ FIGHT</button>
+                        <button class="game-btn" onclick="branch('queenTalk')">💬 TALK</button>
+                    `;
+                }, 1000);
+            }
             updateStats();
-            updateInventory();
+        }
+
+        function handleQueenSpare() {
+            document.getElementById('queenButtons').style.display = 'none';
+            document.getElementById('queenResult').style.display = 'block';
+            
+            if (player.hasMercy && player.wonder >= 30) {
+                document.getElementById('queenResultText').innerHTML = `
+                    You offer mercy to the Queen.<br>
+                    She stares at you, speechless.<br>
+                    <span style="color: #ff4a4a;">"No one has ever... spared me..."</span><br>
+                    <span class="good">✦ THE QUEEN IS MOVED ✦</span>
+                    <br><span class="highlight">✦ She steps down from her throne ✦</span>
+                `;
+                player.queenSpared = true;
+                player.queenBefriended = true;
+                document.getElementById('queenNext').style.display = 'block';
+            } else {
+                document.getElementById('queenResultText').innerHTML = `
+                    You try to spare the Queen.<br>
+                    <span style="color: #ff4a4a;">"You think you can SPARE ME?"</span><br>
+                    <span style="color: #ff4a4a;">"I AM THE QUEEN!"</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ You need more mercy and wonder ✦</span>
+                `;
+                setTimeout(() => {
+                    document.getElementById('queenResultText').innerHTML += `
+                        <br><button class="game-btn primary" onclick="branch('queenFight')">⚔️ FIGHT</button>
+                        <button class="game-btn wonder" onclick="branch('queenWonder')">🌀 WONDER</button>
+                    `;
+                }, 1000);
+            }
+            updateStats();
+        }
+
+        function handleQueenFlee() {
+            document.getElementById('queenButtons').style.display = 'none';
+            document.getElementById('queenResult').style.display = 'block';
+            document.getElementById('queenResultText').innerHTML = `
+                You try to run from the Queen.<br>
+                She laughs. <span style="color: #ff4a4a;">"There is NO ESCAPE!"</span><br>
+                The doors slam shut. You're trapped.<br>
+                <span class="creepy">✦ You must face her ✦</span>
+            `;
+            setTimeout(() => {
+                document.getElementById('queenResultText').innerHTML += `
+                    <br><button class="game-btn primary" onclick="branch('queenFight')">⚔️ FACE THE QUEEN</button>
+                `;
+            }, 1000);
+        }
+
+        function handleQueenBribe() {
+            document.getElementById('queenButtons').style.display = 'none';
+            document.getElementById('queenResult').style.display = 'block';
+            
+            let bribe = '';
+            if (player.hasCrown) { bribe = 'You offer the crown. The Queen gasps. "My crown! Where did you find it?" She takes it. You pass.'; }
+            else if (player.hasMirror) { bribe = 'You offer the mirror. The Queen looks at herself. She seems... sad. "Go."'; }
+            else if (player.hasCard) { bribe = 'You offer the card. The Queen snatches it. "This is MINE!" She lets you pass.'; }
+            else { bribe = 'You have nothing to offer. The Queen scoffs. "Insolent!"'; }
+            
+            document.getElementById('queenResultText').innerHTML = `
+                You try to bribe the Queen.<br>
+                ${bribe}
+                ${bribe.includes('pass') || bribe.includes('Go') ? 
+                    `<br><span class="good">✦ THE QUEEN LETS YOU PASS ✦</span>` : 
+                    `<br><span class="creepy">✦ The Queen is not amused ✦</span>`
+                }
+            `;
+            if (bribe.includes('pass') || bribe.includes('Go')) {
+                player.queenBefriended = true;
+                document.getElementById('queenNext').style.display = 'block';
+            } else {
+                setTimeout(() => {
+                    document.getElementById('queenResultText').innerHTML += `
+                        <br><button class="game-btn primary" onclick="branch('queenFight')">⚔️ FIGHT</button>
+                    `;
+                }, 1000);
+            }
+            updateStats();
+        }
+
+        function handleQueenChallenge() {
+            document.getElementById('queenButtons').style.display = 'none';
+            document.getElementById('queenResult').style.display = 'block';
+            
+            if (player.hasWisdom && player.hasCourage) {
+                document.getElementById('queenResultText').innerHTML = `
+                    You challenge the Queen to a game of wits.<br>
+                    She smirks. <span style="color: #ff4a4a;">"You dare challenge ME?"</span><br>
+                    You outsmart her. She's furious.<br>
+                    <span class="good">✦ THE QUEEN IS DEFEATED BY YOUR WISDOM ✦</span>
+                `;
+                player.queenDefeated = true;
+                document.getElementById('queenNext').style.display = 'block';
+            } else {
+                document.getElementById('queenResultText').innerHTML = `
+                    You challenge the Queen.<br>
+                    <span style="color: #ff4a4a;">"You lack both wisdom and courage!"</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">✦ You need more wisdom and courage ✦</span>
+                `;
+                setTimeout(() => {
+                    document.getElementById('queenResultText').innerHTML += `
+                        <br><button class="game-btn primary" onclick="branch('queenFight')">⚔️ FIGHT</button>
+                        <button class="game-btn wonder" onclick="branch('queenWonder')">🌀 WONDER</button>
+                    `;
+                }, 1000);
+            }
+            updateStats();
         }
 
         // ============================================================
-        //  EXPLORATION - LOCATION SYSTEM
+        //  ENDING SYSTEM - 50 ENDINGS!
         // ============================================================
 
-        function updateLocationDots() {
-            const dots = document.querySelectorAll('.location-indicator .dot');
-            dots.forEach((dot, i) => {
-                dot.className = 'dot';
-                if (i === locationIndex) dot.classList.add('active');
-                else if (visitedLocations[i]) dot.classList.add('visited');
-            });
+        function handleShowEnding() {
+            const ending = determineEnding();
+            showScreen('s-ending', getEndingTheme(ending));
+            
+            const endingData = getEndingData(ending);
+            document.getElementById('endingBanner').textContent = endingData.banner;
+            document.getElementById('endingBanner').className = 'ending-banner ' + endingData.type;
+            document.getElementById('endingTitle').textContent = endingData.title;
+            document.getElementById('endingText').innerHTML = endingData.text;
+            
+            player.ending = ending;
         }
 
-        function moveDirection(dir) {
-            const desc = document.getElementById('exploreDesc');
-            const locations = {
-                'north': {
-                    text: 'You walk north. The hallway seems to stretch longer.<br>A door labeled <span class="highlight">"303"</span> appears. Then disappears.',
-                    index: 1
+        function determineEnding() {
+            // 50 different endings based on choices and flags
+            let ending = 1;
+            
+            // Check major paths
+            if (player.queenBefriended && player.ianBefriended) ending = 1; // True Friendship
+            else if (player.queenSpared && player.ianSpared) ending = 2; // Mercy Path
+            else if (player.queenDefeated && player.ianDefeated) ending = 3; // Warrior Path
+            else if (player.queenBefriended && player.ianDefeated) ending = 4; // Queen's Ally
+            else if (player.queenDefeated && player.ianBefriended) ending = 5; // Rebel with Friends
+            
+            // Check wonder-based endings
+            else if (player.wonder >= 80 && player.hasWisdom) ending = 6; // Wonder Master
+            else if (player.wonder >= 60) ending = 7; // Wonder Seeker
+            else if (player.wonder <= 10) ending = 8; // Wonderless
+            
+            // Check item-based endings
+            else if (player.hasCrown && player.hasMirror && player.hasClock) ending = 9; // Collector
+            else if (player.hasCrown) ending = 10; // Crowned
+            else if (player.hasMirror) ending = 11; // Mirror Seer
+            else if (player.hasClock) ending = 12; // Time Keeper
+            else if (player.hasRose) ending = 13; // Rose Bearer
+            else if (player.hasCard) ending = 14; // Card Holder
+            else if (player.hasTea) ending = 15; // Tea Drinker
+            
+            // Check side character endings
+            else if (player.metCheshire && player.metHatter && player.metRabbit) ending = 16; // Party Guest
+            else if (player.metCheshire) ending = 17; // Cat's Friend
+            else if (player.metHatter) ending = 18; // Hatter's Guest
+            else if (player.metRabbit) ending = 19; // Rabbit's Savior
+            else if (player.metCaterpillar) ending = 20; // Wise One
+            else if (player.metDuchess) ending = 21; // Duchess's Pupil
+            else if (player.metKnave) ending = 22; // Knave's Ally
+            else if (player.metTweedle) ending = 23; // Tweedle's Friend
+            
+            // Check virtue-based endings
+            else if (player.hasCourage && player.hasWisdom && player.hasMercy) ending = 24; // True Hero
+            else if (player.hasCourage && player.hasWisdom) ending = 25; // Wise Warrior
+            else if (player.hasCourage && player.hasMercy) ending = 26; // Brave Heart
+            else if (player.hasWisdom && player.hasMercy) ending = 27; // Gentle Sage
+            else if (player.hasCourage) ending = 28; // Courageous
+            else if (player.hasWisdom) ending = 29; // Wise
+            else if (player.hasMercy) ending = 30; // Merciful
+            
+            // Check path-based endings
+            else if (player.path === 'ENTERED') ending = 31; // Bold Entrance
+            else if (player.path === 'KNOCKED') ending = 32; // Polite Visitor
+            else if (player.path === 'SNEAKED') ending = 33; // Sneaky One
+            else if (player.path === 'LISTENED') ending = 34; // Listener
+            else if (player.path === 'WALKED') ending = 35; // Walker
+            else if (player.path === 'WAITED') ending = 36; // Patient One
+            else if (player.path === 'RAN') ending = 37; // Runner
+            else if (player.path === 'TOUCHED') ending = 38; // Touched
+            
+            // Check combat outcomes
+            else if (player.ianDefeated && !player.queenDefeated) ending = 39; // Ian's Conqueror
+            else if (!player.ianDefeated && player.queenDefeated) ending = 40; // Queen's Conqueror
+            else if (player.ianSpared && !player.queenSpared) ending = 41; // Ian's Savior
+            else if (!player.ianSpared && player.queenSpared) ending = 42; // Queen's Savior
+            
+            // Check if fled
+            else if (player.path === 'FLED') ending = 43; // Fleeing
+            else if (player.path === 'SNEAKED PAST') ending = 44; // Sneaky Escape
+            
+            // Check item possession
+            else if (player.hasKey && player.hasNote && player.hasCandy) ending = 45; // Prepared
+            else if (player.hasKey) ending = 46; // Key Master
+            else if (player.hasNote) ending = 47; // Note Reader
+            else if (player.hasCandy) ending = 48; // Candy Lover
+            
+            // Default endings
+            else if (player.sideEncounters >= 3) ending = 49; // Social Butterfly
+            else ending = 50; // The Wanderer
+            
+            return ending;
+        }
+
+        function getEndingTheme(ending) {
+            const themes = {
+                1: 'gold', 2: 'escape', 3: 'fire', 4: 'queen', 5: 'ian',
+                6: 'wonder', 7: 'wonder', 8: 'void', 9: 'gold', 10: 'gold',
+                11: 'ice', 12: 'clock', 13: 'forest', 14: 'party', 15: 'candy',
+                16: 'party', 17: 'party', 18: 'party', 19: 'ice', 20: 'wonder',
+                21: 'queen', 22: 'ian', 23: 'party', 24: 'gold', 25: 'wonder',
+                26: 'escape', 27: 'escape', 28: 'fire', 29: 'ice', 30: 'escape',
+                31: 'normal', 32: 'normal', 33: 'creepy', 34: 'wonder', 35: 'normal',
+                36: 'wonder', 37: 'fire', 38: 'wonder', 39: 'ian', 40: 'queen',
+                41: 'ian', 42: 'queen', 43: 'void', 44: 'creepy', 45: 'gold',
+                46: 'gold', 47: 'ice', 48: 'candy', 49: 'party', 50: 'normal'
+            };
+            return themes[ending] || 'normal';
+        }
+
+        function getEndingData(ending) {
+            const endings = {
+                1: {
+                    banner: '🏆 TRUE FRIENDSHIP ENDING',
+                    type: 'good',
+                    title: '✨ The Best Ending ✨',
+                    text: `You befriended both Ian AND the Queen!<br>
+                        Wonderland is at peace. You've shown that mercy and understanding<br>
+                        can conquer even the darkest hearts.<br><br>
+                        <span class="highlight">✦ You escaped Wonderland, but you carry its lessons forever ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 1/50 - True Friendship</span>`
                 },
-                'south': {
-                    text: 'You walk south. You pass a window.<br>Outside is just darkness. <span class="creepy">Infinite darkness.</span>',
-                    index: 3
+                2: {
+                    banner: '🕊️ MERCY ENDING',
+                    type: 'good',
+                    title: '✨ The Compassionate Path ✨',
+                    text: `You spared both Ian and the Queen.<br>
+                        Your mercy transformed Wonderland. The residents remember you<br>
+                        as the one who showed them kindness.<br><br>
+                        <span class="highlight">✦ You proved that mercy is the greatest strength ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 2/50 - The Mercy Path</span>`
                 },
-                'east': {
-                    text: 'You walk east. The carpet changes to playing cards.<br>♥️ You step on a heart. It beats once.',
-                    index: 2
+                3: {
+                    banner: '⚔️ WARRIOR ENDING',
+                    type: 'neutral',
+                    title: '💪 The Conqueror\'s Tale',
+                    text: `You defeated both Ian and the Queen through strength.<br>
+                        Wonderland bows to your power. But something feels... empty.<br>
+                        <span style="color: #8888aa; font-size: 8px;">✦ You won, but at what cost? ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 3/50 - The Warrior</span>`
                 },
-                'west': {
-                    text: 'You walk west. You find a strange mirror.<br>Your reflection is wearing a crown.<br><span class="highlight">✦ It waves at you ✦</span>',
-                    index: 4
+                4: {
+                    banner: '👑 QUEEN\'S ALLY ENDING',
+                    type: 'neutral',
+                    title: '👑 The Royal Alliance',
+                    text: `You defeated Ian but befriended the Queen.<br>
+                        She sees you as a worthy ally. Wonderland has a new power structure.<br>
+                        <span class="highlight">✦ You rule alongside the Queen ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 4/50 - Queen\'s Ally</span>`
                 },
-                'enter': {
-                    text: 'You try a door. The knob is cold.<br>It opens to a room that\'s much larger inside.<br><span class="creepy">A room that shouldn\'t exist.</span><br><span style="color: #8888aa; font-size: 8px;">✦ You find a strange note ✦</span>',
-                    index: -1
+                5: {
+                    banner: '🤝 REBEL FRIEND ENDING',
+                    type: 'good',
+                    title: '🤝 The Rebel Alliance',
+                    text: `You defeated the Queen but befriended Ian.<br>
+                        Together, you lead a rebellion to free Wonderland from tyranny.<br>
+                        <span class="highlight">✦ A new era begins ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 5/50 - Rebel with Friends</span>`
+                },
+                6: {
+                    banner: '🌀 WONDER MASTER ENDING',
+                    type: 'good',
+                    title: '🌀 The Wonder Master',
+                    text: `Your Wonder is off the charts! You've mastered the energy of Wonderland.<br>
+                        You can travel between worlds freely.<br>
+                        <span class="highlight">✦ You are the bridge between worlds ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 6/50 - Wonder Master</span>`
+                },
+                7: {
+                    banner: '🌀 WONDER SEEKER ENDING',
+                    type: 'neutral',
+                    title: '🌀 The Wonder Seeker',
+                    text: `You've felt the power of Wonderland, but you're still learning.<br>
+                        Your journey is not over. There's more to discover.<br>
+                        <span class="highlight">✦ The adventure continues... ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 7/50 - Wonder Seeker</span>`
+                },
+                8: {
+                    banner: '🌑 WONDERLESS ENDING',
+                    type: 'bad',
+                    title: '🌑 The Wonderless',
+                    text: `You rejected the Wonder of this place.<br>
+                        You escape, but you feel empty. Something is missing.<br>
+                        <span style="color: #8888aa; font-size: 8px;">✦ You found the door, but lost yourself ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 8/50 - The Wonderless</span>`
+                },
+                9: {
+                    banner: '📦 COLLECTOR ENDING',
+                    type: 'gold',
+                    title: '📦 The Collector',
+                    text: `You collected the crown, mirror, and clock!<br>
+                        You have all the treasures of Wonderland.<br>
+                        <span class="highlight">✦ You are the ultimate collector ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 9/50 - The Collector</span>`
+                },
+                10: {
+                    banner: '👑 CROWNED ENDING',
+                    type: 'gold',
+                    title: '👑 The Crowned One',
+                    text: `You found the crown of Wonderland.<br>
+                        You wear it with pride. You are the new ruler!<br>
+                        <span class="highlight">✦ All hail the new monarch ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 10/50 - The Crowned One</span>`
+                },
+                11: {
+                    banner: '🪞 MIRROR SEER ENDING',
+                    type: 'ice',
+                    title: '🪞 The Mirror Seer',
+                    text: `You found the magic mirror. You can see the truth in all things.<br>
+                        Wonderland's secrets are yours.<br>
+                        <span class="highlight">✦ You see beyond the illusion ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 11/50 - The Mirror Seer</span>`
+                },
+                12: {
+                    banner: '⏰ TIME KEEPER ENDING',
+                    type: 'clock',
+                    title: '⏰ The Time Keeper',
+                    text: `You found the clock of Wonderland. Time is yours to command.<br>
+                        You can stay in this moment forever.<br>
+                        <span class="highlight">✦ You control time itself ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 12/50 - The Time Keeper</span>`
+                },
+                13: {
+                    banner: '🌹 ROSE BEARER ENDING',
+                    type: 'forest',
+                    title: '🌹 The Rose Bearer',
+                    text: `You found the black rose of Wonderland.<br>
+                        It holds ancient power. You are its guardian.<br>
+                        <span class="highlight">✦ The rose protects you ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 13/50 - The Rose Bearer</span>`
+                },
+                14: {
+                    banner: '🃏 CARD HOLDER ENDING',
+                    type: 'party',
+                    title: '🃏 The Card Holder',
+                    text: `You found the Queen's playing card.<br>
+                        You hold power over her armies.<br>
+                        <span class="highlight">✦ The soldiers follow you ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 14/50 - The Card Holder</span>`
+                },
+                15: {
+                    banner: '🍵 TEA DRINKER ENDING',
+                    type: 'candy',
+                    title: '🍵 The Tea Drinker',
+                    text: `You found the Wonderland tea. It gives you clarity.<br>
+                        You see the world with new eyes.<br>
+                        <span class="highlight">✦ Everything makes sense now ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 15/50 - The Tea Drinker</span>`
+                },
+                16: {
+                    banner: '🎉 PARTY GUEST ENDING',
+                    type: 'party',
+                    title: '🎉 The Party Guest',
+                    text: `You met the Cheshire Cat, Mad Hatter, and White Rabbit!<br>
+                        You're the life of the Wonderland party!<br>
+                        <span class="highlight">✦ Everyone loves you ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 16/50 - The Party Guest</span>`
+                },
+                17: {
+                    banner: '😺 CAT\'S FRIEND ENDING',
+                    type: 'party',
+                    title: '😺 The Cat\'s Friend',
+                    text: `You befriended the Cheshire Cat!<br>
+                        He appears and disappears, always with a grin.<br>
+                        <span class="highlight">✦ You have a magical friend ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 17/50 - Cat's Friend</span>`
+                },
+                18: {
+                    banner: '🎩 HATTER\'S GUEST ENDING',
+                    type: 'party',
+                    title: '🎩 The Hatter\'s Guest',
+                    text: `You joined the Mad Hatter's tea party!<br>
+                        You've never had such a wonderful time.<br>
+                        <span class="highlight">✦ It's always tea time ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 18/50 - Hatter's Guest</span>`
+                },
+                19: {
+                    banner: '🐇 RABBIT\'S SAVIOR ENDING',
+                    type: 'ice',
+                    title: '🐇 The Rabbit\'s Savior',
+                    text: `You helped the White Rabbit!<br>
+                        He's not late anymore. He's grateful.<br>
+                        <span class="highlight">✦ You saved a friend ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 19/50 - Rabbit's Savior</span>`
+                },
+                20: {
+                    banner: '🐛 WISE ONE ENDING',
+                    type: 'wonder',
+                    title: '🐛 The Wise One',
+                    text: `You learned from the Caterpillar.<br>
+                        You have gained great wisdom.<br>
+                        <span class="highlight">✦ Who... are... you? You are now wise ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 20/50 - The Wise One</span>`
+                },
+                21: {
+                    banner: '👑 DUCHESS\'S PUPIL ENDING',
+                    type: 'queen',
+                    title: '👑 The Duchess\'s Pupil',
+                    text: `You learned from the Duchess.<br>
+                        Everything has a moral, and you've found it.<br>
+                        <span class="highlight">✦ You are a philosopher ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 21/50 - Duchess's Pupil</span>`
+                },
+                22: {
+                    banner: '♠️ KNAVE\'S ALLY ENDING',
+                    type: 'ian',
+                    title: '♠️ The Knave\'s Ally',
+                    text: `You befriended the Knave of Hearts!<br>
+                        He's nervous, but loyal to you.<br>
+                        <span class="highlight">✦ You have a soldier friend ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 22/50 - Knave's Ally</span>`
+                },
+                23: {
+                    banner: '👬 TWEEDLE FRIEND ENDING',
+                    type: 'party',
+                    title: '👬 The Tweedle Friend',
+                    text: `You befriended Tweedle Dee and Tweedle Dum!<br>
+                        They finish each other's sentences... and yours.<br>
+                        <span class="highlight">✦ You have twin friends ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 23/50 - Tweedle Friend</span>`
+                },
+                24: {
+                    banner: '⭐ TRUE HERO ENDING',
+                    type: 'gold',
+                    title: '⭐ The True Hero',
+                    text: `You have courage, wisdom, AND mercy!<br>
+                        You are the true hero of Wonderland.<br>
+                        <span class="highlight">✦ Legends will be told about you ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 24/50 - The True Hero</span>`
+                },
+                25: {
+                    banner: '⚔️ WISE WARRIOR ENDING',
+                    type: 'wonder',
+                    title: '⚔️ The Wise Warrior',
+                    text: `You have courage and wisdom.<br>
+                        You fight with your mind and your heart.<br>
+                        <span class="highlight">✦ You are unstoppable ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 25/50 - The Wise Warrior</span>`
+                },
+                26: {
+                    banner: '❤️ BRAVE HEART ENDING',
+                    type: 'escape',
+                    title: '❤️ The Brave Heart',
+                    text: `You have courage and mercy.<br>
+                        You fight for others, not for yourself.<br>
+                        <span class="highlight">✦ You are the protector ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 26/50 - The Brave Heart</span>`
+                },
+                27: {
+                    banner: '🕊️ GENTLE SAGE ENDING',
+                    type: 'escape',
+                    title: '🕊️ The Gentle Sage',
+                    text: `You have wisdom and mercy.<br>
+                        You understand that kindness is the greatest strength.<br>
+                        <span class="highlight">✦ You are the peacemaker ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 27/50 - The Gentle Sage</span>`
+                },
+                28: {
+                    banner: '🔥 COURAGEOUS ENDING',
+                    type: 'fire',
+                    title: '🔥 The Courageous One',
+                    text: `You faced Wonderland with courage.<br>
+                        You never backed down.<br>
+                        <span class="highlight">✦ You are fearless ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 28/50 - The Courageous One</span>`
+                },
+                29: {
+                    banner: '🧠 WISE ENDING',
+                    type: 'ice',
+                    title: '🧠 The Wise One',
+                    text: `You navigated Wonderland with wisdom.<br>
+                        You understand its secrets.<br>
+                        <span class="highlight">✦ You are the scholar ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 29/50 - The Wise One</span>`
+                },
+                30: {
+                    banner: '🕊️ MERCIFUL ENDING',
+                    type: 'escape',
+                    title: '🕊️ The Merciful One',
+                    text: `You showed mercy to all you met.<br>
+                        Wonderland remembers your kindness.<br>
+                        <span class="highlight">✦ You are the forgiver ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 30/50 - The Merciful One</span>`
+                },
+                31: {
+                    banner: '🚪 BOLD ENTRANCE ENDING',
+                    type: 'normal',
+                    title: '🚪 The Bold Entrance',
+                    text: `You entered Room 303 without hesitation.<br>
+                        Your boldness set the tone for your journey.<br>
+                        <span class="highlight">✦ You are decisive ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 31/50 - The Bold Entrance</span>`
+                },
+                32: {
+                    banner: '👊 POLITE VISITOR ENDING',
+                    type: 'normal',
+                    title: '👊 The Polite Visitor',
+                    text: `You knocked first. Manners matter in Wonderland.<br>
+                        The residents appreciated your courtesy.<br>
+                        <span class="highlight">✦ You are polite ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 32/50 - The Polite Visitor</span>`
+                },
+                33: {
+                    banner: '👀 SNEAKY ONE ENDING',
+                    type: 'creepy',
+                    title: '👀 The Sneaky One',
+                    text: `You snuck a peek into Room 303.<br>
+                        You saw things you weren't meant to see.<br>
+                        <span class="highlight">✦ You are observant ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 33/50 - The Sneaky One</span>`
+                },
+                34: {
+                    banner: '👂 LISTENER ENDING',
+                    type: 'wonder',
+                    title: '👂 The Listener',
+                    text: `You listened at the door.<br>
+                        You heard whispers that guided your path.<br>
+                        <span class="highlight">✦ You are wise ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 34/50 - The Listener</span>`
+                },
+                35: {
+                    banner: '🚶 WALKER ENDING',
+                    type: 'normal',
+                    title: '🚶 The Walker',
+                    text: `You walked through the tunnel with purpose.<br>
+                        You didn't hesitate. You just moved forward.<br>
+                        <span class="highlight">✦ You are determined ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 35/50 - The Walker</span>`
+                },
+                36: {
+                    banner: '⏳ PATIENT ONE ENDING',
+                    type: 'wonder',
+                    title: '⏳ The Patient One',
+                    text: `You waited in the tunnel.<br>
+                        You learned the rhythms of Wonderland.<br>
+                        <span class="highlight">✦ You are patient ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 36/50 - The Patient One</span>`
+                },
+                37: {
+                    banner: '🏃 RUNNER ENDING',
+                    type: 'fire',
+                    title: '🏃 The Runner',
+                    text: `You ran through the tunnel!<br>
+                        You made it through, but you missed things.<br>
+                        <span class="highlight">✦ You are fast ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 37/50 - The Runner</span>`
+                },
+                38: {
+                    banner: '✋ TOUCHED ENDING',
+                    type: 'wonder',
+                    title: '✋ The Touched One',
+                    text: `You touched the walls of the tunnel.<br>
+                        Wonderland recognized you.<br>
+                        <span class="highlight">✦ You are connected ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 38/50 - The Touched One</span>`
+                },
+                39: {
+                    banner: '💪 IAN\'S CONQUEROR ENDING',
+                    type: 'ian',
+                    title: '💪 Ian\'s Conqueror',
+                    text: `You defeated Ian in battle!<br>
+                        He respects your strength.<br>
+                        <span class="highlight">✦ You are strong ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 39/50 - Ian's Conqueror</span>`
+                },
+                40: {
+                    banner: '👑 QUEEN\'S CONQUEROR ENDING',
+                    type: 'queen',
+                    title: '👑 The Queen\'s Conqueror',
+                    text: `You defeated the Queen!<br>
+                        Wonderland is free from her tyranny.<br>
+                        <span class="highlight">✦ You are the liberator ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 40/50 - Queen's Conqueror</span>`
+                },
+                41: {
+                    banner: '🕊️ IAN\'S SAVIOR ENDING',
+                    type: 'ian',
+                    title: '🕊️ Ian\'s Savior',
+                    text: `You spared Ian. He will never forget your mercy.<br>
+                        You've earned a loyal friend.<br>
+                        <span class="highlight">✦ You are kind ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 41/50 - Ian's Savior</span>`
+                },
+                42: {
+                    banner: '🕊️ QUEEN\'S SAVIOR ENDING',
+                    type: 'queen',
+                    title: '🕊️ The Queen\'s Savior',
+                    text: `You spared the Queen. She doesn't know how to respond.<br>
+                        You've taught her something new: mercy.<br>
+                        <span class="highlight">✦ You are compassionate ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 42/50 - Queen's Savior</span>`
+                },
+                43: {
+                    banner: '🏃 FLEEING ENDING',
+                    type: 'void',
+                    title: '🏃 The Fleeing One',
+                    text: `You tried to flee from Wonderland.<br>
+                        You escaped, but you'll always wonder what you left behind.<br>
+                        <span class="highlight">✦ You are a survivor ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 43/50 - The Fleeing One</span>`
+                },
+                44: {
+                    banner: '👀 SNEAKY ESCAPE ENDING',
+                    type: 'creepy',
+                    title: '👀 The Sneaky Escape',
+                    text: `You snuck past Ian and escaped Wonderland.<br>
+                        You're clever, but you wonder if you could have made a difference.<br>
+                        <span class="highlight">✦ You are clever ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 44/50 - The Sneaky Escape</span>`
+                },
+                45: {
+                    banner: '📦 PREPARED ENDING',
+                    type: 'gold',
+                    title: '📦 The Prepared One',
+                    text: `You collected the key, note, and candy!<br>
+                        You were ready for anything Wonderland threw at you.<br>
+                        <span class="highlight">✦ You are prepared ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 45/50 - The Prepared One</span>`
+                },
+                46: {
+                    banner: '🔑 KEY MASTER ENDING',
+                    type: 'gold',
+                    title: '🔑 The Key Master',
+                    text: `You found the key to Wonderland.<br>
+                        You can come and go as you please.<br>
+                        <span class="highlight">✦ You are the key master ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 46/50 - The Key Master</span>`
+                },
+                47: {
+                    banner: '📜 NOTE READER ENDING',
+                    type: 'ice',
+                    title: '📜 The Note Reader',
+                    text: `You found the note warning you about the Queen.<br>
+                        Forewarned is forearmed. You were ready.<br>
+                        <span class="highlight">✦ You are prepared ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 47/50 - The Note Reader</span>`
+                },
+                48: {
+                    banner: '💊 CANDY LOVER ENDING',
+                    type: 'candy',
+                    title: '💊 The Candy Lover',
+                    text: `You found Wonderland candy!<br>
+                        It's sweet, magical, and delicious.<br>
+                        <span class="highlight">✦ You have a sweet tooth ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 48/50 - The Candy Lover</span>`
+                },
+                49: {
+                    banner: '🎉 SOCIAL BUTTERFLY ENDING',
+                    type: 'party',
+                    title: '🎉 The Social Butterfly',
+                    text: `You met so many side characters!<br>
+                        Wonderland knows you as a friend to all.<br>
+                        <span class="highlight">✦ You are loved ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 49/50 - The Social Butterfly</span>`
+                },
+                50: {
+                    banner: '🚶 THE WANDERER ENDING',
+                    type: 'normal',
+                    title: '🚶 The Wanderer',
+                    text: `You wandered through Wonderland without a clear path.<br>
+                        You saw many things, but you never stayed in one place.<br>
+                        <span class="highlight">✦ You are a wanderer ✦</span><br><br>
+                        <span style="color: #8888aa; font-size: 8px;">🎉 Ending 50/50 - The Wanderer</span>`
                 }
             };
-
-            const result = locations[dir];
-            if (result) {
-                desc.innerHTML = result.text;
-                if (result.index >= 0 && result.index < 5) {
-                    locationIndex = result.index;
-                    visitedLocations[result.index] = true;
-                    updateLocationDots();
-                }
-                if (dir === 'enter' && Math.random() < 0.3) {
-                    setTimeout(() => {
-                        desc.innerHTML += '<br><span class="highlight">✦ You found a KEY! ✦</span>';
-                        inventory.push('🔑 Key');
-                        updateInventory();
-                    }, 1000);
-                }
-                // Random events in exploration
-                if (Math.random() < 0.1) {
-                    setTimeout(() => {
-                        showEvent('⚡ Something stirs in the shadows...', 1500);
-                    }, 500);
-                }
-            }
-        }
-
-        function updateInventory() {
-            const items = document.querySelectorAll('.inventory-bar .item');
-            const itemList = inventory.slice(0, 3);
-            items.forEach((el, i) => {
-                el.textContent = itemList[i] || '—';
-                el.style.color = itemList[i] ? '#ffd93d' : '#4a4a6a';
-            });
-        }
-
-        function triggerRandomEvent() {
-            const desc = document.getElementById('exploreDesc');
-            const events = [
-                'The lights flicker. A shadow passes by.<br><span class="creepy">✦ You\'re not alone ✦</span>',
-                'You hear a voice whisper: <span style="color: #a29bfe;">"Find the Queen..."</span>',
-                'A card falls from the ceiling. It\'s the <span style="color: #ff4a4a;">Queen of Hearts</span>.',
-                'The hallway shifts. You\'re in a different part of the building now.<br><span class="highlight">✦ Location changed ✦</span>',
-                'You feel a strange warmth. <span style="color: #ffd93d;">✦ Wonder fills you ✦</span>'
-            ];
-            const randomEvent = events[Math.floor(Math.random() * events.length)];
-            desc.innerHTML = randomEvent;
-            player.wonder = Math.min(100, player.wonder + 2);
-            updateStats();
-            showEvent('🎲 Random Event!', 1500);
-        }
-
-        function returnToHall() {
-            showScreen('wornHall', 'creepy');
-        }
-
-        // ============================================================
-        //  MUSCLE MAN IAN ENCOUNTER
-        // ============================================================
-
-        function encounterIan() {
-            showScreen('ianEncounter', 'ian');
-            ianDefeated = false;
-            document.getElementById('ianResult').style.display = 'none';
-            document.getElementById('ianNextActions').style.display = 'none';
-            document.getElementById('ianButtons').style.display = 'flex';
-
-            const dialogue = document.getElementById('ianDialogue');
-            dialogue.innerHTML = `
-                A massive figure rounds the corner.<br>
-                It's Ian... but something's <span class="creepy">wrong</span>.<br>
-                His skin is <span style="color: #8aba4a;">GREEN</span>. His muscles bulge impossibly.<br>
-                He's wearing an RA shirt that says <span style="color: #ffd93d;">"I'M THE BOSS NOW."</span><br>
-                <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 8px;">
-                    "YO! You're not supposed to be here, newbie!"
-                </span>
-                <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 5px;">
-                    He cracks his knuckles. The hallway shakes.
-                </span>
-            `;
-            showEvent('💪 MUSCLE MAN IAN APPEARS!', 1500);
-        }
-
-        function ianAct(action) {
-            const resultDiv = document.getElementById('ianResult');
-            const resultText = document.getElementById('ianResultText');
-            resultDiv.style.display = 'block';
-            document.getElementById('ianNextActions').style.display = 'none';
-
-            const responses = {
-                'fight': `
-                    You throw a punch!<br>
-                    Ian catches it with one finger.<br>
-                    <span style="color: #8aba4a;">"HAHA! That tickles, newbie!"</span><br>
-                    He flicks you. You fly back 10 feet.<br>
-                    <span style="color: #ff6b6b;">❤️ HP: ${Math.max(0, player.hp - 5)}/20</span>
-                `,
-                'act': `
-                    You try to talk to him.<br>
-                    <span style="color: #8aba4a;">"Yo, you think you can just WALK into Wonderland?"</span><br>
-                    He pauses. Something flickers in his eyes.<br>
-                    <span class="highlight">✦ He seems... almost sad ✦</span>
-                `,
-                'prank': `
-                    You yell <span style="color: #ffd93d;">"MY MOM!"</span><br>
-                    Ian freezes. Tears well up in his eyes.<br>
-                    <span style="color: #8aba4a;">"Bro... that's my mom's catchphrase..."</span><br>
-                    He's vulnerable now. You can feel it.<br>
-                    <span class="highlight">✦ He lowers his guard ✦</span>
-                `,
-                'spare': `
-                    You put your hands up. <span style="color: #ffd93d;">"I don't want to fight."</span><br>
-                    Ian stares at you. His muscles deflate slightly.<br>
-                    <span style="color: #8aba4a;">"...You're not like the others."</span><br>
-                    He steps aside. <span class="highlight">✦ You found mercy ✦</span>
-                `,
-                'flee': `
-                    You try to run!<br>
-                    Ian laughs. <span style="color: #8aba4a;">"Nice try, newbie!"</span><br>
-                    He grabs your shirt. You're not going anywhere.<br>
-                    <span style="color: #8888aa;">✦ There's no escape from Wonderland ✦</span>
-                `
-            };
-
-            resultText.innerHTML = responses[action] || 'You do nothing. Ian laughs.';
-
-            // Check outcomes
-            if (action === 'spare' || action === 'prank' || action === 'act') {
-                setTimeout(() => {
-                    resultText.innerHTML += `<br><br><span class="highlight" style="font-size: 12px;">✦ IAN LETS YOU PASS ✦</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">"Go on, newbie. The Queen's waiting for you."</span>`;
-                    document.getElementById('ianNextActions').style.display = 'block';
-                    document.getElementById('ianButtons').style.display = 'none';
-                    ianDefeated = true;
-                    player.wonder += 10;
-                    updateStats();
-                    showEvent('💪 Ian defeated through mercy!', 2000);
-                }, 1500);
-            } else if (action === 'fight') {
-                player.hp = Math.max(0, player.hp - 5);
-                updateStats();
-                if (player.hp <= 0) {
-                    setTimeout(() => {
-                        resultText.innerHTML += `<br><br><span style="color: #ff6b6b; font-size: 14px;">💀 YOU FELL...</span><br>
-                        <span style="color: #8888aa; font-size: 8px;">But in Wonderland, death isn't permanent...</span>`;
-                        setTimeout(() => {
-                            player.hp = 20;
-                            updateStats();
-                            showEvent('🔄 You wake up at the start of the hallway...', 2000);
-                            showScreen('wornHall', 'creepy');
-                        }, 2000);
-                    }, 1500);
-                } else {
-                    setTimeout(() => {
-                        resultText.innerHTML += `<br><br><span style="color: #ff6b6b; font-size: 10px;">💪 IAN IS STILL STANDING</span><br>
-                        <span style="color: #8888aa; font-size: 8px;">Try a different approach...</span>`;
-                    }, 1500);
-                }
-            } else if (action === 'flee') {
-                setTimeout(() => {
-                    resultText.innerHTML += `<br><br><span style="color: #8888aa; font-size: 8px;">You can't run from Wonderland.</span>`;
-                }, 1500);
-            }
-        }
-
-        function continueAfterIan() {
-            if (ianDefeated) {
-                showScreen('exploration', 'wonder');
-                document.getElementById('exploreLocation').innerHTML = '📍 <span class="highlight">THE ENDLESS HALLWAY (CLEARED)</span>';
-                document.getElementById('exploreDesc').innerHTML = `
-                    Ian let you pass. The hallway is quieter now.<br>
-                    <span class="highlight">✦ You can feel the Queen's presence ahead ✦</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">The lobby is just ahead...</span><br>
-                    <span style="color: #4a4a6a; font-size: 7px;">✦ You've earned the right to face her ✦</span>
-                `;
-                // Update the buttons
-                const btnGroup = document.querySelector('#exploration .direction-grid').parentElement;
-                const existing = btnGroup.querySelector('.btn-group') || btnGroup.querySelector('div:last-child');
-                if (existing) {
-                    existing.innerHTML = `
-                        <button class="game-btn" onclick="returnToHall()">🔙 BACK</button>
-                        <button class="game-btn primary" onclick="encounterQueen()">♠️ FIND THE QUEEN</button>
-                        <button class="game-btn wonder" onclick="triggerRandomEvent()">🎲 RANDOM EVENT</button>
-                    `;
-                }
-                updateStats();
-                updateInventory();
-            }
-        }
-
-        // ============================================================
-        //  QUEEN ENCOUNTER
-        // ============================================================
-
-        function encounterQueen() {
-            showScreen('queenEncounter', 'queen');
-            document.getElementById('finalResult').style.display = 'none';
-            showEvent('♠️ THE QUEEN AWAITS!', 2000);
-        }
-
-        function queenAct(action) {
-            const resultDiv = document.getElementById('finalResult');
-            const resultText = document.getElementById('finalResultText');
-            resultDiv.style.display = 'block';
-
-            if (action === 'talk') {
-                resultText.innerHTML = `
-                    You try to reason with the Queen.<br>
-                    <span style="color: #ff4a4a;">"Reason? REASON?"</span><br>
-                    She slams her gavel. The room shakes.<br>
-                    <span style="color: #ff4a4a;">"I AM THE LAW HERE!"</span><br>
-                    <span style="color: #8888aa; font-size: 8px;">✦ She's not listening ✦</span>
-                `;
-            } else if (action === 'wonder') {
-                if (player.wonder >= 50) {
-                    resultText.innerHTML = `
-                        You channel the power of Wonderland itself.<br>
-                        The Queen's desk flickers. She looks... <span style="color: #ffd93d;">uncertain</span>.<br>
-                        <span style="color: #ff4a4a;">"What... what are you?"</span><br>
-                        <span class="highlight">✦ Your Wonder is strong ✦</span>
-                    `;
-                    setTimeout(() => {
-                        resultText.innerHTML += `<br><br><span class="highlight" style="font-size: 14px;">✦ THE QUEEN IS WEAKENED ✦</span>`;
-                        document.getElementById('finalResult').style.display = 'block';
-                    }, 1500);
-                } else {
-                    resultText.innerHTML = `
-                        You try to use Wonder, but it's not enough.<br>
-                        <span style="color: #ff4a4a;">"Your soul is weak!"</span><br>
-                        <span style="color: #8888aa; font-size: 8px;">✦ You need more Wonder to face her ✦</span>
-                    `;
-                }
-            }
-        }
-
-        function startFinalBattle() {
-            const resultDiv = document.getElementById('finalResult');
-            const resultText = document.getElementById('finalResultText');
-            resultDiv.style.display = 'block';
-            resultText.innerHTML = `
-                ⚔️ <span style="color: #ff6b6b; font-size: 16px;">THE FINAL BATTLE BEGINS!</span> ⚔️<br><br>
-                <span style="color: #ff4a4a; font-size: 12px;">QUEEN RYLEE</span><br>
-                <span style="color: #ffd93d; font-size: 10px;">✦ BATTLE SYSTEM COMING SOON ✦</span><br><br>
-                <span style="color: #8888aa; font-size: 8px;">
-                    For now, you've reached the end of the demo.<br>
-                    Thanks for playing <span class="highlight">JN Wonderland</span>!<br><br>
-                    <span style="color: #4a4a6a; font-size: 7px;">
-                        🏆 Stats:<br>
-                        ❤️ HP: ${player.hp}/${player.maxHp}<br>
-                        🌀 Wonder: ${player.wonder}%<br>
-                        📦 Items: ${inventory.join(', ')}
-                    </span>
-                </span>
-            `;
-            showEvent('⚔️ FINAL BOSS: QUEEN RYLEE!', 3000);
+            return endings[ending] || endings[50];
         }
 
         // ============================================================
@@ -1387,28 +2093,48 @@
         }
 
         // ============================================================
+        //  KEYBOARD SUPPORT
+        // ============================================================
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.key === 'Space') {
+                e.preventDefault();
+                const active = document.querySelector('.screen.active');
+                if (!active) return;
+                if (active.id === 's-room303') {
+                    const choices = document.getElementById('room303Choices');
+                    if (choices.style.display === 'none') {
+                        choices.style.display = 'block';
+                        document.getElementById('room303Continue').style.display = 'none';
+                    }
+                }
+                if (active.id === 's-narnia') {
+                    const choices = document.getElementById('narniaChoices');
+                    if (choices.style.display === 'none') {
+                        choices.style.display = 'block';
+                    }
+                }
+            }
+        });
+
+        // ============================================================
         //  INIT
         // ============================================================
 
         // Show Room 303 first
-        showScreen('room303', 'normal');
+        showScreen('s-room303', 'normal');
+        updateStats();
 
-        // Auto-show choices after a moment
+        // Auto-show choices
         setTimeout(() => {
             const choices = document.getElementById('room303Choices');
-            if (choices) {
-                choices.style.display = 'block';
-            }
-        }, 2500);
+            if (choices) choices.style.display = 'block';
+        }, 2000);
 
-        // Update inventory
-        updateInventory();
-
-        console.log('%c✦ JN WONDERLAND - ENHANCED ✦', 'font-size:16px; color:#ffd93d;');
+        console.log('%c✦ JN WONDERLAND - 50 ENDINGS ✦', 'font-size:20px; color:#ffd93d;');
         console.log(`%cPlayer: ${player.name}`, 'color:#8888aa;');
-        console.log(`%cWonder: ${player.wonder}%`, 'color:#a29bfe;');
-        console.log(`%cInventory: ${inventory.join(', ')}`, 'color:#ffd93d;');
-        console.log('%cRoom 303 is waiting...', 'color:#aa4a4a;');
+        console.log('%c✨ 50 unique endings to discover!', 'color:#a29bfe;');
+        console.log('%c🎮 Good luck!', 'color:#ffd93d;');
     </script>
 
 </body>
