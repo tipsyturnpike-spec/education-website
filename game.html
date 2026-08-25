@@ -436,7 +436,11 @@
             flags: {
                 heardIzzyScream: false,
                 enteredCloset: false,
-                foundPortal: false
+                foundPortal: false,
+                enteredForest: false,
+                metBekah: false,
+                foundForestKey: false,
+                openedForestGate: false
             },
             combat: {
                 active: false,
@@ -445,7 +449,8 @@
                 playerDefending: false,
                 messageQueue: [],
                 enemyEncounterChance: 0.1
-            }
+            },
+            party: []
         };
         
         // Dorm-themed enemies
@@ -465,8 +470,7 @@
                 attacks: [
                     { name: 'Sock Attack', power: 1, type: 'physical' },
                     { name: 'Static Cling', power: 1.2, type: 'physical' }
-                ],
-                description: 'A creature made of lost socks and dryer lint'
+                ]
             },
             microwaveWraith: {
                 name: 'Microwave Wraith',
@@ -483,8 +487,7 @@
                 attacks: [
                     { name: 'Hot Pocket', power: 1.5, type: 'magical' },
                     { name: 'Radiation', power: 1, type: 'physical' }
-                ],
-                description: 'Haunted by every burnt popcorn incident'
+                ]
             },
             textbookTitan: {
                 name: 'Textbook Titan',
@@ -501,8 +504,7 @@
                 attacks: [
                     { name: 'Knowledge Drop', power: 1.3, type: 'magical' },
                     { name: 'Paper Cut', power: 1.4, type: 'physical' }
-                ],
-                description: 'A sentient stack of overpriced textbooks'
+                ]
             },
             coffeeGolem: {
                 name: 'Coffee Golem',
@@ -519,8 +521,7 @@
                 attacks: [
                     { name: 'Caffeine Rush', power: 1.6, type: 'magical' },
                     { name: 'Hot Splash', power: 1.2, type: 'physical' }
-                ],
-                description: 'Manifestation of finals week desperation'
+                ]
             },
             showerMold: {
                 name: 'Shower Mold',
@@ -537,12 +538,62 @@
                 attacks: [
                     { name: 'Spore Cloud', power: 1.1, type: 'physical' },
                     { name: 'Slimy Touch', power: 1.3, type: 'physical' }
-                ],
-                description: 'The thing growing in the communal shower'
+                ]
+            },
+            forestImp: {
+                name: 'Forest Imp',
+                hp: 22,
+                maxHp: 22,
+                pp: 8,
+                attack: 4,
+                defense: 2,
+                speed: 7,
+                exp: 10,
+                money: 10,
+                color: '#228B22',
+                sprite: 'imp',
+                attacks: [
+                    { name: 'Branch Whip', power: 1.3, type: 'physical' },
+                    { name: 'Leaf Storm', power: 1.4, type: 'magical' }
+                ]
+            },
+            mushroomZombie: {
+                name: 'Mushroom Zombie',
+                hp: 28,
+                maxHp: 28,
+                pp: 0,
+                attack: 5,
+                defense: 3,
+                speed: 2,
+                exp: 14,
+                money: 8,
+                color: '#8B008B',
+                sprite: 'mushroom',
+                attacks: [
+                    { name: 'Spore Burst', power: 1.5, type: 'magical' },
+                    { name: 'Fungal Grab', power: 1.2, type: 'physical' }
+                ]
+            },
+            shadowStudent: {
+                name: 'Shadow Student',
+                hp: 35,
+                maxHp: 35,
+                pp: 15,
+                attack: 6,
+                defense: 4,
+                speed: 5,
+                exp: 20,
+                money: 20,
+                color: '#2F4F4F',
+                sprite: 'shadow',
+                attacks: [
+                    { name: 'Debt Collector', power: 1.7, type: 'magical' },
+                    { name: 'Student Loan', power: 1.5, type: 'physical' }
+                ]
             }
         };
         
-        // Dorm-themed psychic abilities
+        // Psychic abilities
         const psychicAbilities = {
             coffeeBreak: {
                 name: 'Coffee Break',
@@ -601,8 +652,23 @@
                 enemies: ['laundryGoblin', 'microwaveWraith', 'showerMold']
             };
             
+            maps.darkForest = {
+                width: 50,
+                height: 40,
+                tileSize: 20,
+                collisionMap: [],
+                npcs: [],
+                objects: [],
+                exits: [],
+                backgroundColor: '#0a1a0a',
+                floorColor: '#1a3a1a',
+                wallColor: '#0a2a0a',
+                enemies: ['forestImp', 'mushroomZombie', 'shadowStudent', 'laundryGoblin']
+            };
+            
             generateRoom303();
             generateCloset();
+            generateDarkForest();
         }
         
         // Generate Room 303 map
@@ -740,6 +806,107 @@
                     targetX: 38, 
                     targetY: 8,
                     transitionText: 'You step back into your room...'
+                },
+                { 
+                    x: 14, 
+                    y: 14, 
+                    targetArea: 'darkForest', 
+                    targetX: 25, 
+                    targetY: 38,
+                    transitionText: 'You jump through the portal...'
+                }
+            ];
+        }
+        
+        // Generate Dark Forest map
+        function generateDarkForest() {
+            const map = maps.darkForest;
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            // Forest boundaries
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1;
+                map.collisionMap[map.height - 1][x] = 1;
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1;
+                map.collisionMap[y][map.width - 1] = 1;
+            }
+            
+            // Portal entrance at bottom
+            map.collisionMap[map.height - 1][25] = 0;
+            map.collisionMap[map.height - 2][25] = 0;
+            
+            // Create trees (obstacles)
+            const treePositions = [
+                [5, 5], [8, 12], [15, 8], [20, 15], [25, 5],
+                [30, 10], [35, 15], [40, 8], [10, 20], [18, 25],
+                [28, 20], [35, 25], [42, 20], [12, 30], [22, 32],
+                [32, 30], [38, 35], [45, 30], [5, 25], [15, 35]
+            ];
+            
+            treePositions.forEach(([x, y]) => {
+                map.collisionMap[y][x] = 1;
+                map.collisionMap[y][x + 1] = 1;
+                map.collisionMap[y + 1][x] = 1;
+                map.collisionMap[y + 1][x + 1] = 1;
+            });
+            
+            // Path to the gate
+            for (let y = 35; y < 40; y++) {
+                map.collisionMap[y][25] = 0;
+            }
+            
+            // Gate at top
+            map.collisionMap[5][24] = 1;
+            map.collisionMap[5][25] = 1;
+            map.collisionMap[5][26] = 1;
+            
+            // Add objects
+            map.objects = [
+                { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
+                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted, dark tree. Something is carved into it...' },
+                { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms that pulse with an eerie light.' },
+                { x: 15, y: 28, type: 'note', name: 'Torn Note', description: 'A note that says "The key is hidden where the mushrooms glow..."', interactionType: 'note' },
+                { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key that might open the gate.', interactionType: 'forestKey' },
+                { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate blocking the path forward.', interactionType: 'gate' }
+            ];
+            
+            // Add NPCs
+            map.npcs = [
+                {
+                    x: 40,
+                    y: 35,
+                    name: 'Bekah',
+                    sprite: 'bekah',
+                    dialogue: [
+                        "BEKAH: Help! I'm trapped under these roots!",
+                        "BEKAH: Those shadow creatures dragged me here...",
+                        "BEKAH: Can you help me get free?",
+                        "BEKAH: Thank you! I'll join you to find Izzy!",
+                        "BEKAH: I'm good with PSI abilities. Let me help!"
+                    ],
+                    interactionType: 'bekah'
+                }
+            ];
+            
+            // Add exits
+            map.exits = [
+                { 
+                    x: 25, 
+                    y: 39, 
+                    targetArea: 'closet', 
+                    targetX: 14, 
+                    targetY: 14,
+                    transitionText: 'You return through the portal...'
+                },
+                { 
+                    x: 25, 
+                    y: 4, 
+                    targetArea: 'graveyard', 
+                    targetX: 25, 
+                    targetY: 35,
+                    transitionText: 'You unlock the gate and enter the graveyard...'
                 }
             ];
         }
@@ -816,7 +983,6 @@
             
             switch(enemy.sprite) {
                 case 'laundry':
-                    // Draw laundry goblin
                     ctx.fillStyle = '#808080';
                     ctx.fillRect(30, 50, 40, 30);
                     ctx.fillStyle = '#FFFFFF';
@@ -826,7 +992,6 @@
                     ctx.fillRect(45, 55, 10, 5);
                     break;
                 case 'microwave':
-                    // Draw microwave wraith
                     ctx.fillStyle = '#C0C0C0';
                     ctx.fillRect(20, 30, 60, 40);
                     ctx.fillStyle = '#808080';
@@ -837,7 +1002,6 @@
                     ctx.fillRect(45, 45, 10, 10);
                     break;
                 case 'textbook':
-                    // Draw textbook titan
                     ctx.fillStyle = '#8B0000';
                     ctx.fillRect(25, 30, 50, 40);
                     ctx.fillStyle = '#FFFFFF';
@@ -848,7 +1012,6 @@
                     ctx.fillRect(35, 60, 30, 3);
                     break;
                 case 'coffee':
-                    // Draw coffee golem
                     ctx.fillStyle = '#6B4423';
                     ctx.fillRect(30, 30, 40, 50);
                     ctx.fillStyle = '#4A2F1A';
@@ -858,7 +1021,6 @@
                     ctx.fillRect(55, 45, 5, 5);
                     break;
                 case 'mold':
-                    // Draw shower mold
                     ctx.fillStyle = '#556B2F';
                     ctx.beginPath();
                     ctx.arc(50, 50, 25, 0, Math.PI * 2);
@@ -868,6 +1030,31 @@
                     ctx.arc(40, 40, 8, 0, Math.PI * 2);
                     ctx.arc(60, 40, 8, 0, Math.PI * 2);
                     ctx.fill();
+                    break;
+                case 'imp':
+                    ctx.fillStyle = '#228B22';
+                    ctx.fillRect(25, 40, 50, 30);
+                    ctx.fillStyle = '#32CD32';
+                    ctx.fillRect(35, 25, 30, 20);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 35, 10, 5);
+                    break;
+                case 'mushroom':
+                    ctx.fillStyle = '#8B008B';
+                    ctx.fillRect(30, 30, 40, 40);
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(40, 20, 20, 20);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(45, 35, 5, 5);
+                    ctx.fillRect(55, 35, 5, 5);
+                    break;
+                case 'shadow':
+                    ctx.fillStyle = '#2F4F4F';
+                    ctx.fillRect(25, 25, 50, 50);
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.fillRect(35, 35, 30, 30);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 45, 10, 5);
                     break;
                 default:
                     ctx.fillStyle = enemy.color;
@@ -937,7 +1124,6 @@
             const char = gameState.character;
             const enemy = gameState.combat.enemy;
             
-            // More creative attack messages
             const attackMessages = [
                 `${char.name} throws a textbook at ${enemy.name}!`,
                 `${char.name} hits ${enemy.name} with a laptop!`,
@@ -1060,7 +1246,7 @@
             const escapeChance = 0.5;
             if (Math.random() < escapeChance) {
                 endCombat(false);
-                showCombatMessage('You escaped to your dorm room!');
+                showCombatMessage('You escaped!');
             } else {
                 showCombatMessage('Couldn\'t escape!');
                 gameState.combat.turn = 'enemy';
@@ -1194,6 +1380,15 @@
                 
                 if (Math.abs(player.x - exitTileX) < map.tileSize / 2 &&
                     Math.abs(player.y - exitTileY) < map.tileSize / 2) {
+                    if (exit.targetArea === 'graveyard' && !gameState.flags.openedForestGate) {
+                        // Gate is locked
+                        if (!gameState.flags.foundForestKey) {
+                            showDialogue('The gate is locked. You need to find the key...');
+                            gameState.inDialogue = true;
+                        }
+                        return;
+                    }
+                    
                     if (exit.transitionText) {
                         transitionWithDialogue(exit);
                     } else {
@@ -1228,6 +1423,18 @@
                     "The air is cold, and you hear whispers...",
                     "A strange purple glow comes from deeper in...",
                     "You feel something watching you..."
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+            
+            if (areaId === 'darkForest' && !gameState.flags.enteredForest) {
+                gameState.flags.enteredForest = true;
+                gameState.dialogueQueue = [
+                    "You emerge into a twisted, dark forest...",
+                    "The trees seem to move when you're not looking...",
+                    "You can hear Izzy's voice echoing in the distance...",
+                    "There's a gate at the north end, but it's locked...",
+                    "Maybe there's a key hidden somewhere in this forest..."
                 ];
                 setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
             }
@@ -1283,6 +1490,18 @@
                 gameState.flags.heardIzzyScream = true;
                 gameState.dialogueQueue = [...npc.dialogue];
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (npc.interactionType === 'bekah') {
+                if (!gameState.flags.metBekah) {
+                    gameState.flags.metBekah = true;
+                    gameState.party.push('bekah');
+                    gameState.dialogueQueue = [...npc.dialogue];
+                } else {
+                    gameState.dialogueQueue = [
+                        "BEKAH: We need to find Izzy!",
+                        "BEKAH: Let me know if you need help in battle!"
+                    ];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
             }
         }
         
@@ -1294,10 +1513,54 @@
                 gameState.dialogueQueue = [
                     "The portal swirls with dark energy...",
                     "You can hear Izzy's voice echoing from within...",
-                    "This must be the entrance to the Dark Wonderland Forest.",
-                    "Are you ready to jump in?",
-                    "(Dark Wonderland Forest coming soon!)"
+                    "This must be the entrance to the Dark Wonderland Forest."
                 ];
+                if (gameState.dialogueQueue.length > 0) {
+                    // Trigger transition after dialogue
+                    gameState.dialogueQueue.push(null);
+                    gameState.pendingExit = {
+                        targetArea: 'darkForest',
+                        targetX: 25,
+                        targetY: 38
+                    };
+                }
+            } else if (obj.interactionType === 'returnPortal') {
+                gameState.dialogueQueue = [
+                    "A portal back to the closet.",
+                    "Are you sure you want to go back?"
+                ];
+                gameState.dialogueQueue.push(null);
+                gameState.pendingExit = {
+                    targetArea: 'closet',
+                    targetX: 14,
+                    targetY: 14
+                };
+            } else if (obj.interactionType === 'note') {
+                gameState.dialogueQueue = [
+                    "You find a torn note...",
+                    "\"The key is hidden where the mushrooms glow...\"",
+                    "You should look for glowing mushrooms!"
+                ];
+            } else if (obj.interactionType === 'forestKey') {
+                gameState.flags.foundForestKey = true;
+                gameState.dialogueQueue = [
+                    "You found the Forest Key!",
+                    "This should unlock the gate to the graveyard!"
+                ];
+            } else if (obj.interactionType === 'gate') {
+                if (gameState.flags.foundForestKey) {
+                    gameState.flags.openedForestGate = true;
+                    gameState.dialogueQueue = [
+                        "You use the Forest Key...",
+                        "The gate creaks open!",
+                        "The path to the graveyard is clear!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        "The gate is locked.",
+                        "You need to find the key..."
+                    ];
+                }
             } else {
                 gameState.dialogueQueue = [`${obj.name}: ${obj.description}`];
             }
@@ -1325,7 +1588,11 @@
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if (map.collisionMap[y][x] === 1) {
-                        drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
+                        if (gameState.currentArea === 'darkForest') {
+                            drawTreeTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                        } else {
+                            drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
+                        }
                     }
                 }
             }
@@ -1360,6 +1627,20 @@
             ctx.moveTo(x, y + size/2);
             ctx.lineTo(x + size, y + size/2);
             ctx.stroke();
+        }
+        
+        // Draw tree tile
+        function drawTreeTile(ctx, x, y, size) {
+            ctx.fillStyle = '#0a2a0a';
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = '#1a4a1a';
+            ctx.beginPath();
+            ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#0a3a0a';
+            ctx.beginPath();
+            ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
+            ctx.fill();
         }
         
         // Draw objects
@@ -1408,6 +1689,43 @@
                     ctx.fillStyle = `rgba(0, 255, 255, ${pulse * 0.5})`;
                     ctx.fillRect(x + 5, y + 5, tileSize * 2 - 10, tileSize * 2 - 10);
                     break;
+                case 'tree':
+                    ctx.fillStyle = '#1a4a1a';
+                    ctx.beginPath();
+                    ctx.arc(x + tileSize/2, y + tileSize/2, tileSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'mushroom':
+                    ctx.fillStyle = '#8B008B';
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.beginPath();
+                    ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'note':
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.strokeStyle = '#000000';
+                    ctx.strokeRect(x, y, tileSize, tileSize);
+                    break;
+                case 'key':
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(x + 5, y + 8, 10, 4);
+                    ctx.fillRect(x + 12, y + 5, 3, 10);
+                    break;
+                case 'gate':
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i * tileSize, y);
+                        ctx.lineTo(x + i * tileSize, y + tileSize * 2);
+                        ctx.stroke();
+                    }
+                    break;
             }
         }
         
@@ -1416,13 +1734,26 @@
             const x = npc.x * tileSize;
             const y = npc.y * tileSize;
             
-            ctx.fillStyle = '#FFC0CB';
-            ctx.fillRect(x, y, tileSize, tileSize);
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(x, y, tileSize, tileSize/3);
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(x + 5, y + 8, 3, 3);
-            ctx.fillRect(x + 12, y + 8, 3, 3);
+            if (npc.sprite === 'bekah') {
+                // Draw Bekah (short brunette)
+                ctx.fillStyle = '#FF69B4';
+                ctx.fillRect(x, y, tileSize, tileSize * 0.8);
+                ctx.fillStyle = '#FFC0CB';
+                ctx.fillRect(x + 3, y - 3, tileSize - 6, tileSize - 6);
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x + 3, y - 6, tileSize - 6, 5);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 3, 3, 3);
+                ctx.fillRect(x + 12, y + 3, 3, 3);
+            } else {
+                ctx.fillStyle = '#FFC0CB';
+                ctx.fillRect(x, y, tileSize, tileSize);
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x, y, tileSize, tileSize/3);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
+            }
         }
         
         // Draw player
