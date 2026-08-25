@@ -126,7 +126,6 @@
             transform: scale(1.05);
         }
         
-        /* Inventory UI */
         .inventory-screen {
             position: absolute;
             top: 50%;
@@ -320,7 +319,6 @@
             display: block;
         }
         
-        /* Combat UI */
         .combat-screen {
             position: absolute;
             top: 0;
@@ -378,6 +376,7 @@
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid #00ffff;
             border-radius: 5px;
+            cursor: pointer;
         }
         
         .combat-party-member.active {
@@ -522,7 +521,6 @@
                 <button onclick="returnToTitle()">TITLE SCREEN</button>
             </div>
             
-            <!-- Inventory Screen -->
             <div class="inventory-screen" id="inventoryScreen">
                 <h2>INVENTORY</h2>
                 <div class="money-display">MONEY: $<span id="inventoryMoney">0</span></div>
@@ -538,14 +536,12 @@
                 </div>
             </div>
             
-            <!-- Combat Screen -->
             <div class="combat-screen" id="combatScreen">
                 <div class="combat-background"></div>
                 <div class="combat-enemy-area" id="combatEnemyArea">
                     <canvas id="combatEnemyCanvas" class="combat-enemy" width="100" height="100"></canvas>
                 </div>
                 <div class="combat-party-area" id="combatPartyArea">
-                    <!-- Party members will be displayed here -->
                 </div>
                 <div class="combat-menu" id="combatMenu">
                     <button class="combat-button" onclick="playerAttack()">FIGHT</button>
@@ -564,7 +560,6 @@
                 </div>
             </div>
             
-            <!-- Combat Message -->
             <div class="combat-message" id="combatMessage">
                 <p id="combatMessageText"></p>
             </div>
@@ -576,82 +571,18 @@
     </div>
     
     <script>
-        // Item definitions
         const items = {
-            ramen: {
-                name: 'Instant Ramen',
-                type: 'item',
-                healAmount: 20,
-                description: 'Cheap instant noodles. Restores 20 HP.',
-                price: 5,
-                usable: true
-            },
-            energyDrink: {
-                name: 'Energy Drink',
-                type: 'item',
-                healAmount: 50,
-                description: 'Highly caffeinated. Restores 50 HP.',
-                price: 15,
-                usable: true
-            },
-            coffee: {
-                name: 'Coffee',
-                type: 'item',
-                ppRestore: 10,
-                description: 'Restores 10 PP. Essential for college students.',
-                price: 8,
-                usable: true
-            },
-            pizza: {
-                name: 'Cold Pizza',
-                type: 'item',
-                healAmount: 100,
-                description: 'Leftover pizza. Restores 100 HP.',
-                price: 20,
-                usable: true
-            },
-            textbook: {
-                name: 'Textbook',
-                type: 'weapon',
-                attackBonus: 5,
-                description: 'Heavy textbook. +5 Attack.',
-                price: 30,
-                usable: false
-            },
-            laptop: {
-                name: 'Laptop',
-                type: 'weapon',
-                attackBonus: 10,
-                description: 'Can be used as a weapon. +10 Attack.',
-                price: 75,
-                usable: false
-            },
-            deskLamp: {
-                name: 'Desk Lamp',
-                type: 'weapon',
-                attackBonus: 3,
-                description: 'A sturdy desk lamp. +3 Attack.',
-                price: 15,
-                usable: false
-            },
-            backpack: {
-                name: 'Heavy Backpack',
-                type: 'weapon',
-                attackBonus: 8,
-                description: 'Full of textbooks. +8 Attack.',
-                price: 50,
-                usable: false
-            },
-            forestKey: {
-                name: 'Forest Key',
-                type: 'keyItem',
-                description: 'A rusted key that opens the Forest Gate.',
-                price: 0,
-                usable: false
-            }
+            ramen: { name: 'Instant Ramen', type: 'item', healAmount: 20, description: 'Cheap instant noodles. Restores 20 HP.', price: 5, usable: true },
+            energyDrink: { name: 'Energy Drink', type: 'item', healAmount: 50, description: 'Highly caffeinated. Restores 50 HP.', price: 15, usable: true },
+            coffee: { name: 'Coffee', type: 'item', ppRestore: 10, description: 'Restores 10 PP. Essential for college students.', price: 8, usable: true },
+            pizza: { name: 'Cold Pizza', type: 'item', healAmount: 100, description: 'Leftover pizza. Restores 100 HP.', price: 20, usable: true },
+            textbook: { name: 'Textbook', type: 'weapon', attackBonus: 5, description: 'Heavy textbook. +5 Attack.', price: 30, usable: false },
+            laptop: { name: 'Laptop', type: 'weapon', attackBonus: 10, description: 'Can be used as a weapon. +10 Attack.', price: 75, usable: false },
+            deskLamp: { name: 'Desk Lamp', type: 'weapon', attackBonus: 3, description: 'A sturdy desk lamp. +3 Attack.', price: 15, usable: false },
+            backpack: { name: 'Heavy Backpack', type: 'weapon', attackBonus: 8, description: 'Full of textbooks. +8 Attack.', price: 50, usable: false },
+            forestKey: { name: 'Forest Key', type: 'keyItem', description: 'A rusted key that opens the Forest Gate.', price: 0, usable: false }
         };
         
-        // Game state
         let gameState = {
             character: null,
             currentArea: 'room303',
@@ -659,56 +590,13 @@
             paused: false,
             inDialogue: false,
             dialogueQueue: [],
-            player: {
-                x: 400,
-                y: 300,
-                direction: 'down',
-                moving: false,
-                speed: 3
-            },
-            keys: {
-                up: false,
-                down: false,
-                left: false,
-                right: false,
-                interact: false
-            },
-            flags: {
-                heardIzzyScream: false,
-                enteredCloset: false,
-                foundPortal: false,
-                enteredForest: false,
-                metBekah: false,
-                foundForestKey: false,
-                openedForestGate: false
-            },
-            combat: {
-                active: false,
-                enemy: null,
-                turn: 'player',
-                playerDefending: false,
-                messageQueue: [],
-                enemyEncounterChance: 0.1,
-                activePartyMember: 0
-            },
+            pendingExit: null,
+            player: { x: 400, y: 300, direction: 'down', moving: false, speed: 3 },
+            keys: { up: false, down: false, left: false, right: false, interact: false },
+            flags: { heardIzzyScream: false, enteredCloset: false, foundPortal: false, enteredForest: false, metBekah: false, foundForestKey: false, openedForestGate: false },
+            combat: { active: false, enemy: null, turn: 'player', playerDefending: false, messageQueue: [], enemyEncounterChance: 0.1, activePartyMember: 0 },
             party: [
-                {
-                    id: 'protagonist',
-                    name: 'PROTAGONIST',
-                    level: 1,
-                    hp: 30,
-                    maxHp: 30,
-                    pp: 10,
-                    maxPp: 10,
-                    attack: 5,
-                    defense: 3,
-                    speed: 4,
-                    exp: 0,
-                    shirtColor: '#ff0000',
-                    skinTone: '#f0c8a0',
-                    hairColor: '#4a3728',
-                    pantsColor: '#0000ff'
-                }
+                { id: 'protagonist', name: 'PROTAGONIST', level: 1, hp: 30, maxHp: 30, pp: 10, maxPp: 10, attack: 5, defense: 3, speed: 4, exp: 0, shirtColor: '#ff0000', skinTone: '#f0c8a0', hairColor: '#4a3728', pantsColor: '#0000ff' }
             ],
             inventory: [],
             equippedWeapon: null,
@@ -716,252 +604,40 @@
             selectedItem: null
         };
         
-        // Bekah party member definition
         const bekahStats = {
-            id: 'bekah',
-            name: 'BEKAH',
-            level: 1,
-            hp: 25,
-            maxHp: 25,
-            pp: 15,
-            maxPp: 15,
-            attack: 4,
-            defense: 2,
-            speed: 6,
-            exp: 0,
-            shirtColor: '#FF69B4',
-            skinTone: '#FFC0CB',
-            hairColor: '#8B4513',
-            pantsColor: '#000000'
+            id: 'bekah', name: 'BEKAH', level: 1, hp: 25, maxHp: 25, pp: 15, maxPp: 15, attack: 4, defense: 2, speed: 6, exp: 0, shirtColor: '#FF69B4', skinTone: '#FFC0CB', hairColor: '#8B4513', pantsColor: '#000000'
         };
         
-        // Dorm-themed enemies
         const enemies = {
-            laundryGoblin: {
-                name: 'Laundry Goblin',
-                hp: 15,
-                maxHp: 15,
-                pp: 0,
-                attack: 3,
-                defense: 1,
-                speed: 5,
-                exp: 5,
-                money: 5,
-                color: '#808080',
-                sprite: 'laundry',
-                attacks: [
-                    { name: 'Sock Attack', power: 1, type: 'physical' },
-                    { name: 'Static Cling', power: 1.2, type: 'physical' }
-                ]
-            },
-            microwaveWraith: {
-                name: 'Microwave Wraith',
-                hp: 20,
-                maxHp: 20,
-                pp: 5,
-                attack: 4,
-                defense: 2,
-                speed: 6,
-                exp: 8,
-                money: 8,
-                color: '#C0C0C0',
-                sprite: 'microwave',
-                attacks: [
-                    { name: 'Hot Pocket', power: 1.5, type: 'magical' },
-                    { name: 'Radiation', power: 1, type: 'physical' }
-                ]
-            },
-            textbookTitan: {
-                name: 'Textbook Titan',
-                hp: 25,
-                maxHp: 25,
-                pp: 10,
-                attack: 5,
-                defense: 3,
-                speed: 4,
-                exp: 12,
-                money: 12,
-                color: '#8B0000',
-                sprite: 'textbook',
-                attacks: [
-                    { name: 'Knowledge Drop', power: 1.3, type: 'magical' },
-                    { name: 'Paper Cut', power: 1.4, type: 'physical' }
-                ]
-            },
-            coffeeGolem: {
-                name: 'Coffee Golem',
-                hp: 30,
-                maxHp: 30,
-                pp: 15,
-                attack: 6,
-                defense: 4,
-                speed: 3,
-                exp: 15,
-                money: 15,
-                color: '#6B4423',
-                sprite: 'coffee',
-                attacks: [
-                    { name: 'Caffeine Rush', power: 1.6, type: 'magical' },
-                    { name: 'Hot Splash', power: 1.2, type: 'physical' }
-                ]
-            },
-            showerMold: {
-                name: 'Shower Mold',
-                hp: 18,
-                maxHp: 18,
-                pp: 0,
-                attack: 3,
-                defense: 2,
-                speed: 2,
-                exp: 7,
-                money: 3,
-                color: '#556B2F',
-                sprite: 'mold',
-                attacks: [
-                    { name: 'Spore Cloud', power: 1.1, type: 'physical' },
-                    { name: 'Slimy Touch', power: 1.3, type: 'physical' }
-                ]
-            },
-            forestImp: {
-                name: 'Forest Imp',
-                hp: 22,
-                maxHp: 22,
-                pp: 8,
-                attack: 4,
-                defense: 2,
-                speed: 7,
-                exp: 10,
-                money: 10,
-                color: '#228B22',
-                sprite: 'imp',
-                attacks: [
-                    { name: 'Branch Whip', power: 1.3, type: 'physical' },
-                    { name: 'Leaf Storm', power: 1.4, type: 'magical' }
-                ]
-            },
-            mushroomZombie: {
-                name: 'Mushroom Zombie',
-                hp: 28,
-                maxHp: 28,
-                pp: 0,
-                attack: 5,
-                defense: 3,
-                speed: 2,
-                exp: 14,
-                money: 8,
-                color: '#8B008B',
-                sprite: 'mushroom',
-                attacks: [
-                    { name: 'Spore Burst', power: 1.5, type: 'magical' },
-                    { name: 'Fungal Grab', power: 1.2, type: 'physical' }
-                ]
-            },
-            shadowStudent: {
-                name: 'Shadow Student',
-                hp: 35,
-                maxHp: 35,
-                pp: 15,
-                attack: 6,
-                defense: 4,
-                speed: 5,
-                exp: 20,
-                money: 20,
-                color: '#2F4F4F',
-                sprite: 'shadow',
-                attacks: [
-                    { name: 'Debt Collector', power: 1.7, type: 'magical' },
-                    { name: 'Student Loan', power: 1.5, type: 'physical' }
-                ]
-            }
+            laundryGoblin: { name: 'Laundry Goblin', hp: 15, maxHp: 15, pp: 0, attack: 3, defense: 1, speed: 5, exp: 5, money: 5, color: '#808080', sprite: 'laundry', attacks: [{ name: 'Sock Attack', power: 1, type: 'physical' }, { name: 'Static Cling', power: 1.2, type: 'physical' }] },
+            microwaveWraith: { name: 'Microwave Wraith', hp: 20, maxHp: 20, pp: 5, attack: 4, defense: 2, speed: 6, exp: 8, money: 8, color: '#C0C0C0', sprite: 'microwave', attacks: [{ name: 'Hot Pocket', power: 1.5, type: 'magical' }, { name: 'Radiation', power: 1, type: 'physical' }] },
+            textbookTitan: { name: 'Textbook Titan', hp: 25, maxHp: 25, pp: 10, attack: 5, defense: 3, speed: 4, exp: 12, money: 12, color: '#8B0000', sprite: 'textbook', attacks: [{ name: 'Knowledge Drop', power: 1.3, type: 'magical' }, { name: 'Paper Cut', power: 1.4, type: 'physical' }] },
+            coffeeGolem: { name: 'Coffee Golem', hp: 30, maxHp: 30, pp: 15, attack: 6, defense: 4, speed: 3, exp: 15, money: 15, color: '#6B4423', sprite: 'coffee', attacks: [{ name: 'Caffeine Rush', power: 1.6, type: 'magical' }, { name: 'Hot Splash', power: 1.2, type: 'physical' }] },
+            showerMold: { name: 'Shower Mold', hp: 18, maxHp: 18, pp: 0, attack: 3, defense: 2, speed: 2, exp: 7, money: 3, color: '#556B2F', sprite: 'mold', attacks: [{ name: 'Spore Cloud', power: 1.1, type: 'physical' }, { name: 'Slimy Touch', power: 1.3, type: 'physical' }] },
+            forestImp: { name: 'Forest Imp', hp: 22, maxHp: 22, pp: 8, attack: 4, defense: 2, speed: 7, exp: 10, money: 10, color: '#228B22', sprite: 'imp', attacks: [{ name: 'Branch Whip', power: 1.3, type: 'physical' }, { name: 'Leaf Storm', power: 1.4, type: 'magical' }] },
+            mushroomZombie: { name: 'Mushroom Zombie', hp: 28, maxHp: 28, pp: 0, attack: 5, defense: 3, speed: 2, exp: 14, money: 8, color: '#8B008B', sprite: 'mushroom', attacks: [{ name: 'Spore Burst', power: 1.5, type: 'magical' }, { name: 'Fungal Grab', power: 1.2, type: 'physical' }] },
+            shadowStudent: { name: 'Shadow Student', hp: 35, maxHp: 35, pp: 15, attack: 6, defense: 4, speed: 5, exp: 20, money: 20, color: '#2F4F4F', sprite: 'shadow', attacks: [{ name: 'Debt Collector', power: 1.7, type: 'magical' }, { name: 'Student Loan', power: 1.5, type: 'physical' }] }
         };
         
-        // Psychic abilities
         const psychicAbilities = {
-            coffeeBreak: {
-                name: 'Coffee Break',
-                cost: 5,
-                power: 1.8,
-                type: 'magical',
-                description: 'Channel caffeine into psychic damage'
-            },
-            allNighter: {
-                name: 'All-Nighter',
-                cost: 8,
-                power: 2.2,
-                type: 'magical',
-                description: 'Unleash the power of sleep deprivation'
-            },
-            ramenHeal: {
-                name: 'Ramen Break',
-                cost: 5,
-                power: 0,
-                type: 'healing',
-                healAmount: 30,
-                description: 'Restore HP with instant noodles'
-            },
-            bekahHeal: {
-                name: 'Bekah\'s Kindness',
-                cost: 5,
-                power: 0,
-                type: 'healing',
-                healAmount: 25,
-                description: 'Bekah uses her psychic kindness to heal'
-            }
+            coffeeBreak: { name: 'Coffee Break', cost: 5, power: 1.8, type: 'magical', description: 'Channel caffeine into psychic damage' },
+            allNighter: { name: 'All-Nighter', cost: 8, power: 2.2, type: 'magical', description: 'Unleash the power of sleep deprivation' },
+            ramenHeal: { name: 'Ramen Break', cost: 5, power: 0, type: 'healing', healAmount: 30, description: 'Restore HP with instant noodles' },
+            bekahHeal: { name: 'Bekah\'s Kindness', cost: 5, power: 0, type: 'healing', healAmount: 25, description: 'Bekah uses her psychic kindness to heal' }
         };
         
-        // Map data
         const maps = {};
         
-        // Initialize maps
         function initMaps() {
-            maps.room303 = {
-                width: 40,
-                height: 30,
-                tileSize: 20,
-                collisionMap: [],
-                npcs: [],
-                objects: [],
-                exits: [],
-                backgroundColor: '#2d1b4e',
-                floorColor: '#8B7355',
-                wallColor: '#4A4A4A',
-                enemies: []
-            };
-            
-            maps.closet = {
-                width: 30,
-                height: 30,
-                tileSize: 20,
-                collisionMap: [],
-                npcs: [],
-                objects: [],
-                exits: [],
-                backgroundColor: '#1a0a2e',
-                floorColor: '#6B5B45',
-                wallColor: '#3A2A1A',
-                enemies: ['laundryGoblin', 'microwaveWraith', 'showerMold']
-            };
-            
-            maps.darkForest = {
-                width: 50,
-                height: 40,
-                tileSize: 20,
-                collisionMap: [],
-                npcs: [],
-                objects: [],
-                exits: [],
-                backgroundColor: '#0a1a0a',
-                floorColor: '#1a3a1a',
-                wallColor: '#0a2a0a',
-                enemies: ['forestImp', 'mushroomZombie', 'shadowStudent', 'laundryGoblin']
-            };
+            maps.room303 = { width: 40, height: 30, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#2d1b4e', floorColor: '#8B7355', wallColor: '#4A4A4A', enemies: [] };
+            maps.closet = { width: 30, height: 30, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a0a2e', floorColor: '#6B5B45', wallColor: '#3A2A1A', enemies: ['laundryGoblin', 'microwaveWraith', 'showerMold'] };
+            maps.darkForest = { width: 50, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#0a1a0a', floorColor: '#1a3a1a', wallColor: '#0a2a0a', enemies: ['forestImp', 'mushroomZombie', 'shadowStudent', 'laundryGoblin'] };
             
             generateRoom303();
             generateCloset();
             generateDarkForest();
         }
         
-        // Generate Room 303 map
         function generateRoom303() {
             const map = maps.room303;
             map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
@@ -977,28 +653,19 @@
             
             map.collisionMap[map.height - 1][20] = 0;
             map.collisionMap[map.height - 2][20] = 0;
-            
             map.collisionMap[8][map.width - 1] = 0;
             map.collisionMap[9][map.width - 1] = 0;
             map.collisionMap[8][map.width - 2] = 0;
             map.collisionMap[9][map.width - 2] = 0;
             
             for (let y = 5; y < 10; y++) {
-                for (let x = 5; x < 12; x++) {
-                    map.collisionMap[y][x] = 1;
-                }
+                for (let x = 5; x < 12; x++) map.collisionMap[y][x] = 1;
             }
-            
             for (let y = 15; y < 18; y++) {
-                for (let x = 25; x < 32; x++) {
-                    map.collisionMap[y][x] = 1;
-                }
+                for (let x = 25; x < 32; x++) map.collisionMap[y][x] = 1;
             }
-            
             for (let y = 5; y < 12; y++) {
-                for (let x = 30; x < 33; x++) {
-                    map.collisionMap[y][x] = 1;
-                }
+                for (let x = 30; x < 33; x++) map.collisionMap[y][x] = 1;
             }
             
             map.objects = [
@@ -1008,33 +675,14 @@
             ];
             
             map.npcs = [
-                { 
-                    x: 22, 
-                    y: 10, 
-                    name: 'Izzy', 
-                    sprite: 'izzy',
-                    dialogue: [
-                        "IZZY: *muffled screams from the closet*",
-                        "IZZY: HELP! Something dragged me in here!",
-                        "IZZY: It's so dark... and cold... PLEASE HURRY!"
-                    ],
-                    interactionType: 'izzy'
-                }
+                { x: 22, y: 10, name: 'Izzy', sprite: 'izzy', dialogue: ["IZZY: *muffled screams from the closet*", "IZZY: HELP! Something dragged me in here!", "IZZY: It's so dark... and cold... PLEASE HURRY!"], interactionType: 'izzy' }
             ];
             
             map.exits = [
-                { 
-                    x: 39, 
-                    y: 8, 
-                    targetArea: 'closet', 
-                    targetX: 1, 
-                    targetY: 15,
-                    transitionText: 'You open the closet door...'
-                }
+                { x: 39, y: 8, targetArea: 'closet', targetX: 1, targetY: 15, transitionText: 'You open the closet door...' }
             ];
         }
         
-        // Generate Closet map
         function generateCloset() {
             const map = maps.closet;
             map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
@@ -1055,16 +703,12 @@
                 map.collisionMap[y][10] = 1;
                 map.collisionMap[y][11] = 1;
             }
-            
             for (let y = 20; y < 25; y++) {
                 map.collisionMap[y][15] = 1;
                 map.collisionMap[y][16] = 1;
             }
-            
             for (let y = 24; y < 28; y++) {
-                for (let x = 24; x < 28; x++) {
-                    map.collisionMap[y][x] = 1;
-                }
+                for (let x = 24; x < 28; x++) map.collisionMap[y][x] = 1;
             }
             
             map.collisionMap[14][14] = 0;
@@ -1076,39 +720,16 @@
                 { x: 10, y: 5, type: 'clothes', name: 'Old Clothes', description: 'Dusty clothes from students long gone...' },
                 { x: 15, y: 22, type: 'clothes', name: 'Winter Coat', description: 'A heavy winter coat. It smells like mothballs.' },
                 { x: 25, y: 26, type: 'boxes', name: 'Cardboard Boxes', description: 'Old moving boxes. One says "FRAGILE" but it\'s been opened.', itemDrop: 'ramen' },
-                {
-                    x: 14,
-                    y: 14,
-                    type: 'portal',
-                    name: 'Strange Portal',
-                    description: 'A swirling vortex of purple energy. This must be where Izzy was taken!',
-                    interactionType: 'portal'
-                }
+                { x: 14, y: 14, type: 'portal', name: 'Strange Portal', description: 'A swirling vortex of purple energy. This must be where Izzy was taken!', interactionType: 'portal' }
             ];
             
             map.npcs = [];
             
             map.exits = [
-                { 
-                    x: 0, 
-                    y: 15, 
-                    targetArea: 'room303', 
-                    targetX: 38, 
-                    targetY: 8,
-                    transitionText: 'You step back into your room...'
-                },
-                { 
-                    x: 14, 
-                    y: 14, 
-                    targetArea: 'darkForest', 
-                    targetX: 25, 
-                    targetY: 38,
-                    transitionText: 'You jump through the portal...'
-                }
+                { x: 0, y: 15, targetArea: 'room303', targetX: 38, targetY: 8, transitionText: 'You step back into your room...' }
             ];
         }
         
-        // Generate Dark Forest map
         function generateDarkForest() {
             const map = maps.darkForest;
             map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
@@ -1139,9 +760,7 @@
                 map.collisionMap[y + 1][x + 1] = 1;
             });
             
-            for (let y = 35; y < 40; y++) {
-                map.collisionMap[y][25] = 0;
-            }
+            for (let y = 35; y < 40; y++) map.collisionMap[y][25] = 0;
             
             map.collisionMap[5][24] = 1;
             map.collisionMap[5][25] = 1;
@@ -1157,43 +776,15 @@
             ];
             
             map.npcs = [
-                {
-                    x: 40,
-                    y: 35,
-                    name: 'Bekah',
-                    sprite: 'bekah',
-                    dialogue: [
-                        "BEKAH: Help! I'm trapped under these roots!",
-                        "BEKAH: Those shadow creatures dragged me here...",
-                        "BEKAH: Can you help me get free?",
-                        "BEKAH: Thank you! I'll join you to find Izzy!",
-                        "BEKAH: I'm good with PSI abilities. Let me help!"
-                    ],
-                    interactionType: 'bekah'
-                }
+                { x: 40, y: 35, name: 'Bekah', sprite: 'bekah', dialogue: ["BEKAH: Help! I'm trapped under these roots!", "BEKAH: Those shadow creatures dragged me here...", "BEKAH: Can you help me get free?", "BEKAH: Thank you! I'll join you to find Izzy!", "BEKAH: I'm good with PSI abilities. Let me help!"], interactionType: 'bekah' }
             ];
             
             map.exits = [
-                { 
-                    x: 25, 
-                    y: 39, 
-                    targetArea: 'closet', 
-                    targetX: 14, 
-                    targetY: 14,
-                    transitionText: 'You return through the portal...'
-                },
-                { 
-                    x: 25, 
-                    y: 4, 
-                    targetArea: 'graveyard', 
-                    targetX: 25, 
-                    targetY: 35,
-                    transitionText: 'You unlock the gate and enter the graveyard...'
-                }
+                { x: 25, y: 39, targetArea: 'closet', targetX: 14, targetY: 14, transitionText: 'You return through the portal...' },
+                { x: 25, y: 4, targetArea: 'graveyard', targetX: 25, targetY: 35, transitionText: 'You unlock the gate and enter the graveyard...' }
             ];
         }
         
-        // Initialize game
         function initGame() {
             const characterData = localStorage.getItem('johnNeumaierCharacter');
             
@@ -1204,7 +795,6 @@
             
             const charData = JSON.parse(characterData);
             
-            // Set protagonist party member
             gameState.party[0] = {
                 ...gameState.party[0],
                 name: charData.name || 'PROTAGONIST',
@@ -1216,13 +806,9 @@
             
             gameState.character = gameState.party[0];
             
-            // Initialize inventory
-            if (!charData.inventory) {
-                charData.inventory = [];
-            }
+            if (!charData.inventory) charData.inventory = [];
             gameState.inventory = charData.inventory;
             
-            // Give starting items
             if (gameState.inventory.length === 0) {
                 addItem('ramen', 2);
                 addItem('coffee', 1);
@@ -1238,24 +824,17 @@
             }, 2000);
         }
         
-        // Add item to inventory
         function addItem(itemId, quantity = 1) {
             const existingItem = gameState.inventory.find(item => item.id === itemId);
-            
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                gameState.inventory.push({
-                    id: itemId,
-                    quantity: quantity
-                });
+                gameState.inventory.push({ id: itemId, quantity: quantity });
             }
         }
         
-        // Remove item from inventory
         function removeItem(itemId, quantity = 1) {
             const itemIndex = gameState.inventory.findIndex(item => item.id === itemId);
-            
             if (itemIndex !== -1) {
                 gameState.inventory[itemIndex].quantity -= quantity;
                 if (gameState.inventory[itemIndex].quantity <= 0) {
@@ -1264,21 +843,18 @@
             }
         }
         
-        // Check if player has item
         function hasItem(itemId) {
             return gameState.inventory.some(item => item.id === itemId);
         }
         
-        // Get item quantity
         function getItemQuantity(itemId) {
             const item = gameState.inventory.find(item => item.id === itemId);
             return item ? item.quantity : 0;
         }
         
-        // Use item
         function useItem(itemId, targetPartyMember = null) {
             const itemData = items[itemId];
-            const target = targetPartyMember || gameState.combat.activePartyMember;
+            const target = targetPartyMember !== null ? targetPartyMember : gameState.combat.activePartyMember;
             const partyMember = gameState.party[target];
             
             if (!itemData || !itemData.usable) return false;
@@ -1300,18 +876,14 @@
             return false;
         }
         
-        // Equip weapon
         function equipWeapon(itemId) {
             const itemData = items[itemId];
-            
             if (!itemData || itemData.type !== 'weapon') return;
-            
             gameState.equippedWeapon = itemId;
             gameState.party[0].attack = 5 + itemData.attackBonus;
             updateHUD();
         }
         
-        // Show inventory screen
         function showInventory() {
             document.getElementById('gameMenu').classList.remove('active');
             gameState.paused = true;
@@ -1320,30 +892,22 @@
             updateInventoryDisplay();
         }
         
-        // Close inventory
         function closeInventory() {
             document.getElementById('inventoryScreen').classList.remove('active');
             gameState.paused = false;
         }
         
-        // Switch inventory tab
         function switchInventoryTab(tab, button) {
             gameState.inventoryTab = tab;
             gameState.selectedItem = null;
-            
-            document.querySelectorAll('.inventory-tab').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.inventory-tab').forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-            
             updateInventoryDisplay();
         }
         
-        // Update inventory display
         function updateInventoryDisplay() {
             const listElement = document.getElementById('inventoryList');
             const moneyElement = document.getElementById('inventoryMoney');
-            
             moneyElement.textContent = gameState.party[0].money || 0;
             listElement.innerHTML = '';
             
@@ -1351,19 +915,13 @@
             
             switch(gameState.inventoryTab) {
                 case 'items':
-                    displayItems = gameState.inventory.filter(item => 
-                        items[item.id].type === 'item'
-                    );
+                    displayItems = gameState.inventory.filter(item => items[item.id].type === 'item');
                     break;
                 case 'weapons':
-                    displayItems = gameState.inventory.filter(item => 
-                        items[item.id].type === 'weapon'
-                    );
+                    displayItems = gameState.inventory.filter(item => items[item.id].type === 'weapon');
                     break;
                 case 'keyItems':
-                    displayItems = gameState.inventory.filter(item => 
-                        items[item.id].type === 'keyItem'
-                    );
+                    displayItems = gameState.inventory.filter(item => items[item.id].type === 'keyItem');
                     break;
             }
             
@@ -1376,10 +934,7 @@
                 const itemData = items[item.id];
                 const itemElement = document.createElement('div');
                 itemElement.className = 'inventory-item';
-                
-                if (gameState.selectedItem === item.id) {
-                    itemElement.classList.add('selected');
-                }
+                if (gameState.selectedItem === item.id) itemElement.classList.add('selected');
                 
                 itemElement.innerHTML = `
                     <div>
@@ -1389,15 +944,11 @@
                     <div class="item-quantity">x${item.quantity}</div>
                 `;
                 
-                itemElement.addEventListener('click', () => {
-                    selectInventoryItem(item.id);
-                });
-                
+                itemElement.addEventListener('click', () => selectInventoryItem(item.id));
                 listElement.appendChild(itemElement);
             });
         }
         
-        // Select inventory item
         function selectInventoryItem(itemId) {
             gameState.selectedItem = itemId;
             updateInventoryDisplay();
@@ -1416,16 +967,13 @@
             }
         }
         
-        // Show item menu in combat
         function showItemMenu() {
             if (gameState.combat.turn !== 'player') return;
             
             const itemMenu = document.getElementById('itemMenu');
             itemMenu.innerHTML = '';
             
-            const usableItems = gameState.inventory.filter(item => 
-                items[item.id].type === 'item' && items[item.id].usable
-            );
+            const usableItems = gameState.inventory.filter(item => items[item.id].type === 'item' && items[item.id].usable);
             
             if (usableItems.length === 0) {
                 showCombatMessage('No usable items!');
@@ -1465,7 +1013,6 @@
             itemMenu.classList.add('active');
         }
         
-        // Game loop
         function gameLoop() {
             if (!gameState.paused && !gameState.inDialogue && !gameState.combat.active) {
                 updatePlayer();
@@ -1473,14 +1020,11 @@
                 checkRandomEncounter();
                 renderGame();
             }
-            
             requestAnimationFrame(gameLoop);
         }
         
-        // Check for random encounters
         function checkRandomEncounter() {
             const map = maps[gameState.currentArea];
-            
             if (map.enemies && map.enemies.length > 0 && gameState.player.moving) {
                 if (Math.random() < gameState.combat.enemyEncounterChance) {
                     const randomEnemy = map.enemies[Math.floor(Math.random() * map.enemies.length)];
@@ -1489,7 +1033,6 @@
             }
         }
         
-        // Start combat
         function startCombat(enemyType) {
             gameState.combat.active = true;
             gameState.combat.turn = 'player';
@@ -1504,29 +1047,25 @@
             
             drawCombatEnemy();
             updateCombatPartyDisplay();
-            
             showCombatMessage(`${gameState.combat.enemy.name} attacks!`);
         }
         
-        // Update combat party display
         function updateCombatPartyDisplay() {
             const partyArea = document.getElementById('combatPartyArea');
             partyArea.innerHTML = '';
             
             gameState.party.forEach((member, index) => {
+                if (member.hp <= 0) return;
+                
                 const memberElement = document.createElement('div');
                 memberElement.className = 'combat-party-member';
-                
-                if (index === gameState.combat.activePartyMember) {
-                    memberElement.classList.add('active');
-                }
+                if (index === gameState.combat.activePartyMember) memberElement.classList.add('active');
                 
                 const canvas = document.createElement('canvas');
                 canvas.className = 'combat-player';
                 canvas.width = 50;
                 canvas.height = 50;
                 
-                // Draw party member
                 const ctx = canvas.getContext('2d');
                 ctx.fillStyle = member.shirtColor;
                 ctx.fillRect(5, 15, 40, 35);
@@ -1558,7 +1097,6 @@
             });
         }
         
-        // Draw combat enemy
         function drawCombatEnemy() {
             const canvas = document.getElementById('combatEnemyCanvas');
             const ctx = canvas.getContext('2d');
@@ -1647,7 +1185,6 @@
             }
         }
         
-        // Show combat message
         function showCombatMessage(message) {
             const messageDiv = document.getElementById('combatMessage');
             const messageText = document.getElementById('combatMessageText');
@@ -1660,20 +1197,17 @@
             }, 1500);
         }
         
-        // Show PSI menu
         function showPSIMenu() {
             if (gameState.combat.turn !== 'player') return;
             document.getElementById('combatMenu').style.display = 'none';
             document.getElementById('psiMenu').classList.add('active');
         }
         
-        // Hide PSI menu
         function hidePSIMenu() {
             document.getElementById('combatMenu').style.display = 'flex';
             document.getElementById('psiMenu').classList.remove('active');
         }
         
-        // Player actions
         function playerAttack() {
             if (gameState.combat.turn !== 'player') return;
             
@@ -1706,7 +1240,6 @@
             }
         }
         
-        // Psychic abilities
         function useCoffeeBreak() {
             if (gameState.combat.turn !== 'player') return;
             
@@ -1810,11 +1343,9 @@
             }
         }
         
-        // Enemy turn
         function enemyTurn() {
             const enemy = gameState.combat.enemy;
             
-            // Enemy attacks random party member
             const alivePartyMembers = gameState.party.filter(member => member.hp > 0);
             if (alivePartyMembers.length === 0) {
                 endCombat(false);
@@ -1837,14 +1368,12 @@
             
             showCombatMessage(`${enemy.name} uses ${attack.name} on ${target.name}! ${damage} damage!`);
             
-            // Check if all party members are defeated
             const allDefeated = gameState.party.every(member => member.hp <= 0);
             
             if (allDefeated) {
                 endCombat(false);
                 showCombatMessage('Your party is defeated...');
                 setTimeout(() => {
-                    // Revive party
                     gameState.party.forEach(member => {
                         member.hp = member.maxHp;
                         member.pp = member.maxPp;
@@ -1859,7 +1388,6 @@
             }
         }
         
-        // End combat
         function endCombat(victory) {
             gameState.combat.active = false;
             document.getElementById('combatScreen').classList.remove('active');
@@ -1867,7 +1395,6 @@
             if (victory) {
                 const enemy = gameState.combat.enemy;
                 
-                // Give EXP and money to all alive party members
                 gameState.party.forEach(member => {
                     if (member.hp > 0) {
                         member.exp += enemy.exp;
@@ -1894,7 +1421,6 @@
             }
         }
         
-        // Update player position
         function updatePlayer() {
             const map = maps[gameState.currentArea];
             const player = gameState.player;
@@ -1902,48 +1428,28 @@
             let dx = 0;
             let dy = 0;
             
-            if (gameState.keys.up) {
-                dy = -player.speed;
-                player.direction = 'up';
-            }
-            if (gameState.keys.down) {
-                dy = player.speed;
-                player.direction = 'down';
-            }
-            if (gameState.keys.left) {
-                dx = -player.speed;
-                player.direction = 'left';
-            }
-            if (gameState.keys.right) {
-                dx = player.speed;
-                player.direction = 'right';
-            }
+            if (gameState.keys.up) { dy = -player.speed; player.direction = 'up'; }
+            if (gameState.keys.down) { dy = player.speed; player.direction = 'down'; }
+            if (gameState.keys.left) { dx = -player.speed; player.direction = 'left'; }
+            if (gameState.keys.right) { dx = player.speed; player.direction = 'right'; }
             
             player.moving = dx !== 0 || dy !== 0;
             
-            if (dx !== 0 && canMove(player.x + dx, player.y, map)) {
-                player.x += dx;
-            }
-            if (dy !== 0 && canMove(player.x, player.y + dy, map)) {
-                player.y += dy;
-            }
+            if (dx !== 0 && canMove(player.x + dx, player.y, map)) player.x += dx;
+            if (dy !== 0 && canMove(player.x, player.y + dy, map)) player.y += dy;
             
             checkAreaTransition();
         }
         
-        // Check if player can move to position
         function canMove(x, y, map) {
             const tileX = Math.floor(x / map.tileSize);
             const tileY = Math.floor(y / map.tileSize);
             
-            if (tileX < 0 || tileX >= map.width || tileY < 0 || tileY >= map.height) {
-                return false;
-            }
+            if (tileX < 0 || tileX >= map.width || tileY < 0 || tileY >= map.height) return false;
             
             return map.collisionMap[tileY][tileX] === 0;
         }
         
-        // Check for area transitions
         function checkAreaTransition() {
             const map = maps[gameState.currentArea];
             const player = gameState.player;
@@ -1971,7 +1477,6 @@
             });
         }
         
-        // Transition with dialogue
         function transitionWithDialogue(exit) {
             gameState.inDialogue = true;
             gameState.dialogueQueue = [
@@ -1982,7 +1487,6 @@
             gameState.pendingExit = exit;
         }
         
-        // Transition to new area
         function transitionArea(areaId, targetX, targetY) {
             gameState.currentArea = areaId;
             gameState.player.x = targetX * maps[areaId].tileSize;
@@ -2013,7 +1517,6 @@
             }
         }
         
-        // Check for interactions
         function checkInteractions() {
             const map = maps[gameState.currentArea];
             const player = gameState.player;
@@ -2028,9 +1531,7 @@
                 if (Math.abs(player.x - npcX) < interactRange &&
                     Math.abs(player.y - npcY) < interactRange) {
                     nearInteraction = true;
-                    if (gameState.keys.interact) {
-                        interactWithNPC(npc);
-                    }
+                    if (gameState.keys.interact) interactWithNPC(npc);
                 }
             });
             
@@ -2041,9 +1542,7 @@
                 if (Math.abs(player.x - objX) < interactRange &&
                     Math.abs(player.y - objY) < interactRange) {
                     nearInteraction = true;
-                    if (gameState.keys.interact) {
-                        interactWithObject(obj);
-                    }
+                    if (gameState.keys.interact) interactWithObject(obj);
                 }
             });
             
@@ -2055,7 +1554,6 @@
             }
         }
         
-        // Interact with NPC
         function interactWithNPC(npc) {
             gameState.keys.interact = false;
             
@@ -2078,7 +1576,6 @@
             }
         }
         
-        // Interact with object
         function interactWithObject(obj) {
             gameState.keys.interact = false;
             
@@ -2086,33 +1583,37 @@
                 gameState.dialogueQueue = [
                     "The portal swirls with dark energy...",
                     "You can hear Izzy's voice echoing from within...",
-                    "This must be the entrance to the Dark Wonderland Forest."
+                    "This must be the entrance to the Dark Wonderland Forest.",
+                    "You step through the portal..."
                 ];
-                if (gameState.dialogueQueue.length > 0) {
-                    gameState.dialogueQueue.push(null);
-                    gameState.pendingExit = {
-                        targetArea: 'darkForest',
-                        targetX: 25,
-                        targetY: 38
-                    };
-                }
+                
+                gameState.pendingExit = {
+                    targetArea: 'darkForest',
+                    targetX: 25,
+                    targetY: 38
+                };
+                
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'returnPortal') {
                 gameState.dialogueQueue = [
                     "A portal back to the closet.",
-                    "Are you sure you want to go back?"
+                    "You step through the portal..."
                 ];
-                gameState.dialogueQueue.push(null);
+                
                 gameState.pendingExit = {
                     targetArea: 'closet',
                     targetX: 14,
                     targetY: 14
                 };
+                
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'note') {
                 gameState.dialogueQueue = [
                     "You find a torn note...",
                     "\"The key is hidden where the mushrooms glow...\"",
                     "You should look for glowing mushrooms!"
                 ];
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'forestKey') {
                 if (!hasItem('forestKey')) {
                     gameState.flags.foundForestKey = true;
@@ -2126,6 +1627,7 @@
                         "You already have the Forest Key."
                     ];
                 }
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'gate') {
                 if (gameState.flags.foundForestKey || hasItem('forestKey')) {
                     gameState.flags.openedForestGate = true;
@@ -2140,6 +1642,7 @@
                         "You need to find the key..."
                     ];
                 }
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.itemDrop) {
                 if (!hasItem(obj.itemDrop)) {
                     addItem(obj.itemDrop);
@@ -2153,14 +1656,13 @@
                         `${obj.name}: ${obj.description}`
                     ];
                 }
+                showDialogue(gameState.dialogueQueue.shift());
             } else {
                 gameState.dialogueQueue = [`${obj.name}: ${obj.description}`];
+                showDialogue(gameState.dialogueQueue.shift());
             }
-            
-            showDialogue(gameState.dialogueQueue.shift());
         }
         
-        // Render game
         function renderGame() {
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
@@ -2189,18 +1691,11 @@
                 }
             }
             
-            map.objects.forEach(obj => {
-                drawObject(ctx, obj, map.tileSize);
-            });
-            
-            map.npcs.forEach(npc => {
-                drawNPC(ctx, npc, map.tileSize);
-            });
-            
+            map.objects.forEach(obj => drawObject(ctx, obj, map.tileSize));
+            map.npcs.forEach(npc => drawNPC(ctx, npc, map.tileSize));
             drawPlayer(ctx);
         }
         
-        // Draw floor tile
         function drawFloorTile(ctx, x, y, size, color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, size, size);
@@ -2208,7 +1703,6 @@
             ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
         }
         
-        // Draw wall tile
         function drawWallTile(ctx, x, y, size, color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, size, size);
@@ -2221,7 +1715,6 @@
             ctx.stroke();
         }
         
-        // Draw tree tile
         function drawTreeTile(ctx, x, y, size) {
             ctx.fillStyle = '#0a2a0a';
             ctx.fillRect(x, y, size, size);
@@ -2235,7 +1728,6 @@
             ctx.fill();
         }
         
-        // Draw objects
         function drawObject(ctx, obj, tileSize) {
             const x = obj.x * tileSize;
             const y = obj.y * tileSize;
@@ -2321,7 +1813,6 @@
             }
         }
         
-        // Draw NPCs
         function drawNPC(ctx, npc, tileSize) {
             const x = npc.x * tileSize;
             const y = npc.y * tileSize;
@@ -2347,7 +1838,6 @@
             }
         }
         
-        // Draw player
         function drawPlayer(ctx) {
             const player = gameState.player;
             const tileSize = maps[gameState.currentArea].tileSize;
@@ -2372,7 +1862,6 @@
             ctx.fillRect(player.x + 12, player.y + tileSize - 5, 5, 5);
         }
         
-        // Update HUD
         function updateHUD() {
             const partyLeader = gameState.party[0];
             document.getElementById('hudName').textContent = partyLeader.name;
@@ -2384,7 +1873,6 @@
             document.getElementById('hudLocation').textContent = getLocationName(gameState.currentArea);
         }
         
-        // Get location name
         function getLocationName(areaId) {
             const locations = {
                 'room303': 'Room 303',
@@ -2399,7 +1887,6 @@
             return locations[areaId] || 'Unknown';
         }
         
-        // Dialogue system
         function showDialogue(text) {
             gameState.inDialogue = true;
             document.getElementById('dialogueText').textContent = text;
@@ -2412,17 +1899,16 @@
             
             if (gameState.dialogueQueue.length > 0) {
                 const nextDialogue = gameState.dialogueQueue.shift();
-                if (nextDialogue === null && gameState.pendingExit) {
-                    const exit = gameState.pendingExit;
-                    gameState.pendingExit = null;
-                    transitionArea(exit.targetArea, exit.targetX, exit.targetY);
-                } else if (nextDialogue) {
+                if (nextDialogue) {
                     setTimeout(() => showDialogue(nextDialogue), 500);
                 }
+            } else if (gameState.pendingExit) {
+                const exit = gameState.pendingExit;
+                gameState.pendingExit = null;
+                transitionArea(exit.targetArea, exit.targetX, exit.targetY);
             }
         }
         
-        // Opening scene
         function startOpeningScene() {
             const char = gameState.party[0];
             
@@ -2438,7 +1924,6 @@
             showDialogue(gameState.dialogueQueue.shift());
         }
         
-        // Menu functions
         function toggleMenu() {
             const menu = document.getElementById('gameMenu');
             menu.classList.toggle('active');
@@ -2460,7 +1945,6 @@
             }
         }
         
-        // Event listeners
         document.addEventListener('keydown', (e) => {
             switch(e.key.toLowerCase()) {
                 case 'arrowup':
@@ -2531,7 +2015,6 @@
             }
         });
         
-        // Start the game
         initGame();
     </script>
 </body>
