@@ -3,826 +3,585 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Living Curriculum | Rebuilding American Education</title>
+    <title>JN Wonderland - Character Creation</title>
     <style>
+        /* ========== GLOBAL PIXEL STYLE ========== */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #2A5C7D;
-            --secondary: #4A9B6E;
-            --accent: #E6B85C;
-            --highlight: #C44545;
-            --light: #F7F9FC;
-            --dark: #2E4053;
-            --gradient: linear-gradient(135deg, #2A5C7D 0%, #4A9B6E 100%);
-            --special-ed: #9B59B6;
-        }
-
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        /* Consistent Navigation */
-        .navbar {
-            background: rgba(255,255,255,0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
+            background: #0a0a0a;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            font-family: 'Press Start 2P', monospace;
+            image-rendering: pixelated;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* ========== MAIN GAME CONTAINER ========== */
+        .game-container {
+            background: #1a1a2e;
+            border: 6px solid #4a4a6a;
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(100, 50, 200, 0.3);
+            position: relative;
         }
 
-        .nav-menu {
+        /* ========== HEADER ========== */
+        .game-title {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 20px;
+            letter-spacing: 4px;
+            text-shadow: 4px 4px 0 #2d2d4a;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 4px solid #4a4a6a;
+        }
+
+        .game-title span {
+            color: #ffd93d;
+        }
+
+        /* ========== MAIN LAYOUT ========== */
+        .stat-layout {
             display: flex;
-            list-style: none;
-            gap: 1.5rem;
+            flex-direction: row;
+            gap: 30px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        .nav-menu a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: all 0.3s;
-            padding: 0.5rem 0;
+        /* ========== LEFT: CHARACTER DISPLAY ========== */
+        .character-display {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            background: #12121f;
+            border: 4px solid #3a3a5a;
+            padding: 20px;
+        }
+
+        .character-pixel {
+            width: 160px;
+            height: 200px;
+            margin: 0 auto 15px;
+            background: #1a1a2e;
+            border: 3px solid #4a4a6a;
             position: relative;
+            image-rendering: pixelated;
         }
 
-        .nav-menu a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gradient);
-            transition: width 0.3s;
-        }
-
-        .nav-menu a:hover::after,
-        .nav-menu a.active::after {
+        /* ========== PIXEL CHARACTER SPRITE ========== */
+        /* Base body - changes with customization */
+        .pixel-sprite {
             width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            gap: 1px;
+            padding: 4px;
         }
 
-        .btn {
-            padding: 0.8rem 1.8rem;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: var(--gradient);
-            color: white;
-            box-shadow: 0 4px 15px rgba(42,92,125,0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(42,92,125,0.4);
-        }
-
-        .btn-secondary {
+        .pixel {
+            width: 100%;
+            height: 100%;
             background: transparent;
-            border: 2px solid white;
-            color: white;
         }
 
-        .btn-secondary:hover {
-            background: white;
-            color: var(--primary);
+        /* Skin tones */
+        .skin-light { background: #f5d0b8; }
+        .skin-medium { background: #d4a574; }
+        .skin-dark { background: #8d6b4b; }
+        .skin-olive { background: #c4a882; }
+
+        /* Hair colors */
+        .hair-blonde { background: #f5d742; }
+        .hair-brown { background: #8b6b4a; }
+        .hair-black { background: #2a2a2a; }
+        .hair-red { background: #c0392b; }
+        .hair-pink { background: #ff6b9d; }
+
+        /* Outfit colors */
+        .outfit-hoodie { background: #4a7a9c; }
+        .outfit-sweater { background: #8b5a2b; }
+        .outfit-jacket { background: #2d3d4a; }
+        .outfit-tshirt { background: #c0392b; }
+
+        /* Eyes (fixed) */
+        .eye-white { background: #f0f0f0; }
+        .eye-pupil { background: #1a1a2e; }
+
+        /* Mouth (fixed) */
+        .mouth { background: #8b6b4a; }
+
+        /* ========== CHARACTER NAME ========== */
+        .character-name {
+            color: #d4d4f0;
+            font-size: 12px;
+            margin-top: 10px;
+            background: #0a0a15;
+            padding: 8px;
+            border: 2px solid #3a3a5a;
         }
 
-        /* Hero Section */
-        .hero {
-            background: var(--gradient);
-            min-height: 90vh;
+        .character-name input {
+            background: transparent;
+            border: none;
+            color: #ffd93d;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            text-align: center;
+            width: 120px;
+            outline: none;
+        }
+
+        .character-name input::placeholder {
+            color: #4a4a6a;
+        }
+
+        /* ========== RIGHT: STATS ========== */
+        .stats-panel {
+            flex: 1;
+            min-width: 250px;
+            background: #12121f;
+            border: 4px solid #3a3a5a;
+            padding: 20px;
+        }
+
+        .stat-row {
             display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 2px solid #1a1a2e;
+            color: #c8c8e8;
+            font-size: 11px;
+        }
+
+        .stat-row .label {
+            color: #8888aa;
+        }
+
+        .stat-row .value {
+            color: #ffd93d;
+        }
+
+        .stat-row .value.hp {
+            color: #ff6b6b;
+        }
+        .stat-row .value.wonder {
+            color: #a29bfe;
+        }
+
+        /* ========== CUSTOMIZATION CONTROLS ========== */
+        .customization {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 4px solid #2a2a4a;
+        }
+
+        .custom-row {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-            margin-top: 70px;
+            margin: 6px 0;
+            color: #8888aa;
+            font-size: 9px;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><path d="M20 20 L80 20 L80 80 L20 80 Z" fill="none" stroke="white" stroke-width="2"/><circle cx="50" cy="50" r="10" fill="white"/></svg>');
-            background-size: 50px 50px;
-            animation: move 20s linear infinite;
-        }
-
-        @keyframes move {
-            0% { transform: translateX(0) translateY(0); }
-            100% { transform: translateX(50px) translateY(50px); }
-        }
-
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 1;
-            color: white;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 4.5rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 1s ease;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            animation: fadeInUp 1s ease 0.2s both;
-        }
-
-        .hero-buttons {
+        .custom-row .controls {
             display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 3rem;
-            animation: fadeInUp 1s ease 0.4s both;
+            gap: 8px;
         }
 
-        .callout-phrase {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 3rem 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: fadeInUp 1s ease 0.6s both;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Mission Section */
-        .mission-section {
-            padding: 6rem 2rem;
-            background: white;
-        }
-
-        .mission-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .mission-title {
-            font-size: 3rem;
-            color: var(--dark);
-            margin-bottom: 2rem;
-        }
-
-        .mission-statement {
-            font-size: 1.8rem;
-            font-weight: 300;
-            line-height: 1.5;
-            color: var(--primary);
-            margin-bottom: 3rem;
-            font-style: italic;
-        }
-
-        .mission-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-
-        .mission-card {
-            padding: 2rem;
-            background: var(--light);
-            border-radius: 20px;
-            transition: transform 0.3s;
-        }
-
-        .mission-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .mission-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        /* History Section */
-        .history-section {
-            padding: 6rem 2rem;
-            background: var(--light);
-        }
-
-        .history-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .history-title {
-            font-size: 3rem;
-            color: var(--dark);
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .history-timeline {
-            position: relative;
-            margin: 4rem 0;
-        }
-
-        .history-item {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .history-year {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--highlight);
-            min-width: 150px;
-        }
-
-        .history-content h3 {
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-
-        .history-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-
-        .stat-box {
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--highlight);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        .stat-source {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 0.5rem;
-        }
-
-        /* Special Education Section - NEW */
-        .special-ed-section {
-            padding: 6rem 2rem;
-            background: linear-gradient(135deg, #F3E8FF 0%, #E5D5FF 100%);
-        }
-
-        .special-ed-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .special-ed-title {
-            font-size: 3rem;
-            color: var(--dark);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .special-ed-subtitle {
-            font-size: 1.3rem;
-            text-align: center;
-            color: #555;
-            max-width: 800px;
-            margin: 0 auto 3rem;
-        }
-
-        .special-ed-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-
-        .special-ed-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-left: 5px solid var(--special-ed);
-            transition: transform 0.3s;
-        }
-
-        .special-ed-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .special-ed-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .special-ed-card h3 {
-            color: var(--special-ed);
-            margin-bottom: 1rem;
-        }
-
-        .special-ed-badge {
-            display: inline-block;
-            background: var(--special-ed);
-            color: white;
-            padding: 0.3rem 1rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            margin-top: 1rem;
-        }
-
-        /* Physical Education Section - NEW */
-        .pe-section {
-            padding: 6rem 2rem;
-            background: white;
-        }
-
-        .pe-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .pe-title {
-            font-size: 3rem;
-            color: var(--dark);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .pe-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .pe-card {
-            background: var(--light);
-            padding: 2rem;
-            border-radius: 20px;
-            text-align: center;
-            border-bottom: 5px solid var(--secondary);
-        }
-
-        .pe-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .pe-card h3 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Age Navigation Cards */
-        .age-nav-section {
-            padding: 4rem 2rem;
-            background: white;
-        }
-
-        .age-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .age-card {
-            background: var(--light);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s;
+        .custom-row .controls button {
+            background: #2a2a4a;
+            border: 2px solid #4a4a6a;
+            color: #d4d4f0;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            padding: 4px 12px;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .age-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        .custom-row .controls button:hover {
+            background: #4a4a7a;
+            border-color: #ffd93d;
         }
 
-        .age-range {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
+        .custom-row .controls button:active {
+            transform: scale(0.95);
         }
 
-        .age-name {
-            font-size: 1.2rem;
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--dark);
-            color: white;
-            padding: 4rem 2rem 2rem;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 3rem;
-        }
-
-        .footer-bottom {
+        .custom-row .current-value {
+            color: #ffd93d;
+            font-size: 9px;
+            min-width: 60px;
             text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .history-stats,
-            .mission-grid,
-            .special-ed-grid,
-            .pe-grid,
-            .age-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .history-item {
-                flex-direction: column;
-            }
+        /* ========== START BUTTON ========== */
+        .start-button {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            background: #2a2a4a;
+            border: 4px solid #4a4a6a;
+            color: #ffd93d;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 2px 2px 0 #1a1a2e;
+            letter-spacing: 2px;
+        }
+
+        .start-button:hover {
+            background: #4a4a7a;
+            border-color: #ffd93d;
+            box-shadow: 0 0 30px rgba(255, 217, 61, 0.2);
+        }
+
+        .start-button:active {
+            transform: scale(0.98);
+        }
+
+        /* ========== WONDERLAND CORRUPTION EFFECT ========== */
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { opacity: 1; transform: translate(0); }
+            92% { opacity: 0.8; transform: translate(-2px, 1px); }
+            94% { opacity: 1; transform: translate(2px, -1px); }
+            96% { opacity: 0.9; transform: translate(-1px, 2px); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 700px) {
+            .game-container { padding: 15px; }
+            .stat-layout { flex-direction: column; align-items: center; }
+            .character-display, .stats-panel { width: 100%; }
+            .game-title { font-size: 14px; }
         }
     </style>
 </head>
 <body>
-    <!-- Updated Navigation with Special Ed Tab -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">The Living Curriculum</div>
-            <ul class="nav-menu">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="infants.html">Infants (0-4)</a></li>
-                <li><a href="elementary.html">Elementary (5-10)</a></li>
-                <li><a href="middle.html">Middle (11-13)</a></li>
-                <li><a href="highschool.html">High (14-18)</a></li>
-                <li><a href="special-education.html">Special Education</a></li> <!-- NEW TAB -->
-                <li><a href="community.html">Community</a></li>
-            </ul>
-            <button class="btn btn-primary" onclick="openModal()">Join Movement</button>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>The American Dream Needs New Schools</h1>
-            <p>For over 40 years, we've watched our education system fail our children. Literacy rates plummet. Practical skills vanish. A generation that can't fix, can't grow, can't build. It's 2026, and the crisis continues.</p>
-            <div class="callout-phrase">🔥 WE NEED YOU TO HELP REBUILD OUR SCHOOLS 🔥</div>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="openModal()">Join the Rebuilding</button>
-                <a href="#history" class="btn btn-secondary">Learn the Truth</a>
+    <div class="game-container">
+        <!-- ===== TITLE ===== -->
+        <div class="game-title">
+            ⚠️ JOHN <span>NEUMAIER</span> WONDERLAND ⚠️
+            <div style="font-size: 9px; color: #6666aa; margin-top: 6px; letter-spacing: 0;">
+                ✦ room 303 is waiting ✦
             </div>
         </div>
-    </section>
 
-    <!-- Mission Statement -->
-    <section class="mission-section">
-        <div class="mission-container">
-            <h2 class="mission-title">Our Mission</h2>
-            <div class="mission-statement">
-                "To rebuild American education from the ground up - creating hands-on, minds-on learning that produces capable, thoughtful, innovative humans who can garden, cook, build, fix, calculate, question, and create. We're not reforming the old system. We're building a new one."
-            </div>
-            <div class="mission-grid">
-                <div class="mission-card">
-                    <div class="mission-icon">🔨</div>
-                    <h3>Hands First</h3>
-                    <p>Children learn by doing. Every concept is experienced before it's explained.</p>
-                </div>
-                <div class="mission-card">
-                    <div class="mission-icon">🌱</div>
-                    <h3>Life Ready</h3>
-                    <p>Every graduate can garden, cook, fix, budget, and think critically.</p>
-                </div>
-                <div class="mission-card">
-                    <div class="mission-icon">🤔</div>
-                    <h3>Question Everything</h3>
-                    <p>No sanitized textbooks. No single narrative. Multiple perspectives always.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <!-- ===== MAIN LAYOUT ===== -->
+        <div class="stat-layout">
 
-    <!-- History of Failure Section - UPDATED DATES -->
-    <section id="history" class="history-section">
-        <div class="history-container">
-            <h2 class="history-title">The Betrayal: How America Failed Its Children</h2>
-            
-            <div class="history-timeline">
-                <div class="history-item">
-                    <div class="history-year">1983</div>
-                    <div class="history-content">
-                        <h3>"A Nation at Risk" - The Warning We Ignored</h3>
-                        <p>The National Commission on Excellence in Education declared: "The educational foundations of our society are being eroded by a rising tide of mediocrity that threatens our very future as a Nation and a people." They warned that if another country had done this to us, we'd view it as an act of war. We did nothing.</p>
-                        <p><small>Source: U.S. Department of Education, 1983</small></p>
+            <!-- ===== LEFT: CHARACTER ===== -->
+            <div class="character-display">
+                <div class="character-pixel" id="characterSprite">
+                    <!-- Sprite built by JavaScript -->
+                </div>
+
+                <div class="character-name">
+                    ▶ NAME: 
+                    <input type="text" id="playerName" placeholder="PROTAGONIST" maxlength="12">
+                </div>
+
+                <!-- Customization Controls -->
+                <div class="customization">
+                    <div class="custom-row">
+                        <span>HAIR</span>
+                        <div class="controls">
+                            <button onclick="changeHair(-1)">◀</button>
+                            <span class="current-value" id="hairLabel">BLONDE</span>
+                            <button onclick="changeHair(1)">▶</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="history-item">
-                    <div class="history-year">2002</div>
-                    <div class="history-content">
-                        <h3>No Child Left Behind - The Testing Disaster</h3>
-                        <p>Schools began teaching to the test. Art, music, shop class, home economics - eliminated. Children became data points. Creativity died. By 2007, 62% of school districts had cut time from other subjects to focus on reading and math.</p>
-                        <p><small>Source: Center on Education Policy, 2008</small></p>
+                    <div class="custom-row">
+                        <span>SKIN</span>
+                        <div class="controls">
+                            <button onclick="changeSkin(-1)">◀</button>
+                            <span class="current-value" id="skinLabel">LIGHT</span>
+                            <button onclick="changeSkin(1)">▶</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="history-item">
-                    <div class="history-year">2015</div>
-                    <div class="history-content">
-                        <h3>Every Student Succeeds Act - More of the Same</h3>
-                        <p>Despite promises of change, the damage was done. A generation had grown up without ever using a tool, planting a seed, or fixing anything. We created excellent test-takers and helpless humans.</p>
-                    </div>
-                </div>
-
-                <div class="history-item">
-                    <div class="history-year">2026</div>
-                    <div class="history-content">
-                        <h3>The Crisis Today</h3>
-                        <p>Today, in 2026, the crisis has only deepened. 54% of U.S. adults read below 6th grade level. 66% can't perform basic car maintenance. 89% of young adults wish they'd learned practical skills in school. We have failed an entire generation - and the next one is waiting.</p>
+                    <div class="custom-row">
+                        <span>OUTFIT</span>
+                        <div class="controls">
+                            <button onclick="changeOutfit(-1)">◀</button>
+                            <span class="current-value" id="outfitLabel">HOODIE</span>
+                            <button onclick="changeOutfit(1)">▶</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="history-stats">
-                <div class="stat-box">
-                    <span class="stat-number">54%</span>
-                    <span class="stat-label">of adults read below 6th grade</span>
-                    <div class="stat-source">PIAAC, 2023</div>
+            <!-- ===== RIGHT: STATS ===== -->
+            <div class="stats-panel">
+                <div class="stat-row">
+                    <span class="label">❤️ HP</span>
+                    <span class="value hp" id="hpStat">20 / 20</span>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-number">66%</span>
-                    <span class="stat-label">Can't change a tire</span>
-                    <div class="stat-source">AAA Survey, 2023</div>
+                <div class="stat-row">
+                    <span class="label">⚔️ ATK</span>
+                    <span class="value" id="atkStat">5</span>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-number">75%</span>
-                    <span class="stat-label">Can't cook from scratch</span>
-                    <div class="stat-source">USDA, 2022</div>
+                <div class="stat-row">
+                    <span class="label">🛡️ DEF</span>
+                    <span class="value" id="defStat">3</span>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-number">89%</span>
-                    <span class="stat-label">Want practical skills</span>
-                    <div class="stat-source">Nat. Gardening Assoc., 2023</div>
+                <div class="stat-row">
+                    <span class="label">⭐ LVL</span>
+                    <span class="value" id="lvlStat">1</span>
                 </div>
-            </div>
-        </div>
-    </section>
+                <div class="stat-row">
+                    <span class="label">✨ EXP</span>
+                    <span class="value" id="expStat">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="label">🌀 WONDER</span>
+                    <span class="value wonder" id="wonderStat">0%</span>
+                </div>
 
-    <!-- NEW: Special Education Section -->
-    <section class="special-ed-section">
-        <div class="special-ed-container">
-            <h2 class="special-ed-title">Every Child Deserves to Shine</h2>
-            <p class="special-ed-subtitle">Our curriculum is designed for all learners. We believe that every child - regardless of ability, challenge, or learning difference - deserves hands-on, meaningful education.</p>
-            
-            <div class="special-ed-grid">
-                <div class="special-ed-card">
-                    <div class="special-ed-icon">🧩</div>
-                    <h3>Adaptive Learning</h3>
-                    <p>Every activity can be modified for different abilities. We focus on what children CAN do, not what they can't.</p>
-                    <span class="special-ed-badge">All Ages</span>
+                <!-- Subtitle / Flavor Text -->
+                <div style="margin-top: 20px; font-size: 8px; color: #555577; text-align: center; line-height: 1.8; border-top: 2px solid #1a1a2e; padding-top: 15px;">
+                    <span class="glitch-text">✦ the walls are breathing ✦</span><br>
+                    <span style="color: #3a3a5a;">third floor • room 303 • JN hall</span>
                 </div>
-                
-                <div class="special-ed-card">
-                    <div class="special-ed-icon">🤲</div>
-                    <h3>Sensory Integration</h3>
-                    <p>Hands-on learning is naturally therapeutic. Gardening, cooking, and building engage all senses and support regulation.</p>
-                    <span class="special-ed-badge">All Ages</span>
-                </div>
-                
-                <div class="special-ed-card">
-                    <div class="special-ed-icon">👥</div>
-                    <h3>Inclusive Community</h3>
-                    <p>All children learn together. Our curriculum builds understanding, patience, and friendship across all abilities.</p>
-                    <span class="special-ed-badge">All Ages</span>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem;">
-                <button class="btn btn-primary" onclick="location.href='special-education.html'">Explore Special Education →</button>
             </div>
         </div>
-    </section>
 
-    <!-- NEW: Physical Education Section -->
-    <section class="pe-section">
-        <div class="pe-container">
-            <h2 class="pe-title">Physical Education: Bodies in Motion</h2>
-            <p style="text-align: center; font-size: 1.2rem; max-width: 800px; margin: 0 auto 3rem;">Not just sports - lifelong physical confidence and health</p>
-            
-            <div class="pe-grid">
-                <div class="pe-card">
-                    <div class="pe-icon">🏃</div>
-                    <h3>Cooperative Games</h3>
-                    <p>No one sits on the bench. Every game is designed for everyone to play.</p>
-                </div>
-                
-                <div class="pe-card">
-                    <div class="pe-icon">🧗</div>
-                    <h3>Adventure Skills</h3>
-                    <p>Hiking, climbing, camping, navigation. Confidence in the outdoors.</p>
-                </div>
-                
-                <div class="pe-card">
-                    <div class="pe-icon">🤸</div>
-                    <h3>Body Awareness</h3>
-                    <p>Yoga, dance, stretching. Understanding and caring for your body.</p>
-                </div>
-                
-                <div class="pe-card">
-                    <div class="pe-icon">🏊</div>
-                    <h3>Lifelong Sports</h3>
-                    <p>Swimming, biking, hiking - activities you can enjoy at any age.</p>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem;">
-                <button class="btn btn-primary" onclick="location.href='physical-education.html'">Explore Physical Education →</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Age Group Navigation -->
-    <section class="age-nav-section">
-        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">Explore by Age</h2>
-        <div class="age-grid">
-            <div class="age-card" onclick="location.href='infants.html'">
-                <div class="age-range">0-4 Years</div>
-                <div class="age-name">Infant & Toddler</div>
-                <p>Sensory exploration, attachment, first words through play</p>
-            </div>
-            <div class="age-card" onclick="location.href='elementary.html'">
-                <div class="age-range">5-10 Years</div>
-                <div class="age-name">Elementary Explorers</div>
-                <p>Gardening, simple tools, cooking, projects</p>
-            </div>
-            <div class="age-card" onclick="location.href='middle.html'">
-                <div class="age-range">11-13 Years</div>
-                <div class="age-name">Middle School Makers</div>
-                <p>Woodshop, mechanics, advanced projects</p>
-            </div>
-            <div class="age-card" onclick="location.href='highschool.html'">
-                <div class="age-range">14-18 Years</div>
-                <div class="age-name">High School Masters</div>
-                <p>Auto, taxes, gun safety, certifications</p>
-            </div>
-            <div class="age-card" onclick="location.href='special-education.html'">
-                <div class="age-range">All Ages</div>
-                <div class="age-name">Special Education</div>
-                <p>Adaptive, inclusive, every child shines</p>
-            </div>
-            <div class="age-card" onclick="location.href='physical-education.html'">
-                <div class="age-range">All Ages</div>
-                <div class="age-name">Physical Education</div>
-                <p>Lifelong movement and health</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal -->
-    <div id="signupModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
-        <div style="background: white; margin: 10% auto; padding: 3rem; border-radius: 30px; max-width: 500px;">
-            <span style="float: right; font-size: 2rem; cursor: pointer;" onclick="closeModal()">&times;</span>
-            <h2 style="color: var(--primary); margin-bottom: 1rem;">Join the Rebuilding</h2>
-            <p style="margin-bottom: 2rem;">We need teachers, parents, and community members who believe in something better.</p>
-            <input type="text" placeholder="Your Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
-            <input type="email" placeholder="Your Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
-            <select style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #eee; border-radius: 10px;">
-                <option>I am a parent</option>
-                <option>I am a teacher</option>
-                <option>I am a community member</option>
-            </select>
-            <button class="btn btn-primary" style="width: 100%;" onclick="alert('Thank you for joining the movement!')">Join Now</button>
-        </div>
+        <!-- ===== START BUTTON ===== -->
+        <button class="start-button" id="startGameBtn">
+            ▶ ENTER ROOM 303 ◀
+        </button>
     </div>
 
-    <!-- Updated Footer with New Sections -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div>
-                <h4>The Living Curriculum</h4>
-                <p>Rebuilding American education from the ground up.</p>
-            </div>
-            <div>
-                <h4>Explore</h4>
-                <ul style="list-style: none;">
-                    <li><a href="infants.html" style="color: #ccc; text-decoration: none;">Infants (0-4)</a></li>
-                    <li><a href="elementary.html" style="color: #ccc; text-decoration: none;">Elementary (5-10)</a></li>
-                    <li><a href="middle.html" style="color: #ccc; text-decoration: none;">Middle (11-13)</a></li>
-                    <li><a href="highschool.html" style="color: #ccc; text-decoration: none;">High (14-18)</a></li>
-                    <li><a href="special-education.html" style="color: #ccc; text-decoration: none;">Special Education</a></li>
-                    <li><a href="physical-education.html" style="color: #ccc; text-decoration: none;">Physical Education</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Connect</h4>
-                <ul style="list-style: none;">
-                    <li><a href="community.html" style="color: #ccc; text-decoration: none;">Community</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 The Living Curriculum. We're building something new.</p>
-        </div>
-    </footer>
-
     <script>
-        function openModal() {
-            document.getElementById('signupModal').style.display = 'block';
-        }
-        
-        function closeModal() {
-            document.getElementById('signupModal').style.display = 'none';
-        }
-        
-        window.onclick = function(event) {
-            const modal = document.getElementById('signupModal');
-            if (event.target == modal) {
-                closeModal();
+        // ============================================================
+        //  CHARACTER CUSTOMIZATION SYSTEM
+        // ============================================================
+
+        // Data
+        const hairOptions = ['blonde', 'brown', 'black', 'red', 'pink'];
+        const hairLabels = ['BLONDE', 'BROWN', 'BLACK', 'RED', 'PINK'];
+        const skinOptions = ['light', 'medium', 'dark', 'olive'];
+        const skinLabels = ['LIGHT', 'MEDIUM', 'DARK', 'OLIVE'];
+        const outfitOptions = ['hoodie', 'sweater', 'jacket', 'tshirt'];
+        const outfitLabels = ['HOODIE', 'SWEATER', 'JACKET', 'T-SHIRT'];
+
+        let hairIndex = 0;
+        let skinIndex = 0;
+        let outfitIndex = 0;
+
+        // ============================================================
+        //  PIXEL SPRITE BUILDER
+        // ============================================================
+
+        function buildPixelSprite(hair, skin, outfit) {
+            // 12 columns x 15 rows pixel art character
+            // This is a simplified Undertale-style sprite
+            const rows = 15;
+            const cols = 12;
+            
+            // Define which cells get which class
+            // 0 = empty, 1 = skin, 2 = hair, 3 = outfit, 4 = eye-white, 5 = pupil, 6 = mouth
+            
+            // Simplified character map (12x15 grid)
+            // Row 0-1: Hair top
+            // Row 2: Hair + forehead
+            // Row 3-4: Eyes
+            // Row 5-8: Body (outfit)
+            // Row 9-11: Legs (outfit)
+            // Row 12-14: Feet (outfit)
+            
+            const map = [
+                // r0: top hair
+                [0,0,0,2,2,2,2,2,2,0,0,0],
+                // r1: hair sides
+                [0,0,2,2,2,2,2,2,2,2,0,0],
+                // r2: hair + forehead
+                [0,2,2,1,1,1,1,1,1,2,2,0],
+                // r3: eyes row 1
+                [2,2,1,4,5,1,1,4,5,1,2,2],
+                // r4: eyes row 2 + mouth
+                [2,2,1,4,5,1,1,4,5,1,2,2],
+                // r5: upper body start
+                [0,0,3,3,3,3,3,3,3,3,0,0],
+                // r6: body
+                [0,3,3,3,3,3,3,3,3,3,3,0],
+                // r7: body
+                [0,3,3,3,3,3,3,3,3,3,3,0],
+                // r8: body
+                [0,3,3,3,3,3,3,3,3,3,3,0],
+                // r9: legs start
+                [0,0,3,3,3,3,3,3,3,3,0,0],
+                // r10: legs
+                [0,0,3,3,3,3,3,3,3,3,0,0],
+                // r11: legs
+                [0,0,3,3,3,3,3,3,3,3,0,0],
+                // r12: feet
+                [0,0,0,3,3,3,3,3,3,0,0,0],
+                // r13: feet
+                [0,0,0,3,3,3,3,3,3,0,0,0],
+                // r14: feet bottom
+                [0,0,0,3,3,3,3,3,3,0,0,0]
+            ];
+
+            // Build the HTML
+            let html = '<div class="pixel-sprite">';
+            
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = map[r][c];
+                    let classes = 'pixel';
+                    
+                    if (cell === 1) classes += ` skin-${skin}`;
+                    else if (cell === 2) classes += ` hair-${hair}`;
+                    else if (cell === 3) classes += ` outfit-${outfit}`;
+                    else if (cell === 4) classes += ' eye-white';
+                    else if (cell === 5) classes += ' eye-pupil';
+                    else if (cell === 6) classes += ' mouth';
+                    
+                    html += `<div class="${classes}"></div>`;
+                }
             }
+            
+            html += '</div>';
+            return html;
         }
+
+        // ============================================================
+        //  UPDATE FUNCTIONS
+        // ============================================================
+
+        function updateCharacter() {
+            const hair = hairOptions[hairIndex];
+            const skin = skinOptions[skinIndex];
+            const outfit = outfitOptions[outfitIndex];
+            
+            document.getElementById('characterSprite').innerHTML = buildPixelSprite(hair, skin, outfit);
+            
+            // Update labels
+            document.getElementById('hairLabel').textContent = hairLabels[hairIndex];
+            document.getElementById('skinLabel').textContent = skinLabels[skinIndex];
+            document.getElementById('outfitLabel').textContent = outfitLabels[outfitIndex];
+        }
+
+        function changeHair(delta) {
+            hairIndex = (hairIndex + delta + hairOptions.length) % hairOptions.length;
+            updateCharacter();
+        }
+
+        function changeSkin(delta) {
+            skinIndex = (skinIndex + delta + skinOptions.length) % skinOptions.length;
+            updateCharacter();
+        }
+
+        function changeOutfit(delta) {
+            outfitIndex = (outfitIndex + delta + outfitOptions.length) % outfitOptions.length;
+            updateCharacter();
+        }
+
+        // ============================================================
+        //  SAVE / LOAD STATE
+        // ============================================================
+
+        function getPlayerState() {
+            return {
+                name: document.getElementById('playerName').value || 'PROTAGONIST',
+                hair: hairOptions[hairIndex],
+                skin: skinOptions[skinIndex],
+                outfit: outfitOptions[outfitIndex],
+                hp: 20,
+                maxHp: 20,
+                atk: 5,
+                def: 3,
+                lvl: 1,
+                exp: 0,
+                wonder: 0
+            };
+        }
+
+        // ============================================================
+        //  START GAME
+        // ============================================================
+
+        document.getElementById('startGameBtn').addEventListener('click', function() {
+            const state = getPlayerState();
+            
+            // Save to localStorage so we can use it on the next page
+            localStorage.setItem('jnPlayerState', JSON.stringify(state));
+            
+            // For now, alert the player info
+            alert(`
+╔═══════════════════════════════╗
+║   🚪 ENTERING ROOM 303...    ║
+╠═══════════════════════════════╣
+║ NAME: ${state.name.padEnd(12)} ║
+║ HAIR: ${state.hair.toUpperCase().padEnd(8)} ║
+║ SKIN: ${state.skin.toUpperCase().padEnd(8)} ║
+║ OUTFIT: ${state.outfit.toUpperCase().padEnd(8)} ║
+║                               ║
+║  ⚠️ THE CLOSET IS GLOWING ⚠️  ║
+╚═══════════════════════════════╝
+
+🔮 You hear screaming from Room 303...
+   The door is slightly ajar...
+
+   ✦ Welcome to John Neumaier Wonderland ✦
+            `);
+            
+            // In the next phase, we'll transition to the actual game scene
+            // For now, we'll display the opening scene in the console
+            console.log('=== JN WONDERLAND ===');
+            console.log('Player:', state.name);
+            console.log('Entering Room 303...');
+            console.log('The closet is glowing...');
+            console.log('You step through into a twisted version of JN Hall.');
+            console.log('The walls are breathing. The hallways go on forever.');
+        });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+
+        // Check if there's saved state
+        const saved = localStorage.getItem('jnPlayerState');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                hairIndex = hairOptions.indexOf(data.hair) || 0;
+                skinIndex = skinOptions.indexOf(data.skin) || 0;
+                outfitIndex = outfitOptions.indexOf(data.outfit) || 0;
+                document.getElementById('playerName').value = data.name;
+            } catch(e) { /* ignore */ }
+        }
+
+        updateCharacter();
+
+        // Also update stats display with some random variation for flavor
+        // (In a real game, these would change based on gameplay)
+        console.log('%c✦ JN WONDERLAND - CHARACTER CREATION ✦', 'font-size:16px; color:#ffd93d;');
+        console.log('%cRoom 303 is waiting for you...', 'color:#8888aa;');
     </script>
+
 </body>
 </html>
