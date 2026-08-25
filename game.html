@@ -3,2774 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - Earthbound Style</title>
+    <title>John Neumaier Hall - The Adventure Begins</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background: #0a0a0a;
+            background: #000;
+            font-family: 'Press Start 2P', cursive;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            font-family: 'Press Start 2P', monospace;
-            image-rendering: pixelated;
+            height: 100vh;
             overflow: hidden;
         }
-
-        #gameContainer {
+        
+        .game-container {
             position: relative;
-            width: 960px;
-            height: 680px;
-            background: #1a1a2e;
-            border: 6px solid #4a4a6a;
-            overflow: hidden;
-            box-shadow: 0 0 60px rgba(100, 50, 200, 0.3);
-            transition: background 2s ease, border-color 2s ease;
+            width: 800px;
+            height: 600px;
+            background: #1a0a2e;
+            border: 4px solid #ff00ff;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
         }
-
-        #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
+        
+        .game-screen {
+            position: relative;
             width: 100%;
             height: 100%;
-            z-index: 1;
-            image-rendering: pixelated;
-            cursor: default;
+            overflow: hidden;
         }
-
-        #dialogueBox {
+        
+        .dialogue-box {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 800px;
-            background: rgba(5, 5, 15, 0.95);
-            border: 4px solid #3a2a4a;
-            padding: 18px 24px;
-            color: #d4d4f0;
-            font-size: 10px;
-            line-height: 2.2;
-            backdrop-filter: blur(8px);
-            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #00ffff;
+            padding: 20px;
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.6;
             display: none;
-            z-index: 20;
-            min-height: 120px;
-            box-shadow: 0 0 40px rgba(100, 50, 150, 0.2);
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
-
-        #dialogueBox .speaker {
-            color: #ffd93d;
-            font-size: 8px;
-            margin-bottom: 4px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        
+        .dialogue-box.active {
+            display: block;
+            animation: dialogue-appear 0.5s ease-out;
         }
-
-        #dialogueBox .dialogue {
-            color: #e8e8f0;
-            font-size: 10px;
-            line-height: 2.2;
+        
+        @keyframes dialogue-appear {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
-
-        #dialogueBox .dialogue .highlight { color: #ffd93d; }
-        #dialogueBox .dialogue .creepy { color: #ff6b6b; }
-        #dialogueBox .dialogue .good { color: #4aff8a; }
-        #dialogueBox .dialogue .wonder { color: #a29bfe; }
-        #dialogueBox .dialogue .trippy { color: #ff69b4; }
-        #dialogueBox .dialogue .dark { color: #6a4a7a; }
-
-        #dialogueBox .continue {
-            color: #4a4a6a;
-            font-size: 7px;
-            text-align: right;
-            margin-top: 8px;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        #dialogueBox .btn-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 12px;
-            pointer-events: auto;
-        }
-
-        #dialogueBox .game-btn {
-            background: #2a2a4a;
-            border: 3px solid #4a4a6a;
-            color: #d4d4f0;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 8px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            pointer-events: auto;
-            min-width: 80px;
-        }
-
-        #dialogueBox .game-btn:hover {
-            background: #4a4a7a;
-            border-color: #ffd93d;
-            color: #ffd93d;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
-        }
-
-        #dialogueBox .game-btn.primary { background: #4a2a4a; border-color: #8a4a6a; color: #ff9d8a; }
-        #dialogueBox .game-btn.danger { background: #4a2a2a; border-color: #8a2a2a; color: #ff6a6a; }
-        #dialogueBox .game-btn.success { background: #2a4a2a; border-color: #4a8a4a; color: #8aff8a; }
-        #dialogueBox .game-btn.wonder { background: #2a2a4a; border-color: #6a4a8a; color: #c8a8ff; }
-        #dialogueBox .game-btn.earth { background: #2a2a00; border-color: #8a8a2a; color: #ffd93d; }
-
-        /* ========== HUD ========== */
-        #hud {
-            position: absolute;
-            top: 10px;
-            right: 12px;
-            background: rgba(5, 5, 15, 0.85);
-            border: 2px solid #2a2a4a;
-            padding: 8px 14px;
-            font-size: 7px;
-            color: #8888aa;
-            text-align: right;
-            line-height: 2;
-            z-index: 15;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
-            min-width: 120px;
-        }
-
-        #hud .hp { color: #ff6b6b; }
-        #hud .act { color: #ffd93d; }
-        #hud .wonder { color: #a29bfe; }
-        #hud .items { color: #6ab4ff; }
-        #hud .step { color: #ff8a4a; }
-        #hud .izzy { color: #ffd93d; }
-
-        /* ========== QUEST LOG ========== */
-        #questLog {
-            position: absolute;
-            top: 10px;
-            left: 12px;
-            background: rgba(5, 5, 15, 0.85);
-            border: 2px solid #2a2a4a;
-            padding: 8px 14px;
-            font-size: 6px;
-            color: #6ac8ff;
-            z-index: 15;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
-            max-width: 220px;
-            line-height: 1.8;
-        }
-
-        #questLog .title {
-            color: #ffd93d;
-            font-size: 7px;
-            margin-bottom: 4px;
-            letter-spacing: 1px;
-        }
-
-        #questLog .step-done { color: #4aff8a; }
-        #questLog .step-active { color: #ffd93d; }
-        #questLog .step-hidden { color: #2a2a4a; }
-        #questLog .step-forest { color: #4a8a4a; }
-        #questLog .step-grave { color: #6a4a7a; }
-        #questLog .step-village { color: #ff8a4a; }
-        #questLog .step-castle { color: #ff6b6b; }
-
-        /* ========== CHAPTER TITLE ========== */
-        #chapterTitle {
+        
+        .menu {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #ffd93d;
-            font-size: 24px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 4px solid #ff00ff;
+            padding: 30px;
+            color: #fff;
             text-align: center;
-            z-index: 25;
-            pointer-events: none;
-            opacity: 0;
-            text-shadow: 0 0 60px rgba(255, 217, 61, 0.3);
-            transition: opacity 1.5s ease;
+            display: none;
+            z-index: 200;
+            min-width: 300px;
         }
-
-        #chapterTitle .sub {
+        
+        .menu.active {
+            display: block;
+        }
+        
+        .menu h2 {
+            color: #ff00ff;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .menu button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #2d1b4e;
+            border: 2px solid #00ffff;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .menu button:hover {
+            background: #ff00ff;
+            border-color: #fff;
+            transform: scale(1.05);
+        }
+        
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
             font-size: 10px;
-            color: #8888aa;
-            margin-top: 10px;
-            letter-spacing: 4px;
+            z-index: 50;
+            pointer-events: none;
         }
-
-        /* ========== DARK OVERLAY ========== */
-        #darkOverlay {
+        
+        .hud-left, .hud-right {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border: 2px solid #00ffff;
+        }
+        
+        .hud-left {
+            text-align: left;
+        }
+        
+        .hud-right {
+            text-align: right;
+        }
+        
+        .loading-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0);
-            z-index: 5;
-            pointer-events: none;
-            transition: background 2s ease;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
-        @media (max-width: 1000px) {
-            #gameContainer { width: 95vw; height: 90vh; }
-            #dialogueBox { font-size: 8px; padding: 12px 16px; min-height: 100px; }
-            #dialogueBox .dialogue { font-size: 8px; }
-            #dialogueBox .game-btn { font-size: 7px; padding: 6px 12px; min-width: 60px; }
-            #hud { font-size: 6px; padding: 5px 10px; min-width: 100px; }
-            #questLog { font-size: 5px; padding: 5px 10px; max-width: 180px; }
-            #chapterTitle { font-size: 18px; }
+        
+        .loading-text {
+            color: #ff00ff;
+            font-size: 24px;
+            animation: loading-pulse 1s infinite;
         }
-
-        @media (max-width: 600px) {
-            #dialogueBox { font-size: 7px; padding: 10px 12px; min-height: 80px; bottom: 10px; }
-            #dialogueBox .dialogue { font-size: 7px; }
-            #dialogueBox .game-btn { font-size: 6px; padding: 4px 8px; min-width: 50px; }
-            #hud { font-size: 5px; padding: 3px 6px; top: 5px; right: 6px; min-width: 80px; }
-            #questLog { font-size: 4px; padding: 3px 6px; top: 5px; left: 6px; max-width: 140px; }
-            #chapterTitle { font-size: 14px; }
+        
+        @keyframes loading-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
-
-    <div id="gameContainer">
-
-        <canvas id="gameCanvas"></canvas>
-        <div id="darkOverlay"></div>
-
-        <div id="chapterTitle">
-            <div id="chapterTitleText">CHAPTER I</div>
-            <div class="sub" id="chapterSubText">The Scream</div>
-        </div>
-
-        <div id="hud">
-            <div class="hp">❤️ HP: <span id="hudHp">20</span>/20</div>
-            <div class="act">📍 <span id="hudAct">ROOM 303</span></div>
-            <div class="wonder">🌀 WONDER: <span id="hudWonder">5</span>%</div>
-            <div class="izzy">👱 IZZY: <span id="hudIzzy">⚠️ LOST</span></div>
-            <div class="items">📦 ITEMS: <span id="hudItems">None</span></div>
-            <div class="step">🐱 QUEST: <span id="hudStep">0</span>/<span id="hudMaxStep">10</span></div>
-        </div>
-
-        <div id="questLog">
-            <div class="title">🌍 EARTHBOUND QUEST</div>
-            <div id="questList">
-                <div class="step-active">✦ The Scream</div>
-                <div>✦ Izzy is Taken</div>
-                <div>✦ Enter Wonderland</div>
-                <div>✦ Spooky Forest</div>
-                <div>✦ Graveyard</div>
-                <div>✦ Village</div>
-                <div>✦ Upper Village</div>
-                <div>✦ Castle Walls</div>
-                <div>✦ Castle</div>
-                <div>✦ Save Izzy!</div>
+    <div class="game-container">
+        <div class="game-screen" id="gameScreen">
+            <!-- HUD -->
+            <div class="hud">
+                <div class="hud-left">
+                    <div id="hudName">PLAYER</div>
+                    <div>LV: <span id="hudLevel">1</span></div>
+                    <div>HP: <span id="hudHP">30/30</span></div>
+                    <div>PP: <span id="hudPP">10/10</span></div>
+                </div>
+                <div class="hud-right">
+                    <div>EXP: <span id="hudEXP">0</span></div>
+                    <div>MONEY: $<span id="hudMoney">0</span></div>
+                    <div>LOCATION: <span id="hudLocation">Room 303</span></div>
+                </div>
+            </div>
+            
+            <!-- Dialogue Box -->
+            <div class="dialogue-box" id="dialogueBox">
+                <p id="dialogueText"></p>
+                <p style="text-align: center; margin-top: 10px; color: #00ffff; font-size: 10px;">
+                    [PRESS SPACE TO CONTINUE]
+                </p>
+            </div>
+            
+            <!-- Game Menu -->
+            <div class="menu" id="gameMenu">
+                <h2>MENU</h2>
+                <button onclick="toggleMenu()">RESUME</button>
+                <button onclick="showInventory()">INVENTORY</button>
+                <button onclick="showStatus()">STATUS</button>
+                <button onclick="saveGame()">SAVE</button>
+                <button onclick="returnToTitle()">TITLE SCREEN</button>
+            </div>
+            
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loadingScreen">
+                <div class="loading-text">LOADING...</div>
             </div>
         </div>
-
-        <div id="dialogueBox">
-            <div class="speaker" id="dialogueSpeaker">🎮 NARRATOR</div>
-            <div class="dialogue" id="dialogueText">Welcome to JN Wonderland...</div>
-            <div class="continue" id="dialogueContinue">▼ Press SPACE or click</div>
-            <div class="btn-group" id="dialogueButtons" style="display: none;"></div>
-        </div>
-
     </div>
-
+    
     <script>
-        // ============================================================
-        //  SETUP
-        // ============================================================
-
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
-
-        let W, H, tileSize;
-
-        function resizeCanvas() {
-            const container = document.getElementById('gameContainer');
-            const rect = container.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            W = canvas.width;
-            H = canvas.height;
-            tileSize = Math.min(W / 35, H / 25);
-            tileSize = Math.max(tileSize, 14);
-            cols = Math.floor(W / tileSize);
-            rows = Math.floor(H / tileSize);
-        }
-
-        // ============================================================
-        //  PLAYER STATE
-        // ============================================================
-
-        let player = {
-            name: 'PROTAGONIST',
-            hair: 'blonde',
-            skin: 'light',
-            outfit: 'hoodie',
-            hp: 20,
-            maxHp: 20,
-            wonder: 5,
-            x: 5,
-            y: 7,
-            facing: 'down',
-            questStep: 0,
-            act: 'ROOM 303',
-            // Story flags
-            sawIzzyTaken: false,
-            metCat: false,
-            enteredWonderland: false,
-            foundMemories: 0,
-            foundResidents: 0,
-            ianDefeated: false,
-            ianBefriended: false,
-            queenDefeated: false,
-            queenBefriended: false,
-            izzySaved: false,
-            hasMercy: false,
-            hasWisdom: false,
-            hasCourage: false,
-            hasHope: false,
-            // Area progress
-            forestCleared: false,
-            graveyardCleared: false,
-            villageCleared: false,
-            upperVillageCleared: false,
-            castleWallsCleared: false,
-            castleCleared: false,
-            // Side characters
-            metHatter: false,
-            metCheshire: false,
-            metRabbit: false,
-            metCaterpillar: false,
-            // Items
-            hasKey: false,
-            hasNote: false,
-            hasCandy: false,
-            hasCrown: false,
-            hasMirror: false,
-            hasClock: false,
-            hasRose: false,
-            hasTea: false,
-            hasCard: false,
-            hasHeart: false,
-            hasLetter: false,
-            hasPhoto: false,
-            hasDiary: false,
-            hasLantern: false,
-            hasMap: false,
-            hasCompass: false,
-            // Combat
-            enemiesDefeated: 0,
-            // State
+        // Game state
+        let gameState = {
+            character: null,
+            currentArea: 'room303',
+            gameTime: 0,
+            paused: false,
             inDialogue: false,
-            gameState: 'exploring',
-            ending: 0,
-            mapSection: 0,
-            time: 0
+            dialogueQueue: []
         };
-
-        // ============================================================
-        //  LOAD PLAYER
-        // ============================================================
-
-        function loadPlayerData() {
-            const saved = localStorage.getItem('jnPlayerState');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    player.name = data.name || 'PROTAGONIST';
-                    player.hair = data.hair || 'blonde';
-                    player.skin = data.skin || 'light';
-                    player.outfit = data.outfit || 'hoodie';
-                } catch (e) { /* ignore */ }
+        
+        // Initialize game
+        function initGame() {
+            // Load character from localStorage
+            const characterData = localStorage.getItem('johnNeumaierCharacter');
+            
+            if (!characterData) {
+                // No character found, return to title
+                window.location.href = 'index.html';
+                return;
             }
+            
+            gameState.character = JSON.parse(characterData);
+            
+            // Update HUD
+            updateHUD();
+            
+            // Start opening scene
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                startOpeningScene();
+            }, 2000);
         }
-        loadPlayerData();
-
-        // ============================================================
-        //  TILE MAP - EARTHBOUND STYLE
-        // ============================================================
-
-        let cols = 35, rows = 25;
-        let map = [];
-
-        const T = {
-            FLOOR: 0,
-            WALL: 1,
-            DOOR: 2,
-            CLOSET: 3,
-            CAT: 4,
-            RESIDENT: 5,
-            ENEMY: 6,
-            ITEM: 7,
-            EXIT: 8,
-            QUEEN: 9,
-            IAN: 10,
-            CHEST: 11,
-            MEMORY: 12,
-            LETTER: 13,
-            PHOTO: 14,
-            DIARY: 15,
-            SHADOW: 16,
-            PORTAL: 17,
-            STAIRS: 18,
-            MIRROR: 19,
-            BLOOD: 20,
-            EYE: 21,
-            TREE: 22,
-            GRAVE: 23,
-            HOUSE: 24,
-            CASTLE: 25,
-            BUG: 26,
-            FLOWER: 27,
-            ROCK: 28,
-            BRIDGE: 29,
-            WATER: 30,
-            GRASS: 31,
-            PATH: 32,
-            SIGN: 33,
-            WELL: 34,
-            STATUE: 35,
-            FOUNTAIN: 36,
-            BENCH: 37,
-            LAMP: 38,
-            GATE: 39,
-            TOWER: 40
-        };
-
-        // ============================================================
-        //  BUILD THE MASSIVE EARTHBOUND MAP
-        // ============================================================
-
-        function buildMap() {
-            map = [];
-            for (let r = 0; r < rows; r++) {
-                map[r] = [];
-                for (let c = 0; c < cols; c++) {
-                    map[r][c] = T.WALL;
-                }
-            }
-
-            // ============================================================
-            //  SECTION 0: ROOM 303 (START)
-            // ============================================================
-            for (let r = 2; r < 8; r++) {
-                for (let c = 2; c < 9; c++) {
-                    if (r === 2 || r === 7 || c === 2 || c === 8) {
-                        if (!(r === 2 && c === 4) && !(r === 2 && c === 5)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[2][5] = T.DOOR;
-            map[4][6] = T.CLOSET;
-            map[3][5] = T.SIGN; // Izzy spot
-
-            // ============================================================
-            //  SECTION 1: THE PORTAL HALLWAY (connects to Wonderland)
-            // ============================================================
-            for (let r = 2; r < 10; r++) {
-                for (let c = 9; c < 14; c++) {
-                    if (r === 2 || r === 9 || c === 9 || c === 13) {
-                        if (!(r === 2 && c === 11) && !(r === 9 && c === 11)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[2][11] = T.DOOR;
-            map[9][11] = T.DOOR;
-            map[5][11] = T.PORTAL;
-
-            // ============================================================
-            //  SECTION 2: SPOOKY FOREST
-            // ============================================================
-            for (let r = 2; r < 14; r++) {
-                for (let c = 14; c < 20; c++) {
-                    if (r === 2 || r === 13 || c === 14 || c === 19) {
-                        if (!(r === 2 && c === 16) && !(r === 13 && c === 16)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = Math.random() < 0.3 ? T.TREE : T.FLOOR;
-                    }
-                }
-            }
-            map[2][16] = T.DOOR;
-            map[13][16] = T.DOOR;
-            // Forest features
-            map[4][15] = T.BUG;
-            map[6][17] = T.BUG;
-            map[8][15] = T.BUG;
-            map[10][18] = T.BUG;
-            map[5][16] = T.CHEST;
-            map[9][17] = T.FLOWER;
-            map[11][15] = T.ROCK;
-            map[7][18] = T.SIGN;
-            map[12][17] = T.TREE;
-
-            // ============================================================
-            //  SECTION 3: GRAVEYARD
-            // ============================================================
-            for (let r = 2; r < 14; r++) {
-                for (let c = 20; c < 26; c++) {
-                    if (r === 2 || r === 13 || c === 20 || c === 25) {
-                        if (!(r === 2 && c === 22) && !(r === 13 && c === 22)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = Math.random() < 0.2 ? T.GRAVE : T.FLOOR;
-                    }
-                }
-            }
-            map[2][22] = T.DOOR;
-            map[13][22] = T.DOOR;
-            // Graveyard features
-            map[4][21] = T.GRAVE;
-            map[6][23] = T.GRAVE;
-            map[8][21] = T.GRAVE;
-            map[10][24] = T.GRAVE;
-            map[5][22] = T.MEMORY;
-            map[7][24] = T.SHADOW;
-            map[9][23] = T.SHADOW;
-            map[11][21] = T.CHEST;
-            map[12][23] = T.STATUE;
-
-            // ============================================================
-            //  SECTION 4: VILLAGE
-            // ============================================================
-            for (let r = 2; r < 14; r++) {
-                for (let c = 26; c < 32; c++) {
-                    if (r === 2 || r === 13 || c === 26 || c === 31) {
-                        if (!(r === 2 && c === 28) && !(r === 13 && c === 28)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[2][28] = T.DOOR;
-            map[13][28] = T.DOOR;
-            // Village features
-            map[4][27] = T.HOUSE;
-            map[6][29] = T.HOUSE;
-            map[8][27] = T.HOUSE;
-            map[10][30] = T.HOUSE;
-            map[5][28] = T.RESIDENT;
-            map[7][28] = T.RESIDENT;
-            map[9][29] = T.RESIDENT;
-            map[11][27] = T.RESIDENT;
-            map[5][26] = T.FOUNTAIN;
-            map[7][30] = T.SIGN;
-            map[9][26] = T.BENCH;
-            map[11][29] = T.WELL;
-
-            // ============================================================
-            //  SECTION 5: UPPER VILLAGE
-            // ============================================================
-            for (let r = 14; r < 20; r++) {
-                for (let c = 2; c < 10; c++) {
-                    if (r === 14 || r === 19 || c === 2 || c === 9) {
-                        if (!(r === 14 && c === 5) && !(r === 19 && c === 5)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[14][5] = T.DOOR;
-            map[19][5] = T.DOOR;
-            // Upper Village features
-            map[16][4] = T.HOUSE;
-            map[18][6] = T.HOUSE;
-            map[15][7] = T.RESIDENT;
-            map[17][8] = T.RESIDENT;
-            map[16][6] = T.FOUNTAIN;
-            map[18][4] = T.STATUE;
-            map[15][3] = T.CHEST;
-
-            // ============================================================
-            //  SECTION 6: CASTLE WALLS
-            // ============================================================
-            for (let r = 14; r < 20; r++) {
-                for (let c = 10; c < 18; c++) {
-                    if (r === 14 || r === 19 || c === 10 || c === 17) {
-                        if (!(r === 14 && c === 13) && !(r === 19 && c === 13)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[14][13] = T.DOOR;
-            map[19][13] = T.DOOR;
-            // Castle Walls features
-            map[16][12] = T.STATUE;
-            map[17][14] = T.STATUE;
-            map[15][11] = T.SHADOW;
-            map[18][15] = T.SHADOW;
-            map[16][14] = T.CHEST;
-            map[17][12] = T.SIGN;
-
-            // ============================================================
-            //  SECTION 7: CASTLE
-            // ============================================================
-            for (let r = 14; r < 20; r++) {
-                for (let c = 18; c < 26; c++) {
-                    if (r === 14 || r === 19 || c === 18 || c === 25) {
-                        if (!(r === 14 && c === 21) && !(r === 19 && c === 21)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[14][21] = T.DOOR;
-            map[19][21] = T.DOOR;
-            // Castle features
-            map[16][20] = T.IAN;
-            map[17][22] = T.IAN;
-            map[16][23] = T.CHEST;
-            map[18][20] = T.TOWER;
-            map[18][24] = T.TOWER;
-
-            // ============================================================
-            //  SECTION 8: QUEEN'S ROOM (BOSS)
-            // ============================================================
-            for (let r = 14; r < 22; r++) {
-                for (let c = 26; c < cols - 1; c++) {
-                    if (r === 14 || r === 21 || c === 26 || c === cols - 2) {
-                        if (!(r === 14 && c === 29) && !(r === 14 && c === 30)) {
-                            map[r][c] = T.WALL;
-                        }
-                    } else {
-                        map[r][c] = T.FLOOR;
-                    }
-                }
-            }
-            map[14][29] = T.DOOR;
-            map[14][30] = T.DOOR;
-            map[18][29] = T.QUEEN;
-            map[19][30] = T.EXIT; // Exit back to Room 303
-            map[17][28] = T.STATUE;
-            map[17][30] = T.STATUE;
-            map[16][29] = T.MEMORY;
-            map[20][29] = T.CHEST;
-
-            // ============================================================
-            //  CONNECTING HALLWAYS
-            // ============================================================
-
-            // Room 303 to Portal Hallway
-            map[4][9] = T.DOOR;
-
-            // Portal Hallway to Spooky Forest
-            map[6][14] = T.DOOR;
-
-            // Spooky Forest to Graveyard
-            map[6][20] = T.DOOR;
-
-            // Graveyard to Village
-            map[6][26] = T.DOOR;
-
-            // Village to Upper Village (stairs)
-            map[13][5] = T.STAIRS;
-            map[14][5] = T.STAIRS;
-
-            // Upper Village to Castle Walls
-            map[14][10] = T.DOOR;
-
-            // Castle Walls to Castle
-            map[14][18] = T.DOOR;
-
-            // Castle to Queen's Room
-            map[14][26] = T.DOOR;
-
-            // ============================================================
-            //  ADDITIONAL FEATURES
-            // ============================================================
-
-            // Some random items scattered
-            map[8][13] = T.ITEM;
-            map[10][12] = T.ITEM;
-            map[3][19] = T.ITEM;
-            map[4][25] = T.ITEM;
-            map[7][27] = T.ITEM;
-            map[9][28] = T.ITEM;
-            map[16][3] = T.ITEM;
-            map[18][7] = T.ITEM;
-            map[16][11] = T.ITEM;
-            map[18][16] = T.ITEM;
-            map[16][22] = T.ITEM;
-            map[18][23] = T.ITEM;
-
-            // Spooky Forest bugs
-            map[3][15] = T.BUG;
-            map[5][18] = T.BUG;
-            map[7][14] = T.BUG;
-            map[9][16] = T.BUG;
-            map[11][17] = T.BUG;
-            map[12][15] = T.BUG;
-
-            // Graveyard shadows
-            map[3][21] = T.SHADOW;
-            map[5][23] = T.SHADOW;
-            map[9][22] = T.SHADOW;
-            map[11][24] = T.SHADOW;
-
-            // Village residents
-            map[4][28] = T.RESIDENT;
-            map[6][27] = T.RESIDENT;
-            map[8][29] = T.RESIDENT;
-            map[10][28] = T.RESIDENT;
-
-            // Upper Village residents
-            map[16][5] = T.RESIDENT;
-            map[18][6] = T.RESIDENT;
+        
+        // Update HUD elements
+        function updateHUD() {
+            const char = gameState.character;
+            document.getElementById('hudName').textContent = char.name;
+            document.getElementById('hudLevel').textContent = char.level;
+            document.getElementById('hudHP').textContent = `${char.hp}/${char.maxHp}`;
+            document.getElementById('hudPP').textContent = `${char.pp}/${char.maxPp}`;
+            document.getElementById('hudEXP').textContent = char.exp;
+            document.getElementById('hudMoney').textContent = char.money;
+            document.getElementById('hudLocation').textContent = getLocationName(gameState.currentArea);
         }
-
-        // ============================================================
-        //  RENDER ENGINE
-        // ============================================================
-
-        let cameraX = 0, cameraY = 0;
-        let darkOpacity = 0;
-
-        function render() {
-            ctx.clearRect(0, 0, W, H);
-
-            player.time += 0.02;
-
-            // Camera follow
-            const targetCamX = player.x * tileSize - W / 2 + tileSize / 2;
-            const targetCamY = player.y * tileSize - H / 2 + tileSize / 2;
-            cameraX += (targetCamX - cameraX) * 0.08;
-            cameraY += (targetCamY - cameraY) * 0.08;
-
-            // Draw map
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const x = c * tileSize - cameraX;
-                    const y = r * tileSize - cameraY;
-
-                    if (x < -tileSize || x > W + tileSize || y < -tileSize || y > H + tileSize) continue;
-
-                    const tile = map[r][c];
-
-                    // Floor
-                    if (tile !== T.WALL && tile !== T.TREE && tile !== T.WATER && tile !== T.GRASS) {
-                        const dark = 0.1;
-                        ctx.fillStyle = `rgba(20, 15, 30, ${dark})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                    }
-
-                    // Grass
-                    if (tile === T.GRASS || tile === T.TREE) {
-                        const dark = 0.15;
-                        ctx.fillStyle = `rgba(20, 40, 20, ${dark})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                    }
-
-                    // Water
-                    if (tile === T.WATER) {
-                        const wave = 0.5 + 0.5 * Math.sin(player.time * 2 + r + c);
-                        ctx.fillStyle = `rgba(20, 40, 80, ${0.3 + wave * 0.2})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                    }
-
-                    // Path
-                    if (tile === T.PATH) {
-                        ctx.fillStyle = `rgba(60, 50, 40, 0.3)`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                    }
-
-                    // Wall
-                    if (tile === T.WALL) {
-                        ctx.fillStyle = '#1a1528';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#252040';
-                        ctx.fillRect(x + 1, y + 1, tileSize - 2, tileSize - 2);
-                    }
-
-                    // Door
-                    if (tile === T.DOOR) {
-                        ctx.fillStyle = '#2a1a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a2a2a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        ctx.fillStyle = '#8a6a3a';
-                        ctx.fillRect(x + tileSize * 0.7, y + tileSize * 0.4, tileSize * 0.1, tileSize * 0.2);
-                        // Door glow
-                        const dist = Math.abs(player.x - c) + Math.abs(player.y - r);
-                        if (dist <= 2) {
-                            const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                            grad.addColorStop(0, 'rgba(255, 217, 61, 0.1)');
-                            grad.addColorStop(1, 'rgba(255, 217, 61, 0)');
-                            ctx.fillStyle = grad;
-                            ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                        }
-                    }
-
-                    // Closet
-                    if (tile === T.CLOSET) {
-                        ctx.fillStyle = '#0a0a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#1a0a2a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.8);
-                        grad.addColorStop(0, 'rgba(100, 50, 200, 0.3)');
-                        grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Portal
-                    if (tile === T.PORTAL) {
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
-                        grad.addColorStop(0, `hsla(${player.time * 100 + 200}, 80%, 60%, 0.3)`);
-                        grad.addColorStop(0.5, `hsla(${player.time * 100 + 300}, 80%, 60%, 0.2)`);
-                        grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize * 0.5, y - tileSize * 0.5, tileSize * 2, tileSize * 2);
-                        ctx.fillStyle = '#a29bfe';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#8888aa';
-                        ctx.font = `${tileSize * 0.1}px monospace`;
-                        ctx.fillText('PORTAL', x + tileSize/2, y + tileSize * 0.92);
-                    }
-
-                    // Tree
-                    if (tile === T.TREE) {
-                        ctx.fillStyle = '#1a2a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#2a4a2a';
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize * 0.3, tileSize * 0.4, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = '#1a2a1a';
-                        ctx.fillRect(x + tileSize * 0.4, y + tileSize * 0.3, tileSize * 0.2, tileSize * 0.5);
-                        // Shadow
-                        ctx.fillStyle = 'rgba(0,0,0,0.2)';
-                        ctx.beginPath();
-                        ctx.ellipse(x + tileSize/2, y + tileSize * 0.9, tileSize * 0.3, tileSize * 0.1, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    // Grave
-                    if (tile === T.GRAVE) {
-                        ctx.fillStyle = '#1a1a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#2a2a2a';
-                        ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.1, tileSize * 0.6, tileSize * 0.7);
-                        ctx.fillStyle = '#3a3a3a';
-                        ctx.fillRect(x + tileSize * 0.35, y + tileSize * 0.1, tileSize * 0.3, tileSize * 0.1);
-                        // Glow
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.8);
-                        grad.addColorStop(0, 'rgba(100, 50, 150, 0.1)');
-                        grad.addColorStop(1, 'rgba(100, 50, 150, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                    }
-
-                    // House
-                    if (tile === T.HOUSE) {
-                        ctx.fillStyle = '#2a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a2a1a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.2, tileSize * 0.8, tileSize * 0.7);
-                        // Roof
-                        ctx.fillStyle = '#4a3a2a';
-                        ctx.beginPath();
-                        ctx.moveTo(x, y + tileSize * 0.2);
-                        ctx.lineTo(x + tileSize/2, y);
-                        ctx.lineTo(x + tileSize, y + tileSize * 0.2);
-                        ctx.fill();
-                        // Door
-                        ctx.fillStyle = '#2a1a0a';
-                        ctx.fillRect(x + tileSize * 0.4, y + tileSize * 0.6, tileSize * 0.2, tileSize * 0.3);
-                        // Window
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.35, tileSize * 0.15, tileSize * 0.15);
-                        ctx.fillRect(x + tileSize * 0.65, y + tileSize * 0.35, tileSize * 0.15, tileSize * 0.15);
-                    }
-
-                    // Castle
-                    if (tile === T.CASTLE) {
-                        ctx.fillStyle = '#2a2a3a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a3a5a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.9);
-                        // Towers
-                        ctx.fillStyle = '#3a3a5a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.2, tileSize * 0.3);
-                        ctx.fillRect(x + tileSize * 0.7, y + tileSize * 0.1, tileSize * 0.2, tileSize * 0.3);
-                        // Crenellations
-                        for (let i = 0; i < 4; i++) {
-                            ctx.fillRect(x + tileSize * (0.1 + i * 0.2), y + tileSize * 0.05, tileSize * 0.08, tileSize * 0.05);
-                        }
-                    }
-
-                    // Tower
-                    if (tile === T.TOWER) {
-                        ctx.fillStyle = '#2a2a3a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a3a5a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        // Top
-                        ctx.fillStyle = '#4a4a6a';
-                        ctx.beginPath();
-                        ctx.moveTo(x + tileSize * 0.1, y + tileSize * 0.2);
-                        ctx.lineTo(x + tileSize/2, y);
-                        ctx.lineTo(x + tileSize * 0.9, y + tileSize * 0.2);
-                        ctx.fill();
-                    }
-
-                    // Bug
-                    if (tile === T.BUG) {
-                        const pulse = 0.5 + 0.5 * Math.sin(player.time * 2 + r + c);
-                        ctx.fillStyle = `rgba(50, 100, 50, ${0.3 + pulse * 0.3})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#4a8a4a';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🐛', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#8888aa';
-                        ctx.font = `${tileSize * 0.08}px monospace`;
-                        ctx.fillText('BUG', x + tileSize/2, y + tileSize * 0.92);
-                    }
-
-                    // Sign
-                    if (tile === T.SIGN) {
-                        ctx.fillStyle = '#1a1a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#2a2a2a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.15}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('📋', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Statue
-                    if (tile === T.STATUE) {
-                        ctx.fillStyle = '#2a2a3a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a3a5a';
-                        ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.1, tileSize * 0.6, tileSize * 0.8);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.3}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🗿', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Well
-                    if (tile === T.WELL) {
-                        ctx.fillStyle = '#1a1a2a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#2a2a4a';
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize * 0.5, tileSize * 0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = '#0a0a1a';
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize * 0.5, tileSize * 0.2, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.2}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('💧', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Fountain
-                    if (tile === T.FOUNTAIN) {
-                        const water = 0.5 + 0.5 * Math.sin(player.time * 3 + r);
-                        ctx.fillStyle = '#1a2a3a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = `rgba(50, 100, 200, ${0.2 + water * 0.2})`;
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize * 0.4, tileSize * 0.25, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.2}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('⛲', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Bench
-                    if (tile === T.BENCH) {
-                        ctx.fillStyle = '#2a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a2a1a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.3, tileSize * 0.8, tileSize * 0.2);
-                        ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.5, tileSize * 0.15, tileSize * 0.4);
-                        ctx.fillRect(x + tileSize * 0.65, y + tileSize * 0.5, tileSize * 0.15, tileSize * 0.4);
-                    }
-
-                    // Flower
-                    if (tile === T.FLOWER) {
-                        const bloom = 0.5 + 0.5 * Math.sin(player.time * 1.5 + r + c);
-                        ctx.fillStyle = `rgba(200, 50, 100, ${0.2 + bloom * 0.2})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ff6b9d';
-                        ctx.font = `${tileSize * 0.3}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🌸', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Rock
-                    if (tile === T.ROCK) {
-                        ctx.fillStyle = '#2a2a2a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a3a3a';
-                        ctx.beginPath();
-                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.35, tileSize * 0.3, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    // Shadow
-                    if (tile === T.SHADOW) {
-                        const pulse = 0.5 + 0.5 * Math.sin(player.time * 2 + r + c);
-                        ctx.fillStyle = `rgba(0, 0, 0, ${0.1 + pulse * 0.15})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = `rgba(100, 50, 150, ${0.1 + pulse * 0.1})`;
-                        ctx.font = `${tileSize * 0.3}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('👻', x + tileSize/2, y + tileSize * 0.65);
-                    }
-
-                    // Resident
-                    if (tile === T.RESIDENT) {
-                        ctx.fillStyle = '#1a0a1a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#6ab4ff';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('👤', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#8888aa';
-                        ctx.font = `${tileSize * 0.08}px monospace`;
-                        ctx.fillText('RESIDENT', x + tileSize/2, y + tileSize * 0.92);
-                    }
-
-                    // Ian
-                    if (tile === T.IAN) {
-                        ctx.fillStyle = '#0a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                        grad.addColorStop(0, 'rgba(100, 200, 50, 0.15)');
-                        grad.addColorStop(1, 'rgba(100, 200, 50, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                        ctx.fillStyle = '#8aba4a';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('💪', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#8aba4a';
-                        ctx.font = `${tileSize * 0.1}px monospace`;
-                        ctx.fillText('IAN', x + tileSize/2, y + tileSize * 0.92);
-                    }
-
-                    // Queen
-                    if (tile === T.QUEEN) {
-                        ctx.fillStyle = '#2a0a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 2);
-                        grad.addColorStop(0, 'rgba(255, 0, 0, 0.15)');
-                        grad.addColorStop(1, 'rgba(255, 0, 0, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                        ctx.fillStyle = '#ff4a4a';
-                        ctx.font = `${tileSize * 0.6}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('👑', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#ff4a4a';
-                        ctx.font = `${tileSize * 0.1}px monospace`;
-                        ctx.fillText('QUEEN', x + tileSize/2, y + tileSize * 0.92);
-                    }
-
-                    // Exit
-                    if (tile === T.EXIT) {
-                        const pulse = 0.5 + 0.5 * Math.sin(player.time * 2);
-                        ctx.fillStyle = `rgba(50, 200, 100, ${0.05 + pulse * 0.1})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                        grad.addColorStop(0, `rgba(74, 255, 138, ${0.1 + pulse * 0.2})`);
-                        grad.addColorStop(1, 'rgba(74, 255, 138, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                        ctx.fillStyle = '#4aff8a';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🚪', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#4aff8a';
-                        ctx.font = `${tileSize * 0.1}px monospace`;
-                        ctx.fillText('EXIT', x + tileSize/2, y + tileSize * 0.92);
-                    }
-
-                    // Items
-                    if (tile === T.ITEM) {
-                        ctx.fillStyle = 'rgba(255, 217, 61, 0.15)';
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('✨', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Chest
-                    if (tile === T.CHEST) {
-                        ctx.fillStyle = '#2a1a0a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#6a4a2a';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.2, tileSize * 0.8, tileSize * 0.6);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.fillRect(x + tileSize * 0.35, y + tileSize * 0.15, tileSize * 0.3, tileSize * 0.1);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.35}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('📦', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Memory
-                    if (tile === T.MEMORY) {
-                        ctx.fillStyle = 'rgba(100, 50, 200, 0.15)';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
-                        grad.addColorStop(0, 'rgba(162, 155, 254, 0.2)');
-                        grad.addColorStop(1, 'rgba(162, 155, 254, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#a29bfe';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('💭', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Letter
-                    if (tile === T.LETTER) {
-                        ctx.fillStyle = 'rgba(200, 180, 100, 0.15)';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('✉️', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Photo
-                    if (tile === T.PHOTO) {
-                        ctx.fillStyle = 'rgba(150, 100, 50, 0.15)';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ff8a4a';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🖼️', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Diary
-                    if (tile === T.DIARY) {
-                        ctx.fillStyle = 'rgba(100, 50, 50, 0.15)';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#ff6b6b';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('📖', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Mirror
-                    if (tile === T.MIRROR) {
-                        ctx.fillStyle = 'rgba(100, 100, 150, 0.15)';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = 'rgba(200, 200, 255, 0.1)';
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
-                        ctx.fillStyle = '#a29bfe';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🪞', x + tileSize/2, y + tileSize * 0.7);
-                    }
-
-                    // Blood
-                    if (tile === T.BLOOD) {
-                        ctx.fillStyle = 'rgba(100, 20, 20, 0.3)';
-                        ctx.beginPath();
-                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.4, tileSize * 0.2, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.beginPath();
-                        ctx.ellipse(x + tileSize * 0.3, y + tileSize * 0.6, tileSize * 0.2, tileSize * 0.1, 0.5, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    // Eye
-                    if (tile === T.EYE) {
-                        ctx.fillStyle = 'rgba(200, 200, 200, 0.2)';
-                        ctx.beginPath();
-                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.3, tileSize * 0.2, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = 'rgba(100, 50, 150, 0.4)';
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.1, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    // Stairs
-                    if (tile === T.STAIRS) {
-                        ctx.fillStyle = '#1a1a2a';
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        for (let i = 0; i < 4; i++) {
-                            ctx.fillStyle = '#2a2a4a';
-                            ctx.fillRect(x + tileSize * 0.1, y + tileSize * (0.1 + i * 0.2), tileSize * 0.8, tileSize * 0.05);
-                        }
-                        ctx.fillStyle = '#ffd93d';
-                        ctx.font = `${tileSize * 0.3}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('⬇', x + tileSize/2, y + tileSize * 0.75);
-                    }
-                }
-            }
-
-            // Draw player
-            const px = player.x * tileSize - cameraX;
-            const py = player.y * tileSize - cameraY;
-            if (px > -tileSize && px < W + tileSize && py > -tileSize && py < H + tileSize) {
-                drawPixelSprite(ctx, px, py, tileSize, player.hair, player.skin, player.outfit, player.facing);
-            }
-
-            // Draw interaction indicator
-            const nearby = getNearbyInteractive();
-            if (nearby && player.gameState === 'exploring' && !player.inDialogue) {
-                const nx = nearby.x * tileSize - cameraX;
-                const ny = nearby.y * tileSize - cameraY;
-                const pulse = 0.5 + 0.5 * Math.sin(player.time * 3);
-                ctx.fillStyle = `rgba(255, 217, 61, ${0.1 + pulse * 0.15})`;
-                ctx.fillRect(nx, ny - 18, tileSize, 16);
-                ctx.fillStyle = '#ffd93d';
-                ctx.font = '7px monospace';
-                ctx.textAlign = 'center';
-                const labels = {
-                    [T.CLOSET]: '🌀 ENTER',
-                    [T.DOOR]: '🚪 OPEN',
-                    [T.ITEM]: '✨ PICK UP',
-                    [T.CHEST]: '📦 OPEN',
-                    [T.RESIDENT]: '💬 TALK',
-                    [T.IAN]: '💪 FACE',
-                    [T.QUEEN]: '👑 CHALLENGE',
-                    [T.EXIT]: '🚪 ESCAPE',
-                    [T.MEMORY]: '💭 REMEMBER',
-                    [T.LETTER]: '✉️ READ',
-                    [T.PHOTO]: '🖼️ VIEW',
-                    [T.DIARY]: '📖 READ',
-                    [T.SHADOW]: '👻 INVESTIGATE',
-                    [T.MIRROR]: '🪞 LOOK',
-                    [T.BLOOD]: '🩸 INVESTIGATE',
-                    [T.EYE]: '👁️ LOOK',
-                    [T.STAIRS]: '⬇️ DESCEND',
-                    [T.PORTAL]: '🌀 ENTER',
-                    [T.TREE]: '🌲 SEARCH',
-                    [T.GRAVE]: '🪦 READ',
-                    [T.SIGN]: '📋 READ',
-                    [T.WELL]: '💧 LOOK',
-                    [T.FOUNTAIN]: '⛲ DRINK',
-                    [T.STATUE]: '🗿 EXAMINE',
-                    [T.BENCH]: '🪑 SIT',
-                    [T.BUG]: '🐛 INTERACT',
-                    [T.FLOWER]: '🌸 PICK',
-                    [T.ROCK]: '🪨 MOVE',
-                    [T.HOUSE]: '🏠 ENTER',
-                    [T.CASTLE]: '🏰 ENTER',
-                    [T.TOWER]: '🗼 CLIMB'
-                };
-                ctx.fillText('🔹 ' + (labels[nearby.tile] || 'INTERACT'), nx + tileSize/2, ny - 6);
-            }
-
-            document.getElementById('darkOverlay').style.background = `rgba(0, 0, 0, ${darkOpacity})`;
-        }
-
-        // ============================================================
-        //  SPRITE FUNCTIONS
-        // ============================================================
-
-        function drawPixelSprite(ctx, x, y, size, hair, skin, outfit, facing) {
-            const s = size / 12;
-            const colors = {
-                skin: skin === 'light' ? '#f5d0b8' :
-                      skin === 'medium' ? '#d4a574' :
-                      skin === 'dark' ? '#8d6b4b' : '#c4a882',
-                hair: hair === 'blonde' ? '#f5d742' :
-                      hair === 'brown' ? '#8b6b4a' :
-                      hair === 'black' ? '#2a2a2a' :
-                      hair === 'red' ? '#c0392b' : '#ff6b9d',
-                outfit: outfit === 'hoodie' ? '#4a7a9c' :
-                       outfit === 'sweater' ? '#8b5a2b' :
-                       outfit === 'jacket' ? '#2d3d4a' : '#c0392b',
-                eye: '#f0f0f0',
-                pupil: '#1a1a2e'
+        
+        // Get location name
+        function getLocationName(areaId) {
+            const locations = {
+                'room303': 'Room 303',
+                'closet': 'The Closet',
+                'darkForest': 'Dark Wonderland Forest',
+                'graveyard': 'The Graveyard',
+                'village': 'The Village',
+                'upperVillage': 'Upper Village',
+                'castleWalls': 'Castle Walls',
+                'castle': 'The Castle'
             };
-
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.beginPath();
-            ctx.ellipse(x + s * 6, y + s * 16, s * 4, s * 1.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = colors.outfit;
-            ctx.fillRect(x + s * 2, y + s * 5, s * 8, s * 7);
-
-            ctx.fillStyle = colors.skin;
-            ctx.fillRect(x + s * 3, y + s * 1, s * 6, s * 4);
-
-            ctx.fillStyle = colors.hair;
-            ctx.fillRect(x + s * 2, y + s * 0, s * 8, s * 2);
-            ctx.fillRect(x + s * 1, y + s * 2, s * 2, s * 1);
-            ctx.fillRect(x + s * 9, y + s * 2, s * 2, s * 1);
-
-            ctx.fillStyle = colors.eye;
-            ctx.fillRect(x + s * 4, y + s * 2.5, s * 1.5, s * 1.5);
-            ctx.fillRect(x + s * 6.5, y + s * 2.5, s * 1.5, s * 1.5);
-            ctx.fillStyle = colors.pupil;
-            ctx.fillRect(x + s * 4.5, y + s * 3, s * 0.8, s * 0.8);
-            ctx.fillRect(x + s * 7, y + s * 3, s * 0.8, s * 0.8);
-
-            ctx.fillStyle = '#8b6b4a';
-            ctx.fillRect(x + s * 5, y + s * 4, s * 2, s * 0.5);
-
-            ctx.fillStyle = colors.outfit;
-            ctx.fillRect(x + s * 3, y + s * 12, s * 2, s * 2.5);
-            ctx.fillRect(x + s * 7, y + s * 12, s * 2, s * 2.5);
-
-            ctx.fillStyle = '#1a1a2a';
-            ctx.fillRect(x + s * 2.5, y + s * 14.5, s * 3, s * 1.2);
-            ctx.fillRect(x + s * 6.5, y + s * 14.5, s * 3, s * 1.2);
-
-            ctx.fillStyle = 'rgba(255, 217, 61, 0.4)';
-            const dirSize = s * 2.5;
-            if (facing === 'up') {
-                ctx.beginPath();
-                ctx.moveTo(x + s * 6, y - dirSize * 0.8);
-                ctx.lineTo(x + s * 6 - dirSize * 0.6, y + dirSize * 0.2);
-                ctx.lineTo(x + s * 6 + dirSize * 0.6, y + dirSize * 0.2);
-                ctx.fill();
-            } else if (facing === 'down') {
-                ctx.beginPath();
-                ctx.moveTo(x + s * 6, y + s * 17 + dirSize * 0.8);
-                ctx.lineTo(x + s * 6 - dirSize * 0.6, y + s * 17 - dirSize * 0.2);
-                ctx.lineTo(x + s * 6 + dirSize * 0.6, y + s * 17 - dirSize * 0.2);
-                ctx.fill();
-            } else if (facing === 'left') {
-                ctx.beginPath();
-                ctx.moveTo(x - dirSize * 0.8, y + s * 8);
-                ctx.lineTo(x + dirSize * 0.2, y + s * 8 - dirSize * 0.6);
-                ctx.lineTo(x + dirSize * 0.2, y + s * 8 + dirSize * 0.6);
-                ctx.fill();
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(x + s * 12 + dirSize * 0.8, y + s * 8);
-                ctx.lineTo(x + s * 12 - dirSize * 0.2, y + s * 8 - dirSize * 0.6);
-                ctx.lineTo(x + s * 12 - dirSize * 0.2, y + s * 8 + dirSize * 0.6);
-                ctx.fill();
-            }
+            return locations[areaId] || 'Unknown';
         }
-
-        // ============================================================
-        //  INTERACTION SYSTEM
-        // ============================================================
-
-        function getNearbyInteractive() {
-            const directions = [
-                { dx: 0, dy: -1 },
-                { dx: 0, dy: 1 },
-                { dx: -1, dy: 0 },
-                { dx: 1, dy: 0 }
-            ];
-
-            for (const dir of directions) {
-                const nx = player.x + dir.dx;
-                const ny = player.y + dir.dy;
-                if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
-                    const tile = map[ny][nx];
-                    if (tile === T.DOOR || tile === T.CLOSET || tile === T.ITEM || 
-                        tile === T.CHEST || tile === T.EXIT || tile === T.QUEEN || 
-                        tile === T.IAN || tile === T.RESIDENT || tile === T.PORTAL ||
-                        tile === T.MEMORY || tile === T.LETTER || tile === T.PHOTO ||
-                        tile === T.DIARY || tile === T.SHADOW || tile === T.MIRROR ||
-                        tile === T.BLOOD || tile === T.EYE || tile === T.STAIRS ||
-                        tile === T.TREE || tile === T.GRAVE || tile === T.SIGN ||
-                        tile === T.WELL || tile === T.FOUNTAIN || tile === T.STATUE ||
-                        tile === T.BENCH || tile === T.BUG || tile === T.FLOWER ||
-                        tile === T.ROCK || tile === T.HOUSE || tile === T.CASTLE ||
-                        tile === T.TOWER) {
-                        return { x: nx, y: ny, tile: tile };
-                    }
-                }
-            }
-            return null;
+        
+        // Dialogue system
+        function showDialogue(text) {
+            gameState.inDialogue = true;
+            document.getElementById('dialogueText').textContent = text;
+            document.getElementById('dialogueBox').classList.add('active');
         }
-
-        // ============================================================
-        //  DIALOGUE SYSTEM
-        // ============================================================
-
-        let dialogueCallback = null;
-        let dialogueTimer = null;
-
-        function showDialogue(speaker, text, choices = null, callback = null, autoClose = 0) {
-            const box = document.getElementById('dialogueBox');
-            const speakerEl = document.getElementById('dialogueSpeaker');
-            const textEl = document.getElementById('dialogueText');
-            const continueEl = document.getElementById('dialogueContinue');
-            const buttonsEl = document.getElementById('dialogueButtons');
-
-            box.style.display = 'block';
-            speakerEl.textContent = speaker;
-            textEl.innerHTML = text;
-            continueEl.style.display = 'none';
-            buttonsEl.style.display = 'none';
-
-            if (choices && choices.length > 0) {
-                buttonsEl.style.display = 'flex';
-                buttonsEl.innerHTML = '';
-                for (const choice of choices) {
-                    const btn = document.createElement('button');
-                    btn.className = 'game-btn ' + (choice.class || '');
-                    btn.textContent = choice.label;
-                    btn.onclick = function() {
-                        if (choice.action) choice.action();
-                        if (callback) callback(choice.value);
-                    };
-                    buttonsEl.appendChild(btn);
-                }
-            } else {
-                continueEl.style.display = 'block';
-                continueEl.textContent = '▼ Press SPACE or click to continue';
-            }
-
-            dialogueCallback = callback;
-            player.inDialogue = true;
-            player.gameState = 'dialogue';
-
-            if (autoClose > 0) {
-                clearTimeout(dialogueTimer);
-                dialogueTimer = setTimeout(() => {
-                    closeDialogue();
-                }, autoClose);
-            }
-
-            box.onclick = function(e) {
-                if (e.target === box || e.target === textEl || e.target === continueEl) {
-                    if (continueEl.style.display !== 'none') {
-                        continueDialogue();
-                    }
-                }
-            };
-        }
-
-        function continueDialogue() {
-            if (dialogueCallback) {
-                const cb = dialogueCallback;
-                dialogueCallback = null;
-                cb();
-            } else {
-                closeDialogue();
-            }
-        }
-
+        
         function closeDialogue() {
-            document.getElementById('dialogueBox').style.display = 'none';
-            player.inDialogue = false;
-            player.gameState = 'exploring';
-            dialogueCallback = null;
-            clearTimeout(dialogueTimer);
-            updateUI();
-        }
-
-        // Keyboard
-        document.addEventListener('keydown', function(e) {
-            if (e.key === ' ' || e.key === 'Space') {
-                e.preventDefault();
-                if (player.inDialogue) {
-                    const continueEl = document.getElementById('dialogueContinue');
-                    if (continueEl.style.display !== 'none') {
-                        continueDialogue();
-                    }
-                } else if (player.gameState === 'exploring') {
-                    interact();
-                }
-            }
-
-            if (!player.inDialogue && player.gameState === 'exploring') {
-                let dx = 0, dy = 0;
-                if (e.key === 'ArrowUp' || e.key === 'w') { dy = -1; player.facing = 'up'; }
-                if (e.key === 'ArrowDown' || e.key === 's') { dy = 1; player.facing = 'down'; }
-                if (e.key === 'ArrowLeft' || e.key === 'a') { dx = -1; player.facing = 'left'; }
-                if (e.key === 'ArrowRight' || e.key === 'd') { dx = 1; player.facing = 'right'; }
-
-                if (dx !== 0 || dy !== 0) {
-                    e.preventDefault();
-                    tryMove(dx, dy);
-                }
-            }
-        });
-
-        // ============================================================
-        //  MOVEMENT WITH SECTION TRACKING
-        // ============================================================
-
-        function tryMove(dx, dy) {
-            const nx = player.x + dx;
-            const ny = player.y + dy;
-
-            if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
-
-            const tile = map[ny][nx];
-            if (tile === T.WALL || tile === T.TREE || tile === T.WATER || 
-                tile === T.HOUSE || tile === T.CASTLE || tile === T.TOWER) return;
-
-            // Don't move onto NPCs
-            if (tile === T.RESIDENT || tile === T.IAN || tile === T.QUEEN || 
-                tile === T.SHADOW || tile === T.BUG) {
-                player.x = nx;
-                player.y = ny;
-                player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
-                                 dx === -1 ? 'left' : 'right';
-                updateUI();
-                interact();
-                return;
-            }
-
-            player.x = nx;
-            player.y = ny;
-            player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
-                             dx === -1 ? 'left' : 'right';
-
-            updateMapSection();
-            updateUI();
-
-            // Auto-interact with items
-            if (tile === T.ITEM || tile === T.CHEST || tile === T.MEMORY || 
-                tile === T.LETTER || tile === T.PHOTO || tile === T.DIARY ||
-                tile === T.MIRROR || tile === T.BLOOD || tile === T.EYE ||
-                tile === T.STAIRS || tile === T.PORTAL || tile === T.SIGN ||
-                tile === T.GRAVE || tile === T.WELL || tile === T.FOUNTAIN ||
-                tile === T.STATUE || tile === T.BENCH || tile === T.FLOWER ||
-                tile === T.ROCK) {
-                interact();
+            gameState.inDialogue = false;
+            document.getElementById('dialogueBox').classList.remove('active');
+            
+            if (gameState.dialogueQueue.length > 0) {
+                const nextDialogue = gameState.dialogueQueue.shift();
+                setTimeout(() => showDialogue(nextDialogue), 500);
             }
         }
-
-        function updateMapSection() {
-            // Determine which area the player is in
-            if (player.x < 9 && player.y < 8) {
-                player.act = 'ROOM 303';
-                player.mapSection = 0;
-            } else if (player.x >= 9 && player.x < 14 && player.y < 10) {
-                player.act = 'PORTAL HALL';
-                player.mapSection = 1;
-            } else if (player.x >= 14 && player.x < 20 && player.y < 14) {
-                player.act = 'SPOOKY FOREST';
-                player.mapSection = 2;
-            } else if (player.x >= 20 && player.x < 26 && player.y < 14) {
-                player.act = 'GRAVEYARD';
-                player.mapSection = 3;
-            } else if (player.x >= 26 && player.x < 32 && player.y < 14) {
-                player.act = 'VILLAGE';
-                player.mapSection = 4;
-            } else if (player.x >= 2 && player.x < 10 && player.y >= 14 && player.y < 20) {
-                player.act = 'UPPER VILLAGE';
-                player.mapSection = 5;
-            } else if (player.x >= 10 && player.x < 18 && player.y >= 14 && player.y < 20) {
-                player.act = 'CASTLE WALLS';
-                player.mapSection = 6;
-            } else if (player.x >= 18 && player.x < 26 && player.y >= 14 && player.y < 20) {
-                player.act = 'CASTLE';
-                player.mapSection = 7;
-            } else if (player.x >= 26 && player.y >= 14) {
-                player.act = 'QUEEN\'S ROOM';
-                player.mapSection = 8;
-            }
-        }
-
-        // Click to move
-        canvas.addEventListener('click', function(e) {
-            if (player.inDialogue || player.gameState !== 'exploring') return;
-
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-
-            const tx = Math.floor((mx + cameraX) / tileSize);
-            const ty = Math.floor((my + cameraY) / tileSize);
-
-            if (tx >= 0 && tx < cols && ty >= 0 && ty < rows) {
-                const dx = Math.sign(tx - player.x);
-                const dy = Math.sign(ty - player.y);
-
-                if (dx !== 0 && dy !== 0) {
-                    if (map[player.y][player.x + dx] !== T.WALL && 
-                        map[player.y][player.x + dx] !== T.TREE &&
-                        map[player.y][player.x + dx] !== T.WATER) {
-                        tryMove(dx, 0);
-                        return;
-                    }
-                    if (map[player.y + dy][player.x] !== T.WALL &&
-                        map[player.y + dy][player.x] !== T.TREE &&
-                        map[player.y + dy][player.x] !== T.WATER) {
-                        tryMove(0, dy);
-                        return;
-                    }
-                } else if (dx !== 0) {
-                    tryMove(dx, 0);
-                } else if (dy !== 0) {
-                    tryMove(0, dy);
-                }
-            }
-        });
-
-        // ============================================================
-        //  INTERACT
-        // ============================================================
-
-        function interact() {
-            if (player.inDialogue) return;
-
-            const nearby = getNearbyInteractive();
-            if (!nearby) {
-                showDialogue('💡 HINT', 'There\'s nothing here.');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            const { x, y, tile } = nearby;
-
-            switch (tile) {
-                case T.SIGN: readSign(x, y); break;
-                case T.CLOSET: enterCloset(); break;
-                case T.PORTAL: enterPortal(x, y); break;
-                case T.DOOR: openDoor(x, y); break;
-                case T.ITEM: pickUpItem(x, y); break;
-                case T.CHEST: openChest(x, y); break;
-                case T.MEMORY: findMemory(x, y); break;
-                case T.LETTER: readLetter(x, y); break;
-                case T.PHOTO: viewPhoto(x, y); break;
-                case T.DIARY: readDiary(x, y); break;
-                case T.MIRROR: lookInMirror(x, y); break;
-                case T.BLOOD: investigateBlood(x, y); break;
-                case T.EYE: lookAtEye(x, y); break;
-                case T.STAIRS: descendStairs(x, y); break;
-                case T.GRAVE: readGrave(x, y); break;
-                case T.WELL: lookInWell(x, y); break;
-                case T.FOUNTAIN: drinkFromFountain(x, y); break;
-                case T.STATUE: examineStatue(x, y); break;
-                case T.BENCH: sitOnBench(x, y); break;
-                case T.BUG: interactWithBug(x, y); break;
-                case T.FLOWER: pickFlower(x, y); break;
-                case T.ROCK: moveRock(x, y); break;
-                case T.RESIDENT: talkToResident(x, y); break;
-                case T.SHADOW: investigateShadow(x, y); break;
-                case T.IAN: faceIan(); break;
-                case T.QUEEN: faceQueen(); break;
-                case T.EXIT: escapeWonderland(); break;
-                default: 
-                    showDialogue('💡 HINT', 'You can\'t interact with that.');
-                    setTimeout(closeDialogue, 1500);
-            }
-        }
-
-        // ============================================================
-        //  OPENING: IZZY GETS TAKEN
-        // ============================================================
-
-        function readSign(x, y) {
-            if (!player.sawIzzyTaken) {
-                showDialogue('📋 A NOTE',
-                    '<span class="creepy">"HELP! IZZY WAS TAKEN!"</span><br><br>' +
-                    'The note is written in messy handwriting.<br>' +
-                    '"She was dragged into the <span class="highlight">closet</span>.<br>' +
-                    '"Please... save her..."'
-                );
-                setTimeout(closeDialogue, 3000);
-                return;
-            }
-
-            // Random sign messages
-            const messages = [
-                '"Welcome to JN Wonderland"<br><span style="color:#8888aa;">- The Cat</span>',
-                '"Beware the Spooky Forest"<br><span style="color:#8888aa;">- Village Elder</span>',
-                '"The Graveyard holds memories"<br><span style="color:#8888aa;">- Unknown</span>',
-                '"The Queen watches from her throne"<br><span style="color:#8888aa;">- Warning</span>',
-                '"Izzy is waiting..."<br><span style="color:#ffd93d;">- Hope</span>'
+        
+        // Opening scene
+        function startOpeningScene() {
+            const char = gameState.character;
+            
+            gameState.dialogueQueue = [
+                `${char.name}, you're in your dorm room at John Neumaier Hall.`,
+                "It's a quiet evening... or so you thought.",
+                "Suddenly, you hear a violent crash from room 303.",
+                "IZZY SCREAMS!",
+                "Something is terribly wrong..."
             ];
-            showDialogue('📋 SIGN', messages[Math.floor(Math.random() * messages.length)]);
-            setTimeout(closeDialogue, 2000);
+            
+            showDialogue(gameState.dialogueQueue.shift());
         }
-
-        function showIzzyTakenScene() {
-            player.sawIzzyTaken = true;
-            player.questStep = Math.max(player.questStep, 1);
-            darkOpacity = 0.5;
-
-            showDialogue('👱 IZZY', 
-                '<span class="creepy" style="font-size:14px;">"HELP! SOMEONE HELP!"</span><br><br>' +
-                'You see <span class="highlight">Izzy</span>, the short blonde girl from 303, being <span class="creepy">dragged</span> toward the closet.<br>' +
-                'She\'s screaming, reaching out to you.<br>' +
-                '<span style="color: #ffd93d;">"PLEASE! DON\'T LET THEM TAKE ME!"</span><br><br>' +
-                'The closet door GLOWS. Shadows reach out like hands.<br>' +
-                'She\'s pulled inside. The door SLAMS shut.<br><br>' +
-                '<span class="creepy">✦ IZZY IS GONE ✦</span><br>' +
-                '<span class="highlight">✦ You must enter Wonderland and save her ✦</span>'
-            );
-            setTimeout(() => {
-                darkOpacity = 0;
-                closeDialogue();
-                showDialogue('🎮 NARRATOR',
-                    'You stand frozen. Your friend is gone.<br>' +
-                    'The closet is still glowing.<br><br>' +
-                    '<span class="highlight">✦ Enter the closet to begin your journey ✦</span><br>' +
-                    '<span style="color: #8888aa;">The portal will take you to Wonderland.</span>'
-                );
-                setTimeout(closeDialogue, 3500);
-                map[3][5] = T.FLOOR;
-                map[5][11] = T.PORTAL;
-                updateUI();
-            }, 4000);
+        
+        // Menu functions
+        function toggleMenu() {
+            const menu = document.getElementById('gameMenu');
+            menu.classList.toggle('active');
+            gameState.paused = menu.classList.contains('active');
         }
-
-        // ============================================================
-        //  ENTER CLOSET
-        // ============================================================
-
-        function enterCloset() {
-            if (!player.sawIzzyTaken) {
-                showIzzyTakenScene();
-                return;
-            }
-
-            if (player.enteredWonderland) {
-                showDialogue('🌀 THE CLOSET', 'You\'ve already entered Wonderland. The portal awaits.');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            player.enteredWonderland = true;
-            player.questStep = Math.max(player.questStep, 3);
-            player.act = 'PORTAL HALL';
-
-            showChapter('CHAPTER II', 'The Portal');
-
-            showDialogue('🌀 THE CLOSET',
-                'You step into the closet. There\'s no back wall.<br>' +
-                '<span class="creepy">Just a long, dark tunnel.</span><br><br>' +
-                'You walk forward. The walls pulse like they\'re breathing.<br>' +
-                'You hear Izzy\'s voice: <span style="color: #ffd93d;">"...help me..."</span><br><br>' +
-                'You emerge into a <span class="trippy">strange hallway</span>.<br>' +
-                'A glowing <span class="highlight">portal</span> pulses at the end.<br><br>' +
-                '<span class="highlight">✦ Enter the portal to reach Wonderland ✦</span>'
-            );
-            setTimeout(closeDialogue, 3500);
-            map[4][6] = T.FLOOR;
-            player.x = 10;
-            player.y = 5;
-            updateMapSection();
-            updateUI();
+        
+        function showInventory() {
+            // TODO: Implement inventory system
+            console.log('Inventory system coming soon!');
         }
-
-        // ============================================================
-        //  ENTER PORTAL
-        // ============================================================
-
-        function enterPortal(x, y) {
-            if (player.enteredWonderland && player.questStep < 4) {
-                player.questStep = Math.max(player.questStep, 4);
-                player.act = 'SPOOKY FOREST';
-                showChapter('CHAPTER III', 'Spooky Forest');
-
-                showDialogue('🌀 THE PORTAL',
-                    'You step through the portal.<br><br>' +
-                    'The world shimmers. Colors bleed together.<br>' +
-                    'You emerge in a <span class="trippy">dark forest</span>.<br><br>' +
-                    '<span class="highlight">✦ Welcome to Wonderland ✦</span><br>' +
-                    '<span style="color: #8888aa;">Find your way through the Spooky Forest.</span><br>' +
-                    '<span style="color: #8888aa;">Beware the bugs... they bite.</span>'
-                );
-                map[y][x] = T.FLOOR;
-                player.x = 16;
-                player.y = 8;
-                updateMapSection();
-                updateUI();
-                setTimeout(closeDialogue, 3500);
-                return;
-            }
-
-            if (player.questStep >= 4) {
-                showDialogue('🌀 PORTAL', 'You step through the portal. You\'re in the Spooky Forest.');
-                player.x = 16;
-                player.y = 8;
-                updateMapSection();
-                updateUI();
-                setTimeout(closeDialogue, 1500);
-            }
+        
+        function showStatus() {
+            // TODO: Implement status screen
+            console.log('Status screen coming soon!');
         }
-
-        // ============================================================
-        //  SPOOKY FOREST: BUGS
-        // ============================================================
-
-        let bugState = {};
-
-        function interactWithBug(x, y) {
-            const bugKey = `${x},${y}`;
-            if (bugState[bugKey] && bugState[bugKey].defeated) {
-                showDialogue('🐛 BUG', 'The bug is gone. You already defeated it.');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            showDialogue('🐛 A BUG',
-                '<span class="creepy">A giant bug scuttles toward you!</span><br><br>' +
-                'Its mandibles click. It looks hungry.<br><br>' +
-                'What do you do?',
-                [
-                    { label: '⚔️ Fight', value: 'fight', class: 'danger' },
-                    { label: '🌀 Wonder', value: 'wonder', class: 'wonder' },
-                    { label: '🏃 Run', value: 'run' },
-                    { label: '💬 Talk', value: 'talk' }
-                ],
-                function(choice) {
-                    closeDialogue();
-                    if (choice === 'fight') {
-                        const damage = 2 + Math.floor(Math.random() * 3);
-                        player.hp -= damage;
-                        player.enemiesDefeated++;
-                        player.wonder += 2;
-                        bugState[bugKey] = { defeated: true };
-                        showDialogue('⚔️ BATTLE',
-                            'You fight the bug!<br>' +
-                            `You deal <span class="damage">${damage}</span> damage!<br>` +
-                            `<span class="good">✦ Bug defeated! ✦</span><br>` +
-                            `<span style="color: #8888aa;">You lose ${damage} HP</span>`
-                        );
-                        map[y][x] = T.FLOOR;
-                        updateUI();
-                        setTimeout(closeDialogue, 2500);
-                    } else if (choice === 'wonder') {
-                        if (player.wonder >= 10) {
-                            player.wonder -= 5;
-                            bugState[bugKey] = { defeated: true };
-                            showDialogue('🌀 WONDER',
-                                'You use Wonder energy!<br>' +
-                                'The bug freezes and scurries away.<br>' +
-                                `<span class="good">✦ Bug banished! ✦</span>`
-                            );
-                            map[y][x] = T.FLOOR;
-                            updateUI();
-                            setTimeout(closeDialogue, 2000);
-                        } else {
-                            showDialogue('🌀 WONDER',
-                                'You try to use Wonder, but it\'s not enough.<br>' +
-                                `<span style="color: #8888aa;">Need 10+ Wonder (current: ${player.wonder})</span>`
-                            );
-                            setTimeout(closeDialogue, 1500);
-                        }
-                    } else if (choice === 'talk') {
-                        if (Math.random() < 0.5) {
-                            bugState[bugKey] = { defeated: true };
-                            showDialogue('💬 TALK',
-                                'You talk to the bug.<br>' +
-                                'It seems to understand you!<br>' +
-                                `<span class="good">✦ The bug leaves you alone ✦</span>`
-                            );
-                            map[y][x] = T.FLOOR;
-                            updateUI();
-                            setTimeout(closeDialogue, 2000);
-                        } else {
-                            const damage = 3;
-                            player.hp -= damage;
-                            showDialogue('💬 TALK',
-                                'You try to talk to the bug.<br>' +
-                                '<span class="creepy">It doesn\'t listen!</span><br>' +
-                                `It bites you! <span class="creepy">You lose ${damage} HP</span>`
-                            );
-                            updateUI();
-                            setTimeout(closeDialogue, 2000);
-                        }
-                    } else {
-                        if (Math.random() < 0.6) {
-                            showDialogue('🏃 RUN',
-                                'You escape the bug!<br>' +
-                                '<span style="color: #8888aa;">You lose 1 HP from exhaustion.</span>'
-                            );
-                            player.hp -= 1;
-                            updateUI();
-                            setTimeout(closeDialogue, 1500);
-                        } else {
-                            const damage = 2;
-                            player.hp -= damage;
-                            showDialogue('🏃 RUN',
-                                'The bug blocks your path!<br>' +
-                                `<span class="creepy">It bites you! You lose ${damage} HP</span>`
-                            );
-                            updateUI();
-                            setTimeout(closeDialogue, 1500);
-                        }
-                    }
-                }
-            );
+        
+        function saveGame() {
+            localStorage.setItem('johnNeumaierSave', JSON.stringify(gameState));
+            console.log('Game saved!');
         }
-
-        // ============================================================
-        //  SPOOKY FOREST: FLOWERS & ROCKS
-        // ============================================================
-
-        function pickFlower(x, y) {
-            showDialogue('🌸 FLOWER',
-                'You pick the flower.<br>' +
-                'It glows with <span class="wonder">Wonder energy</span>.<br>' +
-                `<span class="good">✦ +3 WONDER ✦</span>`
-            );
-            player.wonder += 3;
-            map[y][x] = T.FLOOR;
-            updateUI();
-            setTimeout(closeDialogue, 1500);
-        }
-
-        function moveRock(x, y) {
-            if (player.hasKey) {
-                showDialogue('🪨 ROCK',
-                    'You use your key to move the rock.<br>' +
-                    'Underneath, you find a <span class="highlight">hidden path</span>!<br>' +
-                    `<span class="good">✦ +5 WONDER ✦</span>`
-                );
-                player.wonder += 5;
-                map[y][x] = T.FLOOR;
-                updateUI();
-                setTimeout(closeDialogue, 2000);
-            } else {
-                showDialogue('🪨 ROCK',
-                    'The rock is too heavy to move.<br>' +
-                    '<span style="color: #8888aa;">You need something to help you.</span>'
-                );
-                setTimeout(closeDialogue, 1500);
-            }
-        }
-
-        // ============================================================
-        //  GRAVEYARD
-        // ============================================================
-
-        let graveyardMemories = 0;
-
-        function readGrave(x, y) {
-            const epitaphs = [
-                '"Here lies a resident of Room 301.<br>They were kind."',
-                '"Room 302. They tried to escape.<br>They almost made it."',
-                '"Room 304. They painted the walls.<br>Now the walls paint them."',
-                '"Room 305. They loved music.<br>Now they are silence."',
-                '"Room 306. They tried to fix the building.<br>They became part of it."',
-                '"Room 307. They knew the truth.<br>The truth was too much."',
-                '"Room 308. They were innocent.<br>Innocence doesn\'t last here."'
-            ];
-
-            const epitaph = epitaphs[Math.floor(Math.random() * epitaphs.length)];
-            graveyardMemories++;
-            player.wonder += 2;
-            player.sanity += 1;
-
-            showDialogue('🪦 GRAVE', epitaph);
-            setTimeout(closeDialogue, 2500);
-            updateUI();
-
-            if (graveyardMemories >= 4) {
-                setTimeout(() => {
-                    showDialogue('🪦 ALL GRAVES READ',
-                        'You\'ve read the graves. You understand the tragedy.<br>' +
-                        '<span class="highlight">✦ The Queen took them all ✦</span><br>' +
-                        '<span class="good">✦ +10 WONDER ✦</span>'
-                    );
-                    player.wonder += 10;
-                    player.questStep = Math.max(player.questStep, 5);
-                    updateUI();
-                    setTimeout(closeDialogue, 3000);
-                }, 500);
-            }
-        }
-
-        // ============================================================
-        //  VILLAGE
-        // ============================================================
-
-        function talkToResident(x, y) {
-            const residents = [
-                { name: '👤 OLD WOMAN', text: '"The Queen took my granddaughter. Please save her."' },
-                { name: '👤 FARMER', text: '"The bugs came from the forest. They\'re getting worse."' },
-                { name: '👤 CHILD', text: '"I saw Izzy! She was crying. The Queen was yelling at her."' },
-                { name: '👤 ELDER', text: '"To reach the Queen, you must pass through the graveyard."' },
-                { name: '👤 MERCHANT', text: '"I have items for you... if you have coin."' }
-            ];
-
-            const resident = residents[Math.floor(Math.random() * residents.length)];
-            showDialogue(`${resident.name}`, resident.text);
-            setTimeout(closeDialogue, 2000);
-
-            // Random chance of receiving item
-            if (Math.random() < 0.2 && !player.hasCandy) {
-                player.hasCandy = true;
-                setTimeout(() => {
-                    showDialogue('🎁 GIFT', 'The resident gives you <span class="highlight">CANDY</span>!');
-                    setTimeout(closeDialogue, 1500);
-                }, 1500);
-            }
-            updateUI();
-        }
-
-        // ============================================================
-        //  VILLAGE: FOUNTAIN & WELL
-        // ============================================================
-
-        function drinkFromFountain(x, y) {
-            showDialogue('⛲ FOUNTAIN',
-                'You drink from the fountain.<br>' +
-                'The water is cool and refreshing.<br>' +
-                `<span class="good">✦ +3 HP, +2 WONDER ✦</span>`
-            );
-            player.hp = Math.min(player.maxHp, player.hp + 3);
-            player.wonder += 2;
-            updateUI();
-            setTimeout(closeDialogue, 2000);
-        }
-
-        function lookInWell(x, y) {
-            showDialogue('💧 WELL',
-                'You look into the well.<br>' +
-                'You see your reflection... <span class="trippy">but it\'s Izzy\'s face.</span><br>' +
-                '<span class="creepy">"Find me..."</span>'
-            );
-            player.sanity += 2;
-            player.wonder += 3;
-            updateUI();
-            setTimeout(closeDialogue, 2000);
-        }
-
-        // ============================================================
-        //  VILLAGE: STATUE & BENCH
-        // ============================================================
-
-        function examineStatue(x, y) {
-            const statues = [
-                '"A statue of a cat. Its eyes seem to follow you."',
-                '"A statue of a queen. It\'s cracked and broken."',
-                '"A statue of a girl. She looks like Izzy."',
-                '"A statue of a knight. Its sword is missing."'
-            ];
-            showDialogue('🗿 STATUE', statues[Math.floor(Math.random() * statues.length)]);
-            setTimeout(closeDialogue, 2000);
-        }
-
-        function sitOnBench(x, y) {
-            showDialogue('🪑 BENCH',
-                'You sit on the bench and rest.<br>' +
-                `<span class="good">✦ +2 HP ✦</span>`
-            );
-            player.hp = Math.min(player.maxHp, player.hp + 2);
-            updateUI();
-            setTimeout(closeDialogue, 1500);
-        }
-
-        // ============================================================
-        //  UPPER VILLAGE
-        // ============================================================
-
-        // Upper Village has more residents and a chest
-
-        // ============================================================
-        //  CASTLE WALLS
-        // ============================================================
-
-        let wallShadows = 0;
-
-        function investigateShadow(x, y) {
-            wallShadows++;
-            showDialogue('👻 A SHADOW',
-                '<span class="creepy">A shadow moves along the wall.</span><br><br>' +
-                'It whispers: <span class="dark">"The Queen is waiting..."</span><br>' +
-                'It fades away.<br><br>' +
-                `<span style="color: #8888aa;">Shadows encountered: ${wallShadows}</span>`
-            );
-            player.sanity -= 2;
-            updateUI();
-            setTimeout(closeDialogue, 2000);
-
-            if (wallShadows >= 4) {
-                setTimeout(() => {
-                    showDialogue('👻 ALL SHADOWS',
-                        'You\'ve faced all the shadows.<br>' +
-                        '<span class="highlight">✦ The path to the castle is clear ✦</span>'
-                    );
-                    player.questStep = Math.max(player.questStep, 7);
-                    updateUI();
-                    setTimeout(closeDialogue, 2000);
-                }, 500);
-            }
-        }
-
-        // ============================================================
-        //  CASTLE - IAN (BODYGUARD)
-        // ============================================================
-
-        function faceIan() {
-            if (player.ianDefeated || player.ianBefriended) {
-                showDialogue('💪 IAN', '"You already dealt with me, human. Go on."');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            if (player.questStep < 6) {
-                showDialogue('💪 IAN', '"You\'re not ready. Explore the areas first."');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            player.act = 'CASTLE';
-            showChapter('CHAPTER VIII', 'The Bodyguard');
-
-            showDialogue('💪 IAN - QUEEN\'S BODYGUARD',
-                '<span style="color: #8aba4a; font-size: 14px;">"YOU SHALL NOT PASS!"</span><br><br>' +
-                'Ian stands before you, massive and green.<br>' +
-                '<span style="color: #8aba4a;">"The Queen took Izzy. She\'s in the throne room."</span><br>' +
-                '<span style="color: #8aba4a;">"You can\'t save her. You\'re too weak."</span><br><br>' +
-                'His eyes are sad. <span class="dark">"I was a resident too."</span><br><br>' +
-                'How do you approach him?',
-                [
-                    { label: '⚔️ Fight', value: 'fight', class: 'danger' },
-                    { label: '💬 Talk', value: 'talk' },
-                    { label: '🎭 Prank', value: 'prank', class: 'wonder' },
-                    { label: '🕊️ Spare', value: 'spare', class: 'success' },
-                    { label: '💔 Heal', value: 'heal', class: 'good' }
-                ],
-                function(choice) {
-                    handleIanChoice(choice);
-                }
-            );
-        }
-
-        function handleIanChoice(choice) {
-            closeDialogue();
-
-            switch (choice) {
-                case 'fight':
-                    if (player.foundMemories >= 2 || player.graveyardCleared) {
-                        player.ianDefeated = true;
-                        player.questStep = Math.max(player.questStep, 8);
-                        player.hasCourage = true;
-                        showDialogue('⚔️ BATTLE',
-                            'You fight Ian with all your strength!<br>' +
-                            'You\'re fighting for Izzy. You won\'t lose.<br>' +
-                            '<span class="good">✦ IAN IS DEFEATED! ✦</span><br>' +
-                            '<span style="color: #8aba4a;">"...You\'re stronger than I was. Save her."</span>'
-                        );
-                        map[16][20] = T.FLOOR;
-                        map[17][22] = T.FLOOR;
-                        setTimeout(closeDialogue, 3000);
-                    } else {
-                        showDialogue('⚔️ BATTLE',
-                            'You fight Ian, but he\'s too strong!<br>' +
-                            '<span class="creepy">✦ You lose 5 HP ✦</span><br>' +
-                            '<span style="color: #8888aa;">You need more experience.</span>'
-                        );
-                        player.hp -= 5;
-                        updateUI();
-                        setTimeout(closeDialogue, 2000);
-                    }
-                    break;
-
-                case 'talk':
-                    if (player.hasWisdom) {
-                        player.ianBefriended = true;
-                        player.questStep = Math.max(player.questStep, 8);
-                        player.hasMercy = true;
-                        showDialogue('💬 TALK',
-                            'You talk to Ian. You tell him you understand.<br>' +
-                            '<span style="color: #8aba4a;">"...You really get it, don\'t you?"</span><br>' +
-                            '<span class="good">✦ IAN LETS YOU PASS ✦</span><br>' +
-                            '"Save Izzy. Don\'t make my mistake."'
-                        );
-                        map[16][20] = T.FLOOR;
-                        map[17][22] = T.FLOOR;
-                        setTimeout(closeDialogue, 3000);
-                    } else {
-                        showDialogue('💬 TALK',
-                            'You try to talk to Ian, but he\'s not listening.<br>' +
-                            '<span style="color: #8888aa;">You need more wisdom.</span>'
-                        );
-                        setTimeout(closeDialogue, 2000);
-                    }
-                    break;
-
-                case 'prank':
-                    player.ianBefriended = true;
-                    player.questStep = Math.max(player.questStep, 8);
-                    player.hasMercy = true;
-                    showDialogue('🎭 PRANK',
-                        'You yell <span style="color: #ffd93d;">"MY MOM!"</span><br>' +
-                        'Ian freezes. His eyes water.<br>' +
-                        '<span style="color: #8aba4a;">"...Alright, alright. You got me. Go on."</span><br>' +
-                        '<span class="good">✦ IAN LETS YOU PASS ✦</span>'
-                    );
-                    map[16][20] = T.FLOOR;
-                    map[17][22] = T.FLOOR;
-                    setTimeout(closeDialogue, 2500);
-                    break;
-
-                case 'spare':
-                    if (player.hasMercy) {
-                        player.ianBefriended = true;
-                        player.questStep = Math.max(player.questStep, 8);
-                        showDialogue('🕊️ SPARE',
-                            'You put your hands up.<br>' +
-                            '<span style="color: #ffd93d;">"I don\'t want to fight you, Ian."</span><br>' +
-                            '<span style="color: #8aba4a;">"...You\'re the first person to say that."</span><br>' +
-                            '<span class="good">✦ IAN STEPS ASIDE ✦</span>'
-                        );
-                        map[16][20] = T.FLOOR;
-                        map[17][22] = T.FLOOR;
-                        setTimeout(closeDialogue, 3000);
-                    } else {
-                        showDialogue('🕊️ SPARE',
-                            'You try to spare Ian, but he doesn\'t believe you.<br>' +
-                            '<span style="color: #8888aa;">You need to show mercy first.</span>'
-                        );
-                        setTimeout(closeDialogue, 2000);
-                    }
-                    break;
-
-                case 'heal':
-                    if (player.hasHeart || player.hasRose) {
-                        player.ianBefriended = true;
-                        player.questStep = Math.max(player.questStep, 8);
-                        player.hasMercy = true;
-                        player.hasHope = true;
-                        showDialogue('💔 HEAL',
-                            'You reach out to Ian.<br>' +
-                            'You place your hand on his chest.<br>' +
-                            '<span class="wonder">✦ You share your hope with him ✦</span><br><br>' +
-                            'Ian\'s eyes widen. The green fades.<br>' +
-                            '<span style="color: #8aba4a;">"...I forgot what it felt like."</span><br>' +
-                            '<span class="good">✦ IAN IS HEALED ✦</span>'
-                        );
-                        map[16][20] = T.FLOOR;
-                        map[17][22] = T.FLOOR;
-                        setTimeout(closeDialogue, 3000);
-                    } else {
-                        showDialogue('💔 HEAL',
-                            'You try to heal Ian, but you have nothing to give.<br>' +
-                            '<span style="color: #8888aa;">You need a Heart or a Rose.</span>'
-                        );
-                        setTimeout(closeDialogue, 1500);
-                    }
-                    break;
-            }
-            updateUI();
-        }
-
-        // ============================================================
-        //  QUEEN'S ROOM - FINAL BOSS
-        // ============================================================
-
-        function faceQueen() {
-            if (player.queenDefeated || player.queenBefriended) {
-                showDialogue('👑 THE QUEEN', '"You\'ve already won. Leave me."');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            if (player.questStep < 8) {
-                showDialogue('👑 THE QUEEN', '"You\'re not ready. Complete your quest."');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            if (!player.ianDefeated && !player.ianBefriended) {
-                showDialogue('👑 THE QUEEN', '"You must face Ian first!"');
-                setTimeout(closeDialogue, 1500);
-                return;
-            }
-
-            player.act = 'QUEEN\'S ROOM';
-            showChapter('CHAPTER IX', 'The Queen');
-
-            let intro = '<span style="color: #ff4a4a; font-size: 14px;">"YOU DARE FACE ME?"</span><br><br>';
-            if (graveyardMemories >= 4) intro += '"You read the graves. You know what I took."<br>';
-            if (player.foundMemories >= 2) intro += '"You found the memories. You know what I did."<br>';
-            intro += '<br><span style="color: #ff4a4a;">"IZZY IS MINE!"</span><br><br>';
-            intro += '<span style="color: #8888aa; font-size: 8px;">Izzy is trapped behind the Queen.</span>';
-
-            showDialogue('👑 QUEEN RYLEE', intro,
-                [
-                    { label: '⚔️ Fight', value: 'fight', class: 'danger' },
-                    { label: '💬 Talk', value: 'talk' },
-                    { label: '🌀 Wonder', value: 'wonder', class: 'wonder' },
-                    { label: '🕊️ Spare', value: 'spare', class: 'success' },
-                    { label: '💔 Heal', value: 'heal', class: 'good' }
-                ],
-                function(choice) {
-                    handleQueenChoice(choice);
-                }
-            );
-        }
-
-        function handleQueenChoice(choice) {
-            closeDialogue();
-
-            switch (choice) {
-                case 'fight':
-                    if (graveyardMemories >= 4 && player.hasCourage) {
-                        player.queenDefeated = true;
-                        player.questStep = 9;
-                        showDialogue('⚔️ FINAL BATTLE',
-                            'You fight the Queen with everything you have!<br>' +
-                            'The memories strengthen you. The graves give you power.<br>' +
-                            '<span class="good">✦ THE QUEEN IS DEFEATED! ✦</span><br><br>' +
-                            'She falls. Izzy\'s cage shatters.<br>' +
-                            '<span style="color: #ffd93d;">Izzy runs to you.</span><br>' +
-                            '<span class="highlight">✦ Izzy is free ✦</span>'
-                        );
-                        player.izzySaved = true;
-                        setTimeout(() => {
-                            closeDialogue();
-                            showEnding('good', 'The Savior',
-                                'You defeated the Queen and saved Izzy!<br><br>' +
-                                'The darkness lifts. Izzy is in your arms.<br>' +
-                                'You escape Wonderland together.<br><br>' +
-                                '<span class="highlight">✦ You are the hero Izzy needed ✦</span>'
-                            );
-                        }, 4000);
-                    } else {
-                        showDialogue('⚔️ FINAL BATTLE',
-                            'You fight the Queen, but she\'s too powerful!<br>' +
-                            '<span class="creepy">✦ You lose 5 HP ✦</span><br>' +
-                            '<span style="color: #8888aa;">You need more power from the graveyard.</span>'
-                        );
-                        player.hp -= 5;
-                        updateUI();
-                        setTimeout(closeDialogue, 2000);
-                    }
-                    break;
-
-                case 'talk':
-                    if (player.foundMemories >= 2 && player.hasWisdom) {
-                        player.queenBefriended = true;
-                        player.questStep = 9;
-                        showDialogue('💬 TALK',
-                            'You talk to the Queen. You tell her about Izzy.<br>' +
-                            'You tell her about love. About friendship.<br><br>' +
-                            '<span style="color: #ff4a4a;">"...I forgot what it felt like."</span><br>' +
-                            'She starts to cry. Izzy\'s cage fades.<br>' +
-                            '<span class="good">✦ THE QUEEN RELEASES IZZY ✦</span>'
-                        );
-                        player.izzySaved = true;
-                        setTimeout(() => {
-                            closeDialogue();
-                            showEnding('good', 'The Redeemer',
-                                'You reached the Queen\'s heart.<br><br>' +
-                                'She releases Izzy. The darkness fades.<br>' +
-                                'Izzy runs to you.<br><br>' +
-                                '<span class="highlight">✦ You proved that love conquers all ✦</span>'
-                            );
-                        }, 4000);
-                    } else {
-                        showDialogue('💬 TALK',
-                            'You try to talk to the Queen, but she won\'t listen.<br>' +
-                            '<span style="color: #8888aa;">You need more wisdom and memories.</span>'
-                        );
-                        setTimeout(closeDialogue, 2000);
-                    }
-                    break;
-
-                case 'wonder':
-                    if (player.wonder >= 50) {
-                        player.queenDefeated = true;
-                        player.questStep = 9;
-                        player.hasWonderPower = true;
-                        showDialogue('🌀 WONDER POWER',
-                            'You channel the power of Wonderland itself!<br>' +
-                            'The Queen\'s throne shatters. Izzy\'s cage breaks.<br>' +
-                            '<span style="color: #ff4a4a;">"WHAT ARE YOU?"</span><br><br>' +
-                            '<span class="good">✦ THE QUEEN IS OVERWHELMED ✦</span>'
-                        );
-                        player.izzySaved = true;
-                        setTimeout(() => {
-                            closeDialogue();
-                            showEnding('good', 'The Wonder Master',
-                                'You mastered the power of Wonderland.<br><br>' +
-                                'The Queen bows. Izzy is free.<br>' +
-                                'You become the guardian of Wonderland.<br><br>' +
-                                '<span class="highlight">✦ You are the bridge between worlds ✦</span>'
-                            );
-                        }, 4000);
-                    } else {
-                        showDialogue('🌀 WONDER POWER',
-                            'You try to use Wonder, but it\'s not enough.<br>' +
-                            `<span style="color: #8888aa;">Need 50+ Wonder (current: ${player.wonder})</span>`
-                        );
-                        setTimeout(closeDialogue, 1500);
-                    }
-                    break;
-
-                case 'spare':
-                    if (player.hasMercy && player.hasHope) {
-                        player.queenBefriended = true;
-                        player.questStep = 9;
-                        player.hasHope = true;
-                        showDialogue('🕊️ SPARE',
-                            'You offer mercy to the Queen.<br>' +
-                            'She stares at you, speechless.<br><br>' +
-                            '<span style="color: #ff4a4a;">"...No one has ever shown me mercy."</span><br>' +
-                            'She breaks down. Izzy\'s cage dissolves.<br>' +
-                            '<span class="good">✦ THE QUEEN RELEASES IZZY ✦</span>'
-                        );
-                        player.izzySaved = true;
-                        setTimeout(() => {
-                            closeDialogue();
-                            showEnding('good', 'The Merciful One',
-                                'You showed mercy to the Queen.<br><br>' +
-                                'She releases Izzy. The darkness fades.<br>' +
-                                'Izzy is in your arms.<br><br>' +
-                                '<span class="highlight">✦ Mercy is the greatest strength ✦</span>'
-                            );
-                        }, 4000);
-                    } else {
-                        showDialogue('🕊️ SPARE',
-                            'You try to spare the Queen.<br>' +
-                            '<span style="color: #ff4a4a;">"You think you can SPARE ME?"</span><br>' +
-                            '<span style="color: #8888aa;">You need more mercy and hope.</span>'
-                        );
-                        setTimeout(closeDialogue, 2000);
-                    }
-                    break;
-
-                case 'heal':
-                    if (player.hasHeart && player.hasRose) {
-                        player.queenBefriended = true;
-                        player.questStep = 9;
-                        player.hasHope = true;
-                        player.hasMercy = true;
-                        showDialogue('💔 HEAL',
-                            'You reach out to the Queen.<br>' +
-                            'You place the Heart and Rose in her hands.<br><br>' +
-                            '<span class="wonder">✦ The Heart pulses with life ✦</span><br>' +
-                            '<span class="wonder">✦ The Rose blooms with hope ✦</span><br><br>' +
-                            '<span style="color: #ff4a4a;">"...I remember what it felt like to be human."</span><br>' +
-                            '<span class="good">✦ THE QUEEN HEALS IZZY ✦</span>'
-                        );
-                        player.izzySaved = true;
-                        setTimeout(() => {
-                            closeDialogue();
-                            showEnding('good', 'The Healer',
-                                'You healed the Queen\'s broken heart.<br><br>' +
-                                'She releases Izzy. The darkness is gone.<br>' +
-                                'Izzy runs into your arms.<br><br>' +
-                                '<span class="highlight">✦ You are the greatest healer of all ✦</span>'
-                            );
-                        }, 4000);
-                    } else {
-                        showDialogue('💔 HEAL',
-                            'You try to heal the Queen, but you have nothing to give.<br>' +
-                            '<span style="color: #8888aa;">You need a Heart and a Rose.</span>'
-                        );
-                        setTimeout(closeDialogue, 1500);
-                    }
-                    break;
-            }
-            updateUI();
-        }
-
-        // ============================================================
-        //  ESCAPE
-        // ============================================================
-
-        function escapeWonderland() {
-            if (player.questStep < 9) {
-                showDialogue('🚪 EXIT',
-                    'The exit is locked. You need to complete your quest.<br>' +
-                    `<span style="color: #8888aa;">Progress: ${player.questStep}/10</span>`
-                );
-                setTimeout(closeDialogue, 2000);
-                return;
-            }
-
-            if (!player.izzySaved) {
-                showDialogue('👱 IZZY',
-                    '"You came for me. You really came."<br><br>' +
-                    'Izzy is standing behind you, her hand in yours.<br>' +
-                    '"<span class="highlight">Let\'s go home.</span>"'
-                );
-                player.izzySaved = true;
-                setTimeout(closeDialogue, 2500);
-                setTimeout(() => {
-                    showDialogue('🚪 THE EXIT',
-                        'You stand before the glowing exit with Izzy.<br><br>' +
-                        'The cat appears beside you.<br>' +
-                        '"You did it. You saved her."<br>' +
-                        '"Now go. <span class="highlight">Go home.</span>"<br><br>' +
-                        'What do you do?',
-                        [
-                            { label: '🚪 Escape with Izzy', value: 'escape', class: 'success' },
-                            { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' }
-                        ],
-                        function(choice) {
-                            closeDialogue();
-                            if (choice === 'escape') {
-                                showEnding('good', 'The Great Escape',
-                                    'You step through the exit with Izzy.<br><br>' +
-                                    'You\'re back in JN Hall. The sun is rising.<br>' +
-                                    'Izzy is beside you. She\'s safe.<br><br>' +
-                                    '<span class="highlight">✦ You saved your friend. That\'s all that matters ✦</span>'
-                                );
-                            } else {
-                                showEnding('neutral', 'The Guardians',
-                                    'You choose to stay in Wonderland with Izzy.<br><br>' +
-                                    'The cat smiles. "You belong here now."<br>' +
-                                    'You and Izzy become the new guardians of Wonderland.<br><br>' +
-                                    '<span class="highlight">✦ Together, you protect the lost souls ✦</span>'
-                                );
-                            }
-                        }
-                    );
-                }, 500);
-            } else {
-                showDialogue('🚪 THE EXIT',
-                    'You stand before the glowing exit with Izzy.<br><br>' +
-                    'The cat appears beside you.<br>' +
-                    '"You did it. Now go. <span class="highlight">Go home.</span>"<br><br>' +
-                    'What do you do?',
-                    [
-                        { label: '🚪 Escape with Izzy', value: 'escape', class: 'success' },
-                        { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' }
-                    ],
-                    function(choice) {
-                        closeDialogue();
-                        if (choice === 'escape') {
-                            showEnding('good', 'The Great Escape',
-                                'You step through the exit with Izzy.<br><br>' +
-                                'You\'re back in JN Hall. The sun is rising.<br>' +
-                                'Izzy is beside you. She\'s safe.<br><br>' +
-                                '<span class="highlight">✦ You saved your friend. That\'s all that matters ✦</span>'
-                            );
-                        } else {
-                            showEnding('neutral', 'The Guardians',
-                                'You choose to stay in Wonderland with Izzy.<br><br>' +
-                                'The cat smiles. "You belong here now."<br>' +
-                                'You and Izzy become the new guardians of Wonderland.<br><br>' +
-                                '<span class="highlight">✦ Together, you protect the lost souls ✦</span>'
-                            );
-                        }
-                    }
-                );
-            }
-        }
-
-        // ============================================================
-        //  CHAPTER TITLE
-        // ============================================================
-
-        function showChapter(title, sub) {
-            const el = document.getElementById('chapterTitle');
-            document.getElementById('chapterTitleText').textContent = title;
-            const subEl = document.getElementById('chapterSubText');
-            subEl.textContent = sub;
-            el.style.opacity = '1';
-            setTimeout(() => {
-                el.style.opacity = '0';
-            }, 2500);
-            darkOpacity = 0.3;
-            setTimeout(() => {
-                darkOpacity = 0;
-            }, 2500);
-        }
-
-        // ============================================================
-        //  ENDING SYSTEM
-        // ============================================================
-
-        function showEnding(type, title, text) {
-            const box = document.getElementById('dialogueBox');
-            box.style.display = 'block';
-            document.getElementById('dialogueSpeaker').textContent = `🎬 ${title}`;
-            document.getElementById('dialogueText').innerHTML = text;
-            document.getElementById('dialogueContinue').style.display = 'none';
-            const buttons = document.getElementById('dialogueButtons');
-            buttons.style.display = 'flex';
-            buttons.innerHTML = `
-                <button class="game-btn primary" onclick="resetGame()">🔄 PLAY AGAIN</button>
-                <button class="game-btn" onclick="window.location.href='index.html'">🏠 MENU</button>
-            `;
-            player.gameState = 'dialogue';
-            player.inDialogue = true;
-            player.questStep = 10;
-            updateUI();
-            darkOpacity = 0.2;
-        }
-
-        // ============================================================
-        //  UPDATE UI
-        // ============================================================
-
-        function updateUI() {
-            document.getElementById('hudHp').textContent = player.hp;
-            document.getElementById('hudAct').textContent = player.act;
-            document.getElementById('hudWonder').textContent = Math.min(100, Math.round(player.wonder));
-            document.getElementById('hudIzzy').textContent = player.izzySaved ? '✅ SAVED' : '⚠️ LOST';
-            document.getElementById('hudStep').textContent = Math.min(player.questStep, 10);
-            document.getElementById('hudMaxStep').textContent = 10;
-
-            const izzyEl = document.getElementById('hudIzzy');
-            izzyEl.style.color = player.izzySaved ? '#4aff8a' : '#ff6b6b';
-
-            const items = [];
-            if (player.hasKey) items.push('🔑');
-            if (player.hasNote) items.push('📜');
-            if (player.hasCandy) items.push('💊');
-            if (player.hasCrown) items.push('👑');
-            if (player.hasMirror) items.push('🪞');
-            if (player.hasClock) items.push('⏰');
-            if (player.hasRose) items.push('🌹');
-            if (player.hasTea) items.push('🍵');
-            if (player.hasCard) items.push('🃏');
-            if (player.hasHeart) items.push('❤️');
-            if (player.hasLetter) items.push('✉️');
-            if (player.hasPhoto) items.push('🖼️');
-            if (player.hasDiary) items.push('📖');
-            document.getElementById('hudItems').textContent = items.join(' ') || 'None';
-
-            // Quest log
-            const questSteps = [
-                { id: 'scream', label: 'The Scream' },
-                { id: 'izzy', label: 'Izzy is Taken' },
-                { id: 'portal', label: 'Enter Wonderland' },
-                { id: 'forest', label: 'Spooky Forest' },
-                { id: 'graveyard', label: 'Graveyard' },
-                { id: 'village', label: 'Village' },
-                { id: 'upper', label: 'Upper Village' },
-                { id: 'walls', label: 'Castle Walls' },
-                { id: 'castle', label: 'Castle' },
-                { id: 'save', label: 'Save Izzy!' }
-            ];
-
-            const list = document.getElementById('questList');
-            let html = '';
-            for (let i = 0; i < questSteps.length; i++) {
-                const step = questSteps[i];
-                let cls = '';
-                if (i < player.questStep) cls = 'step-done';
-                else if (i === player.questStep) cls = 'step-active';
-                else cls = 'step-hidden';
-                if (i === 3) cls += ' step-forest';
-                if (i === 4) cls += ' step-grave';
-                if (i === 5 || i === 6) cls += ' step-village';
-                if (i === 7 || i === 8) cls += ' step-castle';
-                html += `<div class="${cls}">${i < player.questStep ? '✅' : '✦'} ${step.label}</div>`;
-            }
-            list.innerHTML = html;
-        }
-
-        // ============================================================
-        //  RESET
-        // ============================================================
-
-        function resetGame() {
-            if (confirm('Reset the game and return to the character creator?')) {
-                localStorage.removeItem('jnPlayerState');
+        
+        function returnToTitle() {
+            if (confirm('Return to title screen?')) {
                 window.location.href = 'index.html';
             }
         }
-
-        // ============================================================
-        //  GAME LOOP
-        // ============================================================
-
-        function gameLoop() {
-            render();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // ============================================================
-        //  INIT
-        // ============================================================
-
-        function init() {
-            resizeCanvas();
-            buildMap();
-            player.x = 4;
-            player.y = 4;
-            player.facing = 'down';
-            player.mapSection = 0;
-            updateUI();
-
-            // OPENING SCENE
-            setTimeout(() => {
-                showDialogue('🎮 NARRATOR',
-                    '<span class="creepy">You hear a scream.</span><br><br>' +
-                    'It\'s 3:03 AM. The scream came from Room 303.<br>' +
-                    'Your heart is racing. You have to check it out.<br><br>' +
-                    '<span style="color: #8888aa; font-size: 8px;">Use WASD/Arrow Keys to move. Press SPACE to interact.</span>'
-                );
-                setTimeout(closeDialogue, 4000);
-            }, 500);
-
-            setTimeout(() => {
-                showDialogue('👱 IZZY', 
-                    '<span style="color: #ffd93d;">"Hey! Over here!"</span><br><br>' +
-                    'You see Izzy in the corner of Room 303.<br>' +
-                    'She looks scared. The closet is <span class="creepy">glowing</span> behind her.<br><br>' +
-                    '<span class="highlight">✦ Walk to Izzy and press SPACE ✦</span>'
-                );
-                setTimeout(closeDialogue, 3500);
-            }, 1500);
-
-            gameLoop();
-
-            window.addEventListener('resize', function() {
-                resizeCanvas();
-            });
-        }
-
-        console.log('%c✦ JN WONDERLAND: EARTHBOUND STYLE ✦', 'font-size:20px; color:#ffd93d;');
-        console.log('%c🌍 Explore 9 interconnected areas!', 'color:#6ac8ff;');
-        console.log('%c🌲 Spooky Forest → 🪦 Graveyard → 🏠 Village → 🏰 Castle → 👑 Queen', 'color:#ff8a4a;');
-        console.log('%c🐛 Interact with bugs and creatures!', 'color:#4a8a4a;');
-        console.log('%c👱 Save Izzy from the Queen!', 'color:#ffd93d;');
-
-        init();
+        
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' && gameState.inDialogue) {
+                e.preventDefault();
+                if (gameState.dialogueQueue.length > 0) {
+                    showDialogue(gameState.dialogueQueue.shift());
+                } else {
+                    closeDialogue();
+                }
+            }
+            
+            if (e.key === 'Escape' && !gameState.inDialogue) {
+                toggleMenu();
+            }
+        });
+        
+        // Start the game
+        initGame();
     </script>
-
 </body>
 </html>
