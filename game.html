@@ -800,4 +800,154 @@
                 His skin is GREEN. His muscles bulge impossibly.<br>
                 He's wearing an RA shirt that says "I'M THE BOSS NOW."<br>
                 <span style="color: #8aba4a; font-size: 10px; display: block; margin-top: 10px;">
-                    "YO!
+                    "YO! You're not supposed to be here, newbie!"
+                </span>
+                <span style="color: #8888aa; font-size: 8px; display: block; margin-top: 5px;">
+                    He cracks his knuckles. The hallway shakes.
+                </span>
+            `;
+        }
+
+        function ianAct(action) {
+            const resultDiv = document.getElementById('ianResult');
+            const resultText = document.getElementById('ianResultText');
+            resultDiv.style.display = 'block';
+            document.getElementById('ianNextActions').style.display = 'none';
+
+            const responses = {
+                'fight': `
+                    You throw a punch!<br>
+                    Ian catches it with one finger.<br>
+                    <span style="color: #8aba4a;">"HAHA! That tickles, newbie!"</span><br>
+                    He flicks you. You fly back 10 feet.<br>
+                    <span style="color: #ff6b6b;">❤️ HP: ${player.hp - 5}/20</span>
+                `,
+                'act': `
+                    You try to talk to him.<br>
+                    <span style="color: #8aba4a;">"Yo, you think you can just WALK into Wonderland?"</span><br>
+                    He pauses. Something flickers in his eyes.<br>
+                    <span style="color: #ffd93d;">✦ He seems... almost sad ✦</span>
+                `,
+                'prank': `
+                    You yell "MY MOM!"<br>
+                    Ian freezes. Tears well up in his eyes.<br>
+                    <span style="color: #8aba4a;">"Bro... that's my mom's catchphrase..."</span><br>
+                    He's vulnerable now. You can feel it.
+                `,
+                'spare': `
+                    You put your hands up. "I don't want to fight."<br>
+                    Ian stares at you. His muscles deflate slightly.<br>
+                    <span style="color: #8aba4a;">"...You're not like the others."</span><br>
+                    He steps aside. <span style="color: #ffd93d;">✦ You found mercy ✦</span>
+                `
+            };
+
+            resultText.innerHTML = responses[action] || 'You do nothing. Ian laughs.';
+
+            // Check if this is the "spare" action - that's the "correct" way
+            if (action === 'spare') {
+                setTimeout(() => {
+                    resultText.innerHTML += `<br><br><span style="color: #ffd93d; font-size: 12px;">✦ IAN LETS YOU PASS ✦</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">"Go on, newbie. The Queen's waiting for you."</span>`;
+                    document.getElementById('ianNextActions').style.display = 'block';
+                    ianDefeated = true;
+                }, 1500);
+            } else if (action === 'prank') {
+                setTimeout(() => {
+                    resultText.innerHTML += `<br><br><span style="color: #ffd93d; font-size: 12px;">✦ IAN IS MOVED ✦</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">"Alright, alright. You got me. Go ahead."</span>`;
+                    document.getElementById('ianNextActions').style.display = 'block';
+                    ianDefeated = true;
+                }, 1500);
+            } else if (action === 'act') {
+                setTimeout(() => {
+                    resultText.innerHTML += `<br><br><span style="color: #ffd93d; font-size: 12px;">✦ YOU REACHED HIM ✦</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">"Just... get out of here before the Queen finds you."</span>`;
+                    document.getElementById('ianNextActions').style.display = 'block';
+                    ianDefeated = true;
+                }, 1500);
+            } else {
+                // Fight option - you need to try again
+                setTimeout(() => {
+                    resultText.innerHTML += `<br><br><span style="color: #ff6b6b; font-size: 10px;">💪 IAN IS STILL STANDING</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">Try a different approach...</span>`;
+                    document.getElementById('ianNextActions').style.display = 'none';
+                    // Enable buttons again (they're always enabled)
+                }, 1500);
+            }
+        }
+
+        function continueAfterIan() {
+            if (ianDefeated) {
+                // Unlock the exploration fully
+                showScreen('exploration');
+                document.getElementById('exploreLocation').textContent = '📍 THE ENDLESS HALLWAY (CLEARED)';
+                document.getElementById('exploreDesc').innerHTML = `
+                    Ian let you pass. The hallway is quieter now.<br>
+                    <span style="color: #ffd93d;">✦ You can feel the Queen's presence ahead ✦</span><br>
+                    <span style="color: #8888aa; font-size: 8px;">The lobby is just ahead...</span>
+                `;
+                // Add the "Find the Queen" button if not already there
+                const btnGroup = document.querySelector('#exploration .direction-buttons').parentElement;
+                const existingBtn = btnGroup.querySelector('.btn-group');
+                if (existingBtn) {
+                    existingBtn.innerHTML = `
+                        <button class="game-btn" onclick="returnToHall()">🔙 BACK TO HALL</button>
+                        <button class="game-btn primary" onclick="encounterQueen()">♠️ FIND THE QUEEN</button>
+                    `;
+                }
+            }
+        }
+
+        // ============================================================
+        //  FINAL BATTLE (Teaser)
+        // ============================================================
+
+        function startFinalBattle() {
+            const result = document.getElementById('finalResult');
+            const resultText = document.getElementById('finalResultText');
+            result.style.display = 'block';
+            resultText.innerHTML = `
+                ⚠️ TO BE CONTINUED... ⚠️<br><br>
+                <span style="color: #ff6b6b; font-size: 12px;">THE QUEEN OF THE DESK</span><br>
+                <span style="color: #ffd93d; font-size: 10px;">✦ BATTLE SYSTEM COMING SOON ✦</span><br><br>
+                <span style="color: #8888aa; font-size: 8px;">
+                    For now, you've reached the end of the demo.<br>
+                    Thanks for playing JN Wonderland!
+                </span>
+            `;
+        }
+
+        // ============================================================
+        //  RESET GAME
+        // ============================================================
+
+        function resetGame() {
+            if (confirm('Reset the game and return to the character creator?')) {
+                localStorage.removeItem('jnPlayerState');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ============================================================
+        //  AUTO-START ROOM 303 SCENE
+        // ============================================================
+
+        // Show Room 303 first
+        showScreen('room303');
+
+        // Auto-show choices after a moment
+        setTimeout(() => {
+            const choices = document.getElementById('room303Choices');
+            if (choices) {
+                choices.style.display = 'block';
+            }
+        }, 3000);
+
+        console.log('%c✦ JN WONDERLAND - GAME LOADED ✦', 'font-size:16px; color:#ffd93d;');
+        console.log(`%cPlayer: ${player.name}`, 'color:#8888aa;');
+        console.log('%cRoom 303 is waiting...', 'color:#aa4a4a;');
+    </script>
+
+</body>
+</html>
