@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN Wonderland - The Asylum</title>
+    <title>JN Wonderland - Save Izzy</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -42,7 +42,6 @@
             cursor: default;
         }
 
-        /* ========== UI OVERLAY ========== */
         #dialogueBox {
             position: absolute;
             bottom: 20px;
@@ -78,6 +77,11 @@
         #dialogueBox .speaker.ian { color: #8aba4a; }
         #dialogueBox .speaker.creepy { color: #aa4a4a; }
         #dialogueBox .speaker.good { color: #4aff8a; }
+        #dialogueBox .speaker.izzy { color: #ffd93d; }
+        #dialogueBox .speaker.hatter { color: #ff6b9d; }
+        #dialogueBox .speaker.cheshire { color: #ff8a4a; }
+        #dialogueBox .speaker.rabbit { color: #6ab4ff; }
+        #dialogueBox .speaker.caterpillar { color: #8aba4a; }
 
         #dialogueBox .dialogue {
             color: #e8e8f0;
@@ -91,6 +95,7 @@
         #dialogueBox .dialogue .wonder { color: #a29bfe; }
         #dialogueBox .dialogue .dark { color: #6a4a7a; }
         #dialogueBox .dialogue .insane { color: #ff6b9d; }
+        #dialogueBox .dialogue .trippy { color: #ff69b4; }
 
         #dialogueBox .continue {
             color: #4a4a6a;
@@ -136,13 +141,11 @@
         }
 
         #dialogueBox .game-btn.primary { background: #4a2a4a; border-color: #8a4a6a; color: #ff9d8a; }
-        #dialogueBox .game-btn.primary:hover { background: #6a3a5a; border-color: #ff6b6b; }
         #dialogueBox .game-btn.danger { background: #4a2a2a; border-color: #8a2a2a; color: #ff6a6a; }
-        #dialogueBox .game-btn.danger:hover { background: #6a3a3a; border-color: #ff4a4a; }
         #dialogueBox .game-btn.success { background: #2a4a2a; border-color: #4a8a4a; color: #8aff8a; }
-        #dialogueBox .game-btn.success:hover { background: #3a6a3a; border-color: #6aff6a; }
         #dialogueBox .game-btn.wonder { background: #2a2a4a; border-color: #6a4a8a; color: #c8a8ff; }
-        #dialogueBox .game-btn.wonder:hover { background: #4a3a6a; border-color: #a87aff; }
+        #dialogueBox .game-btn.tea { background: #2a1a0a; border-color: #8a6a3a; color: #ffd93d; }
+        #dialogueBox .game-btn.trippy { background: #2a0a2a; border-color: #8a4a8a; color: #ff69b4; }
 
         /* ========== HUD ========== */
         #hud {
@@ -168,6 +171,7 @@
         #hud .items { color: #6ab4ff; }
         #hud .step { color: #ff8a4a; }
         #hud .sanity { color: #ff6b9d; }
+        #hud .izzy { color: #ffd93d; }
 
         /* ========== QUEST LOG ========== */
         #questLog {
@@ -196,7 +200,7 @@
         #questLog .step-done { color: #4aff8a; }
         #questLog .step-active { color: #ffd93d; }
         #questLog .step-hidden { color: #2a2a4a; }
-        #questLog .step-insane { color: #ff6b9d; animation: blink 0.5s infinite; }
+        #questLog .step-trippy { color: #ff69b4; animation: blink 0.5s infinite; }
 
         /* ========== CHAPTER TITLE ========== */
         #chapterTitle {
@@ -221,9 +225,9 @@
             letter-spacing: 4px;
         }
 
-        #chapterTitle .insane-sub {
+        #chapterTitle .trippy-sub {
             font-size: 11px;
-            color: #ff6b9d;
+            color: #ff69b4;
             margin-top: 10px;
             letter-spacing: 4px;
             animation: blink 0.5s infinite;
@@ -242,13 +246,8 @@
             transition: background 2s ease;
         }
 
-        /* ========== SANITY EFFECTS ========== */
-        @keyframes vignette {
-            0%, 100% { box-shadow: inset 0 0 100px rgba(0,0,0,0); }
-            50% { box-shadow: inset 0 0 100px rgba(100, 50, 150, 0.1); }
-        }
-
-        .sanity-effect {
+        /* ========== TRIPPY EFFECT ========== */
+        .trippy-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -256,10 +255,15 @@
             height: 100%;
             pointer-events: none;
             z-index: 6;
-            animation: vignette 3s infinite;
+            opacity: 0;
+            transition: opacity 1s ease;
         }
 
-        /* ========== RESPONSIVE ========== */
+        @keyframes trippyPulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.3; }
+        }
+
         @media (max-width: 1000px) {
             #gameContainer { width: 95vw; height: 90vh; }
             #dialogueBox { font-size: 8px; padding: 12px 16px; min-height: 100px; }
@@ -268,7 +272,6 @@
             #hud { font-size: 6px; padding: 5px 10px; min-width: 100px; }
             #questLog { font-size: 5px; padding: 5px 10px; max-width: 180px; }
             #chapterTitle { font-size: 20px; }
-            #chapterTitle .sub { font-size: 9px; }
         }
 
         @media (max-width: 600px) {
@@ -278,7 +281,6 @@
             #hud { font-size: 5px; padding: 3px 6px; top: 5px; right: 6px; min-width: 80px; }
             #questLog { font-size: 4px; padding: 3px 6px; top: 5px; left: 6px; max-width: 140px; }
             #chapterTitle { font-size: 16px; }
-            #chapterTitle .sub { font-size: 7px; }
         }
     </style>
 </head>
@@ -287,7 +289,7 @@
     <div id="gameContainer">
 
         <canvas id="gameCanvas"></canvas>
-        <div class="sanity-effect" id="sanityEffect"></div>
+        <div class="trippy-overlay" id="trippyOverlay"></div>
         <div id="darkOverlay"></div>
 
         <div id="chapterTitle">
@@ -300,21 +302,24 @@
             <div class="act">📖 ACT: <span id="hudAct">I</span></div>
             <div class="wonder">🌀 WONDER: <span id="hudWonder">5</span>%</div>
             <div class="sanity">🧠 SANITY: <span id="hudSanity">100</span>%</div>
+            <div class="izzy">👱 IZZY: <span id="hudIzzy">⚠️ LOST</span></div>
             <div class="items">📦 ITEMS: <span id="hudItems">None</span></div>
-            <div class="step">🐱 QUEST: <span id="hudStep">0</span>/<span id="hudMaxStep">8</span></div>
+            <div class="step">🐱 QUEST: <span id="hudStep">0</span>/<span id="hudMaxStep">10</span></div>
         </div>
 
         <div id="questLog">
-            <div class="title">📋 THE ASYLUM</div>
+            <div class="title">📋 SAVE IZZY</div>
             <div id="questList">
                 <div class="step-active">✦ The Scream</div>
-                <div>✦ The Fall</div>
+                <div>✦ Izzy is Taken</div>
+                <div>✦ The Cat Guide</div>
                 <div>✦ The Endless Hall</div>
+                <div>✦ The Tea Party</div>
                 <div>✦ The Memories</div>
                 <div>✦ The Mad Wing</div>
                 <div>✦ The Bodyguard</div>
                 <div>✦ The Queen</div>
-                <div>✦ The Escape</div>
+                <div>✦ Save Izzy & Escape</div>
             </div>
         </div>
 
@@ -345,8 +350,8 @@
             canvas.height = rect.height;
             W = canvas.width;
             H = canvas.height;
-            tileSize = Math.min(W / 28, H / 20);
-            tileSize = Math.max(tileSize, 18);
+            tileSize = Math.min(W / 30, H / 22);
+            tileSize = Math.max(tileSize, 16);
             cols = Math.floor(W / tileSize);
             rows = Math.floor(H / tileSize);
         }
@@ -370,18 +375,30 @@
             questStep: 0,
             act: 1,
             // Story flags
+            sawIzzyTaken: false,
             metCat: false,
-            enteredCloset: false,
+            enteredWonderland: false,
             foundMemories: 0,
             foundResidents: 0,
             ianDefeated: false,
             ianBefriended: false,
             queenDefeated: false,
             queenBefriended: false,
+            izzySaved: false,
             hasMercy: false,
             hasWisdom: false,
             hasCourage: false,
             hasHope: false,
+            hasTea: false,
+            // Side characters
+            metHatter: false,
+            metCheshire: false,
+            metRabbit: false,
+            metCaterpillar: false,
+            hatterFriendly: false,
+            cheshireFriendly: false,
+            rabbitFriendly: false,
+            caterpillarFriendly: false,
             // Items
             hasKey: false,
             hasNote: false,
@@ -390,7 +407,7 @@
             hasMirror: false,
             hasClock: false,
             hasRose: false,
-            hasTea: false,
+            hasTeaCup: false,
             hasCard: false,
             hasHeart: false,
             hasLetter: false,
@@ -402,10 +419,10 @@
             inDialogue: false,
             gameState: 'exploring',
             ending: 0,
-            // Map section tracking
-            mapSection: 0, // 0=room303, 1=hallway, 2=endless, 3=memories, 4=madwing, 5=ian, 6=queen
-            mapX: 0,
-            mapY: 0
+            mapSection: 0,
+            // Trippy effects
+            trippyLevel: 0,
+            time: 0
         };
 
         // ============================================================
@@ -427,12 +444,11 @@
         loadPlayerData();
 
         // ============================================================
-        //  TILE MAP - HUGE EXPANDED VERSION
+        //  TILE MAP - TRIPPY EXPANDED
         // ============================================================
 
-        let cols = 28, rows = 20;
+        let cols = 30, rows = 22;
         let map = [];
-        let mapOffsetX = 0, mapOffsetY = 0;
 
         const T = {
             FLOOR: 0,
@@ -456,25 +472,20 @@
             STAIRS: 18,
             MIRROR: 19,
             BLOOD: 20,
-            CRACK: 21,
-            EYE: 22
+            EYE: 21,
+            TEAPOT: 22,
+            CHESHIRE: 23,
+            RABBIT: 24,
+            CATERPILLAR: 25,
+            HATTER: 26,
+            IZZY_SPOT: 27
         };
 
         // ============================================================
-        //  BUILD THE MASSIVE MAP
+        //  BUILD THE TRIPPY MAP
         // ============================================================
 
         function buildMap() {
-            // We'll build a large map and then scroll through sections
-            // Each section is 28x20 tiles
-            // Section 0: Room 303 (normal)
-            // Section 1: Hallway (getting weird)
-            // Section 2: Endless Corridor (looping)
-            // Section 3: Memory Rooms
-            // Section 4: Mad Wing (insanity)
-            // Section 5: Ian's Chamber
-            // Section 6: Queen's Throne Room
-
             map = [];
             for (let r = 0; r < rows; r++) {
                 map[r] = [];
@@ -483,8 +494,7 @@
                 }
             }
 
-            // ===== SECTION 0: ROOM 303 =====
-            // Room 303 area
+            // ===== SECTION 0: ROOM 303 (START) =====
             for (let r = 2; r < 8; r++) {
                 for (let c = 2; c < 9; c++) {
                     if (r === 2 || r === 7 || c === 2 || c === 8) {
@@ -498,21 +508,13 @@
             }
             map[2][5] = T.DOOR;
             map[4][6] = T.CLOSET;
-            map[3][5] = T.CAT;
-            map[5][5] = T.ITEM;
+            map[3][5] = T.IZZY_SPOT; // Where Izzy gets taken
 
-            // Hallway outside Room 303
-            for (let r = 2; r < 8; r++) {
-                for (let c = 9; c < 14; c++) {
-                    map[r][c] = T.FLOOR;
-                }
-            }
-
-            // ===== SECTION 1: THE HALLWAY =====
-            for (let r = 2; r < 14; r++) {
-                for (let c = 14; c < 19; c++) {
-                    if (r === 2 || r === 13 || c === 14 || c === 18) {
-                        if (!(r === 2 && c === 16) && !(r === 13 && c === 16)) {
+            // ===== SECTION 1: WONDERLAND ENTRANCE =====
+            for (let r = 2; r < 10; r++) {
+                for (let c = 9; c < 15; c++) {
+                    if (r === 2 || r === 9 || c === 9 || c === 14) {
+                        if (!(r === 2 && c === 11) && !(r === 9 && c === 11)) {
                             map[r][c] = T.WALL;
                         }
                     } else {
@@ -520,15 +522,15 @@
                     }
                 }
             }
-            map[2][16] = T.DOOR;
-            map[13][16] = T.DOOR;
+            map[2][11] = T.DOOR;
+            map[9][11] = T.DOOR;
+            map[5][12] = T.CAT;
 
-            // ===== SECTION 2: ENDLESS CORRIDOR =====
-            // This section loops! Walking one way wraps around
-            for (let r = 2; r < 14; r++) {
-                for (let c = 19; c < 24; c++) {
-                    if (r === 2 || r === 13 || c === 19 || c === 23) {
-                        if (!(r === 2 && c === 21) && !(r === 13 && c === 21)) {
+            // ===== SECTION 2: ENDLESS HALL =====
+            for (let r = 2; r < 10; r++) {
+                for (let c = 15; c < 21; c++) {
+                    if (r === 2 || r === 9 || c === 15 || c === 20) {
+                        if (!(r === 2 && c === 17) && !(r === 9 && c === 17)) {
                             map[r][c] = T.WALL;
                         }
                     } else {
@@ -536,21 +538,17 @@
                     }
                 }
             }
-            map[2][21] = T.DOOR;
-            map[13][21] = T.DOOR;
+            map[2][17] = T.DOOR;
+            map[9][17] = T.DOOR;
+            // Loop markers
+            map[3][15] = T.MIRROR;
+            map[7][20] = T.MIRROR;
 
-            // Loop indicators (cracks in walls)
-            map[3][19] = T.CRACK;
-            map[4][19] = T.CRACK;
-            map[5][19] = T.CRACK;
-            map[11][23] = T.CRACK;
-            map[12][23] = T.CRACK;
-
-            // ===== SECTION 3: MEMORY ROOMS =====
-            for (let r = 2; r < 14; r++) {
-                for (let c = 24; c < 28; c++) {
-                    if (r === 2 || r === 13 || c === 24 || c === 27) {
-                        if (!(r === 2 && c === 25) && !(r === 2 && c === 26) && !(r === 13 && c === 25) && !(r === 13 && c === 26)) {
+            // ===== SECTION 3: TEA PARTY (HATTER) =====
+            for (let r = 2; r < 10; r++) {
+                for (let c = 21; c < 26; c++) {
+                    if (r === 2 || r === 9 || c === 21 || c === 25) {
+                        if (!(r === 2 && c === 23) && !(r === 9 && c === 23)) {
                             map[r][c] = T.WALL;
                         }
                     } else {
@@ -558,26 +556,38 @@
                     }
                 }
             }
-            map[2][25] = T.DOOR;
-            map[2][26] = T.DOOR;
-            map[13][25] = T.DOOR;
-            map[13][26] = T.DOOR;
+            map[2][23] = T.DOOR;
+            map[9][23] = T.DOOR;
+            map[5][23] = T.HATTER;
+            map[4][22] = T.TEAPOT;
+            map[6][24] = T.TEAPOT;
 
-            // Memory fragments
-            map[4][25] = T.MEMORY;
-            map[6][26] = T.MEMORY;
-            map[8][25] = T.MEMORY;
-            map[10][26] = T.MEMORY;
-            map[5][24] = T.LETTER;
-            map[9][27] = T.PHOTO;
-            map[7][26] = T.DIARY;
+            // ===== SECTION 4: MEMORY ROOMS =====
+            for (let r = 2; r < 10; r++) {
+                for (let c = 26; c < cols - 1; c++) {
+                    if (r === 2 || r === 9 || c === 26 || c === cols - 2) {
+                        if (!(r === 2 && c === 28) && !(r === 9 && c === 28)) {
+                            map[r][c] = T.WALL;
+                        }
+                    } else {
+                        map[r][c] = T.FLOOR;
+                    }
+                }
+            }
+            map[2][28] = T.DOOR;
+            map[9][28] = T.DOOR;
+            map[4][27] = T.MEMORY;
+            map[6][28] = T.MEMORY;
+            map[7][27] = T.MEMORY;
+            map[4][29] = T.LETTER;
+            map[6][29] = T.PHOTO;
+            map[8][27] = T.DIARY;
 
-            // ===== SECTION 4: MAD WING =====
-            // Reality breaks here - weird tile patterns
-            for (let r = 14; r < rows; r++) {
+            // ===== SECTION 5: MAD WING =====
+            for (let r = 10; r < rows - 2; r++) {
                 for (let c = 2; c < 14; c++) {
-                    if (r === 14 || r === rows - 1 || c === 2 || c === 13) {
-                        if (!(r === 14 && c === 7) && !(r === rows - 1 && c === 7)) {
+                    if (r === 10 || r === rows - 3 || c === 2 || c === 13) {
+                        if (!(r === 10 && c === 7) && !(r === rows - 3 && c === 7)) {
                             map[r][c] = T.WALL;
                         }
                     } else {
@@ -585,37 +595,29 @@
                     }
                 }
             }
-            map[14][7] = T.DOOR;
-            map[19][7] = T.DOOR;
-
-            // Madness tiles - eyes in the walls
-            map[15][3] = T.EYE;
-            map[16][12] = T.EYE;
-            map[17][5] = T.EYE;
-            map[18][10] = T.EYE;
-
-            // Blood trails
-            map[16][6] = T.BLOOD;
-            map[17][7] = T.BLOOD;
+            map[10][7] = T.DOOR;
+            map[rows - 3][7] = T.DOOR;
+            // Madness
+            map[12][4] = T.EYE;
+            map[13][11] = T.EYE;
+            map[14][6] = T.EYE;
+            map[15][9] = T.EYE;
+            map[16][12] = T.BLOOD;
+            map[17][5] = T.BLOOD;
             map[18][8] = T.BLOOD;
+            map[13][7] = T.MIRROR;
+            map[16][8] = T.MIRROR;
+            map[14][10] = T.SHADOW;
+            map[17][11] = T.SHADOW;
+            map[12][8] = T.CHESHIRE;
+            map[16][6] = T.RABBIT;
+            map[18][10] = T.CATERPILLAR;
 
-            // Mirrors
-            map[15][8] = T.MIRROR;
-            map[17][9] = T.MIRROR;
-
-            // Shadows
-            map[16][9] = T.SHADOW;
-            map[18][11] = T.SHADOW;
-
-            // Items in mad wing
-            map[16][4] = T.ITEM;
-            map[18][6] = T.CHEST;
-
-            // ===== SECTION 5: IAN'S CHAMBER =====
-            for (let r = 14; r < rows; r++) {
+            // ===== SECTION 6: IAN'S CHAMBER =====
+            for (let r = 10; r < rows - 2; r++) {
                 for (let c = 14; c < 21; c++) {
-                    if (r === 14 || r === rows - 1 || c === 14 || c === 20) {
-                        if (!(r === 14 && c === 17) && !(r === rows - 1 && c === 17)) {
+                    if (r === 10 || r === rows - 3 || c === 14 || c === 20) {
+                        if (!(r === 10 && c === 17) && !(r === rows - 3 && c === 17)) {
                             map[r][c] = T.WALL;
                         }
                     } else {
@@ -623,23 +625,20 @@
                     }
                 }
             }
-            map[14][17] = T.DOOR;
-            map[19][17] = T.DOOR;
-
-            // Ian
-            map[17][17] = T.IAN;
-
+            map[10][17] = T.DOOR;
+            map[rows - 3][17] = T.DOOR;
+            map[15][17] = T.IAN;
             // Arena decorations
-            map[16][15] = T.CRACK;
-            map[16][19] = T.CRACK;
-            map[18][15] = T.CRACK;
-            map[18][19] = T.CRACK;
+            map[13][15] = T.CRACK;
+            map[13][19] = T.CRACK;
+            map[17][15] = T.CRACK;
+            map[17][19] = T.CRACK;
 
-            // ===== SECTION 6: QUEEN'S THRONE ROOM =====
-            for (let r = 14; r < rows; r++) {
-                for (let c = 21; c < cols; c++) {
-                    if (r === 14 || r === rows - 1 || c === 21 || c === cols - 1) {
-                        if (!(r === 14 && c === 24) && !(r === 14 && c === 25)) {
+            // ===== SECTION 7: QUEEN'S THRONE =====
+            for (let r = 10; r < rows - 2; r++) {
+                for (let c = 21; c < cols - 1; c++) {
+                    if (r === 10 || r === rows - 2 || c === 21 || c === cols - 2) {
+                        if (!(r === 10 && c === 24) && !(r === 10 && c === 25)) {
                             map[r][c] = T.WALL;
                         }
                     } else {
@@ -647,66 +646,69 @@
                     }
                 }
             }
-            map[14][24] = T.DOOR;
-            map[14][25] = T.DOOR;
+            map[10][24] = T.DOOR;
+            map[10][25] = T.DOOR;
+            map[16][24] = T.QUEEN;
+            map[17][25] = T.EXIT; // Exit back to room 303
+            map[18][24] = T.IZZY_SPOT; // Izzy is trapped here
 
-            // Queen's throne
-            map[17][24] = T.QUEEN;
-
-            // The exit back to Room 303 (behind the Queen)
-            map[18][25] = T.EXIT;
-
-            // Throne room decorations
-            map[15][22] = T.MIRROR;
-            map[15][26] = T.MIRROR;
-            map[16][23] = T.BLOOD;
-            map[16][25] = T.BLOOD;
-
-            // Portal effect tiles
-            map[17][23] = T.PORTAL;
-            map[17][25] = T.PORTAL;
+            // Portal effects
+            map[14][23] = T.PORTAL;
+            map[14][25] = T.PORTAL;
+            map[15][23] = T.BLOOD;
+            map[15][25] = T.BLOOD;
 
             // ============================================================
-            //  TRANSITION DOORS BETWEEN SECTIONS
+            //  TRANSITION DOORS
             // ============================================================
 
-            // Room 303 to Hallway (section 0 to 1)
+            // Room 303 to Wonderland Entrance
             map[4][9] = T.DOOR;
 
-            // Hallway to Endless (section 1 to 2)
-            map[7][19] = T.DOOR;
+            // Wonderland Entrance to Endless Hall
+            map[6][15] = T.DOOR;
 
-            // Endless to Memories (section 2 to 3)
-            map[7][24] = T.DOOR;
+            // Endless Hall to Tea Party
+            map[6][21] = T.DOOR;
 
-            // Memories to Mad Wing (section 3 to 4) - via stairs
-            map[13][3] = T.STAIRS;
-            map[14][3] = T.STAIRS;
+            // Tea Party to Memories
+            map[6][26] = T.DOOR;
 
-            // Mad Wing to Ian (section 4 to 5)
-            map[14][13] = T.DOOR;
+            // Memories to Mad Wing (stairs)
+            map[9][6] = T.STAIRS;
+            map[10][6] = T.STAIRS;
 
-            // Ian to Queen (section 5 to 6)
-            map[14][21] = T.DOOR;
+            // Mad Wing to Ian
+            map[10][14] = T.DOOR;
+
+            // Ian to Queen
+            map[10][21] = T.DOOR;
         }
 
         // ============================================================
-        //  RENDER ENGINE
+        //  RENDER ENGINE - TRIPPY EFFECTS
         // ============================================================
 
         let cameraX = 0, cameraY = 0;
         let darkOpacity = 0;
-        let insanityLevel = 0;
+        let trippyPhase = 0;
 
         function render() {
             ctx.clearRect(0, 0, W, H);
 
-            // Calculate insanity level based on map section
-            insanityLevel = Math.min(1, player.mapSection / 5);
+            // Update trippy effects
+            player.time += 0.02;
+            trippyPhase = Math.sin(player.time) * 0.5 + 0.5;
 
-            // Camera follow
-            const targetCamX = player.x * tileSize - W / 2 + tileSize / 2;
-            const targetCamY = player.y * tileSize - H / 2 + tileSize / 2;
+            // Calculate trippy level based on section
+            player.trippyLevel = Math.min(1, player.mapSection / 6);
+
+            // Camera with trippy wobble
+            const wobbleX = Math.sin(player.time * 2) * player.trippyLevel * 3;
+            const wobbleY = Math.cos(player.time * 1.7) * player.trippyLevel * 3;
+
+            const targetCamX = player.x * tileSize - W / 2 + tileSize / 2 + wobbleX;
+            const targetCamY = player.y * tileSize - H / 2 + tileSize / 2 + wobbleY;
             cameraX += (targetCamX - cameraX) * 0.08;
             cameraY += (targetCamY - cameraY) * 0.08;
 
@@ -720,62 +722,55 @@
 
                     const tile = map[r][c];
 
-                    // Base floor
+                    // Base floor with trippy color shifting
                     if (tile !== T.WALL) {
-                        // Darkening floor based on section
-                        const dark = 0.1 + insanityLevel * 0.15;
-                        const color = Math.floor(15 + insanityLevel * 20);
-                        ctx.fillStyle = `rgb(${color}, ${Math.floor(color * 0.7)}, ${Math.floor(color * 0.8 + insanityLevel * 20)})`;
+                        const dark = 0.1 + player.trippyLevel * 0.15;
+                        const hueShift = player.trippyLevel * 30 * Math.sin(player.time * 0.5 + r + c);
+                        const rCol = Math.floor(15 + player.trippyLevel * 20 + Math.sin(player.time * 0.7 + r) * 10);
+                        const gCol = Math.floor(10 + player.trippyLevel * 15 + Math.cos(player.time * 0.5 + c) * 10);
+                        const bCol = Math.floor(25 + player.trippyLevel * 25 + Math.sin(player.time * 0.3 + r + c) * 15);
+                        ctx.fillStyle = `rgb(${Math.min(60, rCol)}, ${Math.min(50, gCol)}, ${Math.min(70, bCol)})`;
                         ctx.fillRect(x, y, tileSize, tileSize);
                     }
 
-                    // Wall
+                    // Wall with trippy distortion
                     if (tile === T.WALL) {
-                        const dark = 0.2 + insanityLevel * 0.3;
+                        const dark = 0.2 + player.trippyLevel * 0.3;
+                        const warp = Math.sin(player.time * 0.3 + r * 0.5 + c * 0.7) * player.trippyLevel * 5;
                         ctx.fillStyle = `rgba(20, 15, 30, ${dark})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        // Wall texture
-                        ctx.fillStyle = `rgba(35, 25, 50, ${0.3 + insanityLevel * 0.4})`;
-                        ctx.fillRect(x + 2, y + 2, tileSize - 4, tileSize - 4);
-                        // Cracks appear with insanity
-                        if (insanityLevel > 0.3 && (r + c) % 4 === 0) {
-                            ctx.strokeStyle = `rgba(100, 50, 150, ${insanityLevel * 0.3})`;
-                            ctx.lineWidth = 1;
-                            ctx.beginPath();
-                            ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.3);
-                            ctx.lineTo(x + tileSize * 0.4, y + tileSize * 0.6);
-                            ctx.lineTo(x + tileSize * 0.3, y + tileSize * 0.8);
-                            ctx.stroke();
-                        }
+                        ctx.fillRect(x + warp, y + Math.sin(player.time * 0.4 + c) * player.trippyLevel * 3, tileSize, tileSize);
+                        // Wall texture with trippy colors
+                        const hue = (r * 10 + c * 5 + player.time * 20) % 360;
+                        ctx.fillStyle = `hsla(${hue}, 30%, ${15 + player.trippyLevel * 15}%, ${0.2 + player.trippyLevel * 0.3})`;
+                        ctx.fillRect(x + 2 + warp, y + 2 + Math.sin(player.time * 0.4 + c) * player.trippyLevel * 2, tileSize - 4, tileSize - 4);
                     }
 
-                    // Door
+                    // Door with trippy glow
                     if (tile === T.DOOR) {
                         ctx.fillStyle = '#2a1a1a';
                         ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#3a2a2a';
+                        const pulse = 0.5 + 0.5 * Math.sin(player.time * 2 + r + c);
+                        ctx.fillStyle = `rgba(60, 40, 40, ${0.5 + pulse * 0.3})`;
                         ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
                         ctx.fillStyle = '#8a6a3a';
                         ctx.fillRect(x + tileSize * 0.7, y + tileSize * 0.4, tileSize * 0.1, tileSize * 0.2);
-                        // Door glow
-                        const dist = Math.abs(player.x - c) + Math.abs(player.y - r);
-                        if (dist <= 2) {
-                            const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                            grad.addColorStop(0, `rgba(255, 217, 61, ${0.1 + insanityLevel * 0.1})`);
-                            grad.addColorStop(1, 'rgba(255, 217, 61, 0)');
-                            ctx.fillStyle = grad;
-                            ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                        }
+                        // Trippy door glow
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 1.5);
+                        grad.addColorStop(0, `hsla(${player.time * 100 + 50}, 80%, 60%, ${0.1 + player.trippyLevel * 0.2})`);
+                        grad.addColorStop(1, 'hsla(0, 0%, 0%, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
                     }
 
-                    // Closet
+                    // Closet with trippy vortex
                     if (tile === T.CLOSET) {
                         ctx.fillStyle = '#0a0a1a';
                         ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = '#1a0a2a';
+                        const spiral = 0.5 + 0.5 * Math.sin(player.time * 3 + r + c);
+                        ctx.fillStyle = `rgba(20, 10, 40, ${0.5 + spiral * 0.3})`;
                         ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
                         const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.8);
-                        grad.addColorStop(0, 'rgba(100, 50, 200, 0.3)');
+                        grad.addColorStop(0, `hsla(${player.time * 150 + 200}, 80%, 60%, ${0.2 + player.trippyLevel * 0.3})`);
                         grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
                         ctx.fillStyle = grad;
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -785,9 +780,82 @@
                         ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
                     }
 
+                    // Izzy spot (where she was taken)
+                    if (tile === T.IZZY_SPOT) {
+                        ctx.fillStyle = `rgba(255, 217, 61, ${0.1 + 0.1 * Math.sin(player.time * 2)})`;
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
+                        grad.addColorStop(0, `rgba(255, 217, 61, ${0.2 + 0.2 * Math.sin(player.time * 2)})`);
+                        grad.addColorStop(1, 'rgba(255, 217, 61, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.3}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('👱', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#8888aa';
+                        ctx.font = `${tileSize * 0.12}px monospace`;
+                        ctx.fillText('IZZY WAS HERE', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
                     // Cat
-                    if (tile === T.CAT) {
-                        drawCat(ctx, x, y, tileSize);
+                    if (tile === T.CAT) drawCat(ctx, x, y, tileSize);
+
+                    // Hatter
+                    if (tile === T.HATTER) {
+                        ctx.fillStyle = '#1a0a1a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#ff6b9d';
+                        ctx.font = `${tileSize * 0.5}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🎩', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#ff6b9d';
+                        ctx.font = `${tileSize * 0.12}px monospace`;
+                        ctx.fillText('HATTER', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Cheshire
+                    if (tile === T.CHESHIRE) {
+                        ctx.fillStyle = '#0a1a0a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        const grin = 0.5 + 0.5 * Math.sin(player.time * 3);
+                        ctx.fillStyle = `rgba(255, 138, 74, ${0.3 + grin * 0.3})`;
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.3, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#ff8a4a';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('😺', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#ff8a4a';
+                        ctx.font = `${tileSize * 0.1}px monospace`;
+                        ctx.fillText('CHESHIRE', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Rabbit
+                    if (tile === T.RABBIT) {
+                        ctx.fillStyle = '#0a0a1a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#6ab4ff';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🐇', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#6ab4ff';
+                        ctx.font = `${tileSize * 0.1}px monospace`;
+                        ctx.fillText('RABBIT', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Caterpillar
+                    if (tile === T.CATERPILLAR) {
+                        ctx.fillStyle = '#0a1a0a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#8aba4a';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🐛', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#8aba4a';
+                        ctx.font = `${tileSize * 0.1}px monospace`;
+                        ctx.fillText('CATERPILLAR', x + tileSize/2, y + tileSize * 0.92);
                     }
 
                     // Resident
@@ -799,7 +867,7 @@
                         ctx.textAlign = 'center';
                         ctx.fillText('👤', x + tileSize/2, y + tileSize * 0.7);
                         ctx.fillStyle = '#8888aa';
-                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.font = `${tileSize * 0.12}px monospace`;
                         ctx.fillText('RESIDENT', x + tileSize/2, y + tileSize * 0.92);
                     }
 
@@ -808,7 +876,7 @@
                         ctx.fillStyle = '#0a1a0a';
                         ctx.fillRect(x, y, tileSize, tileSize);
                         const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                        grad.addColorStop(0, 'rgba(100, 200, 50, 0.15)');
+                        grad.addColorStop(0, `rgba(100, 200, 50, ${0.15 + 0.1 * Math.sin(player.time)})`);
                         grad.addColorStop(1, 'rgba(100, 200, 50, 0)');
                         ctx.fillStyle = grad;
                         ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
@@ -817,7 +885,7 @@
                         ctx.textAlign = 'center';
                         ctx.fillText('💪', x + tileSize/2, y + tileSize * 0.7);
                         ctx.fillStyle = '#8aba4a';
-                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.font = `${tileSize * 0.12}px monospace`;
                         ctx.fillText('IAN', x + tileSize/2, y + tileSize * 0.92);
                     }
 
@@ -826,7 +894,7 @@
                         ctx.fillStyle = '#2a0a0a';
                         ctx.fillRect(x, y, tileSize, tileSize);
                         const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 2);
-                        grad.addColorStop(0, 'rgba(255, 0, 0, 0.2)');
+                        grad.addColorStop(0, `rgba(255, 0, 0, ${0.15 + 0.1 * Math.sin(player.time * 0.5)})`);
                         grad.addColorStop(1, 'rgba(255, 0, 0, 0)');
                         ctx.fillStyle = grad;
                         ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
@@ -835,11 +903,29 @@
                         ctx.textAlign = 'center';
                         ctx.fillText('👑', x + tileSize/2, y + tileSize * 0.7);
                         ctx.fillStyle = '#ff4a4a';
-                        ctx.font = `${tileSize * 0.15}px monospace`;
+                        ctx.font = `${tileSize * 0.12}px monospace`;
                         ctx.fillText('THE QUEEN', x + tileSize/2, y + tileSize * 0.92);
                     }
 
-                    // Items
+                    // Exit
+                    if (tile === T.EXIT) {
+                        ctx.fillStyle = 'rgba(50, 200, 100, 0.05)';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
+                        grad.addColorStop(0, `rgba(74, 255, 138, ${0.2 + 0.2 * Math.sin(player.time * 2)})`);
+                        grad.addColorStop(1, 'rgba(74, 255, 138, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
+                        ctx.fillStyle = '#4aff8a';
+                        ctx.font = `${tileSize * 0.5}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🚪', x + tileSize/2, y + tileSize * 0.7);
+                        ctx.fillStyle = '#4aff8a';
+                        ctx.font = `${tileSize * 0.12}px monospace`;
+                        ctx.fillText('EXIT', x + tileSize/2, y + tileSize * 0.92);
+                    }
+
+                    // Other tiles (simplified for space)
                     if (tile === T.ITEM) {
                         ctx.fillStyle = 'rgba(255, 217, 61, 0.15)';
                         ctx.beginPath();
@@ -851,7 +937,6 @@
                         ctx.fillText('✨', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Chest
                     if (tile === T.CHEST) {
                         ctx.fillStyle = '#2a1a0a';
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -865,12 +950,11 @@
                         ctx.fillText('📦', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Memory
                     if (tile === T.MEMORY) {
-                        ctx.fillStyle = `rgba(100, 50, 200, ${0.1 + insanityLevel * 0.2})`;
+                        ctx.fillStyle = `rgba(100, 50, 200, ${0.1 + player.trippyLevel * 0.2})`;
                         ctx.fillRect(x, y, tileSize, tileSize);
                         const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
-                        grad.addColorStop(0, `rgba(162, 155, 254, ${0.2 + insanityLevel * 0.2})`);
+                        grad.addColorStop(0, `rgba(162, 155, 254, ${0.2 + player.trippyLevel * 0.2})`);
                         grad.addColorStop(1, 'rgba(162, 155, 254, 0)');
                         ctx.fillStyle = grad;
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -880,7 +964,6 @@
                         ctx.fillText('💭', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Letter
                     if (tile === T.LETTER) {
                         ctx.fillStyle = 'rgba(200, 180, 100, 0.15)';
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -890,7 +973,6 @@
                         ctx.fillText('✉️', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Photo
                     if (tile === T.PHOTO) {
                         ctx.fillStyle = 'rgba(150, 100, 50, 0.15)';
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -900,7 +982,6 @@
                         ctx.fillText('🖼️', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Diary
                     if (tile === T.DIARY) {
                         ctx.fillStyle = 'rgba(100, 50, 50, 0.15)';
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -910,39 +991,35 @@
                         ctx.fillText('📖', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Shadow
                     if (tile === T.SHADOW) {
-                        ctx.fillStyle = `rgba(0, 0, 0, ${0.2 + insanityLevel * 0.2})`;
+                        ctx.fillStyle = `rgba(0, 0, 0, ${0.2 + player.trippyLevel * 0.2})`;
                         ctx.beginPath();
                         ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.35, 0, Math.PI * 2);
                         ctx.fill();
-                        ctx.fillStyle = `rgba(100, 50, 150, ${0.1 + insanityLevel * 0.2})`;
+                        ctx.fillStyle = `rgba(100, 50, 150, ${0.1 + player.trippyLevel * 0.2})`;
                         ctx.font = `${tileSize * 0.3}px monospace`;
                         ctx.textAlign = 'center';
                         ctx.fillText('👻', x + tileSize/2, y + tileSize * 0.65);
                     }
 
-                    // Exit
-                    if (tile === T.EXIT) {
-                        ctx.fillStyle = 'rgba(50, 200, 100, 0.05)';
+                    if (tile === T.MIRROR) {
+                        const reflect = 0.5 + 0.5 * Math.sin(player.time * 2 + r + c);
+                        ctx.fillStyle = `rgba(100, 100, 150, ${0.1 + player.trippyLevel * 0.15})`;
                         ctx.fillRect(x, y, tileSize, tileSize);
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize);
-                        grad.addColorStop(0, 'rgba(74, 255, 138, 0.2)');
-                        grad.addColorStop(1, 'rgba(74, 255, 138, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize, y - tileSize, tileSize * 3, tileSize * 3);
-                        ctx.fillStyle = '#4aff8a';
-                        ctx.font = `${tileSize * 0.5}px monospace`;
+                        ctx.fillStyle = `rgba(200, 200, 255, ${0.05 + player.trippyLevel * 0.1})`;
+                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
+                        if (player.trippyLevel > 0.3) {
+                            ctx.fillStyle = `hsla(${player.time * 100 + 200}, 80%, 70%, ${(player.trippyLevel - 0.3) * 0.3})`;
+                            ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.2, tileSize * 0.6, tileSize * 0.6);
+                        }
+                        ctx.fillStyle = '#a29bfe';
+                        ctx.font = `${tileSize * 0.4}px monospace`;
                         ctx.textAlign = 'center';
-                        ctx.fillText('🚪', x + tileSize/2, y + tileSize * 0.7);
-                        ctx.fillStyle = '#4aff8a';
-                        ctx.font = `${tileSize * 0.15}px monospace`;
-                        ctx.fillText('EXIT', x + tileSize/2, y + tileSize * 0.92);
+                        ctx.fillText('🪞', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Blood
                     if (tile === T.BLOOD) {
-                        ctx.fillStyle = `rgba(100, 20, 20, ${0.3 + insanityLevel * 0.3})`;
+                        ctx.fillStyle = `rgba(100, 20, 20, ${0.3 + player.trippyLevel * 0.3})`;
                         ctx.beginPath();
                         ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.4, tileSize * 0.2, 0, 0, Math.PI * 2);
                         ctx.fill();
@@ -951,9 +1028,45 @@
                         ctx.fill();
                     }
 
-                    // Crack
+                    if (tile === T.EYE) {
+                        ctx.fillStyle = `rgba(200, 200, 200, ${0.2 + player.trippyLevel * 0.3})`;
+                        ctx.beginPath();
+                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.3, tileSize * 0.2, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        const pupilOffset = Math.sin(player.time * 2 + r + c) * tileSize * 0.05;
+                        ctx.fillStyle = `rgba(100, 50, 150, ${0.4 + player.trippyLevel * 0.3})`;
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2 + pupilOffset, y + tileSize/2, tileSize * 0.1, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = `rgba(150, 50, 50, ${0.2 + player.trippyLevel * 0.2})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.4);
+                        ctx.lineTo(x + tileSize * 0.4, y + tileSize * 0.45);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.8, y + tileSize * 0.6);
+                        ctx.lineTo(x + tileSize * 0.6, y + tileSize * 0.55);
+                        ctx.stroke();
+                    }
+
+                    if (tile === T.TEAPOT) {
+                        ctx.fillStyle = '#2a1a0a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.fillStyle = '#8a6a3a';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize * 0.4, tileSize * 0.2, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#6a4a2a';
+                        ctx.fillRect(x + tileSize * 0.3, y + tileSize * 0.4, tileSize * 0.4, tileSize * 0.3);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = `${tileSize * 0.2}px monospace`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🍵', x + tileSize/2, y + tileSize * 0.7);
+                    }
+
                     if (tile === T.CRACK) {
-                        ctx.strokeStyle = `rgba(60, 40, 80, ${0.3 + insanityLevel * 0.4})`;
+                        ctx.strokeStyle = `rgba(60, 40, 80, ${0.3 + player.trippyLevel * 0.4})`;
                         ctx.lineWidth = 2;
                         ctx.beginPath();
                         ctx.moveTo(x + tileSize * 0.1, y + tileSize * 0.2);
@@ -967,49 +1080,19 @@
                         ctx.stroke();
                     }
 
-                    // Eye
-                    if (tile === T.EYE) {
-                        // White of eye
-                        ctx.fillStyle = `rgba(200, 200, 200, ${0.2 + insanityLevel * 0.3})`;
-                        ctx.beginPath();
-                        ctx.ellipse(x + tileSize/2, y + tileSize/2, tileSize * 0.3, tileSize * 0.2, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        // Pupil
-                        ctx.fillStyle = `rgba(100, 50, 150, ${0.4 + insanityLevel * 0.3})`;
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize/2, tileSize * 0.1, 0, Math.PI * 2);
-                        ctx.fill();
-                        // Red veins
-                        ctx.strokeStyle = `rgba(150, 50, 50, ${0.2 + insanityLevel * 0.2})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.4);
-                        ctx.lineTo(x + tileSize * 0.4, y + tileSize * 0.45);
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo(x + tileSize * 0.8, y + tileSize * 0.6);
-                        ctx.lineTo(x + tileSize * 0.6, y + tileSize * 0.55);
-                        ctx.stroke();
-                    }
-
-                    // Mirror
-                    if (tile === T.MIRROR) {
-                        ctx.fillStyle = `rgba(100, 100, 150, ${0.1 + insanityLevel * 0.15})`;
-                        ctx.fillRect(x, y, tileSize, tileSize);
-                        ctx.fillStyle = `rgba(200, 200, 255, ${0.05 + insanityLevel * 0.1})`;
-                        ctx.fillRect(x + tileSize * 0.1, y + tileSize * 0.1, tileSize * 0.8, tileSize * 0.8);
+                    if (tile === T.PORTAL) {
+                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
+                        grad.addColorStop(0, `hsla(${player.time * 100 + 200}, 80%, 60%, ${0.3 + player.trippyLevel * 0.3})`);
+                        grad.addColorStop(0.5, `hsla(${player.time * 100 + 300}, 80%, 60%, ${0.2 + player.trippyLevel * 0.2})`);
+                        grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize * 0.5, y - tileSize * 0.5, tileSize * 2, tileSize * 2);
                         ctx.fillStyle = '#a29bfe';
                         ctx.font = `${tileSize * 0.4}px monospace`;
                         ctx.textAlign = 'center';
-                        ctx.fillText('🪞', x + tileSize/2, y + tileSize * 0.7);
-                        // Reflection effect
-                        if (insanityLevel > 0.5) {
-                            ctx.fillStyle = `rgba(162, 155, 254, ${(insanityLevel - 0.5) * 0.2})`;
-                            ctx.fillRect(x + tileSize * 0.2, y + tileSize * 0.2, tileSize * 0.6, tileSize * 0.6);
-                        }
+                        ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
                     }
 
-                    // Stairs
                     if (tile === T.STAIRS) {
                         ctx.fillStyle = '#1a1a2a';
                         ctx.fillRect(x, y, tileSize, tileSize);
@@ -1021,20 +1104,6 @@
                         ctx.font = `${tileSize * 0.3}px monospace`;
                         ctx.textAlign = 'center';
                         ctx.fillText('⬇', x + tileSize/2, y + tileSize * 0.75);
-                    }
-
-                    // Portal
-                    if (tile === T.PORTAL) {
-                        const grad = ctx.createRadialGradient(x + tileSize/2, y + tileSize/2, 0, x + tileSize/2, y + tileSize/2, tileSize * 0.6);
-                        grad.addColorStop(0, `rgba(100, 50, 200, ${0.3 + insanityLevel * 0.3})`);
-                        grad.addColorStop(0.5, `rgba(255, 100, 200, ${0.2 + insanityLevel * 0.2})`);
-                        grad.addColorStop(1, 'rgba(100, 50, 200, 0)');
-                        ctx.fillStyle = grad;
-                        ctx.fillRect(x - tileSize * 0.5, y - tileSize * 0.5, tileSize * 2, tileSize * 2);
-                        ctx.fillStyle = '#a29bfe';
-                        ctx.font = `${tileSize * 0.4}px monospace`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText('🌀', x + tileSize/2, y + tileSize * 0.7);
                     }
                 }
             }
@@ -1051,57 +1120,75 @@
             if (nearby && player.gameState === 'exploring' && !player.inDialogue) {
                 const nx = nearby.x * tileSize - cameraX;
                 const ny = nearby.y * tileSize - cameraY;
-                ctx.fillStyle = 'rgba(255, 217, 61, 0.15)';
+                const pulse = 0.5 + 0.5 * Math.sin(player.time * 3);
+                ctx.fillStyle = `rgba(255, 217, 61, ${0.1 + pulse * 0.15})`;
                 ctx.fillRect(nx, ny - 18, tileSize, 16);
                 ctx.fillStyle = '#ffd93d';
                 ctx.font = '7px monospace';
                 ctx.textAlign = 'center';
-                const label = nearby.tile === T.CAT ? '🐱 TALK' :
-                             nearby.tile === T.CLOSET ? '🌀 ENTER' :
-                             nearby.tile === T.DOOR ? '🚪 OPEN' :
-                             nearby.tile === T.ITEM ? '✨ PICK UP' :
-                             nearby.tile === T.CHEST ? '📦 OPEN' :
-                             nearby.tile === T.RESIDENT ? '💬 TALK' :
-                             nearby.tile === T.IAN ? '💪 FACE' :
-                             nearby.tile === T.QUEEN ? '👑 CHALLENGE' :
-                             nearby.tile === T.EXIT ? '🚪 ESCAPE' :
-                             nearby.tile === T.MEMORY ? '💭 REMEMBER' :
-                             nearby.tile === T.LETTER ? '✉️ READ' :
-                             nearby.tile === T.PHOTO ? '🖼️ VIEW' :
-                             nearby.tile === T.DIARY ? '📖 READ' :
-                             nearby.tile === T.SHADOW ? '👻 INVESTIGATE' :
-                             nearby.tile === T.MIRROR ? '🪞 LOOK' :
-                             nearby.tile === T.BLOOD ? '🩸 INVESTIGATE' :
-                             nearby.tile === T.EYE ? '👁️ LOOK' :
-                             nearby.tile === T.STAIRS ? '⬇️ DESCEND' :
-                             nearby.tile === T.PORTAL ? '🌀 ENTER' : '🔹 INTERACT';
-                ctx.fillText('🔹 ' + label, nx + tileSize/2, ny - 6);
+                const labels = {
+                    [T.CAT]: '🐱 TALK',
+                    [T.CLOSET]: '🌀 ENTER',
+                    [T.DOOR]: '🚪 OPEN',
+                    [T.ITEM]: '✨ PICK UP',
+                    [T.CHEST]: '📦 OPEN',
+                    [T.RESIDENT]: '💬 TALK',
+                    [T.IAN]: '💪 FACE',
+                    [T.QUEEN]: '👑 CHALLENGE',
+                    [T.EXIT]: '🚪 ESCAPE',
+                    [T.MEMORY]: '💭 REMEMBER',
+                    [T.LETTER]: '✉️ READ',
+                    [T.PHOTO]: '🖼️ VIEW',
+                    [T.DIARY]: '📖 READ',
+                    [T.SHADOW]: '👻 INVESTIGATE',
+                    [T.MIRROR]: '🪞 LOOK',
+                    [T.BLOOD]: '🩸 INVESTIGATE',
+                    [T.EYE]: '👁️ LOOK',
+                    [T.STAIRS]: '⬇️ DESCEND',
+                    [T.PORTAL]: '🌀 ENTER',
+                    [T.TEAPOT]: '🍵 DRINK',
+                    [T.CHESHIRE]: '😺 TALK',
+                    [T.RABBIT]: '🐇 TALK',
+                    [T.CATERPILLAR]: '🐛 TALK',
+                    [T.HATTER]: '🎩 TALK',
+                    [T.IZZY_SPOT]: '👱 REMEMBER'
+                };
+                ctx.fillText('🔹 ' + (labels[nearby.tile] || 'INTERACT'), nx + tileSize/2, ny - 6);
             }
 
-            // Sanity overlay
-            if (insanityLevel > 0.3) {
-                // Vignette
+            // Trippy overlay
+            if (player.trippyLevel > 0.2) {
+                const overlay = document.getElementById('trippyOverlay');
+                overlay.style.opacity = player.trippyLevel * 0.3;
+                overlay.style.background = `radial-gradient(circle at ${50 + 30 * Math.sin(player.time * 0.5)}% ${50 + 30 * Math.cos(player.time * 0.7)}%, 
+                    rgba(255, 0, 255, ${player.trippyLevel * 0.05}), 
+                    rgba(0, 255, 255, ${player.trippyLevel * 0.05}), 
+                    transparent 70%)`;
+            }
+
+            // Sanity vignette
+            if (player.sanity < 70) {
+                const sanityDark = (70 - player.sanity) / 70 * 0.3;
                 const grad = ctx.createRadialGradient(W/2, H/2, W*0.3, W/2, H/2, W*0.8);
-                grad.addColorStop(0, `rgba(0,0,0,0)`);
-                grad.addColorStop(1, `rgba(0,0,0,${insanityLevel * 0.3})`);
+                grad.addColorStop(0, 'rgba(0,0,0,0)');
+                grad.addColorStop(1, `rgba(0,0,0,${sanityDark})`);
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, W, H);
+            }
 
-                // Static noise
-                if (insanityLevel > 0.6 && Math.random() < insanityLevel * 0.1) {
-                    for (let i = 0; i < 20; i++) {
-                        ctx.fillStyle = `rgba(100, 50, 150, ${Math.random() * 0.05})`;
-                        ctx.fillRect(Math.random() * W, Math.random() * H, Math.random() * 20, Math.random() * 2);
-                    }
+            // Static noise at low sanity
+            if (player.sanity < 40 && Math.random() < (40 - player.sanity) / 40 * 0.2) {
+                for (let i = 0; i < 30; i++) {
+                    ctx.fillStyle = `rgba(100, 50, 150, ${Math.random() * 0.05})`;
+                    ctx.fillRect(Math.random() * W, Math.random() * H, Math.random() * 30, Math.random() * 3);
                 }
             }
 
-            // Dark overlay
             document.getElementById('darkOverlay').style.background = `rgba(0, 0, 0, ${darkOpacity})`;
         }
 
         // ============================================================
-        //  SPRITE FUNCTIONS
+        //  SPRITE FUNCTIONS (simplified)
         // ============================================================
 
         function drawPixelSprite(ctx, x, y, size, hair, skin, outfit, facing) {
@@ -1121,27 +1208,22 @@
                 pupil: '#1a1a2e'
             };
 
-            // Shadow
             ctx.fillStyle = 'rgba(0,0,0,0.3)';
             ctx.beginPath();
             ctx.ellipse(x + s * 6, y + s * 16, s * 4, s * 1.5, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Body
             ctx.fillStyle = colors.outfit;
             ctx.fillRect(x + s * 2, y + s * 5, s * 8, s * 7);
 
-            // Head
             ctx.fillStyle = colors.skin;
             ctx.fillRect(x + s * 3, y + s * 1, s * 6, s * 4);
 
-            // Hair
             ctx.fillStyle = colors.hair;
             ctx.fillRect(x + s * 2, y + s * 0, s * 8, s * 2);
             ctx.fillRect(x + s * 1, y + s * 2, s * 2, s * 1);
             ctx.fillRect(x + s * 9, y + s * 2, s * 2, s * 1);
 
-            // Eyes
             ctx.fillStyle = colors.eye;
             ctx.fillRect(x + s * 4, y + s * 2.5, s * 1.5, s * 1.5);
             ctx.fillRect(x + s * 6.5, y + s * 2.5, s * 1.5, s * 1.5);
@@ -1149,21 +1231,17 @@
             ctx.fillRect(x + s * 4.5, y + s * 3, s * 0.8, s * 0.8);
             ctx.fillRect(x + s * 7, y + s * 3, s * 0.8, s * 0.8);
 
-            // Mouth
             ctx.fillStyle = '#8b6b4a';
             ctx.fillRect(x + s * 5, y + s * 4, s * 2, s * 0.5);
 
-            // Legs
             ctx.fillStyle = colors.outfit;
             ctx.fillRect(x + s * 3, y + s * 12, s * 2, s * 2.5);
             ctx.fillRect(x + s * 7, y + s * 12, s * 2, s * 2.5);
 
-            // Shoes
             ctx.fillStyle = '#1a1a2a';
             ctx.fillRect(x + s * 2.5, y + s * 14.5, s * 3, s * 1.2);
             ctx.fillRect(x + s * 6.5, y + s * 14.5, s * 3, s * 1.2);
 
-            // Direction indicator
             ctx.fillStyle = 'rgba(255, 217, 61, 0.4)';
             const dirSize = s * 2.5;
             if (facing === 'up') {
@@ -1195,19 +1273,16 @@
 
         function drawCat(ctx, x, y, size) {
             const s = size / 12;
-            // Body
             ctx.fillStyle = '#ff8a4a';
             ctx.beginPath();
             ctx.ellipse(x + s * 6, y + s * 6, s * 4, s * 3, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Head
             ctx.fillStyle = '#ff8a4a';
             ctx.beginPath();
             ctx.ellipse(x + s * 6, y + s * 3, s * 3, s * 2.5, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ears
             ctx.fillStyle = '#ff8a4a';
             ctx.beginPath();
             ctx.moveTo(x + s * 3.5, y + s * 1);
@@ -1220,7 +1295,6 @@
             ctx.lineTo(x + s * 7.5, y + s * 0.5);
             ctx.fill();
 
-            // Eyes - glowing
             ctx.fillStyle = '#4a8a4a';
             ctx.beginPath();
             ctx.ellipse(x + s * 4.5, y + s * 3, s * 0.8, s * 1.2, 0, 0, Math.PI * 2);
@@ -1229,41 +1303,21 @@
             ctx.ellipse(x + s * 7.5, y + s * 3, s * 0.8, s * 1.2, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Pupils
             ctx.fillStyle = '#0a0a1a';
             ctx.fillRect(x + s * 4.3, y + s * 2.5, s * 0.4, s * 1.5);
             ctx.fillRect(x + s * 7.3, y + s * 2.5, s * 0.4, s * 1.5);
 
-            // Glow
-            const grad = ctx.createRadialGradient(x + s * 4.5, y + s * 3, 0, x + s * 4.5, y + s * 3, s * 2);
-            grad.addColorStop(0, 'rgba(74, 138, 74, 0.2)');
-            grad.addColorStop(1, 'rgba(74, 138, 74, 0)');
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.arc(x + s * 4.5, y + s * 3, s * 2, 0, Math.PI * 2);
-            ctx.fill();
-            const grad2 = ctx.createRadialGradient(x + s * 7.5, y + s * 3, 0, x + s * 7.5, y + s * 3, s * 2);
-            grad2.addColorStop(0, 'rgba(74, 138, 74, 0.2)');
-            grad2.addColorStop(1, 'rgba(74, 138, 74, 0)');
-            ctx.fillStyle = grad2;
-            ctx.beginPath();
-            ctx.arc(x + s * 7.5, y + s * 3, s * 2, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Nose
             ctx.fillStyle = '#ff6b6b';
             ctx.beginPath();
             ctx.arc(x + s * 6, y + s * 3.8, s * 0.5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Mouth
             ctx.strokeStyle = '#0a0a1a';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(x + s * 6, y + s * 4.2, s * 1.5, 0.1, Math.PI - 0.1);
             ctx.stroke();
 
-            // Tail
             ctx.fillStyle = '#ff8a4a';
             ctx.beginPath();
             ctx.moveTo(x + s * 10, y + s * 6);
@@ -1296,7 +1350,9 @@
                         tile === T.MEMORY || tile === T.LETTER || tile === T.PHOTO ||
                         tile === T.DIARY || tile === T.SHADOW || tile === T.MIRROR ||
                         tile === T.BLOOD || tile === T.EYE || tile === T.STAIRS ||
-                        tile === T.PORTAL) {
+                        tile === T.PORTAL || tile === T.TEAPOT || tile === T.CHESHIRE ||
+                        tile === T.RABBIT || tile === T.CATERPILLAR || tile === T.HATTER ||
+                        tile === T.IZZY_SPOT) {
                         return { x: nx, y: ny, tile: tile };
                     }
                 }
@@ -1410,7 +1466,7 @@
         });
 
         // ============================================================
-        //  MOVEMENT
+        //  MOVEMENT WITH SECTION TRACKING
         // ============================================================
 
         function tryMove(dx, dy) {
@@ -1422,31 +1478,28 @@
             const tile = map[ny][nx];
             if (tile === T.WALL) return;
 
-            // Special: Endless Corridor looping
-            if (tile === T.CRACK && player.mapSection === 2) {
-                // Loop around
-                if (dx === -1) { player.x = cols - 2; }
-                else if (dx === 1) { player.x = 1; }
-                else if (dy === -1) { player.y = rows - 2; }
-                else if (dy === 1) { player.y = 1; }
+            // Endless hall loop
+            if (tile === T.MIRROR && player.mapSection === 2) {
+                if (dx === -1) { player.x = cols - 3; }
+                else if (dx === 1) { player.x = 2; }
+                else if (dy === -1) { player.y = rows - 4; }
+                else if (dy === 1) { player.y = 3; }
                 updateUI();
+                showDialogue('🌀 ENDLESS HALL', '"The hallway loops forever... <span class="trippy">or does it?</span>"');
+                setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            // Don't move into NPC tiles unless interacting
+            // Don't move onto NPCs unless interacting
             if (tile === T.CAT || tile === T.RESIDENT || tile === T.IAN || 
-                tile === T.QUEEN || tile === T.SHADOW) {
+                tile === T.QUEEN || tile === T.SHADOW || tile === T.CHESHIRE ||
+                tile === T.RABBIT || tile === T.CATERPILLAR || tile === T.HATTER) {
                 player.x = nx;
                 player.y = ny;
                 player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
                                  dx === -1 ? 'left' : 'right';
                 updateUI();
-                const nearby = getNearbyInteractive();
-                if (nearby && (nearby.tile === T.CAT || nearby.tile === T.RESIDENT || 
-                              nearby.tile === T.IAN || nearby.tile === T.QUEEN ||
-                              nearby.tile === T.SHADOW)) {
-                    interact();
-                }
+                interact();
                 return;
             }
 
@@ -1455,38 +1508,44 @@
             player.facing = dx === 0 ? (dy === -1 ? 'up' : dy === 1 ? 'down' : player.facing) :
                              dx === -1 ? 'left' : 'right';
 
+            updateMapSection();
             updateUI();
 
-            // Track map section
-            updateMapSection();
-
-            // Check for auto-interactions
+            // Auto-interact with items
             if (tile === T.ITEM || tile === T.CHEST || tile === T.MEMORY || 
                 tile === T.LETTER || tile === T.PHOTO || tile === T.DIARY ||
                 tile === T.MIRROR || tile === T.BLOOD || tile === T.EYE ||
-                tile === T.STAIRS || tile === T.PORTAL) {
+                tile === T.STAIRS || tile === T.PORTAL || tile === T.TEAPOT ||
+                tile === T.IZZY_SPOT) {
                 interact();
             }
 
-            // Sanity effects
-            if (player.mapSection >= 4) {
-                player.sanity = Math.max(0, player.sanity - 0.1);
-                if (Math.random() < 0.01) {
-                    showDialogue('🧠 YOUR MIND', '<span class="insane">"The walls are breathing..."</span>');
+            // Sanity drain in Mad Wing
+            if (player.mapSection >= 5) {
+                player.sanity = Math.max(0, player.sanity - 0.2);
+                if (Math.random() < 0.005) {
+                    const hallucinations = [
+                        '"The walls are <span class="trippy">breathing</span>..."',
+                        '"<span class="insane">THE EYES ARE WATCHING</span>"',
+                        '"You feel <span class="creepy">something behind you</span>..."',
+                        '"<span class="dark">Izzy... is that you?</span>"',
+                        '"The floor is <span class="trippy">melting</span>..."'
+                    ];
+                    showDialogue('🧠 YOUR MIND', hallucinations[Math.floor(Math.random() * hallucinations.length)]);
                     setTimeout(closeDialogue, 1500);
                 }
             }
         }
 
         function updateMapSection() {
-            // Determine which section the player is in based on position
-            if (player.x < 9 && player.y < 8) player.mapSection = 0; // Room 303
-            else if (player.x >= 9 && player.x < 14 && player.y < 14) player.mapSection = 1; // Hallway
-            else if (player.x >= 14 && player.x < 19 && player.y < 14) player.mapSection = 2; // Endless
-            else if (player.x >= 19 && player.x < 28 && player.y < 14) player.mapSection = 3; // Memories
-            else if (player.x < 14 && player.y >= 14) player.mapSection = 4; // Mad Wing
-            else if (player.x >= 14 && player.x < 21 && player.y >= 14) player.mapSection = 5; // Ian
-            else if (player.x >= 21 && player.y >= 14) player.mapSection = 6; // Queen
+            if (player.x < 9 && player.y < 8) player.mapSection = 0;
+            else if (player.x >= 9 && player.x < 15 && player.y < 10) player.mapSection = 1;
+            else if (player.x >= 15 && player.x < 21 && player.y < 10) player.mapSection = 2;
+            else if (player.x >= 21 && player.x < 26 && player.y < 10) player.mapSection = 3;
+            else if (player.x >= 26 && player.y < 10) player.mapSection = 4;
+            else if (player.x < 14 && player.y >= 10) player.mapSection = 5;
+            else if (player.x >= 14 && player.x < 21 && player.y >= 10) player.mapSection = 6;
+            else if (player.x >= 21 && player.y >= 10) player.mapSection = 7;
         }
 
         // Click to move
@@ -1530,15 +1589,15 @@
 
             const nearby = getNearbyInteractive();
             if (!nearby) {
-                showDialogue('💡 HINT', 'There\'s nothing here. Try exploring.');
+                showDialogue('💡 HINT', 'There\'s nothing here.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
             const { x, y, tile } = nearby;
 
-            // Check map section for contextual interactions
             switch (tile) {
+                case T.IZZY_SPOT: rememberIzzy(); break;
                 case T.CAT: meetCat(); break;
                 case T.CLOSET: enterCloset(); break;
                 case T.DOOR: openDoor(x, y); break;
@@ -1553,6 +1612,11 @@
                 case T.EYE: lookAtEye(x, y); break;
                 case T.STAIRS: descendStairs(x, y); break;
                 case T.PORTAL: enterPortal(x, y); break;
+                case T.TEAPOT: drinkTea(x, y); break;
+                case T.CHESHIRE: talkToCheshire(x, y); break;
+                case T.RABBIT: talkToRabbit(x, y); break;
+                case T.CATERPILLAR: talkToCaterpillar(x, y); break;
+                case T.HATTER: talkToHatter(x, y); break;
                 case T.RESIDENT: talkToResident(x, y); break;
                 case T.SHADOW: investigateShadow(x, y); break;
                 case T.IAN: faceIan(); break;
@@ -1565,104 +1629,379 @@
         }
 
         // ============================================================
-        //  ACT I: THE SCREAM
+        //  OPENING: IZZY GETS TAKEN
+        // ============================================================
+
+        let izzyScenePlayed = false;
+
+        function rememberIzzy() {
+            if (player.sawIzzyTaken) {
+                showDialogue('👱 IZZY', '"You remember her... she was dragged here.<br><span class="highlight">You have to save her.</span>"');
+                setTimeout(closeDialogue, 2000);
+                return;
+            }
+            // This is triggered on first interaction with the spot
+            showIzzyTakenScene();
+        }
+
+        function showIzzyTakenScene() {
+            player.sawIzzyTaken = true;
+            player.questStep = Math.max(player.questStep, 1);
+            darkOpacity = 0.5;
+
+            showDialogue('👱 IZZY', 
+                '<span class="creepy" style="font-size:14px;">"HELP! SOMEONE HELP!"</span><br><br>' +
+                'You see <span class="highlight">Izzy</span>, the short blonde girl from 303, being <span class="creepy">dragged</span> toward the closet.<br>' +
+                'She\'s screaming, reaching out to you.<br>' +
+                '<span style="color: #ffd93d;">"PLEASE! DON\'T LET THEM TAKE ME!"</span><br><br>' +
+                'The closet door GLOWS. Shadows reach out like hands.<br>' +
+                'She\'s pulled inside. The door SLAMS shut.<br><br>' +
+                '<span class="creepy">✦ IZZY IS GONE ✦</span><br>' +
+                '<span class="highlight">✦ You have to save her ✦</span>'
+            );
+            setTimeout(() => {
+                darkOpacity = 0;
+                closeDialogue();
+                showDialogue('🎮 NARRATOR',
+                    'You stand frozen. Your friend is gone.<br>' +
+                    'The closet is still glowing.<br><br>' +
+                    '<span class="highlight">✦ You must enter Wonderland and save Izzy ✦</span><br>' +
+                    '<span style="color: #8888aa;">Find the cat. It will guide you.</span>'
+                );
+                setTimeout(closeDialogue, 3500);
+                // Mark the spot as "remembered"
+                map[3][5] = T.FLOOR;
+                // Place cat in Wonderland entrance
+                map[5][12] = T.CAT;
+                updateUI();
+            }, 4000);
+        }
+
+        // ============================================================
+        //  ACT I: THE CAT
         // ============================================================
 
         function meetCat() {
             if (player.metCat) {
                 showDialogue('🐱 THE CAT', 
-                    '"You\'re getting closer, human. The Queen\'s throne room is at the end."<br>' +
-                    '"But beware... the madness grows with each step."'
+                    '"You\'re getting closer, human. But remember: <span class="trippy">nothing is real here.</span>"<br>' +
+                    '"Find the Hatter. He has information about the Queen."'
                 );
                 setTimeout(closeDialogue, 2500);
                 return;
             }
 
             player.metCat = true;
-            player.questStep = Math.max(player.questStep, 1);
-            player.act = 1;
+            player.questStep = Math.max(player.questStep, 2);
+            player.act = 2;
 
-            showChapter('ACT I', 'The Scream');
+            showChapter('ACT II', 'The Cat Guide');
 
             showDialogue('🐱 THE CAT', 
-                '"You heard the scream, didn\'t you?"<br><br>' +
+                '"You came through the closet. You saw Izzy taken."<br><br>' +
                 'The cat sits on the floor, its eyes glowing in the dark.<br>' +
-                '"I\'ve been watching you. You\'re different from the others."<br>' +
-                '"This place... JN Hall... it\'s a doorway. A doorway to Wonderland."<br>' +
-                '"But this Wonderland is a <span class="creepy">nightmare</span>."<br>' +
-                '"It feeds on the sadness of trapped souls. It grows with each step you take."<br>' +
-                '"The Queen... she was once a student here. Now she\'s the darkness itself."<br>' +
-                '"To escape, you must walk through the <span class="insane">madness</span>."<br>' +
-                '"You must find the memories. You must face the bodyguard."<br>' +
-                '"And you must confront the Queen on her throne."<br><br>' +
-                '<span class="creepy">"Be careful, human. The building is alive."</span>',
+                '"I\'ve been watching. The Queen has her."<br>' +
+                '"But saving her won\'t be easy. Wonderland is <span class="trippy">not what it seems</span>."<br>' +
+                '"The rules here bend. Walls move. Doors lead to different places."<br>' +
+                '"You must find the <span class="highlight">Tea Party</span>."<br>' +
+                '"The Hatter knows the way through the Mad Wing."<br>' +
+                '"And you\'ll need to get past <span class="creepy">Ian</span>, the Queen\'s bodyguard."<br><br>' +
+                '<span class="highlight">✦ Your quest: Save Izzy, escape Wonderland ✦</span>',
                 [{ label: '🐱 Continue', value: 'continue' }],
                 function() {
-                    player.talkedToCat = true;
-                    player.questStep = Math.max(player.questStep, 2);
+                    player.questStep = Math.max(player.questStep, 3);
                     updateUI();
                     closeDialogue();
                     showDialogue('🐱 THE CAT', 
-                        '"Remember: <span class="highlight">find the memories</span>. They hold the truth.<br>' +
-                        '"And when you\'re ready, enter the closet. That\'s the way in."<br><br>' +
+                        '"Remember: <span class="trippy">trust nothing</span>. Not even me."<br><br>' +
                         'The cat vanishes with a flick of its tail.' +
-                        '<br><span class="dark">"Find me when you reach the Mad Wing..."</span>'
+                        '<br><span class="dark">"Find the Tea Party. The Hatter will help... or hurt you."</span>'
                     );
                     setTimeout(closeDialogue, 3000);
-                    map[3][5] = T.FLOOR;
+                    map[5][12] = T.FLOOR;
                     updateUI();
                 }
             );
         }
 
         // ============================================================
-        //  ACT II: THE FALL
+        //  ACT II: THE TEA PARTY - HATTER
+        // ============================================================
+
+        let hatterState = 0; // 0=first meeting, 1=friendly, 2=hostile
+
+        function talkToHatter(x, y) {
+            if (player.metHatter && hatterState === 2) {
+                showDialogue('🎩 HATTER', 
+                    '<span class="creepy">"You\'re STILL here? I told you to leave!"</span><br>' +
+                    'He throws a teacup at you! <span class="creepy">You lose 2 HP.</span>'
+                );
+                player.hp -= 2;
+                updateUI();
+                setTimeout(closeDialogue, 2000);
+                return;
+            }
+
+            if (player.metHatter && hatterState === 1) {
+                showDialogue('🎩 HATTER', 
+                    '"Ah, my friend! Come for more tea?"<br>' +
+                    '"The Queen keeps Izzy in her throne room."<br>' +
+                    '"But to get there, you must pass through the <span class="creepy">Mad Wing</span>."<br>' +
+                    '"Beware the <span class="trippy">Cheshire Cat</span>. It will help you... or destroy you."'
+                );
+                setTimeout(closeDialogue, 3000);
+                return;
+            }
+
+            player.metHatter = true;
+            player.questStep = Math.max(player.questStep, 4);
+
+            showDialogue('🎩 HATTER', 
+                '"A visitor! It\'s ALWAYS tea time!"<br><br>' +
+                'The Hatter is wild-eyed, his clothes mismatched.<br>' +
+                '"You came for the girl, didn\'t you? The blonde one."<br>' +
+                '"She\'s with the Queen. The Queen wants to keep her forever."<br>' +
+                '"But I know a secret... <span class="highlight">the Queen is weak to Wonder.</span>"<br>' +
+                '"Gather Wonder. Find the memories. They\'ll make you strong."<br><br>' +
+                '"Now, have some tea!"<br>' +
+                'He offers you a cup. The liquid swirls with impossible colors.',
+                [
+                    { label: '🍵 Drink Tea', value: 'drink', class: 'tea' },
+                    { label: '🚫 Refuse', value: 'refuse', class: 'danger' }
+                ],
+                function(choice) {
+                    closeDialogue();
+                    if (choice === 'drink') {
+                        player.hasTea = true;
+                        player.wonder += 10;
+                        player.sanity += 5;
+                        hatterState = 1;
+                        showDialogue('🎩 HATTER', 
+                            '"Excellent! The tea opens your mind!"<br>' +
+                            '<span class="good">✦ +10 WONDER, +5 SANITY ✦</span><br>' +
+                            '"Go to the Memories. Collect them. Then face the Mad Wing."<br>' +
+                            '"Remember: <span class="trippy">the walls have eyes.</span>"'
+                        );
+                        setTimeout(closeDialogue, 3000);
+                    } else {
+                        hatterState = 2;
+                        showDialogue('🎩 HATTER', 
+                            '<span class="creepy">"YOU REFUSE MY TEA?"</span><br>' +
+                            'His eyes go dark. The room shakes.<br>' +
+                            '<span class="creepy">"GET OUT!"</span><br>' +
+                            'He throws a teacup at you! <span class="creepy">You lose 3 HP.</span>'
+                        );
+                        player.hp -= 3;
+                        updateUI();
+                        setTimeout(closeDialogue, 2000);
+                    }
+                }
+            );
+        }
+
+        // ============================================================
+        //  SIDE CHARACTERS: CHESHIRE CAT
+        // ============================================================
+
+        let cheshireState = 0;
+
+        function talkToCheshire(x, y) {
+            if (player.metCheshire && cheshireState === 1) {
+                showDialogue('😺 CHESHIRE CAT', 
+                    '"We meet again, my friend. The Queen\'s power is fading."<br>' +
+                    '"But beware the shadows. They\'re not what they seem."'
+                );
+                setTimeout(closeDialogue, 2000);
+                return;
+            }
+
+            player.metCheshire = true;
+
+            showDialogue('😺 CHESHIRE CAT', 
+                '"Well, well... a new visitor."<br><br>' +
+                'The cat grins, floating in the air, disappearing and reappearing.<br>' +
+                '"I know why you\'re here. The blonde girl. Izzy."<br>' +
+                '"She\'s trapped in the Queen\'s throne room."<br><br>' +
+                '"I can help you... if you answer my riddle."<br><br>' +
+                '<span class="highlight">"What belongs to you, but others use it more?"</span>',
+                [
+                    { label: '🧠 Your Name', value: 'name' },
+                    { label: '💭 Your Thoughts', value: 'thoughts' },
+                    { label: '❤️ Your Heart', value: 'heart' }
+                ],
+                function(choice) {
+                    closeDialogue();
+                    if (choice === 'name') {
+                        cheshireState = 1;
+                        player.hasWisdom = true;
+                        showDialogue('😺 CHESHIRE CAT', 
+                            '"Correct! Your name. Others use it more than you."<br>' +
+                            '<span class="good">✦ You have earned my respect ✦</span><br>' +
+                            '"The Queen\'s weakness is <span class="highlight">memories</span>. Collect them all."<br>' +
+                            '"And when you face her... don\'t let her break you."'
+                        );
+                        setTimeout(closeDialogue, 3000);
+                    } else {
+                        cheshireState = 0;
+                        showDialogue('😺 CHESHIRE CAT', 
+                            '"Wrong! The answer was <span class="highlight">your name</span>."<br>' +
+                            '<span class="creepy">"You\'re not as clever as I thought."</span><br>' +
+                            'It vanishes with a laugh.' + 
+                            '<span class="creepy">You lose 3 SANITY.</span>'
+                        );
+                        player.sanity -= 3;
+                        updateUI();
+                        setTimeout(closeDialogue, 2000);
+                    }
+                }
+            );
+        }
+
+        // ============================================================
+        //  SIDE CHARACTERS: WHITE RABBIT
+        // ============================================================
+
+        let rabbitState = 0;
+
+        function talkToRabbit(x, y) {
+            if (player.metRabbit && rabbitState === 1) {
+                showDialogue('🐇 WHITE RABBIT', 
+                    '"I\'m late! I\'m late! But... I have time for you."<br>' +
+                    '"The Queen\'s throne room is at the end. But Ian guards it."<br>' +
+                    '"<span class="highlight">Be kind to Ian.</span> He wasn\'t always this way."'
+                );
+                setTimeout(closeDialogue, 2500);
+                return;
+            }
+
+            player.metRabbit = true;
+
+            showDialogue('🐇 WHITE RABBIT', 
+                '"Oh dear! Oh dear! I\'m late!"<br><br>' +
+                'The rabbit frantically checks his pocket watch.<br>' +
+                '"But... but I suppose I have a moment for you."<br>' +
+                '"You\'re looking for the girl, aren\'t you? The blonde one."<br>' +
+                '"She\'s with the Queen. The Queen is very... <span class="creepy">unstable</span>."<br>' +
+                '"But here\'s a secret: <span class="highlight">Ian the bodyguard is her brother.</span>"<br>' +
+                '"If you can reach him, you might get through."<br><br>' +
+                '"Now I really must go!"<br>' +
+                'He hands you a <span class="highlight">pocket watch</span> and runs off.',
+                [{ label: '⏰ Thank you!', value: 'thanks' }],
+                function() {
+                    rabbitState = 1;
+                    player.hasClock = true;
+                    player.wonder += 5;
+                    showDialogue('🐇 WHITE RABBIT', 
+                        '"The watch will help you navigate the Mad Wing."<br>' +
+                        '<span class="good">✦ +5 WONDER, CLOCK ADDED ✦</span>'
+                    );
+                    setTimeout(closeDialogue, 1500);
+                }
+            );
+        }
+
+        // ============================================================
+        //  SIDE CHARACTERS: CATERPILLAR
+        // ============================================================
+
+        let caterpillarState = 0;
+
+        function talkToCaterpillar(x, y) {
+            if (player.metCaterpillar && caterpillarState === 1) {
+                showDialogue('🐛 CATERPILLAR', 
+                    '"Who... are... you..."<br>' +
+                    '"You are... still... searching."<br>' +
+                    '"The Queen... she is... broken."'
+                );
+                setTimeout(closeDialogue, 2000);
+                return;
+            }
+
+            player.metCaterpillar = true;
+
+            showDialogue('🐛 CATERPILLAR', 
+                '"Who... are... you..."<br><br>' +
+                'The caterpillar speaks slowly, blowing smoke rings.<br>' +
+                '"You are... the one... looking for the girl."<br>' +
+                '"I can help you... if you smoke... from my hookah."',
+                [
+                    { label: '💨 Smoke', value: 'smoke', class: 'wonder' },
+                    { label: '🚫 Refuse', value: 'refuse', class: 'danger' }
+                ],
+                function(choice) {
+                    closeDialogue();
+                    if (choice === 'smoke') {
+                        caterpillarState = 1;
+                        player.wonder += 15;
+                        player.sanity -= 5;
+                        showDialogue('🐛 CATERPILLAR', 
+                            '"Good... you see... clearly now."<br>' +
+                            '<span class="good">✦ +15 WONDER ✦</span><br>' +
+                            '<span class="creepy">✦ -5 SANITY ✦</span><br>' +
+                            '"The Queen... she is afraid... of <span class="highlight">connection</span>."<br>' +
+                            '"The residents... their memories... they weaken her."<br>' +
+                            '"Find them... free them... save the girl."'
+                        );
+                        setTimeout(closeDialogue, 3000);
+                    } else {
+                        caterpillarState = 0;
+                        showDialogue('🐛 CATERPILLAR', 
+                            '"Then... you will... never find... the truth..."<br>' +
+                            'It turns away from you.'
+                        );
+                        setTimeout(closeDialogue, 1500);
+                    }
+                }
+            );
+        }
+
+        // ============================================================
+        //  ACT III: THE CLOSET
         // ============================================================
 
         function enterCloset() {
-            if (player.enteredCloset) {
-                showDialogue('🌀 THE CLOSET', 'The closet is still glowing, but you\'ve already entered.');
+            if (player.enteredWonderland) {
+                showDialogue('🌀 THE CLOSET', 'The closet is still glowing, but you\'ve already entered Wonderland.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            if (!player.metCat) {
-                showDialogue('💡 HINT', 'The cat said to find it first. Where did it go?');
+            if (!player.sawIzzyTaken) {
+                showDialogue('💡 HINT', 'You saw Izzy taken. The closet is where she disappeared.');
                 setTimeout(closeDialogue, 1500);
                 return;
             }
 
-            player.enteredCloset = true;
+            player.enteredWonderland = true;
             player.questStep = Math.max(player.questStep, 3);
             player.act = 2;
-            player.wonder += 10;
 
-            showChapter('ACT II', 'The Fall');
+            showChapter('ACT II', 'Into Wonderland');
 
             showDialogue('🌀 THE CLOSET',
                 'You step into the closet. There\'s no back wall.<br>' +
                 '<span class="creepy">Just a long, dark tunnel.</span><br><br>' +
                 'You walk forward. The walls pulse like they\'re breathing.<br>' +
-                'You hear whispers. <span class="dark">"...help me..."</span><br>' +
-                '<span class="dark">"...don\'t trust the Queen..."</span><br>' +
-                '<span class="dark">"...she was one of us..."</span><br><br>' +
-                'You emerge into a <span class="creepy">dark hallway</span>.<br>' +
-                'This isn\'t JN Hall anymore.<br>' +
-                '<span class="good">✦ +10 WONDER ✦</span>',
+                'You hear Izzy\'s voice: <span style="color: #ffd93d;">"...help me..."</span><br>' +
+                '<span class="dark">"...don\'t trust the Queen..."</span><br><br>' +
+                'You emerge into <span class="trippy">Wonderland</span>.<br>' +
+                'The colors are wrong. The air shimmers.<br>' +
+                '<span class="highlight">✦ You must find the Cat ✦</span>',
                 [{ label: '🌀 Enter Wonderland', value: 'enter' }],
                 function() {
-                    player.questStep = Math.max(player.questStep, 4);
+                    player.questStep = Math.max(player.questStep, 3);
                     player.x = 10;
                     player.y = 5;
                     map[4][6] = T.FLOOR;
                     updateMapSection();
                     updateUI();
                     closeDialogue();
-                    showDialogue('🏚️ THE HALLWAY',
+                    showDialogue('🏚️ WONDERLAND',
                         'The hallway stretches before you.<br>' +
-                        'It looks normal... but something feels <span class="creepy">wrong</span>.<br><br>' +
-                        '<span class="highlight">✦ You must find the Endless Corridor ✦</span><br>' +
-                        '<span style="color: #8888aa; font-size: 8px;">Explore the hallway to find the way forward.</span>'
+                        'It looks normal... but something feels <span class="trippy">wrong</span>.<br>' +
+                        'The walls breathe. The floor shifts.<br><br>' +
+                        '<span class="highlight">✦ Find the Cat. It will guide you ✦</span><br>' +
+                        '<span style="color: #8888aa; font-size: 8px;">Explore to find the Tea Party.</span>'
                     );
                     setTimeout(closeDialogue, 3000);
                     updateUI();
@@ -1671,7 +2010,7 @@
         }
 
         // ============================================================
-        //  ACT III: THE HALLWAY - DOORS
+        //  ACT III: DOORS
         // ============================================================
 
         function openDoor(x, y) {
@@ -1682,7 +2021,9 @@
                 'You open the door. A cat walks out. It looks at you, then walks away.',
                 'You open the door. It leads to another hallway. <span class="wonder">✦ This place is confusing ✦</span>',
                 'You open the door. You see a <span class="dark">shadow</span> move inside.',
-                'You open the door. <span class="insane">The room is upside down.</span>'
+                'You open the door. <span class="trippy">The room is upside down.</span>',
+                'You open the door. <span class="insane">A thousand eyes stare back at you.</span>',
+                'You open the door. You hear <span style="color: #ffd93d;">Izzy\'s voice</span> for a moment... then silence.'
             ];
 
             const event = events[Math.floor(Math.random() * events.length)];
@@ -1693,17 +2034,16 @@
                 player.hasCandy = true;
                 updateUI();
             }
-            if (event.includes('shadow')) {
+            if (event.includes('shadow') || event.includes('eyes')) {
                 player.sanity -= 5;
                 updateUI();
             }
+            if (event.includes('Izzy')) {
+                player.sanity += 5;
+                player.wonder += 5;
+                updateUI();
+            }
         }
-
-        // ============================================================
-        //  ACT III: ENDLESS CORRIDOR - LOOPING
-        // ============================================================
-
-        // Special handling in movement - already implemented
 
         // ============================================================
         //  ACT IV: MEMORIES
@@ -1711,34 +2051,35 @@
 
         const memoryData = [
             {
-                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
-                      '"I remember moving into JN Hall. I was so excited.<br>' +
-                      'The building felt alive. I didn\'t know how true that was."'
+                text: '<span class="wonder">💭 MEMORY</span><br><br>' +
+                      '"I remember Izzy\'s laugh. It was the loudest in the hall."<br>' +
+                      '"She always helped everyone. She never let anyone feel alone."<br>' +
+                      '"The Queen took her because she was <span class="highlight">the brightest soul</span>."'
             },
             {
-                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
-                      '"There was a girl. She lived in Room 303.<br>' +
-                      'She was always alone. Always writing in her diary.<br>' +
-                      'She said the walls talked to her."'
+                text: '<span class="wonder">💭 MEMORY</span><br><br>' +
+                      '"Izzy loved Room 303. She called it her \'happy place\'."<br>' +
+                      '"The night she was taken, she was <span class="creepy">screaming</span>."' +
+                      '"She screamed your name."'
             },
             {
-                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
-                      '"The Queen wasn\'t always the Queen.<br>' +
-                      'She was a student. She was sad. She was lonely.<br>' +
-                      'The building fed on her sadness.<br>' +
-                      'And then... she became part of it."'
+                text: '<span class="wonder">💭 MEMORY</span><br><br>' +
+                      '"The Queen doesn\'t want Izzy. She wants <span class="creepy">your despair</span>."<br>' +
+                      '"She feeds on sadness. She grows stronger with each tear."' +
+                      '"Don\'t let her win. <span class="highlight">Hope is your weapon.</span>"'
             },
             {
-                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
-                      '"The building is alive. It remembers everything.<br>' +
-                      'It remembers the screams. It remembers the tears.<br>' +
-                      'And it remembers <span class="insane">you</span>."'
+                text: '<span class="wonder">💭 MEMORY</span><br><br>' +
+                      '"The Mad Wing is a maze of fear. It shows you your worst nightmares."' +
+                      '"But it\'s not real. <span class="trippy">None of this is real.</span>"' +
+                      '"The only real thing is <span class="highlight">your love for Izzy.</span>"'
             },
             {
-                text: '<span class="wonder">💭 MEMORY FRAGMENT</span><br><br>' +
-                      '"To escape, you must understand.<br>' +
-                      'The Queen is not your enemy. She is a victim.<br>' +
-                      'The building is the real cage."'
+                text: '<span class="wonder">💭 MEMORY</span><br><br>' +
+                      '"The Queen sits on her throne, guarding the exit."<br>' +
+                      '"Behind her is the door back to Room 303."<br>' +
+                      '"To save Izzy, you must <span class="highlight">show her the truth</span>."' +
+                      '"Show her that she\'s not alone."'
             }
         ];
 
@@ -1752,8 +2093,8 @@
             const memory = memoryData[player.foundMemories];
             player.foundMemories++;
             player.wonder += 5;
-            player.questStep = Math.max(player.questStep, 5);
-            player.sanity = Math.min(100, player.sanity + 2);
+            player.questStep = Math.max(player.questStep, 6);
+            player.sanity = Math.min(100, player.sanity + 3);
 
             showDialogue('💭 MEMORY FOUND', memory.text);
             map[y][x] = T.FLOOR;
@@ -1763,14 +2104,12 @@
 
             if (player.foundMemories >= memoryData.length) {
                 setTimeout(() => {
-                    showDialogue('📖 THE TRUTH',
+                    showDialogue('📖 ALL MEMORIES FOUND',
                         'You\'ve collected all the memories.<br><br>' +
-                        'The Queen was <span class="creepy">Rylee</span>.<br>' +
-                        'She lived in Room 303.<br>' +
-                        'She was lonely. The building filled her with darkness.<br>' +
-                        'Now she\'s trapped here, feeding on others\' despair.<br><br>' +
-                        '<span class="highlight">✦ You understand now ✦</span><br>' +
-                        '<span class="highlight">✦ You must free her... or stop her ✦</span>'
+                        'Izzy was taken because she was <span class="highlight">pure of heart</span>.<br>' +
+                        'The Queen wanted her light for herself.<br>' +
+                        'But you can <span class="good">save her</span>.<br><br>' +
+                        '<span class="highlight">✦ You know the truth. Now act on it ✦</span>'
                     );
                     setTimeout(closeDialogue, 4000);
                 }, 500);
@@ -1785,12 +2124,11 @@
             player.hasLetter = true;
             player.wonder += 3;
             showDialogue('✉️ A LETTER',
-                '"Dear Rylee,<br><br>' +
-                'I know you\'re scared. We all are.<br>' +
-                'But you don\'t have to face the darkness alone.<br>' +
-                'Please, talk to us. We\'re your friends.<br><br>' +
-                'We miss you."<br><br>' +
-                '<span style="color: #8888aa; font-size: 8px;">The letter is signed: "Your friends in 303"</span>'
+                '"Dear Izzy,<br><br>' +
+                'I know you\'re scared. But I\'m coming for you.<br>' +
+                'Don\'t give up. Don\'t let the Queen break you.<br><br>' +
+                'I\'ll find you. I promise.<br><br>' +
+                '<span style="color: #8888aa; font-size: 8px;">The letter is unsigned... but it\'s your handwriting.</span>'
             );
             map[y][x] = T.FLOOR;
             updateUI();
@@ -1800,12 +2138,12 @@
         function viewPhoto(x, y) {
             player.hasPhoto = true;
             player.wonder += 3;
+            player.sanity += 2;
             showDialogue('🖼️ A PHOTOGRAPH',
-                '"It\'s a photo of a group of students.<br>' +
-                'They\'re smiling. They look happy.<br>' +
-                'In the corner, <span class="creepy">a girl stands alone</span>.<br>' +
-                'She\'s not smiling.<br><br>' +
-                '<span style="color: #8888aa; font-size: 8px;">Written on the back: "JN Hall, 2019"</span>'
+                '"It\'s a photo of you and Izzy.<br>' +
+                'You\'re both smiling. She has her arm around you.<br>' +
+                'In the background, you can see Room 303.<br><br>' +
+                '<span style="color: #8888aa; font-size: 8px;">You remember this day. It was the happiest day.</span>'
             );
             map[y][x] = T.FLOOR;
             updateUI();
@@ -1815,14 +2153,13 @@
         function readDiary(x, y) {
             player.hasDiary = true;
             player.wonder += 5;
-            player.sanity -= 3;
+            player.sanity -= 2;
             showDialogue('📖 A DIARY ENTRY',
-                '"Day 147. The walls are getting louder.<br>' +
-                'They whisper my name. They tell me I belong here.<br>' +
-                'I\'ve started writing back to them.<br>' +
-                '<span class="creepy">I think they\'re listening.</span><br>' +
-                '<span class="dark">I think they\'re becoming me.</span><br><br>' +
-                '<span style="color: #8888aa; font-size: 8px;">The handwriting gets messier. More desperate.</span>'
+                '"Day 47. The Queen showed me Izzy today."<br>' +
+                'She was crying. She was calling your name.<br>' +
+                '<span class="creepy">I couldn\'t help her.</span><br>' +
+                '<span class="dark">I\'m not strong enough.</span><br><br>' +
+                '<span style="color: #8888aa; font-size: 8px;">The handwriting is shaky. The writer is scared.</span>'
             );
             map[y][x] = T.FLOOR;
             updateUI();
@@ -1830,16 +2167,16 @@
         }
 
         // ============================================================
-        //  ACT IV: MAD WING - INSANITY TILES
+        //  ACT IV: MAD WING - TRIPPY TILES
         // ============================================================
 
         function lookInMirror(x, y) {
-            player.sanity -= 5;
+            player.sanity -= 3;
             const reflections = [
-                'You look in the mirror. <span class="creepy">Your reflection is smiling at you.</span>',
+                'You look in the mirror. <span class="creepy">Izzy is behind you, reaching out.</span>',
+                'You look in the mirror. <span class="trippy">Your reflection is wearing the Queen\'s crown.</span>',
                 'You look in the mirror. <span class="dark">Your reflection is crying.</span>',
-                'You look in the mirror. <span class="insane">Your reflection is wearing a crown.</span>',
-                'You look in the mirror. <span class="wonder">Your reflection waves at you.</span>'
+                'You look in the mirror. <span class="insane">Your reflection has no face.</span>'
             ];
             const reflection = reflections[Math.floor(Math.random() * reflections.length)];
             showDialogue('🪞 MIRROR', reflection);
@@ -1851,8 +2188,8 @@
             player.sanity -= 3;
             showDialogue('🩸 BLOOD TRAIL',
                 '"You follow the blood trail.<br>' +
-                'It leads to a door. <span class="creepy">The door is locked.</span><br>' +
-                '<span class="dark">You hear breathing on the other side.</span>"'
+                'It leads to a door. <span class="creepy">The door has Izzy\'s name on it.</span><br>' +
+                '<span class="dark">You hear sobbing on the other side.</span>"'
             );
             setTimeout(closeDialogue, 2000);
             updateUI();
@@ -1863,10 +2200,30 @@
             showDialogue('👁️ THE EYE',
                 '"You look at the eye in the wall.<br>' +
                 '<span class="insane">It looks back at you.</span><br>' +
-                'It blinks. <span class="creepy">You feel it watching you.</span>"'
+                'It blinks. <span class="creepy">It\'s crying Izzy\'s tears.</span>"'
             );
             setTimeout(closeDialogue, 2000);
             updateUI();
+        }
+
+        function drinkTea(x, y) {
+            if (!player.hasTea) {
+                showDialogue('🍵 TEA',
+                    '"You drink the tea.<br>' +
+                    '<span class="trippy">The world melts around you.</span><br>' +
+                    '<span class="good">✦ +5 WONDER ✦</span><br>' +
+                    '<span class="highlight">✦ You feel closer to Izzy ✦</span>'
+                );
+                player.hasTea = true;
+                player.wonder += 5;
+                player.sanity += 3;
+                map[y][x] = T.FLOOR;
+                updateUI();
+                setTimeout(closeDialogue, 2000);
+            } else {
+                showDialogue('🍵 TEA', 'You\'ve already had tea. You feel the <span class="trippy">effects</span> lingering.');
+                setTimeout(closeDialogue, 1500);
+            }
         }
 
         function descendStairs(x, y) {
@@ -1878,15 +2235,15 @@
             );
             map[y][x] = T.FLOOR;
             player.x = 8;
-            player.y = 15;
-            player.mapSection = 4;
+            player.y = 12;
+            player.mapSection = 5;
             updateMapSection();
             updateUI();
             setTimeout(closeDialogue, 2500);
             // Mad Wing intro
             setTimeout(() => {
                 showDialogue('🏚️ THE MAD WING',
-                    '"The walls are covered in <span class="insane">eyes</span>.<br>' +
+                    '"The walls are covered in <span class="trippy">eyes</span>.<br>' +
                     'The floor is stained with <span class="creepy">blood</span>.<br>' +
                     'Mirrors show you things that aren\'t there.<br><br>' +
                     '<span class="highlight">✦ Find the way to Ian\'s Chamber ✦</span><br>' +
@@ -1900,12 +2257,11 @@
             showDialogue('🌀 PORTAL',
                 '"You step into the portal.<br>' +
                 'The world spins. Colors bleed together.<br>' +
-                '<span class="insane">You feel yourself being pulled apart.</span><br><br>' +
-                '<span class="highlight">✦ You emerge in a different part of the building ✦</span>'
+                '<span class="trippy">You feel yourself being pulled apart.</span><br><br>' +
+                '<span class="highlight">✦ You emerge in a different part of the Mad Wing ✦</span>'
             );
-            // Random teleport within the same section
-            const newX = 15 + Math.floor(Math.random() * 5);
-            const newY = 15 + Math.floor(Math.random() * 3);
+            const newX = 4 + Math.floor(Math.random() * 8);
+            const newY = 12 + Math.floor(Math.random() * 6);
             player.x = newX;
             player.y = newY;
             updateMapSection();
@@ -1921,27 +2277,27 @@
             {
                 name: '👻 SARAH',
                 room: '301',
-                story: '"I was a librarian. I loved the quiet. But the Queen... she took the quiet. She filled it with whispers."'
+                story: '"I was Izzy\'s roommate. She was always so <span class="highlight">bright</span>.<br>The Queen couldn\'t stand it. She took her."'
             },
             {
                 name: '🧙‍♂️ MARK',
                 room: '302',
-                story: '"I was a magician. I thought I could escape. I was wrong. But I learned the Queen\'s secret: she feeds on fear."'
+                story: '"I tried to stop the Queen. I failed.<br>But you... you have something I didn\'t have: <span class="highlight">hope</span>."'
             },
             {
                 name: '🎨 LISA',
                 room: '304',
-                story: '"I painted the walls. I made them beautiful. The Queen turned them dark. She hates beauty."'
+                story: '"The Queen hates beauty. Izzy was beautiful.<br>Save her. Bring back the <span class="highlight">light</span>."'
             },
             {
                 name: '🎵 JAMES',
                 room: '305',
-                story: '"I played music. The Queen silenced the music. But I still hear it. I hear it in the walls."'
+                story: '"I heard Izzy singing once. It was the most beautiful thing.<br>Now the Queen has silenced her. <span class="creepy">Don\'t let her stay silent.</span>"'
             },
             {
                 name: '🔧 TINA',
                 room: '306',
-                story: '"I tried to fix the building. I thought I could stop the madness. I was wrong."'
+                story: '"The building is alive. It remembers everything.<br>It remembers Izzy\'s screams. <span class="highlight">Make it remember her laugh.</span>"'
             }
         ];
 
@@ -1949,7 +2305,8 @@
             if (player.foundResidents >= residentData.length) {
                 showDialogue('🏠 RESIDENT', 
                     '"You\'ve helped us all. Thank you.<br>' +
-                    'The Queen is weaker now. You can face her."'
+                    'The Queen is weaker now. Izzy is almost free.<br>' +
+                    '<span class="highlight">Go. Save her.</span>"'
                 );
                 setTimeout(closeDialogue, 2000);
                 return;
@@ -1958,15 +2315,15 @@
             const resident = residentData[player.foundResidents];
             player.foundResidents++;
             player.wonder += 5;
-            player.questStep = Math.max(player.questStep, 6);
+            player.questStep = Math.max(player.questStep, 7);
             player.hasWisdom = true;
-            player.sanity = Math.min(100, player.sanity + 3);
+            player.sanity = Math.min(100, player.sanity + 5);
 
             showDialogue(`🏠 ${resident.name} (Room ${resident.room})`,
                 `${resident.story}<br><br>` +
                 `<span class="good">✦ You helped a former resident ✦</span><br>` +
                 `<span class="highlight">✦ +5 WONDER ✦</span><br>` +
-                `<span class="good">✦ +3 SANITY ✦</span><br>` +
+                `<span class="good">✦ +5 SANITY ✦</span><br>` +
                 `<span style="color: #8888aa; font-size: 8px;">The Queen's power weakens...</span>`
             );
             map[y][x] = T.FLOOR;
@@ -1980,7 +2337,7 @@
                         '<span class="highlight">✦ Their memories strengthen you ✦</span><br>' +
                         '<span class="good">✦ The Queen is vulnerable now ✦</span><br><br>' +
                         'You feel a shift in the building. The darkness is lifting.<br>' +
-                        'You can face the Queen.<br><br>' +
+                        'You can save Izzy.<br><br>' +
                         '<span style="color: #8888aa; font-size: 8px;">Find Ian\'s Chamber in the Mad Wing.</span>'
                     );
                     setTimeout(closeDialogue, 3000);
@@ -2075,7 +2432,7 @@
                 return;
             }
 
-            if (player.questStep < 6) {
+            if (player.questStep < 7) {
                 showDialogue('💪 IAN', '"You\'re not ready. Find the memories and residents first."');
                 setTimeout(closeDialogue, 1500);
                 return;
@@ -2087,8 +2444,8 @@
             showDialogue('💪 IAN - QUEEN\'S BODYGUARD',
                 '<span style="color: #8aba4a; font-size: 14px;">"YOU SHALL NOT PASS!"</span><br><br>' +
                 'Ian stands before you, massive and green, blocking the path to the Queen.<br>' +
-                '<span style="color: #8aba4a;">"The Queen said you\'d come. She said you\'d try to save her."</span><br>' +
-                '<span style="color: #8aba4a;">"But she doesn\'t want to be saved. She wants to be left alone."</span><br><br>' +
+                '<span style="color: #8aba4a;">"The Queen took the girl. The blonde one."</span><br>' +
+                '<span style="color: #8aba4a;">"She\'s in the throne room. You can\'t save her."</span><br><br>' +
                 'His eyes are sad. <span class="dark">"I was a resident too, you know."</span><br>' +
                 '<span class="dark">"I was in Room 306. I tried to fight her. She turned me into this."</span><br><br>' +
                 'How do you approach him?',
@@ -2112,18 +2469,18 @@
                 case 'fight':
                     if (player.foundMemories >= 3 || player.foundResidents >= 3) {
                         player.ianDefeated = true;
-                        player.questStep = Math.max(player.questStep, 7);
+                        player.questStep = Math.max(player.questStep, 8);
                         player.hasCourage = true;
                         player.sanity += 5;
                         showDialogue('⚔️ BATTLE',
                             'You fight Ian with all your strength!<br>' +
-                            'He\'s powerful, but you\'re fighting for more than yourself.<br>' +
+                            'You\'re fighting for Izzy. You won\'t lose.<br>' +
                             '<span class="good">✦ IAN IS DEFEATED! ✦</span><br>' +
-                            '<span style="color: #8aba4a;">"...You\'re stronger than I was. Go on."</span><br>' +
+                            '<span style="color: #8aba4a;">"...You\'re stronger than I was. Save her."</span><br>' +
                             'He steps aside, defeated but almost... relieved.<br>' +
                             `<span class="good">✦ +5 SANITY ✦</span>`
                         );
-                        map[17][17] = T.FLOOR;
+                        map[15][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('⚔️ BATTLE',
@@ -2141,18 +2498,18 @@
                 case 'talk':
                     if (player.hasWisdom) {
                         player.ianBefriended = true;
-                        player.questStep = Math.max(player.questStep, 7);
+                        player.questStep = Math.max(player.questStep, 8);
                         player.hasMercy = true;
                         player.sanity += 10;
                         showDialogue('💬 TALK',
                             'You talk to Ian. You tell him you understand.<br>' +
                             '<span style="color: #8aba4a;">"...You really get it, don\'t you?"</span><br>' +
-                            '<span style="color: #8aba4a;">"She\'s not evil. She\'s just... broken."</span><br>' +
+                            '<span style="color: #8aba4a;">"She\'s my sister. I couldn\'t save her either."</span><br>' +
                             '<span class="good">✦ IAN LETS YOU PASS ✦</span><br>' +
-                            '"Tell her... tell her Ian misses her."<br>' +
+                            '"Save Izzy. Don\'t make my mistake."<br>' +
                             `<span class="good">✦ +10 SANITY ✦</span>`
                         );
-                        map[17][17] = T.FLOOR;
+                        map[15][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('💬 TALK',
@@ -2166,7 +2523,7 @@
 
                 case 'prank':
                     player.ianBefriended = true;
-                    player.questStep = Math.max(player.questStep, 7);
+                    player.questStep = Math.max(player.questStep, 8);
                     player.hasMercy = true;
                     player.sanity += 5;
                     showDialogue('🎭 PRANK',
@@ -2176,14 +2533,14 @@
                         '<span style="color: #8aba4a;">"Alright, alright. You got me. Go on."</span><br>' +
                         '<span class="good">✦ IAN LETS YOU PASS ✦</span>'
                     );
-                    map[17][17] = T.FLOOR;
+                    map[15][17] = T.FLOOR;
                     setTimeout(closeDialogue, 2500);
                     break;
 
                 case 'spare':
                     if (player.hasMercy) {
                         player.ianBefriended = true;
-                        player.questStep = Math.max(player.questStep, 7);
+                        player.questStep = Math.max(player.questStep, 8);
                         player.sanity += 10;
                         showDialogue('🕊️ SPARE',
                             'You put your hands up.<br>' +
@@ -2194,7 +2551,7 @@
                             '"Go on. But be careful. The Queen... she\'s not herself."<br>' +
                             `<span class="good">✦ +10 SANITY ✦</span>`
                         );
-                        map[17][17] = T.FLOOR;
+                        map[15][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('🕊️ SPARE',
@@ -2209,7 +2566,7 @@
                 case 'heal':
                     if (player.hasHeart || player.hasRose) {
                         player.ianBefriended = true;
-                        player.questStep = Math.max(player.questStep, 7);
+                        player.questStep = Math.max(player.questStep, 8);
                         player.hasMercy = true;
                         player.hasHope = true;
                         player.sanity += 15;
@@ -2223,7 +2580,7 @@
                             '"Thank you. Go on. The Queen needs you."<br>' +
                             `<span class="good">✦ +15 SANITY ✦</span>`
                         );
-                        map[17][17] = T.FLOOR;
+                        map[15][17] = T.FLOOR;
                         setTimeout(closeDialogue, 3000);
                     } else {
                         showDialogue('💔 HEAL',
@@ -2248,7 +2605,7 @@
                 return;
             }
 
-            if (player.questStep < 7) {
+            if (player.questStep < 8) {
                 showDialogue('👑 THE QUEEN', '"You\'re not ready. Complete your quest."');
                 setTimeout(closeDialogue, 1500);
                 return;
@@ -2263,14 +2620,12 @@
             player.act = 6;
             showChapter('ACT VII', 'The Queen\'s Throne');
 
-            // Build dialogue based on what player has done
             let intro = '<span style="color: #ff4a4a; font-size: 14px;">"YOU DARE FACE ME?"</span><br><br>';
-            if (player.foundMemories >= 3) intro += '"You found the memories. You know what I was."<br>';
-            if (player.foundResidents >= 3) intro += '"You helped my former friends. They told you about me."<br>';
-            if (player.hasWisdom) intro += '"You understand me. That\'s why you\'re dangerous."<br>';
-            if (player.sanity > 70) intro += '"Your mind is still intact. That won\'t last."<br>';
-            intro += '<br><span style="color: #ff4a4a;">"I AM THE QUEEN OF THE DESK!"</span><br><br>';
-            intro += '<span style="color: #8888aa; font-size: 8px;">Behind her, you see the EXIT back to Room 303.</span>';
+            if (player.foundMemories >= 3) intro += '"You found the memories. You know what I took."<br>';
+            if (player.foundResidents >= 3) intro += '"You helped my former friends. They told you about Izzy."<br>';
+            if (player.hasWisdom) intro += '"You understand love. That\'s why you\'re dangerous."<br>';
+            intro += '<br><span style="color: #ff4a4a;">"IZZY IS MINE NOW!"</span><br><br>';
+            intro += '<span style="color: #8888aa; font-size: 8px;">Behind her, you see Izzy, trapped in a cage of light.</span>';
 
             showDialogue('👑 QUEEN RYLEE', intro,
                 [
@@ -2293,25 +2648,25 @@
                 case 'fight':
                     if (player.foundMemories >= 3 && player.hasCourage) {
                         player.queenDefeated = true;
-                        player.questStep = 8;
+                        player.questStep = 9;
                         player.sanity += 20;
                         showDialogue('⚔️ FINAL BATTLE',
                             'You fight the Queen with everything you have.<br>' +
                             'The memories strengthen you. The residents\' hope empowers you.<br>' +
                             '<span class="good">✦ THE QUEEN IS DEFEATED! ✦</span><br><br>' +
-                            'She falls to her knees. The darkness around her fades.<br>' +
-                            '<span style="color: #ff4a4a;">"...Thank you. I was so alone."</span><br>' +
-                            '<span style="color: #ff4a4a;">"I forgot what it felt like to be free."</span><br><br>' +
-                            '<span class="highlight">✦ Wonderland is free ✦</span><br>' +
+                            'She falls. Izzy\'s cage shatters.<br>' +
+                            '<span style="color: #ffd93d;">Izzy runs to you.</span><br>' +
+                            '<span style="color: #ff4a4a;">"...You saved her."</span><br>' +
+                            '<span class="highlight">✦ Izzy is free ✦</span><br>' +
                             `<span class="good">✦ +20 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
-                            showEnding('good', 'The Liberator',
-                                'You defeated the Queen and freed Wonderland.<br><br>' +
-                                'The darkness lifts. The former residents return.<br>' +
-                                'The building is no longer a prison.<br><br>' +
-                                '<span class="highlight">✦ You are the hero of JN Hall ✦</span>'
+                            showEnding('good', 'The Savior',
+                                'You defeated the Queen and saved Izzy!<br><br>' +
+                                'The darkness lifts. Izzy is in your arms.<br>' +
+                                'Wonderland is free.<br><br>' +
+                                '<span class="highlight">✦ You are the hero Izzy needed ✦</span>'
                             );
                         }, 4000);
                     } else {
@@ -2330,25 +2685,25 @@
                 case 'talk':
                     if (player.foundResidents >= 3 && player.hasWisdom) {
                         player.queenBefriended = true;
-                        player.questStep = 8;
+                        player.questStep = 9;
                         player.sanity += 25;
                         showDialogue('💬 TALK',
-                            'You talk to the Queen. You tell her about the residents.<br>' +
-                            'You tell her they forgive her.<br><br>' +
-                            '<span style="color: #ff4a4a;">"...They forgive me?"</span><br>' +
-                            'She starts to cry. The darkness fades.<br>' +
-                            '<span style="color: #ff4a4a;">"I was so scared. I was so alone."</span><br>' +
-                            '<span class="good">✦ THE QUEEN IS SAVED ✦</span><br><br>' +
+                            'You talk to the Queen. You tell her about Izzy.<br>' +
+                            'You tell her about love. About friendship.<br><br>' +
+                            '<span style="color: #ff4a4a;">"...I forgot what it felt like."</span><br>' +
+                            'She starts to cry. Izzy\'s cage fades.<br>' +
+                            '<span style="color: #ff4a4a;">"I was so alone. I took her so I wouldn\'t be alone."</span><br>' +
+                            '<span class="good">✦ THE QUEEN RELEASES IZZY ✦</span><br><br>' +
                             '<span class="highlight">✦ Wonderland is at peace ✦</span><br>' +
                             `<span class="good">✦ +25 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
                             showEnding('good', 'The Redeemer',
-                                'You saved the Queen through understanding.<br><br>' +
-                                'She was never evil. She was just broken.<br>' +
-                                'Now she\'s healing.<br><br>' +
-                                '<span class="highlight">✦ You showed that mercy can conquer all ✦</span>'
+                                'You reached the Queen\'s heart.<br><br>' +
+                                'She releases Izzy. The darkness fades.<br>' +
+                                'Izzy runs to you.<br><br>' +
+                                '<span class="highlight">✦ You proved that love conquers all ✦</span>'
                             );
                         }, 4000);
                     } else {
@@ -2364,14 +2719,14 @@
                 case 'wonder':
                     if (player.wonder >= 60) {
                         player.queenDefeated = true;
-                        player.questStep = 8;
+                        player.questStep = 9;
                         player.hasWonderPower = true;
                         player.sanity += 30;
                         showDialogue('🌀 WONDER POWER',
                             'You channel the power of Wonderland itself!<br>' +
-                            'The Queen\'s throne shatters.<br>' +
+                            'The Queen\'s throne shatters. Izzy\'s cage breaks.<br>' +
                             '<span style="color: #ff4a4a;">"WHAT ARE YOU?"</span><br><br>' +
-                            'You are the embodiment of Wonderland\'s hope.<br>' +
+                            'You are the embodiment of hope.<br>' +
                             '<span class="good">✦ THE QUEEN IS OVERWHELMED ✦</span><br><br>' +
                             '<span class="highlight">✦ You are the bridge between worlds ✦</span><br>' +
                             `<span class="good">✦ +30 SANITY ✦</span>`
@@ -2380,7 +2735,7 @@
                             closeDialogue();
                             showEnding('good', 'The Wonder Master',
                                 'You mastered the power of Wonderland.<br><br>' +
-                                'The Queen bows to your wisdom.<br>' +
+                                'The Queen bows. Izzy is free.<br>' +
                                 'You can travel between worlds freely.<br><br>' +
                                 '<span class="highlight">✦ You become the guardian of Wonderland ✦</span>'
                             );
@@ -2397,25 +2752,25 @@
                 case 'spare':
                     if (player.hasMercy && player.foundResidents >= 2) {
                         player.queenBefriended = true;
-                        player.questStep = 8;
+                        player.questStep = 9;
                         player.hasHope = true;
                         player.sanity += 30;
                         showDialogue('🕊️ SPARE',
                             'You offer mercy to the Queen.<br>' +
                             'She stares at you, speechless.<br><br>' +
                             '<span style="color: #ff4a4a;">"...No one has ever shown me mercy."</span><br>' +
-                            'She breaks down. The darkness around her fades.<br>' +
-                            '<span class="good">✦ THE QUEEN IS MOVED ✦</span><br><br>' +
-                            '<span class="highlight">✦ She steps down from her throne ✦</span><br>' +
-                            '<span style="color: #ff4a4a;">"I\'m sorry. I\'m so sorry for everything."</span><br>' +
+                            'She breaks down. Izzy\'s cage dissolves.<br>' +
+                            '<span class="good">✦ THE QUEEN RELEASES IZZY ✦</span><br><br>' +
+                            '<span class="highlight">✦ Izzy runs to you ✦</span><br>' +
+                            '<span style="color: #ff4a4a;">"I\'m sorry. I\'m so sorry."</span><br>' +
                             `<span class="good">✦ +30 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
                             showEnding('good', 'The Merciful One',
                                 'You showed mercy to the Queen.<br><br>' +
-                                'She remembers what it\'s like to be loved.<br>' +
-                                'Wonderland is at peace because of your kindness.<br><br>' +
+                                'She releases Izzy. The darkness fades.<br>' +
+                                'Izzy is in your arms.<br><br>' +
                                 '<span class="highlight">✦ You proved that mercy is the greatest strength ✦</span>'
                             );
                         }, 4000);
@@ -2432,7 +2787,7 @@
                 case 'heal':
                     if (player.hasHeart && player.hasRose) {
                         player.queenBefriended = true;
-                        player.questStep = 8;
+                        player.questStep = 9;
                         player.hasHope = true;
                         player.hasMercy = true;
                         player.sanity += 40;
@@ -2442,17 +2797,17 @@
                             '<span class="wonder">✦ The Heart pulses with life ✦</span><br>' +
                             '<span class="wonder">✦ The Rose blooms with hope ✦</span><br><br>' +
                             '<span style="color: #ff4a4a;">"...I remember what it felt like to be human."</span><br>' +
-                            'She\'s crying. The darkness is gone.<br>' +
-                            '<span class="good">✦ THE QUEEN IS HEALED ✦</span><br><br>' +
-                            '<span class="highlight">✦ You brought light back to Wonderland ✦</span><br>' +
+                            'She\'s crying. Izzy\'s cage is gone.<br>' +
+                            '<span class="good">✦ THE QUEEN HEALS IZZY ✦</span><br><br>' +
+                            '<span class="highlight">✦ Izzy is free ✦</span><br>' +
                             `<span class="good">✦ +40 SANITY ✦</span>`
                         );
                         setTimeout(() => {
                             closeDialogue();
                             showEnding('good', 'The Healer',
                                 'You healed the Queen\'s broken heart.<br><br>' +
-                                'She was never evil. She was just wounded.<br>' +
-                                'Now she\'s free. And so is Wonderland.<br><br>' +
+                                'She releases Izzy. The darkness is gone.<br>' +
+                                'Izzy runs into your arms.<br><br>' +
                                 '<span class="highlight">✦ You are the greatest healer of all ✦</span>'
                             );
                         }, 4000);
@@ -2473,61 +2828,89 @@
         // ============================================================
 
         function escapeWonderland() {
-            if (player.questStep < 8) {
+            if (player.questStep < 9) {
                 showDialogue('🚪 EXIT',
                     'The exit is locked. You need to complete your quest.<br>' +
-                    `<span style="color: #8888aa;">Progress: ${player.questStep}/8</span>`
+                    `<span style="color: #8888aa;">Progress: ${player.questStep}/10</span>`
                 );
                 setTimeout(closeDialogue, 2000);
                 return;
             }
 
-            showDialogue('🚪 THE EXIT',
-                'You stand before the glowing exit.<br><br>' +
-                'The cat appears beside you.<br>' +
-                '"You\'ve done it, human. You\'ve completed your quest."<br>' +
-                '"The Queen is free. The residents are free."<br>' +
-                '"Now it\'s time for you to choose your fate."<br><br>' +
-                'What do you do?',
-                [
-                    { label: '🚪 Escape', value: 'escape', class: 'success' },
-                    { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' },
-                    { label: '💔 Stay with the Queen', value: 'queen', class: 'primary' }
-                ],
-                function(choice) {
-                    closeDialogue();
-                    if (choice === 'escape') {
-                        showEnding('good', 'The Escape',
-                            'You step through the exit.<br><br>' +
-                            'You\'re back in JN Hall. The sun is rising.<br>' +
-                            'You\'re forever changed by your journey.<br><br>' +
-                            '<span class="highlight">✦ You carry the wonder of the adventure in your heart ✦</span>'
-                        );
-                    } else if (choice === 'stay') {
-                        showEnding('neutral', 'The Guardian',
-                            'You choose to stay in Wonderland.<br><br>' +
-                            'The cat smiles. "I knew you would."<br>' +
-                            'You become the new guardian of Wonderland.<br><br>' +
-                            '<span class="highlight">✦ You protect the memories forever ✦</span>'
-                        );
-                    } else {
-                        if (player.queenBefriended) {
-                            showEnding('good', 'The Companion',
-                                'You stay with the Queen.<br><br>' +
-                                'She\'s no longer dark. She\'s healing.<br>' +
-                                'Together, you rebuild Wonderland.<br><br>' +
-                                '<span class="highlight">✦ You found love in the darkness ✦</span>'
+            if (!player.izzySaved) {
+                // If Izzy hasn't been saved yet, show special dialogue
+                showDialogue('👱 IZZY',
+                    '"You came for me. You really came."<br><br>' +
+                    'Izzy is standing behind you, her hand in yours.<br>' +
+                    '"The exit is right there. <span class="highlight">We can go home.</span>"<br><br>' +
+                    'She squeezes your hand. You feel her warmth.' +
+                    '<span class="good">✦ Izzy is with you ✦</span>'
+                );
+                player.izzySaved = true;
+                setTimeout(closeDialogue, 3000);
+                setTimeout(() => {
+                    showDialogue('🚪 THE EXIT',
+                        'You stand before the glowing exit with Izzy.<br><br>' +
+                        'The cat appears beside you.<br>' +
+                        '"You did it, human. You saved her."<br>' +
+                        '"Now go. <span class="highlight">Go home.</span>"<br><br>' +
+                        'What do you do?',
+                        [
+                            { label: '🚪 Escape with Izzy', value: 'escape', class: 'success' },
+                            { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' }
+                        ],
+                        function(choice) {
+                            closeDialogue();
+                            if (choice === 'escape') {
+                                showEnding('good', 'The Great Escape',
+                                    'You step through the exit with Izzy.<br><br>' +
+                                    'You\'re back in JN Hall. The sun is rising.<br>' +
+                                    'Izzy is beside you. She\'s safe.<br><br>' +
+                                    '<span class="highlight">✦ You saved your friend. That\'s all that matters ✦</span>'
+                                );
+                            } else {
+                                showEnding('neutral', 'The Guardians',
+                                    'You choose to stay in Wonderland with Izzy.<br><br>' +
+                                    'The cat smiles. "You belong here now."<br>' +
+                                    'You and Izzy become the new guardians of Wonderland.<br><br>' +
+                                    '<span class="highlight">✦ Together, you protect the lost souls ✦</span>'
+                                );
+                            }
+                        }
+                    );
+                }, 500);
+            } else {
+                // Already saved, just escape
+                showDialogue('🚪 THE EXIT',
+                    'You stand before the glowing exit with Izzy.<br><br>' +
+                    'The cat appears beside you.<br>' +
+                    '"You did it, human. You saved her."<br>' +
+                    '"Now go. <span class="highlight">Go home.</span>"<br><br>' +
+                    'What do you do?',
+                    [
+                        { label: '🚪 Escape with Izzy', value: 'escape', class: 'success' },
+                        { label: '🌀 Stay in Wonderland', value: 'stay', class: 'wonder' }
+                    ],
+                    function(choice) {
+                        closeDialogue();
+                        if (choice === 'escape') {
+                            showEnding('good', 'The Great Escape',
+                                'You step through the exit with Izzy.<br><br>' +
+                                'You\'re back in JN Hall. The sun is rising.<br>' +
+                                'Izzy is beside you. She\'s safe.<br><br>' +
+                                '<span class="highlight">✦ You saved your friend. That\'s all that matters ✦</span>'
                             );
                         } else {
-                            showEnding('neutral', 'The Watcher',
-                                'You stay with the Queen, watching over her.<br><br>' +
-                                'She\'s still healing, but she\'s not alone anymore.<br><br>' +
-                                '<span class="highlight">✦ You are her hope ✦</span>'
+                            showEnding('neutral', 'The Guardians',
+                                'You choose to stay in Wonderland with Izzy.<br><br>' +
+                                'The cat smiles. "You belong here now."<br>' +
+                                'You and Izzy become the new guardians of Wonderland.<br><br>' +
+                                '<span class="highlight">✦ Together, you protect the lost souls ✦</span>'
                             );
                         }
                     }
-                }
-            );
+                );
+            }
         }
 
         // ============================================================
@@ -2539,7 +2922,7 @@
             document.getElementById('chapterTitleText').textContent = title;
             const subEl = document.getElementById('chapterSubText');
             subEl.textContent = sub;
-            subEl.className = player.mapSection >= 4 ? 'insane-sub' : 'sub';
+            subEl.className = player.mapSection >= 5 ? 'trippy-sub' : 'sub';
             el.style.opacity = '1';
             setTimeout(() => {
                 el.style.opacity = '0';
@@ -2568,7 +2951,7 @@
             `;
             player.gameState = 'dialogue';
             player.inDialogue = true;
-            player.questStep = 8;
+            player.questStep = 10;
             updateUI();
             darkOpacity = 0.2;
         }
@@ -2582,14 +2965,17 @@
             document.getElementById('hudAct').textContent = ['I','II','III','IV','V','VI','VII'][player.act - 1] || 'VII';
             document.getElementById('hudWonder').textContent = Math.min(100, Math.round(player.wonder));
             document.getElementById('hudSanity').textContent = Math.round(player.sanity);
-            document.getElementById('hudStep').textContent = Math.min(player.questStep, 8);
-            document.getElementById('hudMaxStep').textContent = 8;
+            document.getElementById('hudIzzy').textContent = player.izzySaved ? '✅ SAVED' : '⚠️ LOST';
+            document.getElementById('hudStep').textContent = Math.min(player.questStep, 10);
+            document.getElementById('hudMaxStep').textContent = 10;
 
-            // Sanity color
             const sanityEl = document.getElementById('hudSanity');
             if (player.sanity > 70) sanityEl.style.color = '#4aff8a';
             else if (player.sanity > 40) sanityEl.style.color = '#ffd93d';
             else sanityEl.style.color = '#ff6b6b';
+
+            const izzyEl = document.getElementById('hudIzzy');
+            izzyEl.style.color = player.izzySaved ? '#4aff8a' : '#ff6b6b';
 
             const items = [];
             if (player.hasKey) items.push('🔑');
@@ -2610,13 +2996,15 @@
             // Quest log
             const questSteps = [
                 { id: 'scream', label: 'The Scream' },
-                { id: 'fall', label: 'The Fall' },
+                { id: 'izzy', label: 'Izzy is Taken' },
+                { id: 'cat', label: 'The Cat Guide' },
                 { id: 'endless', label: 'The Endless Hall' },
+                { id: 'tea', label: 'The Tea Party' },
                 { id: 'memories', label: 'The Memories' },
                 { id: 'madwing', label: 'The Mad Wing' },
                 { id: 'ian', label: 'The Bodyguard' },
                 { id: 'queen', label: 'The Queen' },
-                { id: 'escape', label: 'The Escape' }
+                { id: 'escape', label: 'Save Izzy & Escape' }
             ];
 
             const list = document.getElementById('questList');
@@ -2627,7 +3015,7 @@
                 if (i < player.questStep) cls = 'step-done';
                 else if (i === player.questStep) cls = 'step-active';
                 else cls = 'step-hidden';
-                if (i >= 4 && player.mapSection >= 4) cls += ' step-insane';
+                if (i >= 6 && player.mapSection >= 5) cls += ' step-trippy';
                 html += `<div class="${cls}">${i < player.questStep ? '✅' : '✦'} ${step.label}</div>`;
             }
             list.innerHTML = html;
@@ -2666,17 +3054,27 @@
             player.mapSection = 0;
             updateUI();
 
-            // Welcome
+            // OPENING SCENE: Izzy gets taken
             setTimeout(() => {
                 showDialogue('🎮 NARRATOR',
-                    '<span class="creepy">You wake up to a scream.</span><br><br>' +
+                    '<span class="creepy">You hear a scream.</span><br><br>' +
                     'It\'s 3:03 AM. The scream came from Room 303.<br>' +
                     'Your heart is racing. You have to check it out.<br><br>' +
-                    '<span style="color: #8888aa; font-size: 8px;">Use WASD/Arrow Keys to move. Press SPACE to interact.</span><br>' +
-                    '<span style="color: #ff6b6b; font-size: 8px;">🧠 Your sanity drains in the Mad Wing. Find help.</span>'
+                    '<span style="color: #8888aa; font-size: 8px;">Use WASD/Arrow Keys to move. Press SPACE to interact.</span>'
                 );
-                setTimeout(closeDialogue, 4500);
+                setTimeout(closeDialogue, 4000);
             }, 500);
+
+            // Show the Izzy spot after a moment
+            setTimeout(() => {
+                showDialogue('👱 IZZY', 
+                    '<span style="color: #ffd93d;">"Hey! Over here!"</span><br><br>' +
+                    'You see Izzy in the corner of Room 303.<br>' +
+                    'She looks scared. The closet is <span class="creepy">glowing</span> behind her.<br><br>' +
+                    '<span class="highlight">✦ Walk to Izzy and press SPACE ✦</span>'
+                );
+                setTimeout(closeDialogue, 3500);
+            }, 1500);
 
             gameLoop();
 
@@ -2685,12 +3083,12 @@
             });
         }
 
-        console.log('%c✦ JN WONDERLAND: THE ASYLUM ✦', 'font-size:20px; color:#ffd93d;');
-        console.log('%c🏚️ A massive labyrinth with 6 distinct sections', 'color:#8888aa;');
-        console.log('%c🧠 Sanity mechanic - the deeper you go, the more you lose', 'color:#ff6b9d;');
-        console.log(`%c🎮 Player: ${player.name}`, 'color:#6ac8ff;');
-        console.log('%c🐱 Find the cat to begin your quest.', 'color:#ff8a4a;');
-        console.log('%c🌀 6 sections: Room 303 → Hallway → Endless → Memories → Mad Wing → Ian → Queen', 'color:#a29bfe;');
+        console.log('%c✦ JN WONDERLAND: SAVE IZZY ✦', 'font-size:20px; color:#ffd93d;');
+        console.log('%c👱 Izzy has been taken. Save her!', 'color:#ffd93d;');
+        console.log('%c🐱 Find the cat in Wonderland.', 'color:#ff8a4a;');
+        console.log('%c🎩 Meet the Hatter for guidance.', 'color:#ff6b9d;');
+        console.log('%c🌀 Navigate the Mad Wing to reach the Queen.', 'color:#a29bfe;');
+        console.log('%c❤️ Save Izzy and escape together!', 'color:#4aff8a;');
 
         init();
     </script>
