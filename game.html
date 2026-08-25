@@ -39,6 +39,16 @@
             overflow: hidden;
         }
         
+        /* Canvas for game rendering */
+        #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+        
         .dialogue-box {
             position: absolute;
             bottom: 20px;
@@ -166,11 +176,32 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+        
+        .interaction-prompt {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff00ff;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 10px;
+            display: none;
+            z-index: 75;
+        }
+        
+        .interaction-prompt.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="game-screen" id="gameScreen">
+            <!-- Canvas for game rendering -->
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
             <!-- HUD -->
             <div class="hud">
                 <div class="hud-left">
@@ -184,6 +215,11 @@
                     <div>MONEY: $<span id="hudMoney">0</span></div>
                     <div>LOCATION: <span id="hudLocation">Room 303</span></div>
                 </div>
+            </div>
+            
+            <!-- Interaction Prompt -->
+            <div class="interaction-prompt" id="interactionPrompt">
+                [E] TO INTERACT
             </div>
             
             <!-- Dialogue Box -->
@@ -219,7 +255,36 @@
             gameTime: 0,
             paused: false,
             inDialogue: false,
-            dialogueQueue: []
+            dialogueQueue: [],
+            player: {
+                x: 400,
+                y: 300,
+                direction: 'down',
+                moving: false,
+                speed: 3
+            },
+            keys: {
+                up: false,
+                down: false,
+                left: false,
+                right: false
+            }
+        };
+        
+        // Map data
+        const maps = {
+            room303: {
+                width: 40,
+                height: 30,
+                tileSize: 20,
+                collisionMap: [],
+                npcs: [],
+                objects: [],
+                exits: [
+                    { x: 20, y: 28, targetArea: 'closet', targetX: 20, targetY: 2 }
+                ],
+                backgroundColor: '#2d1b4e'
+            }
         };
         
         // Initialize game
@@ -228,21 +293,399 @@
             const characterData = localStorage.getItem('johnNeumaierCharacter');
             
             if (!characterData) {
-                // No character found, return to title
                 window.location.href = 'index.html';
                 return;
             }
             
             gameState.character = JSON.parse(characterData);
             
+            // Generate collision map for room 303
+            generateRoom303();
+            
             // Update HUD
             updateHUD();
             
-            // Start opening scene
+            // Start game loop
+            gameLoop();
+            
+            // Start opening scene after loading
             setTimeout(() => {
                 document.getElementById('loadingScreen').style.display = 'none';
                 startOpeningScene();
             }, 2000);
+        }
+        
+        // Generate Room 303 map
+        function generateRoom303() {
+            const map = maps.room303;
+            
+            // Initialize collision map
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            // Room boundaries
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1; // Top wall
+                map.collisionMap[map.height - 1][x] = 1; // Bottom wall
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1; // Left wall
+                map.collisionMap[y][map.width - 1] = 1; // Right wall
+            }
+            
+            // Create door at bottom (exit to closet)
+            map.collisionMap[map.height - 1][20] = 0;
+            map.collisionMap[map.height - 2][20] = 0;
+            
+            // Furniture - Bed
+            for (let y = 5; y < 10; y++) {
+                for (let x = 5; x < 12; x++) {
+                    map.collisionMap[y][x] = 1;
+                }
+            }
+            
+            // Furniture - Desk
+            for (let y = 15; y < 18; y++) {
+                for (let x = 25; x < 32; x++) {
+                    map.collisionMap[y][x] = 1;
+                }
+            }
+            
+            // Furniture - Bookshelf
+            for (let y = 5; y < 12; y++) {
+                for (let x = 30; x < 33; x++) {
+                    map.collisionMap[y][x] = 1;
+                }
+            }
+            
+            // Add furniture objects
+            map.objects = [
+                { x: 8, y: 5, type: 'bed', name: 'Your Bed', description: 'A messy college dorm bed.' },
+                { x: 28, y: 15, type: 'desk', name: 'Your Desk', description: 'Covered in textbooks and energy drinks.' },
+                { x: 31, y: 8, type: 'bookshelf', name: 'Bookshelf', description: 'Full of textbooks you haven\'t opened yet.' }
+            ];
+            
+            // Add NPCs (Izzy in trouble)
+            map.npcs = [
+                { 
+                    x: 22, 
+                    y: 10, 
+                    name: 'Izzy', 
+                    sprite: 'izzy',
+                    dialogue: [
+                        "IZZY: *muffled screams from the closet*",
+                        "IZZY: HELP! Something dragged me in here!"
+                    ],
+                    interactionType: 'story'
+                }
+            ];
+        }
+        
+        // Game loop
+        function gameLoop() {
+            if (!gameState.paused && !gameState.inDialogue) {
+                updatePlayer();
+                checkInteractions();
+                renderGame();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Update player position
+        function updatePlayer() {
+            const map = maps[gameState.currentArea];
+            const player = gameState.player;
+            
+            let dx = 0;
+            let dy = 0;
+            
+            if (gameState.keys.up) {
+                dy = -player.speed;
+                player.direction = 'up';
+            }
+            if (gameState.keys.down) {
+                dy = player.speed;
+                player.direction = 'down';
+            }
+            if (gameState.keys.left) {
+                dx = -player.speed;
+                player.direction = 'left';
+            }
+            if (gameState.keys.right) {
+                dx = player.speed;
+                player.direction = 'right';
+            }
+            
+            player.moving = dx !== 0 || dy !== 0;
+            
+            // Try to move
+            if (dx !== 0 && canMove(player.x + dx, player.y, map)) {
+                player.x += dx;
+            }
+            if (dy !== 0 && canMove(player.x, player.y + dy, map)) {
+                player.y += dy;
+            }
+            
+            // Check for area transition
+            checkAreaTransition();
+        }
+        
+        // Check if player can move to position
+        function canMove(x, y, map) {
+            const tileX = Math.floor(x / map.tileSize);
+            const tileY = Math.floor(y / map.tileSize);
+            
+            // Check bounds
+            if (tileX < 0 || tileX >= map.width || tileY < 0 || tileY >= map.height) {
+                return false;
+            }
+            
+            // Check collision
+            return map.collisionMap[tileY][tileX] === 0;
+        }
+        
+        // Check for area transitions
+        function checkAreaTransition() {
+            const map = maps[gameState.currentArea];
+            const player = gameState.player;
+            
+            map.exits.forEach(exit => {
+                const exitTileX = exit.x * map.tileSize;
+                const exitTileY = exit.y * map.tileSize;
+                
+                if (Math.abs(player.x - exitTileX) < map.tileSize / 2 &&
+                    Math.abs(player.y - exitTileY) < map.tileSize / 2) {
+                    transitionArea(exit.targetArea, exit.targetX, exit.targetY);
+                }
+            });
+        }
+        
+        // Transition to new area
+        function transitionArea(areaId, targetX, targetY) {
+            gameState.currentArea = areaId;
+            gameState.player.x = targetX * maps[areaId].tileSize;
+            gameState.player.y = targetY * maps[areaId].tileSize;
+            updateHUD();
+            
+            // Show loading transition
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.style.display = 'flex';
+            loadingScreen.querySelector('.loading-text').textContent = `ENTERING ${areaId.toUpperCase()}...`;
+            
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+        }
+        
+        // Check for interactions with NPCs and objects
+        function checkInteractions() {
+            const map = maps[gameState.currentArea];
+            const player = gameState.player;
+            const interactRange = 30;
+            
+            let nearInteraction = false;
+            
+            // Check NPCs
+            map.npcs.forEach(npc => {
+                const npcX = npc.x * map.tileSize;
+                const npcY = npc.y * map.tileSize;
+                
+                if (Math.abs(player.x - npcX) < interactRange &&
+                    Math.abs(player.y - npcY) < interactRange) {
+                    nearInteraction = true;
+                    if (gameState.keys.interact) {
+                        interactWithNPC(npc);
+                    }
+                }
+            });
+            
+            // Check objects
+            map.objects.forEach(obj => {
+                const objX = obj.x * map.tileSize;
+                const objY = obj.y * map.tileSize;
+                
+                if (Math.abs(player.x - objX) < interactRange &&
+                    Math.abs(player.y - objY) < interactRange) {
+                    nearInteraction = true;
+                    if (gameState.keys.interact) {
+                        interactWithObject(obj);
+                    }
+                }
+            });
+            
+            // Update interaction prompt
+            const prompt = document.getElementById('interactionPrompt');
+            if (nearInteraction && !gameState.inDialogue) {
+                prompt.classList.add('active');
+            } else {
+                prompt.classList.remove('active');
+            }
+        }
+        
+        // Interact with NPC
+        function interactWithNPC(npc) {
+            gameState.keys.interact = false;
+            
+            if (npc.interactionType === 'story') {
+                gameState.dialogueQueue = [...npc.dialogue];
+                showDialogue(gameState.dialogueQueue.shift());
+            }
+        }
+        
+        // Interact with object
+        function interactWithObject(obj) {
+            gameState.keys.interact = false;
+            gameState.dialogueQueue = [`${obj.name}: ${obj.description}`];
+            showDialogue(gameState.dialogueQueue.shift());
+        }
+        
+        // Render game
+        function renderGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const map = maps[gameState.currentArea];
+            
+            // Clear canvas
+            ctx.fillStyle = map.backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw floor tiles
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if (map.collisionMap[y][x] === 0) {
+                        drawFloorTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                    }
+                }
+            }
+            
+            // Draw walls and furniture
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if (map.collisionMap[y][x] === 1) {
+                        drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                    }
+                }
+            }
+            
+            // Draw objects
+            map.objects.forEach(obj => {
+                drawObject(ctx, obj, map.tileSize);
+            });
+            
+            // Draw NPCs
+            map.npcs.forEach(npc => {
+                drawNPC(ctx, npc, map.tileSize);
+            });
+            
+            // Draw player
+            drawPlayer(ctx);
+        }
+        
+        // Draw floor tile
+        function drawFloorTile(ctx, x, y, size) {
+            ctx.fillStyle = '#8B7355';
+            ctx.fillRect(x, y, size, size);
+            
+            // Add texture
+            ctx.fillStyle = '#7A6548';
+            ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
+        }
+        
+        // Draw wall tile
+        function drawWallTile(ctx, x, y, size) {
+            ctx.fillStyle = '#4A4A4A';
+            ctx.fillRect(x, y, size, size);
+            
+            // Add brick pattern
+            ctx.strokeStyle = '#3A3A3A';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, size, size);
+            ctx.beginPath();
+            ctx.moveTo(x, y + size/2);
+            ctx.lineTo(x + size, y + size/2);
+            ctx.stroke();
+        }
+        
+        // Draw objects
+        function drawObject(ctx, obj, tileSize) {
+            const x = obj.x * tileSize;
+            const y = obj.y * tileSize;
+            
+            switch(obj.type) {
+                case 'bed':
+                    ctx.fillStyle = '#4169E1';
+                    ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x + 5, y + 5, tileSize * 2, tileSize);
+                    break;
+                case 'desk':
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(x, y, tileSize * 2, tileSize);
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y + tileSize, tileSize * 2, tileSize/2);
+                    break;
+                case 'bookshelf':
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y, tileSize, tileSize * 3);
+                    // Draw books
+                    for (let i = 0; i < 3; i++) {
+                        ctx.fillStyle = ['#FF0000', '#00FF00', '#0000FF'][i];
+                        ctx.fillRect(x + 2, y + i * tileSize + 2, tileSize - 4, tileSize - 4);
+                    }
+                    break;
+            }
+        }
+        
+        // Draw NPCs
+        function drawNPC(ctx, npc, tileSize) {
+            const x = npc.x * tileSize;
+            const y = npc.y * tileSize;
+            
+            // Draw simple NPC sprite
+            ctx.fillStyle = '#FFC0CB';
+            ctx.fillRect(x, y, tileSize, tileSize);
+            
+            // Draw hair
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(x, y, tileSize, tileSize/3);
+            
+            // Draw eyes
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x + 5, y + 8, 3, 3);
+            ctx.fillRect(x + 12, y + 8, 3, 3);
+        }
+        
+        // Draw player
+        function drawPlayer(ctx) {
+            const player = gameState.player;
+            const tileSize = maps[gameState.currentArea].tileSize;
+            
+            // Draw body
+            ctx.fillStyle = gameState.character.shirtColor;
+            ctx.fillRect(player.x, player.y, tileSize, tileSize);
+            
+            // Draw head
+            ctx.fillStyle = gameState.character.skinTone;
+            ctx.fillRect(player.x + 3, player.y - 5, tileSize - 6, tileSize - 6);
+            
+            // Draw hair
+            ctx.fillStyle = gameState.character.hairColor;
+            ctx.fillRect(player.x + 3, player.y - 8, tileSize - 6, 5);
+            
+            // Draw eyes based on direction
+            ctx.fillStyle = '#000000';
+            if (player.direction === 'down') {
+                ctx.fillRect(player.x + 5, player.y + 3, 3, 3);
+                ctx.fillRect(player.x + 12, player.y + 3, 3, 3);
+            } else {
+                ctx.fillRect(player.x + 5, player.y + 2, 3, 3);
+                ctx.fillRect(player.x + 12, player.y + 2, 3, 3);
+            }
+            
+            // Draw pants
+            ctx.fillStyle = gameState.character.pantsColor;
+            ctx.fillRect(player.x + 3, player.y + tileSize - 5, 5, 5);
+            ctx.fillRect(player.x + 12, player.y + tileSize - 5, 5, 5);
         }
         
         // Update HUD elements
@@ -298,7 +741,8 @@
                 "It's a quiet evening... or so you thought.",
                 "Suddenly, you hear a violent crash from room 303.",
                 "IZZY SCREAMS!",
-                "Something is terribly wrong..."
+                "Something is terribly wrong...",
+                "You need to investigate the closet!"
             ];
             
             showDialogue(gameState.dialogueQueue.shift());
@@ -334,6 +778,36 @@
         
         // Event listeners
         document.addEventListener('keydown', (e) => {
+            // Movement keys
+            switch(e.key.toLowerCase()) {
+                case 'arrowup':
+                case 'w':
+                    gameState.keys.up = true;
+                    e.preventDefault();
+                    break;
+                case 'arrowdown':
+                case 's':
+                    gameState.keys.down = true;
+                    e.preventDefault();
+                    break;
+                case 'arrowleft':
+                case 'a':
+                    gameState.keys.left = true;
+                    e.preventDefault();
+                    break;
+                case 'arrowright':
+                case 'd':
+                    gameState.keys.right = true;
+                    e.preventDefault();
+                    break;
+            }
+            
+            // Interaction key
+            if (e.key.toLowerCase() === 'e') {
+                gameState.keys.interact = true;
+            }
+            
+            // Dialogue advancement
             if (e.key === ' ' && gameState.inDialogue) {
                 e.preventDefault();
                 if (gameState.dialogueQueue.length > 0) {
@@ -343,8 +817,33 @@
                 }
             }
             
+            // Menu toggle
             if (e.key === 'Escape' && !gameState.inDialogue) {
                 toggleMenu();
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'arrowup':
+                case 'w':
+                    gameState.keys.up = false;
+                    break;
+                case 'arrowdown':
+                case 's':
+                    gameState.keys.down = false;
+                    break;
+                case 'arrowleft':
+                case 'a':
+                    gameState.keys.left = false;
+                    break;
+                case 'arrowright':
+                case 'd':
+                    gameState.keys.right = false;
+                    break;
+                case 'e':
+                    gameState.keys.interact = false;
+                    break;
             }
         });
         
