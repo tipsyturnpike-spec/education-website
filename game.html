@@ -269,6 +269,7 @@
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border: 2px solid #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
         
         .hud-left {
@@ -318,6 +319,7 @@
             font-size: 10px;
             display: none;
             z-index: 75;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
         
         .interaction-prompt.active {
@@ -982,7 +984,6 @@
             map.collisionMap[2][20] = 0;
             map.collisionMap[3][20] = 0;
             
-            // Buildings
             for (let y = 5; y < 10; y++) {
                 for (let x = 5; x < 12; x++) map.collisionMap[y][x] = 1;
             }
@@ -1101,12 +1102,19 @@
                 const y = enemy.y * tileSize;
                 const enemyData = enemies[enemy.type];
                 
+                // Draw enemy body with detail
                 ctx.fillStyle = enemyData.color;
                 ctx.fillRect(x, y, tileSize, tileSize);
                 
+                // Add eyes
                 ctx.fillStyle = '#FF0000';
                 ctx.fillRect(x + 5, y + 5, 5, 5);
                 ctx.fillRect(x + 12, y + 5, 5, 5);
+                
+                // Add outline
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, tileSize, tileSize);
             });
         }
         
@@ -1518,24 +1526,33 @@
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(25, 45, 15, 15);
                     ctx.fillRect(60, 45, 15, 15);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 55, 10, 5);
                     break;
                 case 'microwave':
                     ctx.fillStyle = '#C0C0C0';
                     ctx.fillRect(20, 30, 60, 40);
                     ctx.fillStyle = '#808080';
                     ctx.fillRect(30, 25, 40, 10);
+                    ctx.fillStyle = '#00FF00';
+                    ctx.fillRect(35, 35, 30, 5);
                     break;
                 case 'imp':
                     ctx.fillStyle = '#228B22';
                     ctx.fillRect(25, 40, 50, 30);
                     ctx.fillStyle = '#32CD32';
                     ctx.fillRect(35, 25, 30, 20);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 35, 10, 5);
                     break;
                 case 'mushroom':
                     ctx.fillStyle = '#8B008B';
                     ctx.fillRect(30, 30, 40, 40);
                     ctx.fillStyle = '#FF69B4';
                     ctx.fillRect(40, 20, 20, 20);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(45, 35, 5, 5);
+                    ctx.fillRect(55, 35, 5, 5);
                     break;
                 case 'skeleton':
                     ctx.fillStyle = '#F5F5DC';
@@ -1544,6 +1561,9 @@
                     ctx.beginPath();
                     ctx.arc(50, 30, 15, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(45, 25, 5, 5);
+                    ctx.fillRect(55, 25, 5, 5);
                     break;
                 case 'ghost':
                     ctx.fillStyle = '#E0E0E0';
@@ -1551,12 +1571,17 @@
                     ctx.arc(50, 40, 25, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.fillRect(25, 40, 50, 30);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(40, 35, 8, 8);
+                    ctx.fillRect(52, 35, 8, 8);
                     break;
                 case 'shadow':
                     ctx.fillStyle = '#2F4F4F';
                     ctx.fillRect(25, 25, 50, 50);
                     ctx.fillStyle = '#1a1a1a';
                     ctx.fillRect(35, 35, 30, 30);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(45, 45, 10, 5);
                     break;
                 default:
                     ctx.fillStyle = enemy.color;
@@ -1831,7 +1856,6 @@
                 if (Math.abs(player.x - exitTileX) < map.tileSize / 2 &&
                     Math.abs(player.y - exitTileY) < map.tileSize / 2) {
                     
-                    // Check if area is locked
                     if (exit.targetArea === 'graveyard' && !gameState.flags.openedForestGate) {
                         if (!hasItem('forestKey')) {
                             showDialogue('The gate is locked. You need the Forest Key...');
@@ -2129,6 +2153,7 @@
             ctx.fillStyle = map.backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Draw floor with texture
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if (map.collisionMap[y][x] === 0) {
@@ -2137,6 +2162,7 @@
                 }
             }
             
+            // Draw walls/obstacles with detail
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if (map.collisionMap[y][x] === 1) {
@@ -2144,6 +2170,8 @@
                             drawTreeTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else if (gameState.currentArea === 'graveyard') {
                             drawTombstoneTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                        } else if (gameState.currentArea === 'village' || gameState.currentArea === 'upperVillage') {
+                            drawBuildingTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else {
                             drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
                         }
@@ -2151,9 +2179,16 @@
                 }
             }
             
+            // Draw objects with detail
             map.objects.forEach(obj => drawObject(ctx, obj, map.tileSize));
+            
+            // Draw visible enemies
             drawVisibleEnemies(ctx);
+            
+            // Draw NPCs
             map.npcs.forEach(npc => drawNPC(ctx, npc, map.tileSize));
+            
+            // Draw player
             drawPlayer(ctx);
         }
         
@@ -2162,11 +2197,20 @@
             ctx.fillRect(x, y, size, size);
             ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillRect(x + 4, y + 4, size - 8, size - 8);
         }
         
         function drawWallTile(ctx, x, y, size, color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, size, size);
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, size, size);
+            ctx.beginPath();
+            ctx.moveTo(x, y + size/2);
+            ctx.lineTo(x + size, y + size/2);
+            ctx.stroke();
         }
         
         function drawTreeTile(ctx, x, y, size) {
@@ -2176,6 +2220,14 @@
             ctx.beginPath();
             ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
             ctx.fill();
+            ctx.fillStyle = '#0a3a0a';
+            ctx.beginPath();
+            ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#2a5a2a';
+            ctx.beginPath();
+            ctx.arc(x + size/2, y + size/2, size/6, 0, Math.PI * 2);
+            ctx.fill();
         }
         
         function drawTombstoneTile(ctx, x, y, size) {
@@ -2183,6 +2235,19 @@
             ctx.fillRect(x, y, size, size);
             ctx.fillStyle = '#808080';
             ctx.fillRect(x + 5, y + 3, size - 10, size - 6);
+            ctx.fillStyle = '#666666';
+            ctx.fillRect(x + 8, y + 8, size - 16, size - 16);
+            ctx.fillStyle = '#999999';
+            ctx.fillRect(x + 8, y + 3, size - 16, 3);
+        }
+        
+        function drawBuildingTile(ctx, x, y, size) {
+            ctx.fillStyle = '#4a3a2a';
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = '#5a4a3a';
+            ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
+            ctx.fillStyle = '#6a5a4a';
+            ctx.fillRect(x + 5, y + 5, size - 10, size - 10);
         }
         
         function drawObject(ctx, obj, tileSize) {
@@ -2193,41 +2258,80 @@
                 case 'bed':
                     ctx.fillStyle = '#4169E1';
                     ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x + 5, y + 5, tileSize * 2, tileSize);
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(x + 8, y + tileSize, tileSize, tileSize/2);
                     break;
                 case 'desk':
                     ctx.fillStyle = '#8B4513';
                     ctx.fillRect(x, y, tileSize * 2, tileSize);
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(x, y + tileSize, tileSize * 2, tileSize/2);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(x + 5, y + 3, 10, 5);
                     break;
                 case 'bookshelf':
                     ctx.fillStyle = '#654321';
                     ctx.fillRect(x, y, tileSize, tileSize * 3);
+                    for (let i = 0; i < 3; i++) {
+                        ctx.fillStyle = ['#FF0000', '#00FF00', '#0000FF'][i];
+                        ctx.fillRect(x + 2, y + i * tileSize + 2, tileSize - 4, tileSize - 4);
+                    }
                     break;
                 case 'clothes':
                     ctx.fillStyle = '#FF69B4';
                     ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = '#FF1493';
+                    ctx.fillRect(x + 5, y + 5, tileSize - 10, tileSize - 10);
                     break;
                 case 'boxes':
                     ctx.fillStyle = '#8B7355';
                     ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+                    ctx.strokeStyle = '#654321';
+                    ctx.strokeRect(x, y, tileSize * 2, tileSize * 2);
+                    ctx.fillStyle = '#A0825A';
+                    ctx.fillRect(x + 5, y + 5, tileSize - 5, tileSize - 5);
                     break;
                 case 'portal':
                     const time = Date.now() / 1000;
                     const pulse = Math.sin(time * 3) * 0.3 + 0.7;
                     ctx.fillStyle = `rgba(255, 0, 255, ${pulse})`;
                     ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+                    ctx.fillStyle = `rgba(0, 255, 255, ${pulse * 0.5})`;
+                    ctx.fillRect(x + 5, y + 5, tileSize * 2 - 10, tileSize * 2 - 10);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${pulse * 0.7})`;
+                    ctx.fillRect(x + 8, y + 8, tileSize * 2 - 16, tileSize * 2 - 16);
                     break;
                 case 'key':
                     ctx.fillStyle = '#FFD700';
                     ctx.fillRect(x + 5, y + 8, 10, 4);
                     ctx.fillRect(x + 12, y + 5, 3, 10);
+                    ctx.fillStyle = '#FFF8DC';
+                    ctx.fillRect(x + 7, y + 9, 6, 2);
                     break;
                 case 'gate':
                     ctx.fillStyle = '#654321';
                     ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i * tileSize, y);
+                        ctx.lineTo(x + i * tileSize, y + tileSize * 2);
+                        ctx.stroke();
+                    }
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(x + tileSize - 5, y + tileSize/2, 10, 10);
                     break;
                 case 'note':
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.strokeStyle = '#000000';
+                    ctx.strokeRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = '#0000FF';
+                    ctx.fillRect(x + 3, y + 3, tileSize - 6, 3);
+                    ctx.fillRect(x + 3, y + 8, tileSize - 6, 3);
                     break;
             }
         }
@@ -2243,30 +2347,50 @@
                 ctx.fillRect(x + 3, y - 3, tileSize - 6, tileSize - 6);
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x + 3, y - 6, tileSize - 6, 5);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 3, 3, 3);
+                ctx.fillRect(x + 12, y + 3, 3, 3);
             } else if (npc.sprite === 'ghost') {
                 ctx.fillStyle = '#E0E0E0';
                 ctx.beginPath();
                 ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'merchant') {
                 ctx.fillStyle = '#2F4F4F';
                 ctx.fillRect(x, y, tileSize, tileSize);
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(x + 5, y + 3, 10, 5);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'healer') {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x, y, tileSize, tileSize);
+                ctx.fillStyle = '#FF0000';
+                ctx.fillRect(x + 5, y + 5, 10, 10);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'elder') {
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x, y, tileSize, tileSize);
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x, y, tileSize, tileSize/3);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else {
                 ctx.fillStyle = '#FFC0CB';
                 ctx.fillRect(x, y, tileSize, tileSize);
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x, y, tileSize, tileSize/3);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
             }
-            
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(x + 5, y + 8, 3, 3);
-            ctx.fillRect(x + 12, y + 8, 3, 3);
         }
         
         function drawPlayer(ctx) {
@@ -2281,8 +2405,13 @@
             ctx.fillStyle = partyLeader.hairColor;
             ctx.fillRect(player.x + 3, player.y - 8, tileSize - 6, 5);
             ctx.fillStyle = '#000000';
-            ctx.fillRect(player.x + 5, player.y + 3, 3, 3);
-            ctx.fillRect(player.x + 12, player.y + 3, 3, 3);
+            if (player.direction === 'down') {
+                ctx.fillRect(player.x + 5, player.y + 3, 3, 3);
+                ctx.fillRect(player.x + 12, player.y + 3, 3, 3);
+            } else {
+                ctx.fillRect(player.x + 5, player.y + 2, 3, 3);
+                ctx.fillRect(player.x + 12, player.y + 2, 3, 3);
+            }
             ctx.fillStyle = partyLeader.pantsColor;
             ctx.fillRect(player.x + 3, player.y + tileSize - 5, 5, 5);
             ctx.fillRect(player.x + 12, player.y + tileSize - 5, 5, 5);
