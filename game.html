@@ -597,7 +597,8 @@
             backpack: { name: 'Heavy Backpack', type: 'weapon', attackBonus: 8, description: 'Full of textbooks. +8 Attack.', price: 50, usable: false },
             forestKey: { name: 'Forest Key', type: 'keyItem', description: 'A rusted key that opens the Forest Gate.', price: 0, usable: false },
             graveyardKey: { name: 'Graveyard Key', type: 'keyItem', description: 'A bone-shaped key that opens the Village Gate.', price: 0, usable: false },
-            villageKey: { name: 'Village Key', type: 'keyItem', description: 'A brass key that opens the Upper Village Gate.', price: 0, usable: false }
+            villageKey: { name: 'Village Key', type: 'keyItem', description: 'A brass key that opens the Upper Village Gate.', price: 0, usable: false },
+            castleKey: { name: 'Castle Key', type: 'keyItem', description: 'An ornate key that opens the Castle Walls gate.', price: 0, usable: false }
         };
         
         let gameState = {
@@ -624,7 +625,10 @@
                 openedVillageGate: false,
                 enteredVillage: false,
                 foundVillageKey: false,
-                openedUpperVillageGate: false
+                openedUpperVillageGate: false,
+                enteredUpperVillage: false,
+                foundCastleKey: false,
+                openedCastleWallsGate: false
             },
             combat: { 
                 active: false, 
@@ -677,6 +681,10 @@
             villageHealer: {
                 name: 'VILLAGE HEALER',
                 healCost: 20
+            },
+            upperMerchant: {
+                name: 'UPPER MERCHANT',
+                items: ['energyDrink', 'pizza', 'coffee', 'textbook', 'backpack', 'laptop']
             }
         };
         
@@ -688,12 +696,14 @@
             maps.darkForest = { width: 50, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#0a1a0a', floorColor: '#1a3a1a', wallColor: '#0a2a0a', enemies: ['forestImp', 'mushroomZombie', 'laundryGoblin'] };
             maps.graveyard = { width: 45, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a1a1a', floorColor: '#2a2a2a', wallColor: '#3a3a3a', enemies: ['skeletonStudent', 'ghostFreshman', 'shadowStudent'] };
             maps.village = { width: 40, height: 35, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#2a1a0a', floorColor: '#4a3a2a', wallColor: '#3a2a1a', enemies: [] };
+            maps.upperVillage = { width: 40, height: 35, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a2a0a', floorColor: '#3a4a2a', wallColor: '#2a3a1a', enemies: [] };
             
             generateRoom303();
             generateCloset();
             generateDarkForest();
             generateGraveyard();
             generateVillage();
+            generateUpperVillage();
         }
         
         function generateRoom303() {
@@ -777,8 +787,8 @@
             map.objects = [
                 { x: 10, y: 5, type: 'clothes', name: 'Old Clothes', description: 'Dusty clothes from students long gone...' },
                 { x: 15, y: 22, type: 'clothes', name: 'Winter Coat', description: 'A heavy winter coat. It smells like mothballs.' },
-                { x: 25, y: 26, type: 'boxes', name: 'Cardboard Boxes', description: 'Old moving boxes. One says "FRAGILE" but it\'s been opened.', itemDrop: 'ramen' },
-                { x: 14, y: 14, type: 'portal', name: 'Strange Portal', description: 'A swirling vortex of purple energy. This must be where Izzy was taken!', interactionType: 'portal' }
+                { x: 25, y: 26, type: 'boxes', name: 'Cardboard Boxes', description: 'Old moving boxes.', itemDrop: 'ramen' },
+                { x: 14, y: 14, type: 'portal', name: 'Strange Portal', description: 'A swirling vortex of purple energy.', interactionType: 'portal' }
             ];
             
             map.npcs = [];
@@ -828,20 +838,20 @@
             
             map.objects = [
                 { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
-                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted, dark tree. Something is carved into it...' },
-                { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms that pulse with an eerie light.' },
-                { x: 15, y: 28, type: 'note', name: 'Torn Note', description: 'A note that says "The key is hidden where the mushrooms glow..."', interactionType: 'note' },
-                { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key that might open the gate.', interactionType: 'forestKey' },
-                { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate blocking the path forward.', interactionType: 'gate' }
+                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted, dark tree.' },
+                { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms.' },
+                { x: 15, y: 28, type: 'note', name: 'Torn Note', description: '"The key is hidden where the mushrooms glow..."', interactionType: 'note' },
+                { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key.', interactionType: 'forestKey' },
+                { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate.', interactionType: 'gate' }
             ];
             
             map.npcs = [
-                { x: 40, y: 35, name: 'Bekah', sprite: 'bekah', dialogue: ["BEKAH: Help! I'm trapped under these roots!", "BEKAH: Those shadow creatures dragged me here...", "BEKAH: Can you help me get free?", "BEKAH: Thank you! I'll join you to find Izzy!", "BEKAH: I'm good with PSI abilities. Let me help!"], interactionType: 'bekah' }
+                { x: 40, y: 35, name: 'Bekah', sprite: 'bekah', dialogue: ["BEKAH: Help! I'm trapped!", "BEKAH: Thank you! I'll join you!"], interactionType: 'bekah' }
             ];
             
             map.exits = [
                 { x: 25, y: 39, targetArea: 'closet', targetX: 14, targetY: 14, transitionText: 'You return through the portal...' },
-                { x: 25, y: 4, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You unlock the gate and enter the graveyard...' }
+                { x: 25, y: 4, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You enter the graveyard...' }
             ];
         }
         
@@ -889,35 +899,20 @@
             for (let y = 3; y < 10; y++) map.collisionMap[y][40] = 0;
             
             map.objects = [
-                { x: 22, y: 38, type: 'portal', name: 'Forest Path', description: 'The path back to the Dark Forest.', interactionType: 'returnToForest' },
-                { x: 10, y: 10, type: 'tombstone', name: 'Old Tombstone', description: 'The name has worn away... Something is scratched on the back.' },
-                { x: 30, y: 8, type: 'tombstone', name: 'Fresh Grave', description: 'The dirt looks recently disturbed...' },
-                { x: 15, y: 28, type: 'note', name: 'Diary Page', description: 'A page from a diary: "...the key is buried with the one who never graduated..."', interactionType: 'note' },
-                { x: 35, y: 28, type: 'key', name: 'Graveyard Key', description: 'A bone-shaped key that opens the Village Gate.', interactionType: 'graveyardKey' },
-                { x: 22, y: 3, type: 'gate', name: 'Village Gate', description: 'A iron gate leading to the Village.', interactionType: 'villageGate' },
-                { x: 12, y: 20, type: 'statue', name: 'Weeping Angel', description: 'A statue of an angel covering its face. It seems to be crying...' }
+                { x: 22, y: 38, type: 'portal', name: 'Forest Path', description: 'The path back.', interactionType: 'returnToForest' },
+                { x: 10, y: 10, type: 'tombstone', name: 'Old Tombstone', description: 'The name has worn away...' },
+                { x: 15, y: 28, type: 'note', name: 'Diary Page', description: 'A page from a diary...', interactionType: 'note' },
+                { x: 35, y: 28, type: 'key', name: 'Graveyard Key', description: 'A bone-shaped key.', interactionType: 'graveyardKey' },
+                { x: 22, y: 3, type: 'gate', name: 'Village Gate', description: 'An iron gate.', interactionType: 'villageGate' }
             ];
             
             map.npcs = [
-                {
-                    x: 18,
-                    y: 30,
-                    name: 'Ghost of Roommate Past',
-                    sprite: 'ghost',
-                    dialogue: [
-                        "GHOST: Beware the RA...",
-                        "GHOST: Rylee was once a student like you...",
-                        "GHOST: But the power of the Desk corrupted her...",
-                        "GHOST: Ian guards the castle walls... He cannot be reasoned with...",
-                        "GHOST: Find the key... It's hidden with those who never left..."
-                    ],
-                    interactionType: 'ghost'
-                }
+                { x: 18, y: 30, name: 'Ghost of Roommate Past', sprite: 'ghost', dialogue: ["GHOST: Beware the RA...", "GHOST: Rylee was corrupted by the Desk..."], interactionType: 'ghost' }
             ];
             
             map.exits = [
                 { x: 22, y: 39, targetArea: 'darkForest', targetX: 25, targetY: 3, transitionText: 'You return to the Dark Forest...' },
-                { x: 22, y: 2, targetArea: 'village', targetX: 20, targetY: 33, transitionText: 'You unlock the gate and enter the Village...' }
+                { x: 22, y: 2, targetArea: 'village', targetX: 20, targetY: 33, transitionText: 'You enter the Village...' }
             ];
         }
         
@@ -950,23 +945,69 @@
             }
             
             map.objects = [
-                { x: 7, y: 5, type: 'bed', name: 'Healer\'s Bed', description: 'A warm bed. You could rest here...', interactionType: 'healer' },
-                { x: 30, y: 5, type: 'desk', name: 'Merchant\'s Stall', description: 'Various goods are on display...', interactionType: 'merchant' },
-                { x: 17, y: 15, type: 'bookshelf', name: 'Village Records', description: 'Old records of the village...', interactionType: 'elder' },
-                { x: 20, y: 3, type: 'gate', name: 'Upper Village Gate', description: 'A gate leading to the Upper Village.', interactionType: 'upperVillageGate' },
-                { x: 35, y: 20, type: 'note', name: 'Village Notice', description: '"Those who seek the Upper Village must prove their worth..."', interactionType: 'note' },
-                { x: 5, y: 20, type: 'key', name: 'Village Key', description: 'A brass key that opens the Upper Village Gate.', interactionType: 'villageKey' }
+                { x: 7, y: 5, type: 'bed', name: 'Healer\'s Bed', description: 'A warm bed.', interactionType: 'healer' },
+                { x: 30, y: 5, type: 'desk', name: 'Merchant\'s Stall', description: 'Various goods.', interactionType: 'merchant' },
+                { x: 17, y: 15, type: 'bookshelf', name: 'Village Records', description: 'Old records.', interactionType: 'elder' },
+                { x: 20, y: 3, type: 'gate', name: 'Upper Village Gate', description: 'A gate to the Upper Village.', interactionType: 'upperVillageGate' },
+                { x: 5, y: 20, type: 'key', name: 'Village Key', description: 'A brass key.', interactionType: 'villageKey' }
             ];
             
             map.npcs = [
-                { x: 15, y: 8, name: 'Village Healer', sprite: 'healer', dialogue: ["HEALER: Welcome, traveler...", "HEALER: I can heal your party for $20..."], interactionType: 'healer' },
-                { x: 32, y: 8, name: 'Shady Merchant', sprite: 'merchant', dialogue: ["MERCHANT: Psst... hey kid...", "MERCHANT: I got stuff that fell off a truck..."], interactionType: 'merchant' },
-                { x: 18, y: 18, name: 'Village Elder', sprite: 'elder', dialogue: ["ELDER: Welcome to our village...", "ELDER: Rylee's reign has driven us from our homes...", "ELDER: To reach the Upper Village, find the Village Key..."], interactionType: 'elder' }
+                { x: 15, y: 8, name: 'Village Healer', sprite: 'healer', dialogue: ["HEALER: I can heal your party for $20..."], interactionType: 'healer' },
+                { x: 32, y: 8, name: 'Shady Merchant', sprite: 'merchant', dialogue: ["MERCHANT: Psst... hey kid..."], interactionType: 'merchant' },
+                { x: 18, y: 18, name: 'Village Elder', sprite: 'elder', dialogue: ["ELDER: Find the Village Key to reach Upper Village..."], interactionType: 'elder' }
             ];
             
             map.exits = [
                 { x: 20, y: 34, targetArea: 'graveyard', targetX: 22, targetY: 2, transitionText: 'You return to the Graveyard...' },
-                { x: 20, y: 2, targetArea: 'upperVillage', targetX: 20, targetY: 33, transitionText: 'You unlock the gate and enter the Upper Village...' }
+                { x: 20, y: 2, targetArea: 'upperVillage', targetX: 20, targetY: 33, transitionText: 'You enter the Upper Village...' }
+            ];
+        }
+        
+        function generateUpperVillage() {
+            const map = maps.upperVillage;
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1;
+                map.collisionMap[map.height - 1][x] = 1;
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1;
+                map.collisionMap[y][map.width - 1] = 1;
+            }
+            
+            map.collisionMap[map.height - 1][20] = 0;
+            map.collisionMap[map.height - 2][20] = 0;
+            map.collisionMap[2][20] = 0;
+            map.collisionMap[3][20] = 0;
+            
+            // Buildings
+            for (let y = 5; y < 10; y++) {
+                for (let x = 5; x < 12; x++) map.collisionMap[y][x] = 1;
+            }
+            for (let y = 5; y < 10; y++) {
+                for (let x = 28; x < 35; x++) map.collisionMap[y][x] = 1;
+            }
+            for (let y = 15; y < 20; y++) {
+                for (let x = 15; x < 22; x++) map.collisionMap[y][x] = 1;
+            }
+            
+            map.objects = [
+                { x: 30, y: 5, type: 'desk', name: 'Upper Merchant', description: 'Better supplies.', interactionType: 'upperMerchant' },
+                { x: 7, y: 5, type: 'bed', name: 'Upper Healer', description: 'A comfortable bed.', interactionType: 'healer' },
+                { x: 17, y: 15, type: 'bookshelf', name: 'Castle Records', description: 'Records about the castle...', interactionType: 'castleInfo' },
+                { x: 20, y: 3, type: 'gate', name: 'Castle Walls Gate', description: 'A massive gate to the Castle Walls.', interactionType: 'castleWallsGate' },
+                { x: 5, y: 25, type: 'key', name: 'Castle Key', description: 'An ornate key for the Castle Walls.', interactionType: 'castleKey' }
+            ];
+            
+            map.npcs = [
+                { x: 18, y: 18, name: 'Upper Elder', sprite: 'elder', dialogue: ["ELDER: The castle walls are guarded by Ian...", "ELDER: He was once a student, but Rylee transformed him...", "ELDER: Find the Castle Key to reach the walls..."], interactionType: 'elder' }
+            ];
+            
+            map.exits = [
+                { x: 20, y: 34, targetArea: 'village', targetX: 20, targetY: 2, transitionText: 'You return to the Village...' },
+                { x: 20, y: 2, targetArea: 'castleWalls', targetX: 20, targetY: 38, transitionText: 'You approach the Castle Walls...' }
             ];
         }
         
@@ -1477,73 +1518,24 @@
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(25, 45, 15, 15);
                     ctx.fillRect(60, 45, 15, 15);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(45, 55, 10, 5);
                     break;
                 case 'microwave':
                     ctx.fillStyle = '#C0C0C0';
                     ctx.fillRect(20, 30, 60, 40);
                     ctx.fillStyle = '#808080';
                     ctx.fillRect(30, 25, 40, 10);
-                    ctx.fillStyle = '#00FF00';
-                    ctx.fillRect(35, 35, 30, 5);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(45, 45, 10, 10);
-                    break;
-                case 'textbook':
-                    ctx.fillStyle = '#8B0000';
-                    ctx.fillRect(25, 30, 50, 40);
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(30, 35, 40, 30);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(35, 40, 30, 3);
-                    ctx.fillRect(35, 50, 30, 3);
-                    ctx.fillRect(35, 60, 30, 3);
-                    break;
-                case 'coffee':
-                    ctx.fillStyle = '#6B4423';
-                    ctx.fillRect(30, 30, 40, 50);
-                    ctx.fillStyle = '#4A2F1A';
-                    ctx.fillRect(25, 25, 50, 15);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(40, 45, 5, 5);
-                    ctx.fillRect(55, 45, 5, 5);
-                    break;
-                case 'mold':
-                    ctx.fillStyle = '#556B2F';
-                    ctx.beginPath();
-                    ctx.arc(50, 50, 25, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#6B8E23';
-                    ctx.beginPath();
-                    ctx.arc(40, 40, 8, 0, Math.PI * 2);
-                    ctx.arc(60, 40, 8, 0, Math.PI * 2);
-                    ctx.fill();
                     break;
                 case 'imp':
                     ctx.fillStyle = '#228B22';
                     ctx.fillRect(25, 40, 50, 30);
                     ctx.fillStyle = '#32CD32';
                     ctx.fillRect(35, 25, 30, 20);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(45, 35, 10, 5);
                     break;
                 case 'mushroom':
                     ctx.fillStyle = '#8B008B';
                     ctx.fillRect(30, 30, 40, 40);
                     ctx.fillStyle = '#FF69B4';
                     ctx.fillRect(40, 20, 20, 20);
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(45, 35, 5, 5);
-                    ctx.fillRect(55, 35, 5, 5);
-                    break;
-                case 'shadow':
-                    ctx.fillStyle = '#2F4F4F';
-                    ctx.fillRect(25, 25, 50, 50);
-                    ctx.fillStyle = '#1a1a1a';
-                    ctx.fillRect(35, 35, 30, 30);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(45, 45, 10, 5);
                     break;
                 case 'skeleton':
                     ctx.fillStyle = '#F5F5DC';
@@ -1552,9 +1544,6 @@
                     ctx.beginPath();
                     ctx.arc(50, 30, 15, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(45, 25, 5, 5);
-                    ctx.fillRect(55, 25, 5, 5);
                     break;
                 case 'ghost':
                     ctx.fillStyle = '#E0E0E0';
@@ -1562,20 +1551,12 @@
                     ctx.arc(50, 40, 25, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.fillRect(25, 40, 50, 30);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(40, 35, 8, 8);
-                    ctx.fillRect(52, 35, 8, 8);
                     break;
-                case 'zombie':
-                    ctx.fillStyle = '#556B2F';
-                    ctx.fillRect(30, 40, 40, 35);
-                    ctx.fillStyle = '#556B2F';
-                    ctx.beginPath();
-                    ctx.arc(50, 35, 18, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(42, 32, 5, 5);
-                    ctx.fillRect(53, 32, 5, 5);
+                case 'shadow':
+                    ctx.fillStyle = '#2F4F4F';
+                    ctx.fillRect(25, 25, 50, 50);
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.fillRect(35, 35, 30, 30);
                     break;
                 default:
                     ctx.fillStyle = enemy.color;
@@ -1612,14 +1593,6 @@
             const partyMember = gameState.party[gameState.combat.activePartyMember];
             const enemy = gameState.combat.enemy;
             
-            const attackMessages = [
-                `${partyMember.name} throws a textbook at ${enemy.name}!`,
-                `${partyMember.name} hits ${enemy.name} with a laptop!`,
-                `${partyMember.name} attacks with a desk lamp!`,
-                `${partyMember.name} swings a backpack!`
-            ];
-            const message = attackMessages[Math.floor(Math.random() * attackMessages.length)];
-            
             let damage = Math.max(1, partyMember.attack - enemy.defense + Math.floor(Math.random() * 3));
             
             if (gameState.combat.playerDefending) {
@@ -1628,7 +1601,7 @@
             }
             
             enemy.hp -= damage;
-            showCombatMessage(`${message} ${damage} damage!`);
+            showCombatMessage(`${partyMember.name} attacks! ${damage} damage!`);
             
             if (enemy.hp <= 0) {
                 endCombat(true);
@@ -1657,7 +1630,7 @@
             updateCombatPartyDisplay();
             hidePSIMenu();
             
-            showCombatMessage(`${partyMember.name} uses ${ability.name}! ${enemy.name} takes ${damage} psychic damage!`);
+            showCombatMessage(`${partyMember.name} uses ${ability.name}! ${damage} damage!`);
             
             if (enemy.hp <= 0) {
                 endCombat(true);
@@ -1686,7 +1659,7 @@
             updateCombatPartyDisplay();
             hidePSIMenu();
             
-            showCombatMessage(`${partyMember.name} pulls an ${ability.name}! ${enemy.name} takes ${damage} damage!`);
+            showCombatMessage(`${partyMember.name} pulls an ${ability.name}! ${damage} damage!`);
             
             if (enemy.hp <= 0) {
                 endCombat(true);
@@ -1712,7 +1685,7 @@
             updateCombatPartyDisplay();
             hidePSIMenu();
             
-            showCombatMessage(`${partyMember.name} eats instant ramen! Restored ${ability.healAmount} HP!`);
+            showCombatMessage(`${partyMember.name} heals ${ability.healAmount} HP!`);
             
             gameState.combat.turn = 'enemy';
             setTimeout(enemyTurn, 1500);
@@ -1722,7 +1695,7 @@
             if (gameState.combat.turn !== 'player') return;
             
             gameState.combat.playerDefending = true;
-            showCombatMessage(`${gameState.party[gameState.combat.activePartyMember].name} hides behind a desk!`);
+            showCombatMessage(`${gameState.party[gameState.combat.activePartyMember].name} defends!`);
             gameState.combat.turn = 'enemy';
             setTimeout(enemyTurn, 1000);
         }
@@ -1747,7 +1720,6 @@
             const alivePartyMembers = gameState.party.filter(member => member.hp > 0);
             if (alivePartyMembers.length === 0) {
                 endCombat(false);
-                showCombatMessage('All party members are defeated...');
                 return;
             }
             
@@ -1764,13 +1736,12 @@
             updateCombatPartyDisplay();
             updateHUD();
             
-            showCombatMessage(`${enemy.name} uses ${attack.name} on ${target.name}! ${damage} damage!`);
+            showCombatMessage(`${enemy.name} uses ${attack.name}! ${damage} damage!`);
             
             const allDefeated = gameState.party.every(member => member.hp <= 0);
             
             if (allDefeated) {
                 endCombat(false);
-                showCombatMessage('Your party is defeated...');
                 setTimeout(() => {
                     gameState.party.forEach(member => {
                         member.hp = member.maxHp;
@@ -1859,22 +1830,46 @@
                 
                 if (Math.abs(player.x - exitTileX) < map.tileSize / 2 &&
                     Math.abs(player.y - exitTileY) < map.tileSize / 2) {
-                    if (exit.targetArea === 'graveyard' && !gameState.flags.openedForestGate && !hasItem('forestKey')) {
-                        showDialogue('The gate is locked. You need to find the key...');
-                        gameState.inDialogue = true;
-                        return;
+                    
+                    // Check if area is locked
+                    if (exit.targetArea === 'graveyard' && !gameState.flags.openedForestGate) {
+                        if (!hasItem('forestKey')) {
+                            showDialogue('The gate is locked. You need the Forest Key...');
+                            gameState.inDialogue = true;
+                            return;
+                        } else {
+                            gameState.flags.openedForestGate = true;
+                        }
                     }
                     
-                    if (exit.targetArea === 'village' && !gameState.flags.openedVillageGate && !hasItem('graveyardKey')) {
-                        showDialogue('The village gate is locked. You need to find the Graveyard Key...');
-                        gameState.inDialogue = true;
-                        return;
+                    if (exit.targetArea === 'village' && !gameState.flags.openedVillageGate) {
+                        if (!hasItem('graveyardKey')) {
+                            showDialogue('The village gate is locked. You need the Graveyard Key...');
+                            gameState.inDialogue = true;
+                            return;
+                        } else {
+                            gameState.flags.openedVillageGate = true;
+                        }
                     }
                     
-                    if (exit.targetArea === 'upperVillage' && !gameState.flags.openedUpperVillageGate && !hasItem('villageKey')) {
-                        showDialogue('The Upper Village gate is locked. You need to find the Village Key...');
-                        gameState.inDialogue = true;
-                        return;
+                    if (exit.targetArea === 'upperVillage' && !gameState.flags.openedUpperVillageGate) {
+                        if (!hasItem('villageKey')) {
+                            showDialogue('The Upper Village gate is locked. You need the Village Key...');
+                            gameState.inDialogue = true;
+                            return;
+                        } else {
+                            gameState.flags.openedUpperVillageGate = true;
+                        }
+                    }
+                    
+                    if (exit.targetArea === 'castleWalls' && !gameState.flags.openedCastleWallsGate) {
+                        if (!hasItem('castleKey')) {
+                            showDialogue('The Castle Walls gate is locked. You need the Castle Key...');
+                            gameState.inDialogue = true;
+                            return;
+                        } else {
+                            gameState.flags.openedCastleWallsGate = true;
+                        }
                     }
                     
                     if (exit.transitionText) {
@@ -1907,10 +1902,7 @@
                 gameState.flags.enteredForest = true;
                 gameState.dialogueQueue = [
                     "You emerge into a twisted, dark forest...",
-                    "The trees seem to move when you're not looking...",
-                    "You can hear Izzy's voice echoing in the distance...",
-                    "There's a gate at the north end, but it's locked...",
-                    "Maybe there's a key hidden somewhere in this forest..."
+                    "Find the key hidden among the trees..."
                 ];
                 setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
             }
@@ -1919,9 +1911,6 @@
                 gameState.flags.enteredGraveyard = true;
                 gameState.dialogueQueue = [
                     "The graveyard is eerily quiet...",
-                    "Tombstones stretch as far as you can see...",
-                    "You feel like you're being watched...",
-                    "There's a gate to the north that leads to a village...",
                     "Find the key hidden among the dead..."
                 ];
                 setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
@@ -1931,10 +1920,17 @@
                 gameState.flags.enteredVillage = true;
                 gameState.dialogueQueue = [
                     "You enter a small village...",
-                    "The villagers look at you with hope...",
-                    "This seems like a safe place to rest...",
-                    "There's a merchant, a healer, and an elder here...",
-                    "The gate to the Upper Village is locked..."
+                    "A safe place to rest..."
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+            
+            if (areaId === 'upperVillage' && !gameState.flags.enteredUpperVillage) {
+                gameState.flags.enteredUpperVillage = true;
+                gameState.dialogueQueue = [
+                    "You enter the Upper Village...",
+                    "The castle looms in the distance...",
+                    "Find the Castle Key to reach the walls..."
                 ];
                 setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
             }
@@ -1990,10 +1986,7 @@
                     gameState.party.push({...bekahStats});
                     gameState.dialogueQueue = [...npc.dialogue];
                 } else {
-                    gameState.dialogueQueue = [
-                        "BEKAH: We need to find Izzy!",
-                        "BEKAH: Let me know if you need help in battle!"
-                    ];
+                    gameState.dialogueQueue = ["BEKAH: Let's find Izzy!"];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (npc.interactionType === 'ghost') {
@@ -2001,6 +1994,8 @@
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (npc.interactionType === 'merchant') {
                 openShop('shadyMerchant');
+            } else if (npc.interactionType === 'upperMerchant') {
+                openShop('upperMerchant');
             } else if (npc.interactionType === 'healer') {
                 openShop('villageHealer');
             } else if (npc.interactionType === 'elder') {
@@ -2015,14 +2010,12 @@
             if (obj.interactionType === 'portal') {
                 gameState.dialogueQueue = [
                     "The portal swirls with dark energy...",
-                    "You can hear Izzy's voice echoing from within...",
-                    "This must be the entrance to the Dark Wonderland Forest.",
                     "You step through the portal..."
                 ];
                 gameState.pendingExit = { targetArea: 'darkForest', targetX: 25, targetY: 38 };
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'returnPortal') {
-                gameState.dialogueQueue = ["A portal back to the closet.", "You step through the portal..."];
+                gameState.dialogueQueue = ["You step through the portal..."];
                 gameState.pendingExit = { targetArea: 'closet', targetX: 14, targetY: 14 };
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'returnToForest') {
@@ -2036,7 +2029,7 @@
                 if (!hasItem('forestKey')) {
                     addItem('forestKey');
                     gameState.flags.foundForestKey = true;
-                    gameState.dialogueQueue = ["You found the Forest Key!", "Added to Key Items!"];
+                    gameState.dialogueQueue = ["You found the Forest Key!"];
                 } else {
                     gameState.dialogueQueue = ["You already have the Forest Key."];
                 }
@@ -2045,7 +2038,7 @@
                 if (!hasItem('graveyardKey')) {
                     addItem('graveyardKey');
                     gameState.flags.foundGraveyardKey = true;
-                    gameState.dialogueQueue = ["You found the Graveyard Key!", "Added to Key Items!"];
+                    gameState.dialogueQueue = ["You found the Graveyard Key!"];
                 } else {
                     gameState.dialogueQueue = ["You already have the Graveyard Key."];
                 }
@@ -2054,9 +2047,18 @@
                 if (!hasItem('villageKey')) {
                     addItem('villageKey');
                     gameState.flags.foundVillageKey = true;
-                    gameState.dialogueQueue = ["You found the Village Key!", "Added to Key Items!"];
+                    gameState.dialogueQueue = ["You found the Village Key!"];
                 } else {
                     gameState.dialogueQueue = ["You already have the Village Key."];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'castleKey') {
+                if (!hasItem('castleKey')) {
+                    addItem('castleKey');
+                    gameState.flags.foundCastleKey = true;
+                    gameState.dialogueQueue = ["You found the Castle Key!"];
+                } else {
+                    gameState.dialogueQueue = ["You already have the Castle Key."];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'gate') {
@@ -2064,7 +2066,7 @@
                     gameState.flags.openedForestGate = true;
                     gameState.dialogueQueue = ["You use the Forest Key...", "The gate creaks open!"];
                 } else {
-                    gameState.dialogueQueue = ["The gate is locked.", "You need to find the key..."];
+                    gameState.dialogueQueue = ["The gate is locked.", "You need the Forest Key..."];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'villageGate') {
@@ -2072,7 +2074,7 @@
                     gameState.flags.openedVillageGate = true;
                     gameState.dialogueQueue = ["You use the Graveyard Key...", "The village gate opens!"];
                 } else {
-                    gameState.dialogueQueue = ["The village gate is locked.", "You need to find the Graveyard Key..."];
+                    gameState.dialogueQueue = ["The village gate is locked.", "You need the Graveyard Key..."];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'upperVillageGate') {
@@ -2080,13 +2082,31 @@
                     gameState.flags.openedUpperVillageGate = true;
                     gameState.dialogueQueue = ["You use the Village Key...", "The Upper Village gate opens!"];
                 } else {
-                    gameState.dialogueQueue = ["The Upper Village gate is locked.", "You need to find the Village Key..."];
+                    gameState.dialogueQueue = ["The Upper Village gate is locked.", "You need the Village Key..."];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'castleWallsGate') {
+                if (hasItem('castleKey')) {
+                    gameState.flags.openedCastleWallsGate = true;
+                    gameState.dialogueQueue = ["You use the Castle Key...", "The Castle Walls gate opens!"];
+                } else {
+                    gameState.dialogueQueue = ["The Castle Walls gate is locked.", "You need the Castle Key..."];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'merchant') {
                 openShop('shadyMerchant');
+            } else if (obj.interactionType === 'upperMerchant') {
+                openShop('upperMerchant');
             } else if (obj.interactionType === 'healer') {
                 openShop('villageHealer');
+            } else if (obj.interactionType === 'castleInfo') {
+                gameState.dialogueQueue = [
+                    "The records mention Ian...",
+                    "He was a star athlete before Rylee transformed him...",
+                    "Now he guards the Castle Walls...",
+                    "He cannot be reasoned with..."
+                ];
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.itemDrop) {
                 if (!hasItem(obj.itemDrop)) {
                     addItem(obj.itemDrop);
@@ -2124,8 +2144,6 @@
                             drawTreeTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else if (gameState.currentArea === 'graveyard') {
                             drawTombstoneTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
-                        } else if (gameState.currentArea === 'village') {
-                            drawBuildingTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else {
                             drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
                         }
@@ -2149,9 +2167,6 @@
         function drawWallTile(ctx, x, y, size, color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, size, size);
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(x, y, size, size);
         }
         
         function drawTreeTile(ctx, x, y, size) {
@@ -2170,13 +2185,6 @@
             ctx.fillRect(x + 5, y + 3, size - 10, size - 6);
         }
         
-        function drawBuildingTile(ctx, x, y, size) {
-            ctx.fillStyle = '#4a3a2a';
-            ctx.fillRect(x, y, size, size);
-            ctx.fillStyle = '#5a4a3a';
-            ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
-        }
-        
         function drawObject(ctx, obj, tileSize) {
             const x = obj.x * tileSize;
             const y = obj.y * tileSize;
@@ -2185,8 +2193,6 @@
                 case 'bed':
                     ctx.fillStyle = '#4169E1';
                     ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(x + 5, y + 5, tileSize * 2, tileSize);
                     break;
                 case 'desk':
                     ctx.fillStyle = '#8B4513';
@@ -2210,24 +2216,6 @@
                     ctx.fillStyle = `rgba(255, 0, 255, ${pulse})`;
                     ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
                     break;
-                case 'tree':
-                    ctx.fillStyle = '#1a4a1a';
-                    ctx.beginPath();
-                    ctx.arc(x + tileSize/2, y + tileSize/2, tileSize, 0, Math.PI * 2);
-                    ctx.fill();
-                    break;
-                case 'mushroom':
-                    ctx.fillStyle = '#8B008B';
-                    ctx.fillRect(x, y, tileSize, tileSize);
-                    ctx.fillStyle = '#FF69B4';
-                    ctx.beginPath();
-                    ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
-                    ctx.fill();
-                    break;
-                case 'note':
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(x, y, tileSize, tileSize);
-                    break;
                 case 'key':
                     ctx.fillStyle = '#FFD700';
                     ctx.fillRect(x + 5, y + 8, 10, 4);
@@ -2237,13 +2225,9 @@
                     ctx.fillStyle = '#654321';
                     ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
                     break;
-                case 'tombstone':
-                    ctx.fillStyle = '#808080';
+                case 'note':
+                    ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(x, y, tileSize, tileSize);
-                    break;
-                case 'statue':
-                    ctx.fillStyle = '#A9A9A9';
-                    ctx.fillRect(x, y, tileSize, tileSize * 2);
                     break;
             }
         }
@@ -2259,50 +2243,30 @@
                 ctx.fillRect(x + 3, y - 3, tileSize - 6, tileSize - 6);
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x + 3, y - 6, tileSize - 6, 5);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 3, 3, 3);
-                ctx.fillRect(x + 12, y + 3, 3, 3);
             } else if (npc.sprite === 'ghost') {
                 ctx.fillStyle = '#E0E0E0';
                 ctx.beginPath();
                 ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'merchant') {
                 ctx.fillStyle = '#2F4F4F';
                 ctx.fillRect(x, y, tileSize, tileSize);
-                ctx.fillStyle = '#FFD700';
-                ctx.fillRect(x + 5, y + 3, 10, 5);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'healer') {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x, y, tileSize, tileSize);
-                ctx.fillStyle = '#FF0000';
-                ctx.fillRect(x + 5, y + 5, 10, 10);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'elder') {
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x, y, tileSize, tileSize);
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x, y, tileSize, tileSize/3);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else {
                 ctx.fillStyle = '#FFC0CB';
                 ctx.fillRect(x, y, tileSize, tileSize);
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(x, y, tileSize, tileSize/3);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             }
+            
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x + 5, y + 8, 3, 3);
+            ctx.fillRect(x + 12, y + 8, 3, 3);
         }
         
         function drawPlayer(ctx) {
@@ -2317,13 +2281,8 @@
             ctx.fillStyle = partyLeader.hairColor;
             ctx.fillRect(player.x + 3, player.y - 8, tileSize - 6, 5);
             ctx.fillStyle = '#000000';
-            if (player.direction === 'down') {
-                ctx.fillRect(player.x + 5, player.y + 3, 3, 3);
-                ctx.fillRect(player.x + 12, player.y + 3, 3, 3);
-            } else {
-                ctx.fillRect(player.x + 5, player.y + 2, 3, 3);
-                ctx.fillRect(player.x + 12, player.y + 2, 3, 3);
-            }
+            ctx.fillRect(player.x + 5, player.y + 3, 3, 3);
+            ctx.fillRect(player.x + 12, player.y + 3, 3, 3);
             ctx.fillStyle = partyLeader.pantsColor;
             ctx.fillRect(player.x + 3, player.y + tileSize - 5, 5, 5);
             ctx.fillRect(player.x + 12, player.y + tileSize - 5, 5, 5);
