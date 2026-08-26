@@ -580,7 +580,8 @@
             laptop: { name: 'Laptop', type: 'weapon', attackBonus: 10, description: 'Can be used as a weapon. +10 Attack.', price: 75, usable: false },
             deskLamp: { name: 'Desk Lamp', type: 'weapon', attackBonus: 3, description: 'A sturdy desk lamp. +3 Attack.', price: 15, usable: false },
             backpack: { name: 'Heavy Backpack', type: 'weapon', attackBonus: 8, description: 'Full of textbooks. +8 Attack.', price: 50, usable: false },
-            forestKey: { name: 'Forest Key', type: 'keyItem', description: 'A rusted key that opens the Forest Gate.', price: 0, usable: false }
+            forestKey: { name: 'Forest Key', type: 'keyItem', description: 'A rusted key that opens the Forest Gate.', price: 0, usable: false },
+            graveyardKey: { name: 'Graveyard Key', type: 'keyItem', description: 'A bone-shaped key that opens the Village Gate.', price: 0, usable: false }
         };
         
         let gameState = {
@@ -593,8 +594,29 @@
             pendingExit: null,
             player: { x: 400, y: 300, direction: 'down', moving: false, speed: 3 },
             keys: { up: false, down: false, left: false, right: false, interact: false },
-            flags: { heardIzzyScream: false, enteredCloset: false, foundPortal: false, enteredForest: false, metBekah: false, foundForestKey: false, openedForestGate: false },
-            combat: { active: false, enemy: null, turn: 'player', playerDefending: false, messageQueue: [], enemyEncounterChance: 0.1, activePartyMember: 0 },
+            flags: { 
+                heardIzzyScream: false, 
+                enteredCloset: false, 
+                foundPortal: false, 
+                enteredForest: false, 
+                metBekah: false, 
+                foundForestKey: false, 
+                openedForestGate: false,
+                enteredGraveyard: false,
+                foundGraveyardKey: false,
+                openedVillageGate: false
+            },
+            combat: { 
+                active: false, 
+                enemy: null, 
+                turn: 'player', 
+                playerDefending: false, 
+                messageQueue: [], 
+                enemyEncounterChance: 0.02, 
+                activePartyMember: 0 
+            },
+            stepCounter: 0,
+            stepsUntilNextEncounter: 20,
             party: [
                 { id: 'protagonist', name: 'PROTAGONIST', level: 1, hp: 30, maxHp: 30, pp: 10, maxPp: 10, attack: 5, defense: 3, speed: 4, exp: 0, shirtColor: '#ff0000', skinTone: '#f0c8a0', hairColor: '#4a3728', pantsColor: '#0000ff' }
             ],
@@ -616,7 +638,10 @@
             showerMold: { name: 'Shower Mold', hp: 18, maxHp: 18, pp: 0, attack: 3, defense: 2, speed: 2, exp: 7, money: 3, color: '#556B2F', sprite: 'mold', attacks: [{ name: 'Spore Cloud', power: 1.1, type: 'physical' }, { name: 'Slimy Touch', power: 1.3, type: 'physical' }] },
             forestImp: { name: 'Forest Imp', hp: 22, maxHp: 22, pp: 8, attack: 4, defense: 2, speed: 7, exp: 10, money: 10, color: '#228B22', sprite: 'imp', attacks: [{ name: 'Branch Whip', power: 1.3, type: 'physical' }, { name: 'Leaf Storm', power: 1.4, type: 'magical' }] },
             mushroomZombie: { name: 'Mushroom Zombie', hp: 28, maxHp: 28, pp: 0, attack: 5, defense: 3, speed: 2, exp: 14, money: 8, color: '#8B008B', sprite: 'mushroom', attacks: [{ name: 'Spore Burst', power: 1.5, type: 'magical' }, { name: 'Fungal Grab', power: 1.2, type: 'physical' }] },
-            shadowStudent: { name: 'Shadow Student', hp: 35, maxHp: 35, pp: 15, attack: 6, defense: 4, speed: 5, exp: 20, money: 20, color: '#2F4F4F', sprite: 'shadow', attacks: [{ name: 'Debt Collector', power: 1.7, type: 'magical' }, { name: 'Student Loan', power: 1.5, type: 'physical' }] }
+            shadowStudent: { name: 'Shadow Student', hp: 35, maxHp: 35, pp: 15, attack: 6, defense: 4, speed: 5, exp: 20, money: 20, color: '#2F4F4F', sprite: 'shadow', attacks: [{ name: 'Debt Collector', power: 1.7, type: 'magical' }, { name: 'Student Loan', power: 1.5, type: 'physical' }] },
+            skeletonStudent: { name: 'Skeleton Student', hp: 32, maxHp: 32, pp: 5, attack: 6, defense: 3, speed: 4, exp: 18, money: 15, color: '#F5F5DC', sprite: 'skeleton', attacks: [{ name: 'Bone Throw', power: 1.4, type: 'physical' }, { name: 'Rattling Cry', power: 1.3, type: 'magical' }] },
+            ghostFreshman: { name: 'Ghost Freshman', hp: 30, maxHp: 30, pp: 12, attack: 5, defense: 2, speed: 7, exp: 16, money: 12, color: '#E0E0E0', sprite: 'ghost', attacks: [{ name: 'Scare', power: 1.5, type: 'magical' }, { name: 'Cold Touch', power: 1.2, type: 'physical' }] },
+            zombieRA: { name: 'Zombie RA', hp: 40, maxHp: 40, pp: 0, attack: 7, defense: 4, speed: 3, exp: 25, money: 25, color: '#556B2F', sprite: 'zombie', attacks: [{ name: 'Policy Violation', power: 1.8, type: 'physical' }, { name: 'Room Check', power: 1.5, type: 'magical' }] }
         };
         
         const psychicAbilities = {
@@ -630,12 +655,14 @@
         
         function initMaps() {
             maps.room303 = { width: 40, height: 30, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#2d1b4e', floorColor: '#8B7355', wallColor: '#4A4A4A', enemies: [] };
-            maps.closet = { width: 30, height: 30, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a0a2e', floorColor: '#6B5B45', wallColor: '#3A2A1A', enemies: ['laundryGoblin', 'microwaveWraith', 'showerMold'] };
+            maps.closet = { width: 30, height: 30, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a0a2e', floorColor: '#6B5B45', wallColor: '#3A2A1A', enemies: [] };
             maps.darkForest = { width: 50, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#0a1a0a', floorColor: '#1a3a1a', wallColor: '#0a2a0a', enemies: ['forestImp', 'mushroomZombie', 'shadowStudent', 'laundryGoblin'] };
+            maps.graveyard = { width: 45, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a1a1a', floorColor: '#2a2a2a', wallColor: '#3a3a3a', enemies: ['skeletonStudent', 'ghostFreshman', 'zombieRA', 'shadowStudent'] };
             
             generateRoom303();
             generateCloset();
             generateDarkForest();
+            generateGraveyard();
         }
         
         function generateRoom303() {
@@ -781,7 +808,85 @@
             
             map.exits = [
                 { x: 25, y: 39, targetArea: 'closet', targetX: 14, targetY: 14, transitionText: 'You return through the portal...' },
-                { x: 25, y: 4, targetArea: 'graveyard', targetX: 25, targetY: 35, transitionText: 'You unlock the gate and enter the graveyard...' }
+                { x: 25, y: 4, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You unlock the gate and enter the graveyard...' }
+            ];
+        }
+        
+        function generateGraveyard() {
+            const map = maps.graveyard;
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1;
+                map.collisionMap[map.height - 1][x] = 1;
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1;
+                map.collisionMap[y][map.width - 1] = 1;
+            }
+            
+            map.collisionMap[map.height - 1][22] = 0;
+            map.collisionMap[map.height - 2][22] = 0;
+            
+            map.collisionMap[2][22] = 1;
+            map.collisionMap[2][23] = 1;
+            map.collisionMap[2][24] = 1;
+            
+            const tombstonePositions = [
+                [5, 5], [8, 8], [15, 5], [20, 8], [30, 5],
+                [35, 8], [40, 5], [5, 15], [10, 15], [15, 18],
+                [25, 12], [30, 15], [35, 18], [40, 15], [8, 22],
+                [15, 25], [20, 22], [28, 25], [35, 22], [40, 25],
+                [5, 30], [12, 32], [20, 30], [30, 32], [38, 30]
+            ];
+            
+            tombstonePositions.forEach(([x, y]) => {
+                map.collisionMap[y][x] = 1;
+            });
+            
+            for (let y = 15; y < 20; y++) {
+                for (let x = 20; x < 25; x++) {
+                    map.collisionMap[y][x] = 1;
+                }
+            }
+            
+            for (let y = 35; y < 40; y++) map.collisionMap[y][22] = 0;
+            for (let y = 25; y < 35; y++) map.collisionMap[y][15] = 0;
+            for (let x = 15; x < 30; x++) map.collisionMap[25][x] = 0;
+            for (let y = 10; y < 25; y++) map.collisionMap[y][30] = 0;
+            for (let x = 30; x < 40; x++) map.collisionMap[10][x] = 0;
+            for (let y = 3; y < 10; y++) map.collisionMap[y][40] = 0;
+            
+            map.objects = [
+                { x: 22, y: 38, type: 'portal', name: 'Forest Path', description: 'The path back to the Dark Forest.', interactionType: 'returnToForest' },
+                { x: 10, y: 10, type: 'tombstone', name: 'Old Tombstone', description: 'The name has worn away... Something is scratched on the back.' },
+                { x: 30, y: 8, type: 'tombstone', name: 'Fresh Grave', description: 'The dirt looks recently disturbed...' },
+                { x: 15, y: 28, type: 'note', name: 'Diary Page', description: 'A page from a diary: "...the key is buried with the one who never graduated..."', interactionType: 'note' },
+                { x: 35, y: 28, type: 'key', name: 'Graveyard Key', description: 'A bone-shaped key that opens the Village Gate.', interactionType: 'graveyardKey' },
+                { x: 22, y: 3, type: 'gate', name: 'Village Gate', description: 'A iron gate leading to the Village.', interactionType: 'villageGate' },
+                { x: 12, y: 20, type: 'statue', name: 'Weeping Angel', description: 'A statue of an angel covering its face. It seems to be crying...' }
+            ];
+            
+            map.npcs = [
+                {
+                    x: 18,
+                    y: 30,
+                    name: 'Ghost of Roommate Past',
+                    sprite: 'ghost',
+                    dialogue: [
+                        "GHOST: Beware the RA...",
+                        "GHOST: Rylee was once a student like you...",
+                        "GHOST: But the power of the Desk corrupted her...",
+                        "GHOST: Ian guards the castle walls... He cannot be reasoned with...",
+                        "GHOST: Find the key... It's hidden with those who never left..."
+                    ],
+                    interactionType: 'ghost'
+                }
+            ];
+            
+            map.exits = [
+                { x: 22, y: 39, targetArea: 'darkForest', targetX: 25, targetY: 3, transitionText: 'You return to the Dark Forest...' },
+                { x: 22, y: 2, targetArea: 'village', targetX: 22, targetY: 38, transitionText: 'You unlock the gate and enter the Village...' }
             ];
         }
         
@@ -1025,8 +1130,19 @@
         
         function checkRandomEncounter() {
             const map = maps[gameState.currentArea];
+            
+            // No encounters in safe areas
+            if (gameState.currentArea === 'room303' || gameState.currentArea === 'closet') {
+                return;
+            }
+            
             if (map.enemies && map.enemies.length > 0 && gameState.player.moving) {
-                if (Math.random() < gameState.combat.enemyEncounterChance) {
+                gameState.stepCounter++;
+                
+                if (gameState.stepCounter >= gameState.stepsUntilNextEncounter) {
+                    gameState.stepCounter = 0;
+                    gameState.stepsUntilNextEncounter = 15 + Math.floor(Math.random() * 15);
+                    
                     const randomEnemy = map.enemies[Math.floor(Math.random() * map.enemies.length)];
                     startCombat(randomEnemy);
                 }
@@ -1178,6 +1294,38 @@
                     ctx.fillRect(35, 35, 30, 30);
                     ctx.fillStyle = '#FF0000';
                     ctx.fillRect(45, 45, 10, 5);
+                    break;
+                case 'skeleton':
+                    ctx.fillStyle = '#F5F5DC';
+                    ctx.fillRect(35, 30, 30, 40);
+                    ctx.fillStyle = '#F5F5DC';
+                    ctx.beginPath();
+                    ctx.arc(50, 30, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(45, 25, 5, 5);
+                    ctx.fillRect(55, 25, 5, 5);
+                    break;
+                case 'ghost':
+                    ctx.fillStyle = '#E0E0E0';
+                    ctx.beginPath();
+                    ctx.arc(50, 40, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillRect(25, 40, 50, 30);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(40, 35, 8, 8);
+                    ctx.fillRect(52, 35, 8, 8);
+                    break;
+                case 'zombie':
+                    ctx.fillStyle = '#556B2F';
+                    ctx.fillRect(30, 40, 40, 35);
+                    ctx.fillStyle = '#556B2F';
+                    ctx.beginPath();
+                    ctx.arc(50, 35, 18, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(42, 32, 5, 5);
+                    ctx.fillRect(53, 32, 5, 5);
                     break;
                 default:
                     ctx.fillStyle = enemy.color;
@@ -1468,6 +1616,14 @@
                         return;
                     }
                     
+                    if (exit.targetArea === 'village' && !gameState.flags.openedVillageGate) {
+                        if (!gameState.flags.foundGraveyardKey) {
+                            showDialogue('The village gate is locked. You need to find the Graveyard Key...');
+                            gameState.inDialogue = true;
+                        }
+                        return;
+                    }
+                    
                     if (exit.transitionText) {
                         transitionWithDialogue(exit);
                     } else {
@@ -1493,17 +1649,6 @@
             gameState.player.y = targetY * maps[areaId].tileSize;
             updateHUD();
             
-            if (areaId === 'closet' && !gameState.flags.enteredCloset) {
-                gameState.flags.enteredCloset = true;
-                gameState.dialogueQueue = [
-                    "The closet is darker than it should be...",
-                    "The air is cold, and you hear whispers...",
-                    "A strange purple glow comes from deeper in...",
-                    "You feel something watching you..."
-                ];
-                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
-            }
-            
             if (areaId === 'darkForest' && !gameState.flags.enteredForest) {
                 gameState.flags.enteredForest = true;
                 gameState.dialogueQueue = [
@@ -1512,6 +1657,18 @@
                     "You can hear Izzy's voice echoing in the distance...",
                     "There's a gate at the north end, but it's locked...",
                     "Maybe there's a key hidden somewhere in this forest..."
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+            
+            if (areaId === 'graveyard' && !gameState.flags.enteredGraveyard) {
+                gameState.flags.enteredGraveyard = true;
+                gameState.dialogueQueue = [
+                    "The graveyard is eerily quiet...",
+                    "Tombstones stretch as far as you can see...",
+                    "You feel like you're being watched...",
+                    "There's a gate to the north that leads to a village...",
+                    "Find the key hidden among the dead..."
                 ];
                 setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
             }
@@ -1573,6 +1730,9 @@
                     ];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (npc.interactionType === 'ghost') {
+                gameState.dialogueQueue = [...npc.dialogue];
+                showDialogue(gameState.dialogueQueue.shift());
             }
         }
         
@@ -1607,11 +1767,22 @@
                 };
                 
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'returnToForest') {
+                gameState.dialogueQueue = [
+                    "The path back to the Dark Forest."
+                ];
+                
+                gameState.pendingExit = {
+                    targetArea: 'darkForest',
+                    targetX: 25,
+                    targetY: 3
+                };
+                
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'note') {
                 gameState.dialogueQueue = [
-                    "You find a torn note...",
-                    "\"The key is hidden where the mushrooms glow...\"",
-                    "You should look for glowing mushrooms!"
+                    "You find a note...",
+                    obj.description.split(': ')[1] || obj.description
                 ];
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'forestKey') {
@@ -1628,6 +1799,20 @@
                     ];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'graveyardKey') {
+                if (!hasItem('graveyardKey')) {
+                    gameState.flags.foundGraveyardKey = true;
+                    addItem('graveyardKey');
+                    gameState.dialogueQueue = [
+                        "You found the Graveyard Key!",
+                        "Added to Key Items!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        "You already have the Graveyard Key."
+                    ];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'gate') {
                 if (gameState.flags.foundForestKey || hasItem('forestKey')) {
                     gameState.flags.openedForestGate = true;
@@ -1640,6 +1825,21 @@
                     gameState.dialogueQueue = [
                         "The gate is locked.",
                         "You need to find the key..."
+                    ];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'villageGate') {
+                if (gameState.flags.foundGraveyardKey || hasItem('graveyardKey')) {
+                    gameState.flags.openedVillageGate = true;
+                    gameState.dialogueQueue = [
+                        "You use the Graveyard Key...",
+                        "The village gate opens!",
+                        "You can now enter the Village!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = [
+                        "The village gate is locked.",
+                        "You need to find the Graveyard Key..."
                     ];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
@@ -1684,6 +1884,8 @@
                     if (map.collisionMap[y][x] === 1) {
                         if (gameState.currentArea === 'darkForest') {
                             drawTreeTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                        } else if (gameState.currentArea === 'graveyard') {
+                            drawTombstoneTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else {
                             drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
                         }
@@ -1726,6 +1928,15 @@
             ctx.beginPath();
             ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
             ctx.fill();
+        }
+        
+        function drawTombstoneTile(ctx, x, y, size) {
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = '#808080';
+            ctx.fillRect(x + 5, y + 3, size - 10, size - 6);
+            ctx.fillStyle = '#666666';
+            ctx.fillRect(x + 8, y + 8, size - 16, size - 16);
         }
         
         function drawObject(ctx, obj, tileSize) {
@@ -1810,6 +2021,20 @@
                         ctx.stroke();
                     }
                     break;
+                case 'tombstone':
+                    ctx.fillStyle = '#808080';
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = '#666666';
+                    ctx.fillRect(x + 5, y + 5, tileSize - 10, tileSize - 10);
+                    break;
+                case 'statue':
+                    ctx.fillStyle = '#A9A9A9';
+                    ctx.fillRect(x, y, tileSize, tileSize * 2);
+                    ctx.fillStyle = '#C0C0C0';
+                    ctx.beginPath();
+                    ctx.arc(x + tileSize/2, y, tileSize/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
             }
         }
         
@@ -1827,6 +2052,14 @@
                 ctx.fillStyle = '#000000';
                 ctx.fillRect(x + 5, y + 3, 3, 3);
                 ctx.fillRect(x + 12, y + 3, 3, 3);
+            } else if (npc.sprite === 'ghost') {
+                ctx.fillStyle = '#E0E0E0';
+                ctx.beginPath();
+                ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 5, y + 8, 3, 3);
+                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else {
                 ctx.fillStyle = '#FFC0CB';
                 ctx.fillRect(x, y, tileSize, tileSize);
