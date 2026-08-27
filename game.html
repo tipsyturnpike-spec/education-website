@@ -6,1163 +6,89 @@
     <title>John Neumaier Hall - The Complete Adventure</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #000;
-            font-family: 'Press Start 2P', cursive;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        .game-container {
-            position: relative;
-            width: 800px;
-            height: 600px;
-            background: #1a0a2e;
-            border: 4px solid #ff00ff;
-            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5), inset 0 0 50px rgba(255, 0, 255, 0.1);
-        }
-        
-        .game-screen {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        
-        #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            image-rendering: pixelated;
-        }
-        
-        .dialogue-box {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            background: rgba(0, 0, 0, 0.95);
-            border: 3px solid #00ffff;
-            padding: 20px;
-            color: #fff;
-            font-size: 12px;
-            line-height: 1.8;
-            display: none;
-            z-index: 100;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-            border-radius: 8px;
-        }
-        
-        .dialogue-box.active {
-            display: block;
-        }
-        
-        .menu {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            border: 4px solid #ff00ff;
-            padding: 30px;
-            color: #fff;
-            text-align: center;
-            display: none;
-            z-index: 200;
-            min-width: 300px;
-            box-shadow: 0 0 40px rgba(255, 0, 255, 0.6);
-            border-radius: 10px;
-        }
-        
-        .menu.active {
-            display: block;
-        }
-        
-        .menu h2 {
-            color: #ff00ff;
-            margin-bottom: 20px;
-            font-size: 20px;
-            text-shadow: 0 0 20px #ff00ff;
-        }
-        
-        .menu button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: linear-gradient(135deg, #2d1b4e, #1a0a2e);
-            border: 2px solid #00ffff;
-            color: #fff;
-            font-family: 'Press Start 2P', cursive;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 12px;
-            border-radius: 5px;
-        }
-        
-        .menu button:hover {
-            background: linear-gradient(135deg, #ff00ff, #8b008b);
-            border-color: #fff;
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
-        }
-        
-        .inventory-screen, .shop-screen, .phone-screen {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            border: 4px solid #ff00ff;
-            padding: 30px;
-            color: #fff;
-            display: none;
-            z-index: 250;
-            width: 600px;
-            max-height: 500px;
-            overflow-y: auto;
-            box-shadow: 0 0 40px rgba(255, 0, 255, 0.5);
-            border-radius: 10px;
-        }
-        
-        .inventory-screen.active, .shop-screen.active, .phone-screen.active {
-            display: block;
-        }
-        
-        .inventory-screen h2, .shop-screen h2, .phone-screen h2 {
-            color: #ff00ff;
-            margin-bottom: 20px;
-            font-size: 16px;
-            text-align: center;
-        }
-        
-        .inventory-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-        
-        .inventory-tab {
-            padding: 10px 15px;
-            background: #2d1b4e;
-            border: 2px solid #00ffff;
-            color: #fff;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .inventory-tab.active {
-            background: #ff00ff;
-            box-shadow: 0 0 20px #ff00ff;
-        }
-        
-        .inventory-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            min-height: 200px;
-        }
-        
-        .inventory-item, .shop-item, .phone-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #00ffff;
-            cursor: pointer;
-            font-size: 10px;
-            transition: all 0.3s;
-            border-radius: 5px;
-        }
-        
-        .inventory-item:hover, .shop-item:hover, .phone-item:hover {
-            background: rgba(255, 0, 255, 0.2);
-            border-color: #ff00ff;
-            transform: scale(1.02);
-        }
-        
-        .item-name {
-            flex: 1;
-        }
-        
-        .item-quantity {
-            color: #00ffff;
-            margin-left: 10px;
-        }
-        
-        .item-price {
-            color: #FFD700;
-            margin-left: 10px;
-        }
-        
-        .item-description {
-            font-size: 10px;
-            color: #cccccc;
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-        
-        .inventory-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        
-        .inventory-actions button {
-            padding: 10px 20px;
-            background: #2d1b4e;
-            border: 2px solid #00ffff;
-            color: #fff;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            border-radius: 5px;
-        }
-        
-        .inventory-actions button:hover {
-            background: #ff00ff;
-        }
-        
-        .money-display {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #FFD700;
-            font-size: 14px;
-        }
-        
-        .hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            display: flex;
-            justify-content: space-between;
-            color: #fff;
-            font-size: 10px;
-            z-index: 50;
-            pointer-events: none;
-        }
-        
-        .hud-left, .hud-right {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 12px;
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-            border-radius: 5px;
-        }
-        
-        .loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            flex-direction: column;
-        }
-        
-        .loading-text {
-            color: #ff00ff;
-            font-size: 24px;
-            animation: loading-pulse 1s infinite;
-        }
-        
-        @keyframes loading-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .interaction-prompt {
-            position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ff00ff;
-            color: #fff;
-            padding: 12px 20px;
-            font-size: 10px;
-            display: none;
-            z-index: 75;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-            border-radius: 5px;
-            animation: prompt-pulse 1s infinite;
-        }
-        
-        @keyframes prompt-pulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.5); }
-            50% { box-shadow: 0 0 40px rgba(255, 0, 255, 1); }
-        }
-        
-        .interaction-prompt.active {
-            display: block;
-        }
-        
-        .combat-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
-            display: none;
-            z-index: 300;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .combat-screen.active {
-            display: flex;
-        }
-        
-        .combat-enemy-area {
-            width: 80%;
-            height: 35%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .combat-enemy {
-            width: 100px;
-            height: 100px;
-            animation: enemy-float 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.5));
-        }
-        
-        @keyframes enemy-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .combat-party-area {
-            width: 80%;
-            height: 20%;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            margin-bottom: 10px;
-            gap: 20px;
-        }
-        
-        .combat-party-member {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #00ffff;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .combat-party-member.active {
-            border-color: #ff00ff;
-            box-shadow: 0 0 25px rgba(255, 0, 255, 0.7);
-        }
-        
-        .combat-player {
-            width: 50px;
-            height: 50px;
-        }
-        
-        .combat-stats {
-            color: #fff;
-            font-size: 9px;
-            line-height: 1.6;
-        }
-        
-        .combat-menu {
-            width: 80%;
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #00ffff;
-            padding: 15px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            border-radius: 8px;
-        }
-        
-        .combat-button {
-            padding: 14px 20px;
-            background: linear-gradient(135deg, #2d1b4e, #1a0a2e);
-            border: 2px solid #ff00ff;
-            color: #fff;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 5px;
-        }
-        
-        .combat-button:hover {
-            background: linear-gradient(135deg, #ff00ff, #8b008b);
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
-        }
-        
-        .combat-message {
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 12px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            border: 2px solid #00ffff;
-            display: none;
-            z-index: 350;
-            min-width: 300px;
-            border-radius: 8px;
-        }
-        
-        .combat-message.active {
-            display: block;
-        }
-        
-        .combat-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            animation: psychedelic-shift 5s linear infinite;
-            background: radial-gradient(circle at 50% 50%, #ff00ff33, #00ffff33, #ff00ff33);
-        }
-        
-        @keyframes psychedelic-shift {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-        
-        .psi-menu, .item-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .psi-menu.active, .item-menu.active {
-            display: flex;
-        }
-        
-        .item-menu {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .phone-screen {
-            background: linear-gradient(135deg, #0a0a2e, #1a1a4e);
-            border: 4px solid #00ff00;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
-        }
-        
-        .phone-screen h2 {
-            color: #00ff00;
-            text-shadow: 0 0 20px #00ff00;
-        }
-        
-        .phone-item {
-            border-color: #00ff00;
-        }
-        
-        .phone-item:hover {
-            background: rgba(0, 255, 0, 0.2);
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#000; font-family:'Press Start 2P',cursive; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
+        .game-container { position:relative; width:800px; height:600px; background:#1a0a2e; border:4px solid #ff00ff; box-shadow:0 0 50px rgba(255,0,255,.5), inset 0 0 50px rgba(255,0,255,.1); }
+        .game-screen { position:relative; width:100%; height:100%; overflow:hidden; }
+        #gameCanvas { position:absolute; top:0; left:0; width:100%; height:100%; image-rendering:pixelated; }
+        .dialogue-box { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); width:90%; background:rgba(0,0,0,.95); border:3px solid #00ffff; padding:20px; color:#fff; font-size:12px; line-height:1.8; display:none; z-index:100; box-shadow:0 0 30px rgba(0,255,255,.5); border-radius:8px; }
+        .dialogue-box.active { display:block; }
+        .menu { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.95); border:4px solid #ff00ff; padding:30px; color:#fff; text-align:center; display:none; z-index:200; min-width:300px; box-shadow:0 0 40px rgba(255,0,255,.6); border-radius:10px; }
+        .menu.active { display:block; }
+        .menu h2 { color:#ff00ff; margin-bottom:20px; font-size:20px; text-shadow:0 0 20px #ff00ff; }
+        .menu button { display:block; width:100%; padding:12px; margin:10px 0; background:linear-gradient(135deg,#2d1b4e,#1a0a2e); border:2px solid #00ffff; color:#fff; font-family:'Press Start 2P',cursive; cursor:pointer; transition:all .3s; font-size:12px; border-radius:5px; }
+        .menu button:hover { background:linear-gradient(135deg,#ff00ff,#8b008b); border-color:#fff; transform:scale(1.05); box-shadow:0 0 30px rgba(255,0,255,.8); }
+        .inventory-screen,.shop-screen,.phone-screen { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.95); border:4px solid #ff00ff; padding:30px; color:#fff; display:none; z-index:250; width:600px; max-height:500px; overflow-y:auto; box-shadow:0 0 40px rgba(255,0,255,.5); border-radius:10px; }
+        .inventory-screen.active,.shop-screen.active,.phone-screen.active { display:block; }
+        .inventory-screen h2,.shop-screen h2,.phone-screen h2 { color:#ff00ff; margin-bottom:20px; font-size:16px; text-align:center; }
+        .inventory-tabs { display:flex; gap:10px; margin-bottom:20px; justify-content:center; }
+        .inventory-tab { padding:10px 15px; background:#2d1b4e; border:2px solid #00ffff; color:#fff; cursor:pointer; font-family:'Press Start 2P',cursive; font-size:10px; border-radius:5px; }
+        .inventory-tab.active { background:#ff00ff; box-shadow:0 0 20px #ff00ff; }
+        .inventory-list { display:flex; flex-direction:column; gap:8px; min-height:200px; }
+        .inventory-item,.shop-item,.phone-item { display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,.05); border:1px solid #00ffff; cursor:pointer; font-size:10px; transition:all .3s; border-radius:5px; }
+        .inventory-item:hover,.shop-item:hover,.phone-item:hover { background:rgba(255,0,255,.2); border-color:#ff00ff; transform:scale(1.02); }
+        .item-name { flex:1; } .item-quantity { color:#00ffff; margin-left:10px; } .item-price { color:#FFD700; margin-left:10px; }
+        .item-description { font-size:10px; color:#ccc; margin-top:5px; }
+        .inventory-actions { display:flex; gap:10px; margin-top:20px; justify-content:center; }
+        .inventory-actions button { padding:10px 20px; background:#2d1b4e; border:2px solid #00ffff; color:#fff; cursor:pointer; font-family:'Press Start 2P',cursive; font-size:10px; }
+        .money-display { text-align:center; margin-bottom:15px; color:#FFD700; font-size:14px; }
+        .hud { position:absolute; top:10px; left:10px; right:10px; display:flex; justify-content:space-between; color:#fff; font-size:10px; z-index:50; pointer-events:none; }
+        .hud-left,.hud-right { background:rgba(0,0,0,.8); padding:12px; border:2px solid #00ffff; box-shadow:0 0 15px rgba(0,255,255,.3); border-radius:5px; }
+        .loading-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:1000; flex-direction:column; }
+        .loading-text { color:#ff00ff; font-size:24px; animation:loading-pulse 1s infinite; }
+        @keyframes loading-pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+        .interaction-prompt { position:absolute; bottom:100px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.9); border:2px solid #ff00ff; color:#fff; padding:12px 20px; font-size:10px; display:none; z-index:75; box-shadow:0 0 20px rgba(255,0,255,.5); border-radius:5px; animation:prompt-pulse 1s infinite; }
+        @keyframes prompt-pulse { 0%,100%{box-shadow:0 0 20px rgba(255,0,255,.5);} 50%{box-shadow:0 0 40px rgba(255,0,255,1);} }
+        .interaction-prompt.active { display:block; }
+        .combat-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#1a0a2e 0%,#2d1b4e 50%,#1a0a2e 100%); display:none; z-index:300; flex-direction:column; align-items:center; justify-content:center; }
+        .combat-screen.active { display:flex; }
+        .combat-enemy-area { width:80%; height:35%; display:flex; justify-content:center; align-items:center; margin-bottom:10px; }
+        .combat-enemy { width:100px; height:100px; animation:enemy-float 2s ease-in-out infinite; filter:drop-shadow(0 0 20px rgba(255,0,255,.5)); }
+        @keyframes enemy-float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
+        .combat-party-area { width:80%; height:20%; display:flex; align-items:center; justify-content:space-around; margin-bottom:10px; gap:20px; }
+        .combat-party-member { display:flex; align-items:center; gap:10px; padding:12px; background:rgba(0,0,0,.7); border:2px solid #00ffff; border-radius:8px; cursor:pointer; }
+        .combat-party-member.active { border-color:#ff00ff; box-shadow:0 0 25px rgba(255,0,255,.7); }
+        .combat-player { width:50px; height:50px; } .combat-stats { color:#fff; font-size:9px; line-height:1.6; }
+        .combat-menu { width:80%; background:rgba(0,0,0,.8); border:3px solid #00ffff; padding:15px; display:flex; gap:15px; justify-content:center; flex-wrap:wrap; }
+        .combat-button { padding:14px 20px; background:linear-gradient(135deg,#2d1b4e,#1a0a2e); border:2px solid #ff00ff; color:#fff; font-family:'Press Start 2P',cursive; font-size:11px; cursor:pointer; transition:all .3s; border-radius:5px; }
+        .combat-button:hover { background:linear-gradient(135deg,#ff00ff,#8b008b); transform:scale(1.1); box-shadow:0 0 30px rgba(255,0,255,.8); }
+        .combat-message { position:absolute; top:15%; left:50%; transform:translateX(-50%); color:#fff; font-size:12px; background:rgba(0,0,0,.9); padding:20px; border:2px solid #00ffff; display:none; z-index:350; min-width:300px; }
+        .combat-message.active { display:block; }
+        .combat-background { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; animation:psychedelic-shift 5s linear infinite; background:radial-gradient(circle at 50% 50%,#ff00ff33,#00ffff33,#ff00ff33); }
+        @keyframes psychedelic-shift { 0%{filter:hue-rotate(0deg);} 100%{filter:hue-rotate(360deg);} }
+        .psi-menu,.item-menu { display:none; flex-direction:column; gap:10px; } .psi-menu.active,.item-menu.active { display:flex; }
+        .item-menu { max-height:200px; overflow-y:auto; }
+        .phone-screen { background:linear-gradient(135deg,#0a0a2e,#1a1a4e); border:4px solid #00ff00; box-shadow:0 0 40px rgba(0,255,0,.5); }
+        .phone-screen h2 { color:#00ff00; text-shadow:0 0 20px #00ff00; } .phone-item { border-color:#00ff00; }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="game-screen" id="gameScreen">
-            <canvas id="gameCanvas" width="800" height="600"></canvas>
-            
-            <div class="hud">
-                <div class="hud-left">
-                    <div id="hudName">PLAYER</div>
-                    <div>LV: <span id="hudLevel">1</span></div>
-                    <div>HP: <span id="hudHP">30/30</span></div>
-                    <div>PP: <span id="hudPP">10/10</span></div>
-                </div>
-                <div class="hud-right">
-                    <div>EXP: <span id="hudEXP">0</span></div>
-                    <div>MONEY: $<span id="hudMoney">50</span></div>
-                    <div>LOCATION: <span id="hudLocation">Room 303</span></div>
-                </div>
-            </div>
-            
-            <div class="interaction-prompt" id="interactionPrompt">[E] TO INTERACT</div>
-            
-            <div class="dialogue-box" id="dialogueBox">
-                <p id="dialogueText"></p>
-                <p style="text-align: center; margin-top: 10px; color: #00ffff; font-size: 10px;">[PRESS SPACE]</p>
-            </div>
-            
-            <div class="menu" id="gameMenu">
-                <h2>MENU</h2>
-                <button onclick="toggleMenu()">RESUME</button>
-                <button onclick="showInventory()">INVENTORY</button>
-                <button onclick="showPhone()">PHONE</button>
-                <button onclick="showStatus()">STATUS</button>
-                <button onclick="saveGame()">SAVE</button>
-                <button onclick="loadGame()">LOAD</button>
-                <button onclick="returnToTitle()">TITLE</button>
-            </div>
-            
-            <div class="inventory-screen" id="inventoryScreen">
-                <h2>INVENTORY</h2>
-                <div class="money-display">MONEY: $<span id="inventoryMoney">0</span></div>
-                <div class="inventory-tabs">
-                    <button class="inventory-tab active" onclick="switchInventoryTab('items', this)">ITEMS</button>
-                    <button class="inventory-tab" onclick="switchInventoryTab('weapons', this)">WEAPONS</button>
-                    <button class="inventory-tab" onclick="switchInventoryTab('keyItems', this)">KEYS</button>
-                </div>
-                <div class="inventory-list" id="inventoryList"></div>
-                <div class="inventory-actions">
-                    <button onclick="closeInventory()">CLOSE</button>
-                </div>
-            </div>
-            
-            <div class="phone-screen" id="phoneScreen">
-                <h2>📱 PHONE</h2>
-                <div class="money-display">MONEY: $<span id="phoneMoney">0</span></div>
-                <div class="inventory-list" id="phoneList"></div>
-                <div class="inventory-actions">
-                    <button onclick="closePhone()">CLOSE</button>
-                </div>
-            </div>
-            
-            <div class="shop-screen" id="shopScreen">
-                <h2 id="shopTitle">SHOP</h2>
-                <div class="money-display">MONEY: $<span id="shopMoney">0</span></div>
-                <div class="inventory-list" id="shopList"></div>
-                <div class="inventory-actions">
-                    <button onclick="closeShop()">CLOSE</button>
-                </div>
-            </div>
-            
-            <div class="combat-screen" id="combatScreen">
-                <div class="combat-background"></div>
-                <div class="combat-enemy-area">
-                    <canvas id="combatEnemyCanvas" class="combat-enemy" width="100" height="100"></canvas>
-                </div>
-                <div class="combat-party-area" id="combatPartyArea"></div>
-                <div class="combat-menu" id="combatMenu">
-                    <button class="combat-button" onclick="playerAttack()">FIGHT</button>
-                    <button class="combat-button" onclick="showPSIMenu()">PSYCH</button>
-                    <button class="combat-button" onclick="showItemMenu()">ITEM</button>
-                    <button class="combat-button" onclick="playerDefend()">GUARD</button>
-                    <button class="combat-button" onclick="playerRun()">RUN</button>
-                </div>
-                <div class="psi-menu" id="psiMenu">
-                    <button class="combat-button" onclick="useCoffeeBreak()">COFFEE BREAK (5 PP)</button>
-                    <button class="combat-button" onclick="useAllNighter()">ALL-NIGHTER (8 PP)</button>
-                    <button class="combat-button" onclick="useRamenHeal()">RAMEN BREAK (5 PP)</button>
-                    <button class="combat-button" onclick="hidePSIMenu()">BACK</button>
-                </div>
-                <div class="item-menu" id="itemMenu"></div>
-            </div>
-            
-            <div class="combat-message" id="combatMessage">
-                <p id="combatMessageText"></p>
-            </div>
-            
-            <div class="loading-screen" id="loadingScreen">
-                <div class="loading-text">LOADING...</div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // ============ SOUND SYSTEM ============
-const soundSystem = {
-    audioContext: null,
-    
-    init() {
-        try {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) {
-            console.log('Audio not supported');
-        }
-    },
-    
-    playSound(type) {
-        if (!this.audioContext) return;
-        
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        
-        switch (type) {
-            case 'interact':
-                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(1200, this.audioContext.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.1);
-                break;
-                
-            case 'combat':
-                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.3);
-                break;
-                
-            case 'victory':
-                oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(1200, this.audioContext.currentTime + 0.4);
-                gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.4);
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.4);
-                break;
-                
-            case 'damage':
-                oscillator.type = 'sawtooth';
-                oscillator.frequency.setValueAtTime(150, this.audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(50, this.audioContext.currentTime + 0.2);
-                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.2);
-                break;
-                
-            case 'levelup':
-                [523, 659, 784, 1047].forEach((freq, i) => {
-                    const osc = this.audioContext.createOscillator();
-                    const gain = this.audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(this.audioContext.destination);
-                    osc.frequency.setValueAtTime(freq, this.audioContext.currentTime + i * 0.1);
-                    gain.gain.setValueAtTime(0.3, this.audioContext.currentTime + i * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + i * 0.1 + 0.1);
-                    osc.start(this.audioContext.currentTime + i * 0.1);
-                    osc.stop(this.audioContext.currentTime + i * 0.1 + 0.1);
-                });
-                break;
-                
-            case 'phone':
-                [440, 550].forEach((freq, i) => {
-                    const osc = this.audioContext.createOscillator();
-                    const gain = this.audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(this.audioContext.destination);
-                    osc.frequency.setValueAtTime(freq, this.audioContext.currentTime + i * 0.15);
-                    gain.gain.setValueAtTime(0.4, this.audioContext.currentTime + i * 0.15);
-                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + i * 0.15 + 0.15);
-                    osc.start(this.audioContext.currentTime + i * 0.15);
-                    osc.stop(this.audioContext.currentTime + i * 0.15 + 0.15);
-                });
-                break;
-        }
-    }
-};
-
-// ============ ITEM DEFINITIONS ============
-const items = {
-    ramen: {
-        name: 'Instant Ramen',
-        type: 'item',
-        healAmount: 20,
-        description: 'Cheap instant noodles. Restores 20 HP.',
-        price: 5,
-        usable: true
-    },
-    energyDrink: {
-        name: 'Energy Drink',
-        type: 'item',
-        healAmount: 50,
-        description: 'Highly caffeinated. Restores 50 HP.',
-        price: 15,
-        usable: true
-    },
-    coffee: {
-        name: 'Coffee',
-        type: 'item',
-        ppRestore: 10,
-        description: 'Restores 10 PP. Essential for college students.',
-        price: 8,
-        usable: true
-    },
-    pizza: {
-        name: 'Cold Pizza',
-        type: 'item',
-        healAmount: 100,
-        description: 'Leftover pizza. Restores 100 HP.',
-        price: 20,
-        usable: true
-    },
-    textbook: {
-        name: 'Textbook',
-        type: 'weapon',
-        attackBonus: 5,
-        description: 'Heavy textbook. +5 Attack.',
-        price: 30,
-        usable: false
-    },
-    laptop: {
-        name: 'Laptop',
-        type: 'weapon',
-        attackBonus: 10,
-        description: 'Can be used as a weapon. +10 Attack.',
-        price: 75,
-        usable: false
-    },
-    deskLamp: {
-        name: 'Desk Lamp',
-        type: 'weapon',
-        attackBonus: 3,
-        description: 'A sturdy desk lamp. +3 Attack.',
-        price: 15,
-        usable: false
-    },
-    backpack: {
-        name: 'Heavy Backpack',
-        type: 'weapon',
-        attackBonus: 8,
-        description: 'Full of textbooks. +8 Attack.',
-        price: 50,
-        usable: false
-    },
-    forestKey: {
-        name: 'Forest Key',
-        type: 'keyItem',
-        description: 'A rusted key that opens the Forest Gate.',
-        price: 0,
-        usable: false
-    },
-    graveyardKey: {
-        name: 'Graveyard Key',
-        type: 'keyItem',
-        description: 'A bone-shaped key that opens the Village Gate.',
-        price: 0,
-        usable: false
-    },
-    villageKey: {
-        name: 'Village Key',
-        type: 'keyItem',
-        description: 'A brass key that opens the Upper Village Gate.',
-        price: 0,
-        usable: false
-    },
-    castleKey: {
-        name: 'Castle Key',
-        type: 'keyItem',
-        description: 'An ornate key that opens the Castle Walls gate.',
-        price: 0,
-        usable: false
-    }
-};
-
+<div class="game-container"><div class="game-screen" id="gameScreen">
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div class="hud"><div class="hud-left"><div id="hudName">PLAYER</div><div>LV: <span id="hudLevel">1</span></div><div>HP: <span id="hudHP">30/30</span></div><div>PP: <span id="hudPP">10/10</span></div></div><div class="hud-right"><div>EXP: <span id="hudEXP">0</span></div><div>MONEY: $<span id="hudMoney">50</span></div><div>LOCATION: <span id="hudLocation">Room 303</span></div></div></div>
+<div class="interaction-prompt" id="interactionPrompt">[E] TO INTERACT</div>
+<div class="dialogue-box" id="dialogueBox"><p id="dialogueText"></p><p style="text-align:center;margin-top:10px;color:#00ffff;font-size:10px;">[PRESS SPACE]</p></div>
+<div class="menu" id="gameMenu"><h2>MENU</h2><button onclick="toggleMenu()">RESUME</button><button onclick="showInventory()">INVENTORY</button><button onclick="showPhone()">PHONE</button><button onclick="showStatus()">STATUS</button><button onclick="saveGame()">SAVE</button><button onclick="loadGame()">LOAD</button><button onclick="returnToTitle()">TITLE</button></div>
+<div class="inventory-screen" id="inventoryScreen"><h2>INVENTORY</h2><div class="money-display">MONEY: $<span id="inventoryMoney">0</span></div><div class="inventory-tabs"><button class="inventory-tab active" onclick="switchInventoryTab('items',this)">ITEMS</button><button class="inventory-tab" onclick="switchInventoryTab('weapons',this)">WEAPONS</button><button class="inventory-tab" onclick="switchInventoryTab('keyItems',this)">KEYS</button></div><div class="inventory-list" id="inventoryList"></div><div class="inventory-actions"><button onclick="closeInventory()">CLOSE</button></div></div>
+<div class="phone-screen" id="phoneScreen"><h2>📱 PHONE</h2><div class="money-display">MONEY: $<span id="phoneMoney">0</span></div><div class="inventory-list" id="phoneList"></div><div class="inventory-actions"><button onclick="closePhone()">CLOSE</button></div></div>
+<div class="shop-screen" id="shopScreen"><h2 id="shopTitle">SHOP</h2><div class="money-display">MONEY: $<span id="shopMoney">0</span></div><div class="inventory-list" id="shopList"></div><div class="inventory-actions"><button onclick="closeShop()">CLOSE</button></div></div>
+<div class="combat-screen" id="combatScreen"><div class="combat-background"></div><div class="combat-enemy-area"><canvas id="combatEnemyCanvas" class="combat-enemy" width="100" height="100"></canvas></div><div class="combat-party-area" id="combatPartyArea"></div><div class="combat-menu" id="combatMenu"><button class="combat-button" onclick="playerAttack()">FIGHT</button><button class="combat-button" onclick="showPSIMenu()">PSYCH</button><button class="combat-button" onclick="showItemMenu()">ITEM</button><button class="combat-button" onclick="playerDefend()">GUARD</button><button class="combat-button" onclick="playerRun()">RUN</button></div><div class="psi-menu" id="psiMenu"><button class="combat-button" onclick="useCoffeeBreak()">COFFEE (5 PP)</button><button class="combat-button" onclick="useAllNighter()">ALL-NIGHT (8 PP)</button><button class="combat-button" onclick="useRamenHeal()">RAMEN (5 PP)</button><button class="combat-button" onclick="hidePSIMenu()">BACK</button></div><div class="item-menu" id="itemMenu"></div></div>
+<div class="combat-message" id="combatMessage"><p id="combatMessageText"></p></div>
+<div class="loading-screen" id="loadingScreen"><div class="loading-text">LOADING...</div></div>
+</div></div>
+<script>
+// ============ SOUND SYSTEM ============
+const soundSystem={audioContext:null,init(){try{this.audioContext=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}},playSound(t){if(!this.audioContext)return;const o=this.audioContext.createOscillator(),g=this.audioContext.createGain();o.connect(g);g.connect(this.audioContext.destination);switch(t){case'interact':o.frequency.setValueAtTime(800,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(1200,this.audioContext.currentTime+.1);g.gain.setValueAtTime(.3,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.1);o.start();o.stop(this.audioContext.currentTime+.1);break;case'combat':o.frequency.setValueAtTime(200,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(400,this.audioContext.currentTime+.3);g.gain.setValueAtTime(.4,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.3);o.start();o.stop(this.audioContext.currentTime+.3);break;case'victory':o.frequency.setValueAtTime(600,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(1200,this.audioContext.currentTime+.4);g.gain.setValueAtTime(.4,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.4);o.start();o.stop(this.audioContext.currentTime+.4);break;case'damage':o.type='sawtooth';o.frequency.setValueAtTime(150,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(50,this.audioContext.currentTime+.2);g.gain.setValueAtTime(.3,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.2);o.start();o.stop(this.audioContext.currentTime+.2);break;case'levelup':[523,659,784,1047].forEach((f,i)=>{const os=this.audioContext.createOscillator(),gn=this.audioContext.createGain();os.connect(gn);gn.connect(this.audioContext.destination);os.frequency.setValueAtTime(f,this.audioContext.currentTime+i*.1);gn.gain.setValueAtTime(.3,this.audioContext.currentTime+i*.1);gn.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+i*.1+.1);os.start(this.audioContext.currentTime+i*.1);os.stop(this.audioContext.currentTime+i*.1+.1);});break;case'phone':[440,550].forEach((f,i)=>{const os=this.audioContext.createOscillator(),gn=this.audioContext.createGain();os.connect(gn);gn.connect(this.audioContext.destination);os.frequency.setValueAtTime(f,this.audioContext.currentTime+i*.15);gn.gain.setValueAtTime(.4,this.audioContext.currentTime+i*.15);gn.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+i*.15+.15);os.start(this.audioContext.currentTime+i*.15);os.stop(this.audioContext.currentTime+i*.15+.15);});break;}}};
+// ============ ITEMS ============
+const items={ramen:{name:'Instant Ramen',type:'item',healAmount:20,description:'Restores 20 HP.',price:5,usable:true},energyDrink:{name:'Energy Drink',type:'item',healAmount:50,description:'Restores 50 HP.',price:15,usable:true},coffee:{name:'Coffee',type:'item',ppRestore:10,description:'Restores 10 PP.',price:8,usable:true},pizza:{name:'Cold Pizza',type:'item',healAmount:100,description:'Restores 100 HP.',price:20,usable:true},textbook:{name:'Textbook',type:'weapon',attackBonus:5,description:'+5 Attack.',price:30,usable:false},laptop:{name:'Laptop',type:'weapon',attackBonus:10,description:'+10 Attack.',price:75,usable:false},deskLamp:{name:'Desk Lamp',type:'weapon',attackBonus:3,description:'+3 Attack.',price:15,usable:false},backpack:{name:'Heavy Backpack',type:'weapon',attackBonus:8,description:'+8 Attack.',price:50,usable:false},forestKey:{name:'Forest Key',type:'keyItem',description:'Opens the Forest Gate.',price:0,usable:false},graveyardKey:{name:'Graveyard Key',type:'keyItem',description:'Opens the Village Gate.',price:0,usable:false},villageKey:{name:'Village Key',type:'keyItem',description:'Opens the Upper Village Gate.',price:0,usable:false},castleKey:{name:'Castle Key',type:'keyItem',description:'Opens the Castle Walls gate.',price:0,usable:false}};
 // ============ GAME STATE ============
-let gameState = {
-    currentArea: 'room303',
-    gameTime: 0,
-    paused: false,
-    inDialogue: false,
-    dialogueQueue: [],
-    pendingExit: null,
-    pendingShop: null,
-    pendingBoss: null,
-    player: {
-        x: 400,
-        y: 300,
-        direction: 'down',
-        moving: false,
-        speed: 3
-    },
-    keys: {
-        up: false,
-        down: false,
-        left: false,
-        right: false,
-        interact: false
-    },
-    flags: {
-        heardIzzyScream: false,
-        enteredCloset: false,
-        foundPortal: false,
-        enteredForest: false,
-        metBekah: false,
-        foundForestKey: false,
-        forestKeyRevealed: false,
-        openedForestGate: false,
-        enteredGraveyard: false,
-        foundGraveyardKey: false,
-        openedVillageGate: false,
-        enteredVillage: false,
-        foundVillageKey: false,
-        openedUpperVillageGate: false,
-        enteredUpperVillage: false,
-        foundCastleKey: false,
-        openedCastleWallsGate: false,
-        enteredCastleWalls: false,
-        defeatedIan: false,
-        enteredCastle: false,
-        defeatedRylee: false,
-        rescuedIzzy: false
-    },
-    combat: {
-        active: false,
-        enemy: null,
-        turn: 'player',
-        playerDefending: false,
-        messageQueue: [],
-        activePartyMember: 0
-    },
-    party: [
-        {
-            id: 'protagonist',
-            name: 'PLAYER',
-            level: 1,
-            hp: 30,
-            maxHp: 30,
-            pp: 10,
-            maxPp: 10,
-            attack: 5,
-            defense: 3,
-            speed: 4,
-            exp: 0,
-            money: 50,
-            shirtColor: '#ff0000',
-            skinTone: '#f0c8a0',
-            hairColor: '#4a3728',
-            pantsColor: '#0000ff'
-        }
-    ],
-    inventory: [],
-    equippedWeapon: null,
-    inventoryTab: 'items',
-    selectedItem: null,
-    currentShop: null,
-    visibleEnemies: [],
-    phoneCooldown: 0,
-    lastPhoneUse: 0
-};
-
-// ============ BEKAH (PARTY MEMBER) ============
-const bekahStats = {
-    id: 'bekah',
-    name: 'BEKAH',
-    level: 1,
-    hp: 25,
-    maxHp: 25,
-    pp: 15,
-    maxPp: 15,
-    attack: 4,
-    defense: 2,
-    speed: 6,
-    exp: 0,
-    money: 0,
-    shirtColor: '#FF69B4',
-    skinTone: '#FFC0CB',
-    hairColor: '#8B4513',
-    pantsColor: '#000000'
-};
-
-// ============ ENEMY DEFINITIONS ============
-const enemies = {
-    laundryGoblin: {
-        name: 'Laundry Goblin',
-        hp: 8,
-        maxHp: 8,
-        pp: 0,
-        attack: 2,
-        defense: 0,
-        speed: 3,
-        exp: 3,
-        money: 3,
-        color: '#808080',
-        sprite: 'laundry',
-        attacks: [
-            { name: 'Sock Attack', power: 1, type: 'physical' }
-        ]
-    },
-    microwaveWraith: {
-        name: 'Microwave Wraith',
-        hp: 12,
-        maxHp: 12,
-        pp: 0,
-        attack: 3,
-        defense: 1,
-        speed: 4,
-        exp: 5,
-        money: 5,
-        color: '#C0C0C0',
-        sprite: 'microwave',
-        attacks: [
-            { name: 'Hot Pocket', power: 1.2, type: 'magical' }
-        ]
-    },
-    textbookTitan: {
-        name: 'Textbook Titan',
-        hp: 25,
-        maxHp: 25,
-        pp: 10,
-        attack: 5,
-        defense: 3,
-        speed: 4,
-        exp: 12,
-        money: 12,
-        color: '#8B0000',
-        sprite: 'textbook',
-        attacks: [
-            { name: 'Knowledge Drop', power: 1.3, type: 'magical' },
-            { name: 'Paper Cut', power: 1.4, type: 'physical' }
-        ]
-    },
-    coffeeGolem: {
-        name: 'Coffee Golem',
-        hp: 30,
-        maxHp: 30,
-        pp: 15,
-        attack: 6,
-        defense: 4,
-        speed: 3,
-        exp: 15,
-        money: 15,
-        color: '#6B4423',
-        sprite: 'coffee',
-        attacks: [
-            { name: 'Caffeine Rush', power: 1.6, type: 'magical' }
-        ]
-    },
-    showerMold: {
-        name: 'Shower Mold',
-        hp: 10,
-        maxHp: 10,
-        pp: 0,
-        attack: 2,
-        defense: 1,
-        speed: 2,
-        exp: 4,
-        money: 2,
-        color: '#556B2F',
-        sprite: 'mold',
-        attacks: [
-            { name: 'Spore Cloud', power: 1, type: 'physical' }
-        ]
-    },
-    forestImp: {
-        name: 'Forest Imp',
-        hp: 15,
-        maxHp: 15,
-        pp: 5,
-        attack: 3,
-        defense: 1,
-        speed: 5,
-        exp: 7,
-        money: 7,
-        color: '#228B22',
-        sprite: 'imp',
-        attacks: [
-            { name: 'Branch Whip', power: 1.2, type: 'physical' }
-        ]
-    },
-    mushroomZombie: {
-        name: 'Mushroom Zombie',
-        hp: 20,
-        maxHp: 20,
-        pp: 0,
-        attack: 4,
-        defense: 2,
-        speed: 2,
-        exp: 10,
-        money: 6,
-        color: '#8B008B',
-        sprite: 'mushroom',
-        attacks: [
-            { name: 'Spore Burst', power: 1.3, type: 'magical' }
-        ]
-    },
-    shadowStudent: {
-        name: 'Shadow Student',
-        hp: 35,
-        maxHp: 35,
-        pp: 15,
-        attack: 6,
-        defense: 4,
-        speed: 5,
-        exp: 20,
-        money: 20,
-        color: '#2F4F4F',
-        sprite: 'shadow',
-        attacks: [
-            { name: 'Debt Collector', power: 1.7, type: 'magical' },
-            { name: 'Student Loan', power: 1.5, type: 'physical' }
-        ]
-    },
-    skeletonStudent: {
-        name: 'Skeleton Student',
-        hp: 25,
-        maxHp: 25,
-        pp: 5,
-        attack: 4,
-        defense: 2,
-        speed: 4,
-        exp: 12,
-        money: 10,
-        color: '#F5F5DC',
-        sprite: 'skeleton',
-        attacks: [
-            { name: 'Bone Throw', power: 1.3, type: 'physical' }
-        ]
-    },
-    ghostFreshman: {
-        name: 'Ghost Freshman',
-        hp: 22,
-        maxHp: 22,
-        pp: 10,
-        attack: 4,
-        defense: 1,
-        speed: 6,
-        exp: 10,
-        money: 8,
-        color: '#E0E0E0',
-        sprite: 'ghost',
-        attacks: [
-            { name: 'Scare', power: 1.4, type: 'magical' }
-        ]
-    },
-    zombieRA: {
-        name: 'Zombie RA',
-        hp: 40,
-        maxHp: 40,
-        pp: 0,
-        attack: 7,
-        defense: 4,
-        speed: 3,
-        exp: 25,
-        money: 25,
-        color: '#556B2F',
-        sprite: 'zombie',
-        attacks: [
-            { name: 'Policy Violation', power: 1.8, type: 'physical' },
-            { name: 'Room Check', power: 1.5, type: 'magical' }
-        ]
-    }
-};
-
-// ============ BOSS DEFINITIONS ============
-const ianBoss = {
-    name: 'IAN - GIANT GUARD',
-    hp: 75,
-    maxHp: 75,
-    pp: 0,
-    attack: 8,
-    defense: 5,
-    speed: 2,
-    exp: 50,
-    money: 50,
-    color: '#8B0000',
-    sprite: 'ian',
-    isBoss: true,
-    attacks: [
-        { name: 'Giant Punch', power: 1.8, type: 'physical' },
-        { name: 'Wall Smash', power: 2.0, type: 'physical' },
-        { name: 'Guard Slam', power: 1.5, type: 'physical' }
-    ]
-};
-
-const ryleeBoss = {
-    name: 'RYLEE - QUEEN OF THE DESK',
-    hp: 100,
-    maxHp: 100,
-    pp: 30,
-    attack: 10,
-    defense: 6,
-    speed: 5,
-    exp: 100,
-    money: 100,
-    color: '#FF00FF',
-    sprite: 'rylee',
-    isBoss: true,
-    isFinalBoss: true,
-    attacks: [
-        { name: 'Desk Slam', power: 2.0, type: 'physical' },
-        { name: 'Queen\'s Decree', power: 2.2, type: 'magical' },
-        { name: 'Heart Break', power: 1.8, type: 'magical' },
-        { name: 'Policy Enforcement', power: 2.5, type: 'physical' }
-    ]
-};
-
-// ============ PSYCHIC ABILITIES ============
-const psychicAbilities = {
-    coffeeBreak: {
-        name: 'Coffee Break',
-        cost: 5,
-        power: 1.8,
-        type: 'magical',
-        description: 'Channel caffeine into psychic damage'
-    },
-    allNighter: {
-        name: 'All-Nighter',
-        cost: 8,
-        power: 2.2,
-        type: 'magical',
-        description: 'Unleash the power of sleep deprivation'
-    },
-    ramenHeal: {
-        name: 'Ramen Break',
-        cost: 5,
-        power: 0,
-        type: 'healing',
-        healAmount: 30,
-        description: 'Restore HP with instant noodles'
-    }
-};
-
-// ============ SHOPS ============
-const shops = {
-    shadyMerchant: {
-        name: 'SHADY MERCHANT',
-        items: ['ramen', 'energyDrink', 'coffee', 'deskLamp', 'textbook']
-    },
-    villageHealer: {
-        name: 'VILLAGE HEALER',
-        healCost: 20
-    },
-    upperMerchant: {
-        name: 'UPPER MERCHANT',
-        items: ['energyDrink', 'pizza', 'coffee', 'textbook', 'backpack', 'laptop']
-    }
-};
-
-// ============ MAPS OBJECT ============
+let gameState={currentArea:'room303',paused:false,inDialogue:false,dialogueQueue:[],pendingExit:null,pendingBoss:null,player:{x:400,y:300,direction:'down',moving:false,speed:3},keys:{up:false,down:false,left:false,right:false,interact:false},flags:{metBekah:false,forestKeyRevealed:false,foundForestKey:false,openedForestGate:false,openedVillageGate:false,openedUpperVillageGate:false,openedCastleWallsGate:false,defeatedIan:false,defeatedRylee:false,rescuedIzzy:false},combat:{active:false,enemy:null,turn:'player',playerDefending:false,activePartyMember:0},party:[{id:'protagonist',name:'PLAYER',level:1,hp:30,maxHp:30,pp:10,maxPp:10,attack:5,defense:3,speed:4,exp:0,money:50,shirtColor:'#ff0000',skinTone:'#f0c8a0',hairColor:'#4a3728',pantsColor:'#0000ff'}],inventory:[],equippedWeapon:null,inventoryTab:'items',visibleEnemies:[],lastPhoneUse:0};
+const bekahStats={id:'bekah',name:'BEKAH',level:1,hp:25,maxHp:25,pp:15,maxPp:15,attack:4,defense:2,speed:6,exp:0,shirtColor:'#FF69B4',skinTone:'#FFC0CB',hairColor:'#8B4513',pantsColor:'#000000'};
+// ============ ENEMIES ============
+const enemies={laundryGoblin:{name:'Laundry Goblin',hp:8,maxHp:8,attack:2,defense:0,speed:3,exp:3,money:3,color:'#808080',sprite:'laundry',attacks:[{name:'Sock Attack',power:1}]},forestImp:{name:'Forest Imp',hp:15,maxHp:15,attack:3,defense:1,speed:5,exp:7,money:7,color:'#228B22',sprite:'imp',attacks:[{name:'Branch Whip',power:1.2}]},mushroomZombie:{name:'Mushroom Zombie',hp:20,maxHp:20,attack:4,defense:2,speed:2,exp:10,money:6,color:'#8B008B',sprite:'mushroom',attacks:[{name:'Spore Burst',power:1.3}]},shadowStudent:{name:'Shadow Student',hp:35,maxHp:35,attack:6,defense:4,speed:5,exp:20,money:20,color:'#2F4F4F',sprite:'shadow',attacks:[{name:'Debt Collector',power:1.7}]},skeletonStudent:{name:'Skeleton Student',hp:25,maxHp:25,attack:4,defense:2,speed:4,exp:12,money:10,color:'#F5F5DC',sprite:'skeleton',attacks:[{name:'Bone Throw',power:1.3}]},ghostFreshman:{name:'Ghost Freshman',hp:22,maxHp:22,attack:4,defense:1,speed:6,exp:10,money:8,color:'#E0E0E0',sprite:'ghost',attacks:[{name:'Scare',power:1.4}]},zombieRA:{name:'Zombie RA',hp:40,maxHp:40,attack:7,defense:4,speed:3,exp:25,money:25,color:'#556B2F',sprite:'zombie',attacks:[{name:'Policy Violation',power:1.8}]}};
+const ianBoss={name:'IAN - GIANT GUARD',hp:75,maxHp:75,attack:8,defense:5,speed:2,exp:50,money:50,color:'#8B0000',sprite:'ian',isBoss:true,attacks:[{name:'Giant Punch',power:1.8},{name:'Wall Smash',power:2.0}]};
+const ryleeBoss={name:'RYLEE - QUEEN OF THE DESK',hp:100,maxHp:100,attack:10,defense:6,speed:5,exp:100,money:100,color:'#FF00FF',sprite:'rylee',isBoss:true,isFinalBoss:true,attacks:[{name:'Desk Slam',power:2.0},{name:'Queen\'s Decree',power:2.2}]};
+    // ============ MAPS OBJECT ============
 const maps = {};
 
 function initMaps() {
@@ -1261,7 +187,7 @@ function initMaps() {
         backgroundColor: '#1a1a2a',
         floorColor: '#3a3a4a',
         wallColor: '#4a4a5a',
-        enemies: ['shadowStudent', 'zombieRA', 'textbookTitan']
+        enemies: ['shadowStudent', 'zombieRA']
     };
     
     maps.castle = {
@@ -1275,7 +201,7 @@ function initMaps() {
         backgroundColor: '#2a0a2a',
         floorColor: '#4a2a4a',
         wallColor: '#3a1a3a',
-        enemies: ['shadowStudent', 'zombieRA', 'coffeeGolem']
+        enemies: ['shadowStudent']
     };
     
     generateRoom303();
@@ -1287,8 +213,8 @@ function initMaps() {
     generateCastleWalls();
     generateCastle();
 }
-        // ============ MAP GENERATION FUNCTIONS ============
 
+// ============ ROOM 303 ============
 function generateRoom303() {
     const m = maps.room303;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1303,28 +229,28 @@ function generateRoom303() {
         m.collisionMap[y][m.width - 1] = 1;
     }
     
-    // Door to closet (right side)
+    // Door to closet (right wall at y=8,9)
     m.collisionMap[8][m.width - 1] = 0;
     m.collisionMap[9][m.width - 1] = 0;
     m.collisionMap[8][m.width - 2] = 0;
     m.collisionMap[9][m.width - 2] = 0;
     
-    // Furniture - Bed
+    // Furniture - Bed (top left)
     for (let y = 5; y < 10; y++) {
         for (let x = 5; x < 12; x++) m.collisionMap[y][x] = 1;
     }
     
-    // Furniture - Desk
+    // Furniture - Desk (middle)
     for (let y = 15; y < 18; y++) {
         for (let x = 25; x < 32; x++) m.collisionMap[y][x] = 1;
     }
     
-    // Furniture - Bookshelf
+    // Furniture - Bookshelf (right side)
     for (let y = 5; y < 12; y++) {
         for (let x = 30; x < 33; x++) m.collisionMap[y][x] = 1;
     }
     
-    // Objects with item drops
+    // Objects with ITEM DROPS
     m.objects = [
         { x: 8, y: 5, type: 'bed', name: 'Your Bed', description: 'A messy college dorm bed.' },
         { x: 28, y: 15, type: 'desk', name: 'Your Desk', description: 'Covered in textbooks and energy drinks.', itemDrop: 'deskLamp' },
@@ -1352,6 +278,7 @@ function generateRoom303() {
     ];
 }
 
+// ============ CLOSET ============
 function generateCloset() {
     const m = maps.closet;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1366,11 +293,11 @@ function generateCloset() {
         m.collisionMap[y][m.width - 1] = 1;
     }
     
-    // Entrance from room
+    // Entrance from room (left wall)
     m.collisionMap[15][0] = 0;
     m.collisionMap[15][1] = 0;
     
-    // Clothing racks (obstacles)
+    // Clothing racks
     for (let y = 3; y < 8; y++) {
         m.collisionMap[y][10] = 1;
         m.collisionMap[y][11] = 1;
@@ -1381,18 +308,18 @@ function generateCloset() {
         m.collisionMap[y][16] = 1;
     }
     
-    // Boxes
+    // Boxes in corner
     for (let y = 24; y < 28; y++) {
         for (let x = 24; x < 28; x++) m.collisionMap[y][x] = 1;
     }
     
-    // Portal area (clear)
+    // Portal area - CLEAR
     m.collisionMap[14][14] = 0;
     m.collisionMap[14][15] = 0;
     m.collisionMap[15][14] = 0;
     m.collisionMap[15][15] = 0;
     
-    // Objects
+    // Objects with item drops
     m.objects = [
         { x: 10, y: 5, type: 'clothes', name: 'Old Clothes', description: 'Dusty clothes from students long gone...' },
         { x: 15, y: 22, type: 'clothes', name: 'Winter Coat', description: 'A heavy winter coat. It smells like mothballs.' },
@@ -1408,6 +335,7 @@ function generateCloset() {
     ];
 }
 
+// ============ DARK FOREST - FULLY FIXED ============
 function generateDarkForest() {
     const m = maps.darkForest;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1426,15 +354,21 @@ function generateDarkForest() {
     m.collisionMap[m.height - 1][25] = 0;
     m.collisionMap[m.height - 2][25] = 0;
     
-    // Exit to graveyard (top) - NO COLLISION BLOCKING
+    // Exit to graveyard (top) - WIDE OPEN
+    m.collisionMap[2][24] = 0;
+    m.collisionMap[2][25] = 0;
+    m.collisionMap[2][26] = 0;
+    m.collisionMap[3][24] = 0;
     m.collisionMap[3][25] = 0;
+    m.collisionMap[3][26] = 0;
     m.collisionMap[4][25] = 0;
     
-    // Trees (obstacles)
+    // Trees - kept AWAY from paths
     const treePositions = [
-        [5, 5], [8, 12], [15, 8], [20, 15], [25, 5],
-        [30, 10], [40, 8], [18, 25], [28, 20], [42, 20],
-        [12, 30], [22, 32], [38, 35], [45, 30], [5, 25]
+        [3, 3], [6, 5], [10, 8], [15, 12], [20, 18],
+        [8, 20], [12, 25], [18, 28], [28, 32], [35, 25],
+        [40, 20], [42, 15], [38, 10], [35, 5], [30, 8],
+        [5, 25], [10, 30], [15, 35], [40, 35], [45, 25]
     ];
     
     treePositions.forEach(([x, y]) => {
@@ -1444,35 +378,45 @@ function generateDarkForest() {
         m.collisionMap[y + 1][x + 1] = 1;
     });
     
-    // CLEAR PATH through forest (vertical path at x=25)
-    for (let y = 35; y < 40; y++) m.collisionMap[y][25] = 0;
-    for (let y = 5; y < 35; y++) m.collisionMap[y][25] = 0;
+    // WIDE CLEAR PATH down the center
+    for (let y = 2; y < m.height - 1; y++) {
+        for (let x = 23; x <= 27; x++) {
+            m.collisionMap[y][x] = 0;
+        }
+    }
     
-    // CLEAR KEY AREA (around x=35, y=30)
-    m.collisionMap[30][35] = 0;
-    m.collisionMap[30][34] = 0;
-    m.collisionMap[31][30] = 0;
-    m.collisionMap[34][30] = 0;
-    m.collisionMap[36][30] = 0;
-    m.collisionMap[35][29] = 0;
-    m.collisionMap[35][31] = 0;
+    // CLEAR AREA AROUND ANCIENT TREE (at x=20, y=15)
+    for (let y = 13; y <= 17; y++) {
+        for (let x = 18; x <= 22; x++) {
+            m.collisionMap[y][x] = 0;
+        }
+    }
     
-    // CLEAR PATH TO ANCIENT TREE (x=10, y=14)
-    m.collisionMap[14][10] = 0;
-    m.collisionMap[14][11] = 0;
-    m.collisionMap[13][10] = 0;
-    m.collisionMap[15][10] = 0;
+    // CLEAR AREA AROUND KEY (at x=35, y=30)
+    for (let y = 28; y <= 32; y++) {
+        for (let x = 33; x <= 37; x++) {
+            m.collisionMap[y][x] = 0;
+        }
+    }
     
-    // Objects
+    // CLEAR AREA AROUND BEKAH (at x=40, y=34)
+    for (let y = 32; y <= 36; y++) {
+        for (let x = 38; x <= 42; x++) {
+            m.collisionMap[y][x] = 0;
+        }
+    }
+    
+    // Objects - ALL VISIBLE, ALL INTERACTABLE
     m.objects = [
         { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
-        { x: 10, y: 14, type: 'tree', name: 'Ancient Tree', description: 'A twisted tree with a huge knot...', interactionType: 'ancientTree' },
-        { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms that pulse with an eerie light.' },
-        { x: 15, y: 28, type: 'note', name: 'Torn Note', description: '"The key is hidden where the mushrooms glow..."', interactionType: 'note' },
-        { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key that opens the Forest Gate.', interactionType: 'forestKey', hidden: true, id: 'forestKey' }
+        { x: 20, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted tree with a huge knot...', interactionType: 'ancientTree' },
+        { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms. Something sparkles nearby to the east...' },
+        { x: 15, y: 28, type: 'note', name: 'Torn Note', description: 'The key is near the glowing mushrooms. Look to the east!', interactionType: 'note' },
+        { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key that opens the Forest Gate.', interactionType: 'forestKey', hidden: false, id: 'forestKey' },
+        { x: 25, y: 3, type: 'gate', name: 'Forest Gate', description: 'A massive gate leading to the Graveyard.', interactionType: 'gate' }
     ];
     
-    // NPCs
+    // NPCs - Bekah
     m.npcs = [
         { 
             x: 40, 
@@ -1490,10 +434,11 @@ function generateDarkForest() {
     // Exits
     m.exits = [
         { x: 25, y: 39, targetArea: 'closet', targetX: 14, targetY: 14, transitionText: 'You return through the portal...' },
-        { x: 25, y: 3, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You enter the graveyard...' }
+        { x: 25, y: 2, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You enter the graveyard...' }
     ];
 }
 
+// ============ GRAVEYARD ============
 function generateGraveyard() {
     const m = maps.graveyard;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1516,7 +461,7 @@ function generateGraveyard() {
     m.collisionMap[2][22] = 0;
     m.collisionMap[3][22] = 0;
     
-    // Tombstones (obstacles)
+    // Tombstones - kept away from path
     const tombstonePositions = [
         [5, 5], [15, 5], [30, 5], [40, 5],
         [10, 15], [15, 18], [30, 15], [40, 15],
@@ -1528,15 +473,21 @@ function generateGraveyard() {
         m.collisionMap[y][x] = 1;
     });
     
-    // CLEAR PATH through graveyard (vertical at x=22)
-    for (let y = 35; y < 40; y++) m.collisionMap[y][22] = 0;
-    for (let y = 5; y < 35; y++) m.collisionMap[y][22] = 0;
+    // WIDE CLEAR PATH down the center
+    for (let y = 2; y < m.height - 1; y++) {
+        for (let x = 20; x <= 24; x++) {
+            m.collisionMap[y][x] = 0;
+        }
+    }
     
     // Clear key area
     m.collisionMap[28][35] = 0;
     m.collisionMap[28][34] = 0;
     m.collisionMap[27][28] = 0;
     m.collisionMap[28][29] = 0;
+    m.collisionMap[35][27] = 0;
+    m.collisionMap[35][28] = 0;
+    m.collisionMap[35][29] = 0;
     
     // Objects
     m.objects = [
@@ -1567,6 +518,7 @@ function generateGraveyard() {
     ];
 }
 
+// ============ VILLAGE ============
 function generateVillage() {
     const m = maps.village;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1621,6 +573,7 @@ function generateVillage() {
     ];
 }
 
+// ============ UPPER VILLAGE ============
 function generateUpperVillage() {
     const m = maps.upperVillage;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1672,6 +625,7 @@ function generateUpperVillage() {
     ];
 }
 
+// ============ CASTLE WALLS ============
 function generateCastleWalls() {
     const m = maps.castleWalls;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1694,8 +648,11 @@ function generateCastleWalls() {
     m.collisionMap[3][25] = 0;
     
     // CLEAR PATH straight up the middle
-    for (let y = 35; y < 40; y++) m.collisionMap[y][25] = 0;
-    for (let y = 4; y < 35; y++) m.collisionMap[y][25] = 0;
+    for (let y = 3; y < m.height - 1; y++) {
+        m.collisionMap[y][24] = 0;
+        m.collisionMap[y][25] = 0;
+        m.collisionMap[y][26] = 0;
+    }
     
     // Wall segments on sides
     for (let x = 5; x < 45; x += 5) {
@@ -1737,6 +694,7 @@ function generateCastleWalls() {
     ];
 }
 
+// ============ CASTLE ============
 function generateCastle() {
     const m = maps.castle;
     m.collisionMap = Array(m.height).fill().map(() => Array(m.width).fill(0));
@@ -1756,8 +714,11 @@ function generateCastle() {
     m.collisionMap[m.height - 2][20] = 0;
     
     // CLEAR PATH to throne room
-    for (let y = 15; y < 35; y++) m.collisionMap[y][20] = 0;
-    for (let y = 5; y < 15; y++) m.collisionMap[y][20] = 0;
+    for (let y = 5; y < m.height - 1; y++) {
+        m.collisionMap[y][19] = 0;
+        m.collisionMap[y][20] = 0;
+        m.collisionMap[y][21] = 0;
+    }
     
     // Throne room walls
     for (let y = 5; y < 15; y++) {
@@ -1805,7 +766,7 @@ function generateCastle() {
         { x: 20, y: 34, targetArea: 'castleWalls', targetX: 25, targetY: 3, transitionText: 'You return to the Castle Walls...' }
     ];
 }
-        // ============ ENEMY SPAWNING ============
+    // ============ ENEMY SPAWNING ============
 function spawnEnemies() {
     const m = maps[gameState.currentArea];
     gameState.visibleEnemies = [];
@@ -1933,6 +894,8 @@ function drawTombstoneTile(ctx, x, y, size) {
     ctx.fillRect(x + 4, y + 2, size - 8, size - 4);
     ctx.fillStyle = '#666666';
     ctx.fillRect(x + 6, y + 6, size - 12, size - 12);
+    ctx.fillStyle = '#999999';
+    ctx.fillRect(x + size / 2 - 1, y + 3, 2, size - 6);
 }
 
 function drawBuildingTile(ctx, x, y, size) {
@@ -1942,25 +905,34 @@ function drawBuildingTile(ctx, x, y, size) {
     ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
     ctx.fillStyle = '#FFD700';
     ctx.fillRect(x + size / 4, y + size / 4, size / 2, size / 2);
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(x + size / 4 + 1, y + size / 4 + 1, size / 2 - 2, size / 2 - 2);
 }
 
 function drawCastleWallTile(ctx, x, y, size) {
     ctx.fillStyle = '#3a3a4a';
     ctx.fillRect(x, y, size, size);
     ctx.fillStyle = '#4a4a5a';
-    ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
+    ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
     ctx.fillStyle = '#5a5a6a';
-    ctx.fillRect(x + 5, y + 5, size - 10, size - 10);
+    ctx.fillRect(x + 4, y + 4, size - 8, size - 8);
+    ctx.strokeStyle = '#2a2a3a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 2, y + 2, size - 4, size - 4);
 }
 
 function drawCastleTile(ctx, x, y, size) {
     ctx.fillStyle = '#2a0a2a';
     ctx.fillRect(x, y, size, size);
     ctx.fillStyle = '#3a1a3a';
-    ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
+    ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
+    ctx.fillStyle = '#4a2a4a';
+    ctx.fillRect(x + 4, y + 4, size - 8, size - 8);
     ctx.fillStyle = '#FFD700';
     ctx.fillRect(x + size / 4, y + size / 4, 2, 2);
     ctx.fillRect(x + 3 * size / 4, y + size / 4, 2, 2);
+    ctx.fillRect(x + size / 4, y + 3 * size / 4, 2, 2);
+    ctx.fillRect(x + 3 * size / 4, y + 3 * size / 4, 2, 2);
 }
 
 function drawObject(ctx, obj, tileSize) {
@@ -1975,6 +947,8 @@ function drawObject(ctx, obj, tileSize) {
             ctx.fillRect(x + 2, y + 2, tileSize * 3 - 4, tileSize * 2 - 4);
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(x + 5, y + 5, tileSize * 2, tileSize);
+            ctx.fillStyle = '#FF69B4';
+            ctx.fillRect(x + 8, y + tileSize, tileSize, tileSize / 2);
             break;
             
         case 'desk':
@@ -1984,6 +958,7 @@ function drawObject(ctx, obj, tileSize) {
             ctx.fillRect(x, y + tileSize, tileSize * 2, tileSize / 2);
             ctx.fillStyle = '#FFD700';
             ctx.fillRect(x + 5, y + 3, 8, 3);
+            ctx.fillRect(x + 8, y + 6, 3, 4);
             break;
             
         case 'bookshelf':
@@ -1998,18 +973,25 @@ function drawObject(ctx, obj, tileSize) {
         case 'clothes':
             ctx.fillStyle = '#FF69B4';
             ctx.fillRect(x, y, tileSize, tileSize);
+            ctx.fillStyle = '#FF1493';
+            ctx.fillRect(x + 5, y + 5, tileSize - 10, tileSize - 10);
             break;
             
         case 'boxes':
             ctx.fillStyle = '#8B7355';
             ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
             ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 2;
             ctx.strokeRect(x, y, tileSize * 2, tileSize * 2);
+            ctx.fillStyle = '#A0825A';
+            ctx.fillRect(x + 5, y + 5, tileSize - 5, tileSize - 5);
             break;
             
         case 'portal':
             const time = Date.now() / 1000;
             const pulse = Math.sin(time * 3) * 0.3 + 0.7;
+            ctx.fillStyle = `rgba(255, 0, 255, ${pulse * 0.5})`;
+            ctx.fillRect(x - 5, y - 5, tileSize * 2 + 10, tileSize * 2 + 10);
             ctx.fillStyle = `rgba(255, 0, 255, ${pulse})`;
             ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
             ctx.fillStyle = `rgba(0, 255, 255, ${pulse * 0.5})`;
@@ -2019,8 +1001,12 @@ function drawObject(ctx, obj, tileSize) {
             break;
             
         case 'key':
-            // GOLDEN KEY WITH GLOW - HIGHLY VISIBLE
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.4)';
+            // GOLDEN KEY WITH STRONG GLOW - HIGHLY VISIBLE
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.5)';
+            ctx.beginPath();
+            ctx.arc(x + tileSize / 2, y + tileSize / 2, tileSize / 2 + 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
             ctx.beginPath();
             ctx.arc(x + tileSize / 2, y + tileSize / 2, tileSize / 2, 0, Math.PI * 2);
             ctx.fill();
@@ -2052,8 +1038,12 @@ function drawObject(ctx, obj, tileSize) {
         case 'note':
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(x, y, tileSize, tileSize);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, tileSize, tileSize);
             ctx.fillStyle = '#0000FF';
             ctx.fillRect(x + 3, y + 3, tileSize - 6, 3);
+            ctx.fillRect(x + 3, y + 8, tileSize - 6, 3);
             break;
             
         case 'mushroom':
@@ -2063,11 +1053,16 @@ function drawObject(ctx, obj, tileSize) {
             ctx.beginPath();
             ctx.arc(x + tileSize / 2, y + tileSize / 2, tileSize / 2, 0, Math.PI * 2);
             ctx.fill();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(x + tileSize / 4, y + tileSize / 3, 2, 2);
+            ctx.fillRect(x + 3 * tileSize / 4, y + tileSize / 3, 2, 2);
             break;
             
         case 'tombstone':
             ctx.fillStyle = '#808080';
             ctx.fillRect(x, y, tileSize, tileSize);
+            ctx.fillStyle = '#666666';
+            ctx.fillRect(x + 5, y + 5, tileSize - 10, tileSize - 10);
             break;
     }
 }
@@ -2079,19 +1074,30 @@ function drawNPC(ctx, npc, tileSize) {
     if (npc.sprite === 'ian') {
         ctx.fillStyle = '#8B0000';
         ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+        ctx.fillStyle = '#A00000';
+        ctx.fillRect(x + 5, y - 5, tileSize * 2 - 10, 10);
         ctx.fillStyle = '#FFD700';
         ctx.fillRect(x + 8, y - 10, tileSize * 2 - 16, 8);
+        ctx.fillStyle = '#C0C0C0';
+        ctx.fillRect(x + 10, y + 25, 5, 15);
+        ctx.fillRect(x + 35, y + 25, 5, 15);
         ctx.fillStyle = '#000000';
         ctx.fillRect(x + 15, y + 15, 5, 5);
         ctx.fillRect(x + 30, y + 15, 5, 5);
     } else if (npc.sprite === 'rylee') {
         ctx.fillStyle = '#FF00FF';
         ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+        ctx.fillStyle = '#FF69B4';
+        ctx.fillRect(x + 5, y - 5, tileSize * 2 - 10, 10);
         ctx.fillStyle = '#FFD700';
-        ctx.fillRect(x + 8, y - 10, tileSize * 2 - 16, 8);
+        ctx.fillRect(x + 5, y - 12, 5, 5);
+        ctx.fillRect(x + 15, y - 15, 5, 8);
+        ctx.fillRect(x + 25, y - 12, 5, 5);
         ctx.fillStyle = '#FF0000';
         ctx.fillRect(x + 15, y + 15, 5, 5);
         ctx.fillRect(x + 30, y + 15, 5, 5);
+        ctx.fillStyle = '#8B0000';
+        ctx.fillRect(x + 45, y + 50, 10, 10);
     } else if (npc.sprite === 'bekah') {
         ctx.fillStyle = '#FF69B4';
         ctx.fillRect(x, y, tileSize, tileSize * 0.8);
@@ -2104,9 +1110,12 @@ function drawNPC(ctx, npc, tileSize) {
         ctx.beginPath();
         ctx.arc(x + tileSize / 2, y + tileSize / 2, tileSize / 2, 0, Math.PI * 2);
         ctx.fill();
+        ctx.fillRect(x, y + tileSize / 2, tileSize, tileSize / 2);
     } else if (npc.sprite === 'merchant') {
         ctx.fillStyle = '#2F4F4F';
         ctx.fillRect(x, y, tileSize, tileSize);
+        ctx.fillStyle = '#FFD700';
+        ctx.fillRect(x + 5, y + 3, 10, 5);
     } else if (npc.sprite === 'healer') {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(x, y, tileSize, tileSize);
@@ -2478,52 +1487,65 @@ function interactWithObject(obj) {
         gameState.pendingExit = { targetArea: 'castleWalls', targetX: 25, targetY: 3 };
         showDialogue('Back to Castle Walls...');
     }
-    // Ancient Tree - Reveals Forest Key
+    // Ancient Tree
     else if (obj.interactionType === 'ancientTree') {
-        if (!gameState.flags.forestKeyRevealed) {
-            gameState.flags.forestKeyRevealed = true;
-            // UNHIDE THE FOREST KEY
-            for (let i = 0; i < maps.darkForest.objects.length; i++) {
-                if (maps.darkForest.objects[i].id === 'forestKey') {
-                    maps.darkForest.objects[i].hidden = false;
-                }
-            }
-            gameState.dialogueQueue = [
-                'You push the knot...',
-                'A key falls from the branches!',
-                'Look near the glowing mushrooms!',
-                'The Forest Key is now VISIBLE!'
-            ];
-            showDialogue(gameState.dialogueQueue.shift());
-        } else {
-            showDialogue('The knot is still there...');
-        }
+        gameState.dialogueQueue = [
+            'You examine the ancient tree...',
+            'There is a huge knot in the trunk...',
+            'You push the knot...',
+            'A golden key is on the ground near the glowing mushrooms to the EAST!',
+            'Walk to the mushrooms and look around!'
+        ];
+        showDialogue(gameState.dialogueQueue.shift());
     }
     // Key Collection
     else if (obj.interactionType === 'forestKey') {
         if (!hasItem('forestKey')) {
             addItem('forestKey');
-            showDialogue('You found the Forest Key! Walk through the gate!');
+            gameState.flags.foundForestKey = true;
+            gameState.dialogueQueue = [
+                'You found the Forest Key!',
+                'Now walk to the TOP of the forest to open the gate!'
+            ];
+            showDialogue(gameState.dialogueQueue.shift());
         } else {
             showDialogue('Already have Forest Key.');
         }
     } else if (obj.interactionType === 'graveyardKey') {
         if (!hasItem('graveyardKey')) {
             addItem('graveyardKey');
-            showDialogue('You found the Graveyard Key!');
+            gameState.flags.foundGraveyardKey = true;
+            showDialogue('You found the Graveyard Key! Walk to the top!');
+        } else {
+            showDialogue('Already have Graveyard Key.');
         }
     } else if (obj.interactionType === 'villageKey') {
         if (!hasItem('villageKey')) {
             addItem('villageKey');
-            showDialogue('You found the Village Key!');
+            gameState.flags.foundVillageKey = true;
+            showDialogue('You found the Village Key! Walk to the top!');
+        } else {
+            showDialogue('Already have Village Key.');
         }
     } else if (obj.interactionType === 'castleKey') {
         if (!hasItem('castleKey')) {
             addItem('castleKey');
-            showDialogue('You found the Castle Key!');
+            gameState.flags.foundCastleKey = true;
+            showDialogue('You found the Castle Key! Walk to the top!');
+        } else {
+            showDialogue('Already have Castle Key.');
         }
     }
-    // Item Drops
+    // Gate interactions
+    else if (obj.interactionType === 'gate') {
+        if (hasItem('forestKey')) {
+            gameState.flags.openedForestGate = true;
+            showDialogue('You use the Forest Key... The gate opens! Walk through!');
+        } else {
+            showDialogue('The gate is locked. You need the Forest Key.');
+        }
+    }
+    // Item drops
     else if (obj.itemDrop) {
         if (!hasItem(obj.itemDrop)) {
             addItem(obj.itemDrop);
@@ -2532,17 +1554,22 @@ function interactWithObject(obj) {
             showDialogue(obj.description || obj.name);
         }
     }
-    // Other interactions
+    // Other
     else if (obj.interactionType === 'throne') {
         showDialogue('The Desk of Power...');
     } else if (obj.interactionType === 'note') {
         showDialogue(obj.description);
+    } else if (obj.interactionType === 'merchant') {
+        openShop('shadyMerchant');
+    } else if (obj.interactionType === 'upperMerchant') {
+        openShop('upperMerchant');
+    } else if (obj.interactionType === 'healer') {
+        openShop('villageHealer');
     } else {
         showDialogue(obj.description || obj.name);
     }
 }
-
-// ============ COMBAT ============
+    // ============ COMBAT SYSTEM ============
 function startCombat(type) {
     gameState.combat.active = true;
     gameState.combat.turn = 'player';
@@ -2630,120 +1657,211 @@ function hidePSIMenu() {
 
 function playerAttack() {
     if (gameState.combat.turn !== 'player') return;
+    
     const member = gameState.party[gameState.combat.activePartyMember];
     const enemy = gameState.combat.enemy;
+    
     let damage = Math.max(1, member.attack - enemy.defense + Math.floor(Math.random() * 3));
+    
+    if (gameState.combat.playerDefending) {
+        damage = Math.floor(damage * 0.5);
+        gameState.combat.playerDefending = false;
+    }
+    
     enemy.hp -= damage;
     showCombatMessage(`${member.name} attacks! ${damage} damage!`);
-    if (enemy.hp <= 0) endCombat(true);
-    else { gameState.combat.turn = 'enemy'; setTimeout(enemyTurn, 1500); }
+    
+    if (enemy.hp <= 0) {
+        endCombat(true);
+    } else {
+        gameState.combat.turn = 'enemy';
+        setTimeout(enemyTurn, 1500);
+    }
 }
 
 function useCoffeeBreak() {
     if (gameState.combat.turn !== 'player') return;
+    
     const member = gameState.party[gameState.combat.activePartyMember];
     const enemy = gameState.combat.enemy;
-    if (member.pp < 5) { showCombatMessage('Not enough PP!'); return; }
+    
+    if (member.pp < 5) {
+        showCombatMessage('Not enough PP!');
+        return;
+    }
+    
     member.pp -= 5;
     let damage = Math.floor(10 + member.attack * 1.5);
     enemy.hp -= damage;
-    updateCombatPartyDisplay(); hidePSIMenu();
+    
+    updateCombatPartyDisplay();
+    hidePSIMenu();
     showCombatMessage(`${member.name} uses Coffee Break! ${damage} damage!`);
-    if (enemy.hp <= 0) endCombat(true);
-    else { gameState.combat.turn = 'enemy'; setTimeout(enemyTurn, 1500); }
+    
+    if (enemy.hp <= 0) {
+        endCombat(true);
+    } else {
+        gameState.combat.turn = 'enemy';
+        setTimeout(enemyTurn, 1500);
+    }
 }
 
 function useAllNighter() {
     if (gameState.combat.turn !== 'player') return;
+    
     const member = gameState.party[gameState.combat.activePartyMember];
     const enemy = gameState.combat.enemy;
-    if (member.pp < 8) { showCombatMessage('Not enough PP!'); return; }
+    
+    if (member.pp < 8) {
+        showCombatMessage('Not enough PP!');
+        return;
+    }
+    
     member.pp -= 8;
     let damage = Math.floor(15 + member.attack * 2);
     enemy.hp -= damage;
-    updateCombatPartyDisplay(); hidePSIMenu();
+    
+    updateCombatPartyDisplay();
+    hidePSIMenu();
     showCombatMessage(`${member.name} pulls an All-Nighter! ${damage} damage!`);
-    if (enemy.hp <= 0) endCombat(true);
-    else { gameState.combat.turn = 'enemy'; setTimeout(enemyTurn, 1500); }
+    
+    if (enemy.hp <= 0) {
+        endCombat(true);
+    } else {
+        gameState.combat.turn = 'enemy';
+        setTimeout(enemyTurn, 1500);
+    }
 }
 
 function useRamenHeal() {
     if (gameState.combat.turn !== 'player') return;
+    
     const member = gameState.party[gameState.combat.activePartyMember];
-    if (member.pp < 5) { showCombatMessage('Not enough PP!'); return; }
+    
+    if (member.pp < 5) {
+        showCombatMessage('Not enough PP!');
+        return;
+    }
+    
     member.pp -= 5;
     member.hp = Math.min(member.maxHp, member.hp + 30);
-    updateCombatPartyDisplay(); hidePSIMenu();
+    
+    updateCombatPartyDisplay();
+    hidePSIMenu();
     showCombatMessage(`${member.name} heals 30 HP!`);
-    gameState.combat.turn = 'enemy'; setTimeout(enemyTurn, 1500);
+    
+    gameState.combat.turn = 'enemy';
+    setTimeout(enemyTurn, 1500);
 }
 
 function playerDefend() {
     if (gameState.combat.turn !== 'player') return;
+    
     gameState.combat.playerDefending = true;
     showCombatMessage('Defending!');
-    gameState.combat.turn = 'enemy'; setTimeout(enemyTurn, 1000);
+    
+    gameState.combat.turn = 'enemy';
+    setTimeout(enemyTurn, 1000);
 }
 
 function playerRun() {
     if (gameState.combat.turn !== 'player') return;
-    if (gameState.combat.enemy.isBoss) { showCombatMessage('Cannot escape!'); return; }
-    if (Math.random() < 0.7) { endCombat(false); showCombatMessage('Escaped!'); }
-    else { showCombatMessage('Failed to escape!'); gameState.combat.turn = 'enemy'; setTimeout(enemyTurn, 1000); }
+    
+    if (gameState.combat.enemy.isBoss) {
+        showCombatMessage('Cannot escape from a boss!');
+        return;
+    }
+    
+    if (Math.random() < 0.7) {
+        endCombat(false);
+        showCombatMessage('Escaped!');
+    } else {
+        showCombatMessage('Failed to escape!');
+        gameState.combat.turn = 'enemy';
+        setTimeout(enemyTurn, 1000);
+    }
 }
 
 function enemyTurn() {
     const enemy = gameState.combat.enemy;
     const alive = gameState.party.filter(m => m.hp > 0);
-    if (alive.length === 0) { endCombat(false); return; }
+    
+    if (alive.length === 0) {
+        endCombat(false);
+        return;
+    }
+    
     const target = alive[Math.floor(Math.random() * alive.length)];
     const attack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
+    
     let damage = Math.max(1, Math.floor(enemy.attack * attack.power - target.defense));
-    if (gameState.combat.playerDefending) { damage = Math.floor(damage * 0.5); gameState.combat.playerDefending = false; }
+    
+    if (gameState.combat.playerDefending) {
+        damage = Math.floor(damage * 0.5);
+        gameState.combat.playerDefending = false;
+    }
+    
     target.hp -= damage;
-    updateCombatPartyDisplay(); updateHUD();
+    updateCombatPartyDisplay();
+    updateHUD();
     soundSystem.playSound('damage');
     showCombatMessage(`${enemy.name} uses ${attack.name}! ${damage} damage!`);
+    
     if (gameState.party.every(m => m.hp <= 0)) {
         endCombat(false);
         setTimeout(() => {
-            gameState.party.forEach(m => { m.hp = m.maxHp; m.pp = m.maxPp; });
+            gameState.party.forEach(m => {
+                m.hp = m.maxHp;
+                m.pp = m.maxPp;
+            });
             gameState.currentArea = 'room303';
             gameState.player.x = 400;
             gameState.player.y = 300;
-            spawnEnemies(); updateHUD();
+            spawnEnemies();
+            updateHUD();
         }, 3000);
-    } else gameState.combat.turn = 'player';
+    } else {
+        gameState.combat.turn = 'player';
+    }
 }
 
 function endCombat(victory) {
     gameState.combat.active = false;
     document.getElementById('combatScreen').classList.remove('active');
+    
     if (victory) {
         const enemy = gameState.combat.enemy;
+        
         gameState.party.forEach(member => {
             if (member.hp > 0) {
                 member.exp += enemy.exp;
                 member.money = (member.money || 0) + enemy.money;
+                
                 if (member.exp >= member.level * 10) {
                     member.level++;
                     member.exp = 0;
-                    member.maxHp += 5; member.hp = member.maxHp;
-                    member.maxPp += 3; member.pp = member.maxPp;
-                    member.attack += 2; member.defense += 1;
+                    member.maxHp += 5;
+                    member.hp = member.maxHp;
+                    member.maxPp += 3;
+                    member.pp = member.maxPp;
+                    member.attack += 2;
+                    member.defense += 1;
                     soundSystem.playSound('levelup');
                     showCombatMessage(member.name + ' leveled up!');
                 }
             }
         });
+        
         if (enemy.isBoss && enemy.name.includes('IAN')) {
             gameState.flags.defeatedIan = true;
             showCombatMessage('IAN defeated! Castle gate is open!');
         }
+        
         if (enemy.isBoss && enemy.name.includes('RYLEE')) {
             gameState.flags.defeatedRylee = true;
             showCombatMessage('RYLEE defeated! Izzy is free!');
         }
+        
         soundSystem.playSound('victory');
         updateHUD();
     }
@@ -2759,18 +1877,24 @@ function showDialogue(text) {
 function closeDialogue() {
     gameState.inDialogue = false;
     document.getElementById('dialogueBox').classList.remove('active');
+    
     if (gameState.dialogueQueue.length > 0) {
         const next = gameState.dialogueQueue.shift();
-        if (next) setTimeout(() => showDialogue(next), 500);
-        else if (gameState.pendingBoss) { const b = gameState.pendingBoss; gameState.pendingBoss = null; startCombat(b); }
+        if (next) {
+            setTimeout(() => showDialogue(next), 500);
+        } else if (gameState.pendingBoss) {
+            const boss = gameState.pendingBoss;
+            gameState.pendingBoss = null;
+            startCombat(boss);
+        }
     } else if (gameState.pendingExit) {
         const exit = gameState.pendingExit;
         gameState.pendingExit = null;
         transitionArea(exit.targetArea, exit.targetX, exit.targetY);
     } else if (gameState.pendingBoss) {
-        const b = gameState.pendingBoss;
+        const boss = gameState.pendingBoss;
         gameState.pendingBoss = null;
-        startCombat(b);
+        startCombat(boss);
     }
 }
 
@@ -2799,9 +1923,14 @@ function updateInventoryDisplay() {
     listElement.innerHTML = '';
     
     let displayItems = [];
-    if (gameState.inventoryTab === 'items') displayItems = gameState.inventory.filter(i => items[i.id].type === 'item');
-    else if (gameState.inventoryTab === 'weapons') displayItems = gameState.inventory.filter(i => items[i.id].type === 'weapon');
-    else displayItems = gameState.inventory.filter(i => items[i.id].type === 'keyItem');
+    
+    if (gameState.inventoryTab === 'items') {
+        displayItems = gameState.inventory.filter(i => items[i.id].type === 'item');
+    } else if (gameState.inventoryTab === 'weapons') {
+        displayItems = gameState.inventory.filter(i => items[i.id].type === 'weapon');
+    } else {
+        displayItems = gameState.inventory.filter(i => items[i.id].type === 'keyItem');
+    }
     
     if (displayItems.length === 0) {
         listElement.innerHTML = '<div style="text-align:center;color:#666;">NO ITEMS</div>';
@@ -2836,18 +1965,21 @@ function updateInventoryDisplay() {
 function useItem(itemId, targetIndex) {
     const itemData = items[itemId];
     const target = gameState.party[targetIndex !== null ? targetIndex : gameState.combat.activePartyMember];
+    
     if (itemData.healAmount) {
         target.hp = Math.min(target.maxHp, target.hp + itemData.healAmount);
         removeItem(itemId);
         updateHUD();
         return true;
     }
+    
     if (itemData.ppRestore) {
         target.pp = Math.min(target.maxPp, target.pp + itemData.ppRestore);
         removeItem(itemId);
         updateHUD();
         return true;
     }
+    
     return false;
 }
 
@@ -2860,15 +1992,20 @@ function equipWeapon(itemId) {
 
 function addItem(itemId, quantity = 1) {
     const existing = gameState.inventory.find(i => i.id === itemId);
-    if (existing) existing.quantity += quantity;
-    else gameState.inventory.push({ id: itemId, quantity: quantity });
+    if (existing) {
+        existing.quantity += quantity;
+    } else {
+        gameState.inventory.push({ id: itemId, quantity: quantity });
+    }
 }
 
 function removeItem(itemId, quantity = 1) {
     const index = gameState.inventory.findIndex(i => i.id === itemId);
     if (index !== -1) {
         gameState.inventory[index].quantity -= quantity;
-        if (gameState.inventory[index].quantity <= 0) gameState.inventory.splice(index, 1);
+        if (gameState.inventory[index].quantity <= 0) {
+            gameState.inventory.splice(index, 1);
+        }
     }
 }
 
@@ -2898,21 +2035,43 @@ function updatePhoneDisplay() {
     callHome.innerHTML = '<div><div class="item-name">📞 Call Home</div><div class="item-description">Ask for money (+$20)</div></div>';
     callHome.onclick = () => {
         const now = Date.now();
-        if (now - gameState.lastPhoneUse < 30000) { showCombatMessage('Cooling down...'); return; }
+        if (now - gameState.lastPhoneUse < 30000) {
+            showCombatMessage('Phone is cooling down. Wait 30 seconds...');
+            return;
+        }
         gameState.lastPhoneUse = now;
-        gameState.party[0].money += 20;
-        updatePhoneDisplay(); updateHUD();
+        gameState.party[0].money = (gameState.party[0].money || 0) + 20;
+        updatePhoneDisplay();
+        updateHUD();
         soundSystem.playSound('phone');
-        showCombatMessage('Parents sent $20!');
+        showCombatMessage('Parents sent you $20!');
     };
     listElement.appendChild(callHome);
+    
+    const checkMessages = document.createElement('div');
+    checkMessages.className = 'phone-item';
+    checkMessages.innerHTML = '<div><div class="item-name">💬 Check Messages</div><div class="item-description">Read text messages from friends</div></div>';
+    checkMessages.onclick = () => {
+        soundSystem.playSound('phone');
+        gameState.dialogueQueue = [
+            'BEKAH: Hey, where are you?',
+            'IZZY: HELP! Rylee has me!',
+            'MOM: Don\'t forget to eat!',
+            'DAD: Study hard!'
+        ];
+        showDialogue(gameState.dialogueQueue.shift());
+        closePhone();
+    };
+    listElement.appendChild(checkMessages);
 }
 
 function openShop(shopType) {
     gameState.paused = true;
     document.getElementById('shopScreen').classList.add('active');
+    
     const shop = shops[shopType];
     document.getElementById('shopTitle').textContent = shop.name;
+    
     const listElement = document.getElementById('shopList');
     document.getElementById('shopMoney').textContent = gameState.party[0].money || 0;
     listElement.innerHTML = '';
@@ -2936,21 +2095,28 @@ function openShop(shopType) {
                     openShop(shopType);
                     updateHUD();
                     soundSystem.playSound('interact');
-                } else showCombatMessage('Not enough money!');
+                } else {
+                    showCombatMessage('Not enough money!');
+                }
             };
             listElement.appendChild(element);
         });
     } else if (shop.healCost) {
         const element = document.createElement('div');
         element.className = 'shop-item';
-        element.innerHTML = `<div><div class="item-name">Full Heal</div></div><div class="item-price">$${shop.healCost}</div>`;
+        element.innerHTML = `<div><div class="item-name">Full Party Heal</div><div class="item-description">Restore all HP and PP</div></div><div class="item-price">$${shop.healCost}</div>`;
         element.onclick = () => {
             if (gameState.party[0].money >= shop.healCost) {
                 gameState.party[0].money -= shop.healCost;
-                gameState.party.forEach(m => { m.hp = m.maxHp; m.pp = m.maxPp; });
+                gameState.party.forEach(m => {
+                    m.hp = m.maxHp;
+                    m.pp = m.maxPp;
+                });
                 updateHUD();
-                showCombatMessage('Healed!');
-            } else showCombatMessage('Not enough!');
+                showCombatMessage('Party fully healed!');
+            } else {
+                showCombatMessage('Not enough money!');
+            }
         };
         listElement.appendChild(element);
     }
@@ -2963,9 +2129,17 @@ function closeShop() {
 
 function showItemMenu() {
     if (gameState.combat.turn !== 'player') return;
+    
     const listElement = document.getElementById('itemMenu');
     listElement.innerHTML = '';
+    
     const usableItems = gameState.inventory.filter(i => items[i.id].type === 'item' && items[i.id].usable);
+    
+    if (usableItems.length === 0) {
+        showCombatMessage('No usable items!');
+        return;
+    }
+    
     usableItems.forEach(item => {
         const button = document.createElement('button');
         button.className = 'combat-button';
@@ -2980,6 +2154,7 @@ function showItemMenu() {
         };
         listElement.appendChild(button);
     });
+    
     const backButton = document.createElement('button');
     backButton.className = 'combat-button';
     backButton.textContent = 'BACK';
@@ -2988,6 +2163,7 @@ function showItemMenu() {
         listElement.classList.remove('active');
     };
     listElement.appendChild(backButton);
+    
     document.getElementById('combatMenu').style.display = 'none';
     listElement.classList.add('active');
 }
@@ -2995,10 +2171,12 @@ function showItemMenu() {
 function showStatus() {
     const member = gameState.party[0];
     gameState.dialogueQueue = [
-        `${member.name} - Lv ${member.level}`,
+        `${member.name} - Level ${member.level}`,
         `HP: ${member.hp}/${member.maxHp}`,
         `PP: ${member.pp}/${member.maxPp}`,
-        `ATK: ${member.attack} DEF: ${member.defense}`
+        `Attack: ${member.attack}`,
+        `Defense: ${member.defense}`,
+        `Weapon: ${gameState.equippedWeapon ? items[gameState.equippedWeapon].name : 'None'}`
     ];
     showDialogue(gameState.dialogueQueue.shift());
     document.getElementById('gameMenu').classList.remove('active');
@@ -3007,7 +2185,7 @@ function showStatus() {
 function saveGame() {
     localStorage.setItem('johnNeumaierSave', JSON.stringify(gameState));
     soundSystem.playSound('victory');
-    showCombatMessage('Saved!');
+    showCombatMessage('Game saved!');
     document.getElementById('gameMenu').classList.remove('active');
 }
 
@@ -3017,10 +2195,15 @@ function loadGame() {
         const parsed = JSON.parse(saveData);
         gameState = { ...gameState, ...parsed };
         gameState.player = parsed.player || gameState.player;
+        gameState.flags = parsed.flags || gameState.flags;
+        gameState.party = parsed.party || gameState.party;
+        gameState.inventory = parsed.inventory || gameState.inventory;
         spawnEnemies();
         updateHUD();
-        showCombatMessage('Loaded!');
-    } else showCombatMessage('No save found.');
+        showCombatMessage('Game loaded!');
+    } else {
+        showCombatMessage('No save file found!');
+    }
     document.getElementById('gameMenu').classList.remove('active');
 }
 
@@ -3078,6 +2261,9 @@ function initGame() {
         const parsed = JSON.parse(saveData);
         gameState = { ...gameState, ...parsed };
         gameState.player = parsed.player || gameState.player;
+        gameState.flags = parsed.flags || gameState.flags;
+        gameState.party = parsed.party || gameState.party;
+        gameState.inventory = parsed.inventory || gameState.inventory;
     } else {
         addItem('ramen', 2);
         addItem('coffee', 1);
@@ -3098,35 +2284,75 @@ function initGame() {
 // ============ EVENT LISTENERS ============
 document.addEventListener('keydown', (e) => {
     switch (e.key.toLowerCase()) {
-        case 'arrowup': case 'w': gameState.keys.up = true; e.preventDefault(); break;
-        case 'arrowdown': case 's': gameState.keys.down = true; e.preventDefault(); break;
-        case 'arrowleft': case 'a': gameState.keys.left = true; e.preventDefault(); break;
-        case 'arrowright': case 'd': gameState.keys.right = true; e.preventDefault(); break;
+        case 'arrowup':
+        case 'w':
+            gameState.keys.up = true;
+            e.preventDefault();
+            break;
+        case 'arrowdown':
+        case 's':
+            gameState.keys.down = true;
+            e.preventDefault();
+            break;
+        case 'arrowleft':
+        case 'a':
+            gameState.keys.left = true;
+            e.preventDefault();
+            break;
+        case 'arrowright':
+        case 'd':
+            gameState.keys.right = true;
+            e.preventDefault();
+            break;
     }
     
-    if (e.key.toLowerCase() === 'e') gameState.keys.interact = true;
+    if (e.key.toLowerCase() === 'e') {
+        gameState.keys.interact = true;
+    }
     
     if (e.key === ' ' && gameState.inDialogue) {
         e.preventDefault();
-        if (gameState.dialogueQueue.length > 0) showDialogue(gameState.dialogueQueue.shift());
-        else closeDialogue();
+        if (gameState.dialogueQueue.length > 0) {
+            showDialogue(gameState.dialogueQueue.shift());
+        } else {
+            closeDialogue();
+        }
     }
     
     if (e.key === 'Escape' && !gameState.inDialogue && !gameState.combat.active) {
-        if (document.getElementById('inventoryScreen').classList.contains('active')) closeInventory();
-        else if (document.getElementById('shopScreen').classList.contains('active')) closeShop();
-        else if (document.getElementById('phoneScreen').classList.contains('active')) closePhone();
-        else toggleMenu();
+        if (document.getElementById('inventoryScreen').classList.contains('active')) {
+            closeInventory();
+        } else if (document.getElementById('shopScreen').classList.contains('active')) {
+            closeShop();
+        } else if (document.getElementById('phoneScreen').classList.contains('active')) {
+            closePhone();
+        } else {
+            toggleMenu();
+        }
     }
 });
 
 document.addEventListener('keyup', (e) => {
     switch (e.key.toLowerCase()) {
-        case 'arrowup': case 'w': gameState.keys.up = false; break;
-        case 'arrowdown': case 's': gameState.keys.down = false; break;
-        case 'arrowleft': case 'a': gameState.keys.left = false; break;
-        case 'arrowright': case 'd': gameState.keys.right = false; break;
-        case 'e': gameState.keys.interact = false; break;
+        case 'arrowup':
+        case 'w':
+            gameState.keys.up = false;
+            break;
+        case 'arrowdown':
+        case 's':
+            gameState.keys.down = false;
+            break;
+        case 'arrowleft':
+        case 'a':
+            gameState.keys.left = false;
+            break;
+        case 'arrowright':
+        case 'd':
+            gameState.keys.right = false;
+            break;
+        case 'e':
+            gameState.keys.interact = false;
+            break;
     }
 });
 
