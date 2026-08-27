@@ -8,58 +8,53 @@
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#000; font-family:'Press Start 2P',cursive; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
-        .game-container { position:relative; width:800px; height:600px; background:#1a0a2e; border:4px solid #ff00ff; box-shadow:0 0 50px rgba(255,0,255,.5), inset 0 0 50px rgba(255,0,255,.1); }
+        .game-container { position:relative; width:800px; height:600px; background:#1a0a2e; border:4px solid #ff00ff; box-shadow:0 0 50px rgba(255,0,255,.5); }
         .game-screen { position:relative; width:100%; height:100%; overflow:hidden; }
         #gameCanvas { position:absolute; top:0; left:0; width:100%; height:100%; image-rendering:pixelated; }
-        .dialogue-box { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); width:90%; background:rgba(0,0,0,.95); border:3px solid #00ffff; padding:20px; color:#fff; font-size:12px; line-height:1.8; display:none; z-index:100; box-shadow:0 0 30px rgba(0,255,255,.5); border-radius:8px; }
+        .dialogue-box { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); width:90%; background:rgba(0,0,0,.95); border:3px solid #00ffff; padding:20px; color:#fff; font-size:12px; line-height:1.8; display:none; z-index:100; border-radius:8px; }
         .dialogue-box.active { display:block; }
-        .menu { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.95); border:4px solid #ff00ff; padding:30px; color:#fff; text-align:center; display:none; z-index:200; min-width:300px; box-shadow:0 0 40px rgba(255,0,255,.6); border-radius:10px; }
+        .menu { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.95); border:4px solid #ff00ff; padding:30px; color:#fff; text-align:center; display:none; z-index:200; min-width:300px; border-radius:10px; }
         .menu.active { display:block; }
-        .menu h2 { color:#ff00ff; margin-bottom:20px; font-size:20px; text-shadow:0 0 20px #ff00ff; }
-        .menu button { display:block; width:100%; padding:12px; margin:10px 0; background:linear-gradient(135deg,#2d1b4e,#1a0a2e); border:2px solid #00ffff; color:#fff; font-family:'Press Start 2P',cursive; cursor:pointer; transition:all .3s; font-size:12px; border-radius:5px; }
-        .menu button:hover { background:linear-gradient(135deg,#ff00ff,#8b008b); border-color:#fff; transform:scale(1.05); box-shadow:0 0 30px rgba(255,0,255,.8); }
-        .inventory-screen,.shop-screen,.phone-screen { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.95); border:4px solid #ff00ff; padding:30px; color:#fff; display:none; z-index:250; width:600px; max-height:500px; overflow-y:auto; box-shadow:0 0 40px rgba(255,0,255,.5); border-radius:10px; }
+        .menu h2 { color:#ff00ff; margin-bottom:20px; font-size:20px; }
+        .menu button { display:block; width:100%; padding:12px; margin:10px 0; background:#2d1b4e; border:2px solid #00ffff; color:#fff; font-family:'Press Start 2P',cursive; cursor:pointer; font-size:12px; border-radius:5px; }
+        .menu button:hover { background:#ff00ff; border-color:#fff; }
+        .inventory-screen,.shop-screen,.phone-screen { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.95); border:4px solid #ff00ff; padding:30px; color:#fff; display:none; z-index:250; width:600px; max-height:500px; overflow-y:auto; border-radius:10px; }
         .inventory-screen.active,.shop-screen.active,.phone-screen.active { display:block; }
-        .inventory-screen h2,.shop-screen h2,.phone-screen h2 { color:#ff00ff; margin-bottom:20px; font-size:16px; text-align:center; }
         .inventory-tabs { display:flex; gap:10px; margin-bottom:20px; justify-content:center; }
         .inventory-tab { padding:10px 15px; background:#2d1b4e; border:2px solid #00ffff; color:#fff; cursor:pointer; font-family:'Press Start 2P',cursive; font-size:10px; border-radius:5px; }
-        .inventory-tab.active { background:#ff00ff; box-shadow:0 0 20px #ff00ff; }
+        .inventory-tab.active { background:#ff00ff; }
         .inventory-list { display:flex; flex-direction:column; gap:8px; min-height:200px; }
-        .inventory-item,.shop-item,.phone-item { display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,.05); border:1px solid #00ffff; cursor:pointer; font-size:10px; transition:all .3s; border-radius:5px; }
-        .inventory-item:hover,.shop-item:hover,.phone-item:hover { background:rgba(255,0,255,.2); border-color:#ff00ff; transform:scale(1.02); }
+        .inventory-item,.shop-item,.phone-item { display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,.05); border:1px solid #00ffff; cursor:pointer; font-size:10px; border-radius:5px; }
+        .inventory-item:hover,.shop-item:hover,.phone-item:hover { background:rgba(255,0,255,.2); }
         .item-name { flex:1; } .item-quantity { color:#00ffff; margin-left:10px; } .item-price { color:#FFD700; margin-left:10px; }
         .item-description { font-size:10px; color:#ccc; margin-top:5px; }
         .inventory-actions { display:flex; gap:10px; margin-top:20px; justify-content:center; }
         .inventory-actions button { padding:10px 20px; background:#2d1b4e; border:2px solid #00ffff; color:#fff; cursor:pointer; font-family:'Press Start 2P',cursive; font-size:10px; }
         .money-display { text-align:center; margin-bottom:15px; color:#FFD700; font-size:14px; }
         .hud { position:absolute; top:10px; left:10px; right:10px; display:flex; justify-content:space-between; color:#fff; font-size:10px; z-index:50; pointer-events:none; }
-        .hud-left,.hud-right { background:rgba(0,0,0,.8); padding:12px; border:2px solid #00ffff; box-shadow:0 0 15px rgba(0,255,255,.3); border-radius:5px; }
-        .loading-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:1000; flex-direction:column; }
-        .loading-text { color:#ff00ff; font-size:24px; animation:loading-pulse 1s infinite; }
-        @keyframes loading-pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
-        .interaction-prompt { position:absolute; bottom:100px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.9); border:2px solid #ff00ff; color:#fff; padding:12px 20px; font-size:10px; display:none; z-index:75; box-shadow:0 0 20px rgba(255,0,255,.5); border-radius:5px; animation:prompt-pulse 1s infinite; }
-        @keyframes prompt-pulse { 0%,100%{box-shadow:0 0 20px rgba(255,0,255,.5);} 50%{box-shadow:0 0 40px rgba(255,0,255,1);} }
+        .hud-left,.hud-right { background:rgba(0,0,0,.8); padding:12px; border:2px solid #00ffff; border-radius:5px; }
+        .loading-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:1000; }
+        .loading-text { color:#ff00ff; font-size:24px; }
+        .interaction-prompt { position:absolute; bottom:100px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.9); border:2px solid #ff00ff; color:#fff; padding:12px 20px; font-size:10px; display:none; z-index:75; border-radius:5px; }
         .interaction-prompt.active { display:block; }
-        .combat-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#1a0a2e 0%,#2d1b4e 50%,#1a0a2e 100%); display:none; z-index:300; flex-direction:column; align-items:center; justify-content:center; }
+        .combat-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); display:none; z-index:300; flex-direction:column; align-items:center; justify-content:center; }
         .combat-screen.active { display:flex; }
-        .combat-enemy-area { width:80%; height:35%; display:flex; justify-content:center; align-items:center; margin-bottom:10px; }
-        .combat-enemy { width:100px; height:100px; animation:enemy-float 2s ease-in-out infinite; filter:drop-shadow(0 0 20px rgba(255,0,255,.5)); }
+        .combat-enemy-area { width:80%; height:35%; display:flex; justify-content:center; align-items:center; }
+        .combat-enemy { width:100px; height:100px; animation:enemy-float 2s ease-in-out infinite; }
         @keyframes enemy-float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
         .combat-party-area { width:80%; height:20%; display:flex; align-items:center; justify-content:space-around; margin-bottom:10px; gap:20px; }
         .combat-party-member { display:flex; align-items:center; gap:10px; padding:12px; background:rgba(0,0,0,.7); border:2px solid #00ffff; border-radius:8px; cursor:pointer; }
-        .combat-party-member.active { border-color:#ff00ff; box-shadow:0 0 25px rgba(255,0,255,.7); }
-        .combat-player { width:50px; height:50px; } .combat-stats { color:#fff; font-size:9px; line-height:1.6; }
+        .combat-party-member.active { border-color:#ff00ff; }
+        .combat-stats { color:#fff; font-size:9px; line-height:1.6; }
         .combat-menu { width:80%; background:rgba(0,0,0,.8); border:3px solid #00ffff; padding:15px; display:flex; gap:15px; justify-content:center; flex-wrap:wrap; }
-        .combat-button { padding:14px 20px; background:linear-gradient(135deg,#2d1b4e,#1a0a2e); border:2px solid #ff00ff; color:#fff; font-family:'Press Start 2P',cursive; font-size:11px; cursor:pointer; transition:all .3s; border-radius:5px; }
-        .combat-button:hover { background:linear-gradient(135deg,#ff00ff,#8b008b); transform:scale(1.1); box-shadow:0 0 30px rgba(255,0,255,.8); }
+        .combat-button { padding:14px 20px; background:#2d1b4e; border:2px solid #ff00ff; color:#fff; font-family:'Press Start 2P',cursive; font-size:11px; cursor:pointer; border-radius:5px; }
+        .combat-button:hover { background:#ff00ff; }
         .combat-message { position:absolute; top:15%; left:50%; transform:translateX(-50%); color:#fff; font-size:12px; background:rgba(0,0,0,.9); padding:20px; border:2px solid #00ffff; display:none; z-index:350; min-width:300px; }
         .combat-message.active { display:block; }
-        .combat-background { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; animation:psychedelic-shift 5s linear infinite; background:radial-gradient(circle at 50% 50%,#ff00ff33,#00ffff33,#ff00ff33); }
-        @keyframes psychedelic-shift { 0%{filter:hue-rotate(0deg);} 100%{filter:hue-rotate(360deg);} }
-        .psi-menu,.item-menu { display:none; flex-direction:column; gap:10px; } .psi-menu.active,.item-menu.active { display:flex; }
-        .item-menu { max-height:200px; overflow-y:auto; }
-        .phone-screen { background:linear-gradient(135deg,#0a0a2e,#1a1a4e); border:4px solid #00ff00; box-shadow:0 0 40px rgba(0,255,0,.5); }
-        .phone-screen h2 { color:#00ff00; text-shadow:0 0 20px #00ff00; } .phone-item { border-color:#00ff00; }
+        .psi-menu,.item-menu { display:none; flex-direction:column; gap:10px; }
+        .psi-menu.active,.item-menu.active { display:flex; }
+        .phone-screen { background:#0a0a2e; border:4px solid #00ff00; }
+        .phone-screen h2 { color:#00ff00; }
     </style>
 </head>
 <body>
@@ -72,23 +67,23 @@
 <div class="inventory-screen" id="inventoryScreen"><h2>INVENTORY</h2><div class="money-display">MONEY: $<span id="inventoryMoney">0</span></div><div class="inventory-tabs"><button class="inventory-tab active" onclick="switchInventoryTab('items',this)">ITEMS</button><button class="inventory-tab" onclick="switchInventoryTab('weapons',this)">WEAPONS</button><button class="inventory-tab" onclick="switchInventoryTab('keyItems',this)">KEYS</button></div><div class="inventory-list" id="inventoryList"></div><div class="inventory-actions"><button onclick="closeInventory()">CLOSE</button></div></div>
 <div class="phone-screen" id="phoneScreen"><h2>📱 PHONE</h2><div class="money-display">MONEY: $<span id="phoneMoney">0</span></div><div class="inventory-list" id="phoneList"></div><div class="inventory-actions"><button onclick="closePhone()">CLOSE</button></div></div>
 <div class="shop-screen" id="shopScreen"><h2 id="shopTitle">SHOP</h2><div class="money-display">MONEY: $<span id="shopMoney">0</span></div><div class="inventory-list" id="shopList"></div><div class="inventory-actions"><button onclick="closeShop()">CLOSE</button></div></div>
-<div class="combat-screen" id="combatScreen"><div class="combat-background"></div><div class="combat-enemy-area"><canvas id="combatEnemyCanvas" class="combat-enemy" width="100" height="100"></canvas></div><div class="combat-party-area" id="combatPartyArea"></div><div class="combat-menu" id="combatMenu"><button class="combat-button" onclick="playerAttack()">FIGHT</button><button class="combat-button" onclick="showPSIMenu()">PSYCH</button><button class="combat-button" onclick="showItemMenu()">ITEM</button><button class="combat-button" onclick="playerDefend()">GUARD</button><button class="combat-button" onclick="playerRun()">RUN</button></div><div class="psi-menu" id="psiMenu"><button class="combat-button" onclick="useCoffeeBreak()">COFFEE (5 PP)</button><button class="combat-button" onclick="useAllNighter()">ALL-NIGHT (8 PP)</button><button class="combat-button" onclick="useRamenHeal()">RAMEN (5 PP)</button><button class="combat-button" onclick="hidePSIMenu()">BACK</button></div><div class="item-menu" id="itemMenu"></div></div>
+<div class="combat-screen" id="combatScreen"><div class="combat-enemy-area"><canvas id="combatEnemyCanvas" class="combat-enemy" width="100" height="100"></canvas></div><div class="combat-party-area" id="combatPartyArea"></div><div class="combat-menu" id="combatMenu"><button class="combat-button" onclick="playerAttack()">FIGHT</button><button class="combat-button" onclick="showPSIMenu()">PSYCH</button><button class="combat-button" onclick="showItemMenu()">ITEM</button><button class="combat-button" onclick="playerDefend()">GUARD</button><button class="combat-button" onclick="playerRun()">RUN</button></div><div class="psi-menu" id="psiMenu"><button class="combat-button" onclick="useCoffeeBreak()">COFFEE (5 PP)</button><button class="combat-button" onclick="useAllNighter()">ALL-NIGHT (8 PP)</button><button class="combat-button" onclick="useRamenHeal()">RAMEN (5 PP)</button><button class="combat-button" onclick="hidePSIMenu()">BACK</button></div><div class="item-menu" id="itemMenu"></div></div>
 <div class="combat-message" id="combatMessage"><p id="combatMessageText"></p></div>
 <div class="loading-screen" id="loadingScreen"><div class="loading-text">LOADING...</div></div>
 </div></div>
 <script>
-// ============ SOUND SYSTEM ============
-const soundSystem={audioContext:null,init(){try{this.audioContext=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}},playSound(t){if(!this.audioContext)return;const o=this.audioContext.createOscillator(),g=this.audioContext.createGain();o.connect(g);g.connect(this.audioContext.destination);switch(t){case'interact':o.frequency.setValueAtTime(800,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(1200,this.audioContext.currentTime+.1);g.gain.setValueAtTime(.3,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.1);o.start();o.stop(this.audioContext.currentTime+.1);break;case'combat':o.frequency.setValueAtTime(200,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(400,this.audioContext.currentTime+.3);g.gain.setValueAtTime(.4,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.3);o.start();o.stop(this.audioContext.currentTime+.3);break;case'victory':o.frequency.setValueAtTime(600,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(1200,this.audioContext.currentTime+.4);g.gain.setValueAtTime(.4,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.4);o.start();o.stop(this.audioContext.currentTime+.4);break;case'damage':o.type='sawtooth';o.frequency.setValueAtTime(150,this.audioContext.currentTime);o.frequency.exponentialRampToValueAtTime(50,this.audioContext.currentTime+.2);g.gain.setValueAtTime(.3,this.audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+.2);o.start();o.stop(this.audioContext.currentTime+.2);break;case'levelup':[523,659,784,1047].forEach((f,i)=>{const os=this.audioContext.createOscillator(),gn=this.audioContext.createGain();os.connect(gn);gn.connect(this.audioContext.destination);os.frequency.setValueAtTime(f,this.audioContext.currentTime+i*.1);gn.gain.setValueAtTime(.3,this.audioContext.currentTime+i*.1);gn.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+i*.1+.1);os.start(this.audioContext.currentTime+i*.1);os.stop(this.audioContext.currentTime+i*.1+.1);});break;case'phone':[440,550].forEach((f,i)=>{const os=this.audioContext.createOscillator(),gn=this.audioContext.createGain();os.connect(gn);gn.connect(this.audioContext.destination);os.frequency.setValueAtTime(f,this.audioContext.currentTime+i*.15);gn.gain.setValueAtTime(.4,this.audioContext.currentTime+i*.15);gn.gain.exponentialRampToValueAtTime(.01,this.audioContext.currentTime+i*.15+.15);os.start(this.audioContext.currentTime+i*.15);os.stop(this.audioContext.currentTime+i*.15+.15);});break;}}};
 // ============ ITEMS ============
 const items={ramen:{name:'Instant Ramen',type:'item',healAmount:20,description:'Restores 20 HP.',price:5,usable:true},energyDrink:{name:'Energy Drink',type:'item',healAmount:50,description:'Restores 50 HP.',price:15,usable:true},coffee:{name:'Coffee',type:'item',ppRestore:10,description:'Restores 10 PP.',price:8,usable:true},pizza:{name:'Cold Pizza',type:'item',healAmount:100,description:'Restores 100 HP.',price:20,usable:true},textbook:{name:'Textbook',type:'weapon',attackBonus:5,description:'+5 Attack.',price:30,usable:false},laptop:{name:'Laptop',type:'weapon',attackBonus:10,description:'+10 Attack.',price:75,usable:false},deskLamp:{name:'Desk Lamp',type:'weapon',attackBonus:3,description:'+3 Attack.',price:15,usable:false},backpack:{name:'Heavy Backpack',type:'weapon',attackBonus:8,description:'+8 Attack.',price:50,usable:false},forestKey:{name:'Forest Key',type:'keyItem',description:'Opens the Forest Gate.',price:0,usable:false},graveyardKey:{name:'Graveyard Key',type:'keyItem',description:'Opens the Village Gate.',price:0,usable:false},villageKey:{name:'Village Key',type:'keyItem',description:'Opens the Upper Village Gate.',price:0,usable:false},castleKey:{name:'Castle Key',type:'keyItem',description:'Opens the Castle Walls gate.',price:0,usable:false}};
+
 // ============ GAME STATE ============
-let gameState={currentArea:'room303',paused:false,inDialogue:false,dialogueQueue:[],pendingExit:null,pendingBoss:null,player:{x:400,y:300,direction:'down',moving:false,speed:3},keys:{up:false,down:false,left:false,right:false,interact:false},flags:{heardIzzyScream:false,enteredCloset:false,enteredForest:false,metBekah:false,forestKeyRevealed:false,foundForestKey:false,openedForestGate:false,enteredGraveyard:false,foundGraveyardKey:false,openedVillageGate:false,enteredVillage:false,foundVillageKey:false,openedUpperVillageGate:false,enteredUpperVillage:false,foundCastleKey:false,openedCastleWallsGate:false,enteredCastleWalls:false,defeatedIan:false,enteredCastle:false,defeatedRylee:false,rescuedIzzy:false},combat:{active:false,enemy:null,turn:'player',playerDefending:false,activePartyMember:0},party:[{id:'protagonist',name:'PLAYER',level:1,hp:30,maxHp:30,pp:10,maxPp:10,attack:5,defense:3,speed:4,exp:0,money:50,shirtColor:'#ff0000',skinTone:'#f0c8a0',hairColor:'#4a3728',pantsColor:'#0000ff'}],inventory:[],equippedWeapon:null,inventoryTab:'items',visibleEnemies:[],lastPhoneUse:0};
+let gameState={currentArea:'room303',paused:false,inDialogue:false,dialogueQueue:[],pendingExit:null,pendingBoss:null,player:{x:400,y:300,direction:'down',moving:false,speed:3},keys:{up:false,down:false,left:false,right:false,interact:false},flags:{metBekah:false,forestKeyRevealed:false,openedForestGate:false,openedVillageGate:false,openedUpperVillageGate:false,openedCastleWallsGate:false,defeatedIan:false,defeatedRylee:false,rescuedIzzy:false},combat:{active:false,enemy:null,turn:'player',playerDefending:false,activePartyMember:0},party:[{id:'protagonist',name:'PLAYER',level:1,hp:30,maxHp:30,pp:10,maxPp:10,attack:5,defense:3,speed:4,exp:0,money:50,shirtColor:'#ff0000',skinTone:'#f0c8a0',hairColor:'#4a3728',pantsColor:'#0000ff'}],inventory:[],equippedWeapon:null,inventoryTab:'items',visibleEnemies:[],lastPhoneUse:0};
+
 const bekahStats={id:'bekah',name:'BEKAH',level:1,hp:25,maxHp:25,pp:15,maxPp:15,attack:4,defense:2,speed:6,exp:0,shirtColor:'#FF69B4',skinTone:'#FFC0CB',hairColor:'#8B4513',pantsColor:'#000000'};
-// ============ ENEMIES ============
-const enemies={laundryGoblin:{name:'Laundry Goblin',hp:8,maxHp:8,attack:2,defense:0,speed:3,exp:3,money:3,color:'#808080',sprite:'laundry',attacks:[{name:'Sock Attack',power:1}]},microwaveWraith:{name:'Microwave Wraith',hp:12,maxHp:12,attack:3,defense:1,speed:4,exp:5,money:5,color:'#C0C0C0',sprite:'microwave',attacks:[{name:'Hot Pocket',power:1.2}]},textbookTitan:{name:'Textbook Titan',hp:25,maxHp:25,attack:5,defense:3,speed:4,exp:12,money:12,color:'#8B0000',sprite:'textbook',attacks:[{name:'Knowledge Drop',power:1.3},{name:'Paper Cut',power:1.4}]},coffeeGolem:{name:'Coffee Golem',hp:30,maxHp:30,attack:6,defense:4,speed:3,exp:15,money:15,color:'#6B4423',sprite:'coffee',attacks:[{name:'Caffeine Rush',power:1.6}]},forestImp:{name:'Forest Imp',hp:15,maxHp:15,attack:3,defense:1,speed:5,exp:7,money:7,color:'#228B22',sprite:'imp',attacks:[{name:'Branch Whip',power:1.2}]},mushroomZombie:{name:'Mushroom Zombie',hp:20,maxHp:20,attack:4,defense:2,speed:2,exp:10,money:6,color:'#8B008B',sprite:'mushroom',attacks:[{name:'Spore Burst',power:1.3}]},shadowStudent:{name:'Shadow Student',hp:35,maxHp:35,attack:6,defense:4,speed:5,exp:20,money:20,color:'#2F4F4F',sprite:'shadow',attacks:[{name:'Debt Collector',power:1.7}]},skeletonStudent:{name:'Skeleton Student',hp:25,maxHp:25,attack:4,defense:2,speed:4,exp:12,money:10,color:'#F5F5DC',sprite:'skeleton',attacks:[{name:'Bone Throw',power:1.3}]},ghostFreshman:{name:'Ghost Freshman',hp:22,maxHp:22,attack:4,defense:1,speed:6,exp:10,money:8,color:'#E0E0E0',sprite:'ghost',attacks:[{name:'Scare',power:1.4}]},zombieRA:{name:'Zombie RA',hp:40,maxHp:40,attack:7,defense:4,speed:3,exp:25,money:25,color:'#556B2F',sprite:'zombie',attacks:[{name:'Policy Violation',power:1.8}]}};
+const enemies={laundryGoblin:{name:'Laundry Goblin',hp:8,maxHp:8,attack:2,defense:0,speed:3,exp:3,money:3,color:'#808080',sprite:'laundry',attacks:[{name:'Sock Attack',power:1}]},forestImp:{name:'Forest Imp',hp:15,maxHp:15,attack:3,defense:1,speed:5,exp:7,money:7,color:'#228B22',sprite:'imp',attacks:[{name:'Branch Whip',power:1.2}]},mushroomZombie:{name:'Mushroom Zombie',hp:20,maxHp:20,attack:4,defense:2,speed:2,exp:10,money:6,color:'#8B008B',sprite:'mushroom',attacks:[{name:'Spore Burst',power:1.3}]},shadowStudent:{name:'Shadow Student',hp:35,maxHp:35,attack:6,defense:4,speed:5,exp:20,money:20,color:'#2F4F4F',sprite:'shadow',attacks:[{name:'Debt Collector',power:1.7}]},skeletonStudent:{name:'Skeleton Student',hp:25,maxHp:25,attack:4,defense:2,speed:4,exp:12,money:10,color:'#F5F5DC',sprite:'skeleton',attacks:[{name:'Bone Throw',power:1.3}]},ghostFreshman:{name:'Ghost Freshman',hp:22,maxHp:22,attack:4,defense:1,speed:6,exp:10,money:8,color:'#E0E0E0',sprite:'ghost',attacks:[{name:'Scare',power:1.4}]},zombieRA:{name:'Zombie RA',hp:40,maxHp:40,attack:7,defense:4,speed:3,exp:25,money:25,color:'#556B2F',sprite:'zombie',attacks:[{name:'Policy Violation',power:1.8}]}};
 const ianBoss={name:'IAN - GIANT GUARD',hp:75,maxHp:75,attack:8,defense:5,speed:2,exp:50,money:50,color:'#8B0000',sprite:'ian',isBoss:true,attacks:[{name:'Giant Punch',power:1.8},{name:'Wall Smash',power:2.0}]};
-const ryleeBoss={name:'RYLEE - QUEEN OF THE DESK',hp:100,maxHp:100,attack:10,defense:6,speed:5,exp:100,money:100,color:'#FF00FF',sprite:'rylee',isBoss:true,isFinalBoss:true,attacks:[{name:'Desk Slam',power:2.0},{name:'Queen\'s Decree',power:2.2},{name:'Heart Break',power:1.8}]};
-    // ============ MAPS ============
+const ryleeBoss={name:'RYLEE - QUEEN OF THE DESK',hp:100,maxHp:100,attack:10,defense:6,speed:5,exp:100,money:100,color:'#FF00FF',sprite:'rylee',isBoss:true,isFinalBoss:true,attacks:[{name:'Desk Slam',power:2.0},{name:'Queen\'s Decree',power:2.2}]};
+
+// ============ MAPS ============
 const maps={};
 function initMaps(){
     maps.room303={width:40,height:30,tileSize:20,collisionMap:[],npcs:[],objects:[],exits:[],backgroundColor:'#2d1b4e',floorColor:'#8B7355',wallColor:'#4A4A4A',enemies:[]};
@@ -98,18 +93,18 @@ function initMaps(){
     maps.village={width:40,height:35,tileSize:20,collisionMap:[],npcs:[],objects:[],exits:[],backgroundColor:'#2a1a0a',floorColor:'#4a3a2a',wallColor:'#3a2a1a',enemies:[]};
     maps.upperVillage={width:40,height:35,tileSize:20,collisionMap:[],npcs:[],objects:[],exits:[],backgroundColor:'#1a2a0a',floorColor:'#3a4a2a',wallColor:'#2a3a1a',enemies:[]};
     maps.castleWalls={width:50,height:40,tileSize:20,collisionMap:[],npcs:[],objects:[],exits:[],backgroundColor:'#1a1a2a',floorColor:'#3a3a4a',wallColor:'#4a4a5a',enemies:['shadowStudent','zombieRA']};
-    maps.castle={width:40,height:35,tileSize:20,collisionMap:[],npcs:[],objects:[],exits:[],backgroundColor:'#2a0a2a',floorColor:'#4a2a4a',wallColor:'#3a1a3a',enemies:['shadowStudent','coffeeGolem']};
+    maps.castle={width:40,height:35,tileSize:20,collisionMap:[],npcs:[],objects:[],exits:[],backgroundColor:'#2a0a2a',floorColor:'#4a2a4a',wallColor:'#3a1a3a',enemies:['shadowStudent']};
     generateRoom303();generateCloset();generateDarkForest();generateGraveyard();generateVillage();generateUpperVillage();generateCastleWalls();generateCastle();
 }
 
+// ============ MAP GENERATION - ALL ITEMS DROPPABLE ============
 function generateRoom303(){
     const m=maps.room303;
     m.collisionMap=Array(m.height).fill().map(()=>Array(m.width).fill(0));
     for(let x=0;x<m.width;x++){m.collisionMap[0][x]=1;m.collisionMap[m.height-1][x]=1;}
     for(let y=0;y<m.height;y++){m.collisionMap[y][0]=1;m.collisionMap[y][m.width-1]=1;}
     m.collisionMap[m.height-1][20]=0;m.collisionMap[m.height-2][20]=0;
-    m.collisionMap[8][m.width-1]=0;m.collisionMap[9][m.width-1]=0;
-    m.collisionMap[8][m.width-2]=0;m.collisionMap[9][m.width-2]=0;
+    m.collisionMap[8][m.width-1]=0;m.collisionMap[9][m.width-1]=0;m.collisionMap[8][m.width-2]=0;m.collisionMap[9][m.width-2]=0;
     for(let y=5;y<10;y++){for(let x=5;x<12;x++)m.collisionMap[y][x]=1;}
     for(let y=15;y<18;y++){for(let x=25;x<32;x++)m.collisionMap[y][x]=1;}
     for(let y=5;y<12;y++){for(let x=30;x<33;x++)m.collisionMap[y][x]=1;}
@@ -146,25 +141,27 @@ function generateDarkForest(){
     m.collisionMap=Array(m.height).fill().map(()=>Array(m.width).fill(0));
     for(let x=0;x<m.width;x++){m.collisionMap[0][x]=1;m.collisionMap[m.height-1][x]=1;}
     for(let y=0;y<m.height;y++){m.collisionMap[y][0]=1;m.collisionMap[y][m.width-1]=1;}
+    // Entrance from closet
     m.collisionMap[m.height-1][25]=0;m.collisionMap[m.height-2][25]=0;
+    // Exit to graveyard (NO COLLISION BLOCKING)
     m.collisionMap[3][25]=0;m.collisionMap[4][25]=0;
-    const trees=[[5,5],[8,12],[15,8],[20,15],[25,5],[30,10],[35,15],[40,8],[10,20],[18,25],[28,20],[42,20],[12,30],[22,32],[38,35],[45,30],[5,25],[15,35]];
+    const trees=[[5,5],[8,12],[15,8],[20,15],[25,5],[30,10],[40,8],[18,25],[28,20],[42,20],[12,30],[22,32],[38,35],[45,30],[5,25]];
     trees.forEach(([x,y])=>{
         m.collisionMap[y][x]=1;m.collisionMap[y][x+1]=1;
         m.collisionMap[y+1][x]=1;m.collisionMap[y+1][x+1]=1;
     });
+    // Clear path through forest
     for(let y=35;y<40;y++)m.collisionMap[y][25]=0;
-    m.collisionMap[30][35]=0;m.collisionMap[29][30]=0;m.collisionMap[30][30]=0;
-    m.collisionMap[31][30]=0;m.collisionMap[34][30]=0;m.collisionMap[36][30]=0;
-    m.collisionMap[4][24]=0;m.collisionMap[4][25]=0;m.collisionMap[4][26]=0;
+    for(let y=5;y<35;y++)m.collisionMap[y][25]=0;
+    // Clear key area
+    m.collisionMap[30][35]=0;m.collisionMap[30][34]=0;
+    // Clear path to Ancient Tree
     m.collisionMap[14][10]=0;m.collisionMap[14][11]=0;
     m.objects=[
-        {x:25,y:38,type:'portal',name:'Return Portal',description:'A portal back.',interactionType:'returnPortal'},
+        {x:25,y:38,type:'portal',name:'Return Portal',description:'A portal back to closet.',interactionType:'returnPortal'},
         {x:10,y:14,type:'tree',name:'Ancient Tree',description:'A tree with a huge knot...',interactionType:'ancientTree'},
         {x:30,y:22,type:'mushroom',name:'Glowing Mushrooms',description:'Bioluminescent mushrooms.'},
-        {x:15,y:28,type:'note',name:'Torn Note',description:'"The key is hidden where the mushrooms glow..."',interactionType:'note'},
-        {x:35,y:30,type:'key',name:'Forest Key',description:'A rusted key.',interactionType:'forestKey',hidden:true,id:'forestKey'},
-        {x:25,y:4,type:'gate',name:'Forest Gate',description:'A massive gate.',interactionType:'gate'}
+        {x:35,y:30,type:'key',name:'Forest Key',description:'A rusted key.',interactionType:'forestKey',hidden:true,id:'forestKey'}
     ];
     m.npcs=[{x:40,y:34,name:'Bekah',sprite:'bekah',dialogue:["BEKAH: Help! I'm trapped!","BEKAH: Thank you! I'll join you!"],interactionType:'bekah'}];
     m.exits=[
@@ -180,21 +177,13 @@ function generateGraveyard(){
     for(let y=0;y<m.height;y++){m.collisionMap[y][0]=1;m.collisionMap[y][m.width-1]=1;}
     m.collisionMap[m.height-1][22]=0;m.collisionMap[m.height-2][22]=0;
     m.collisionMap[2][22]=0;m.collisionMap[3][22]=0;
-    const tombs=[[5,5],[8,8],[15,5],[20,8],[30,5],[35,8],[40,5],[5,15],[10,15],[15,18],[25,12],[30,15],[35,18],[40,15],[8,22],[15,25],[20,22],[28,25],[35,22],[40,25],[5,30],[12,32],[20,30],[30,32],[38,30]];
+    const tombs=[[5,5],[15,5],[30,5],[40,5],[10,15],[15,18],[30,15],[40,15],[8,22],[20,22],[28,25],[40,25],[12,32],[30,32]];
     tombs.forEach(([x,y])=>{m.collisionMap[y][x]=1;});
-    for(let y=15;y<20;y++){for(let x=20;x<25;x++)m.collisionMap[y][x]=1;}
     for(let y=35;y<40;y++)m.collisionMap[y][22]=0;
-    for(let y=25;y<35;y++)m.collisionMap[y][15]=0;
-    for(let x=15;x<30;x++)m.collisionMap[25][x]=0;
-    for(let y=10;y<25;y++)m.collisionMap[y][30]=0;
-    for(let x=30;x<40;x++)m.collisionMap[10][x]=0;
-    for(let y=3;y<10;y++)m.collisionMap[y][40]=0;
+    for(let y=5;y<35;y++)m.collisionMap[y][22]=0;
     m.objects=[
         {x:22,y:38,type:'portal',name:'Forest Path',description:'Back to forest.',interactionType:'returnToForest'},
-        {x:10,y:10,type:'tombstone',name:'Old Tombstone',description:'Name worn away...'},
-        {x:15,y:28,type:'note',name:'Diary Page',description:'A diary page...',interactionType:'note'},
-        {x:35,y:28,type:'key',name:'Graveyard Key',description:'A bone key.',interactionType:'graveyardKey'},
-        {x:22,y:3,type:'gate',name:'Village Gate',description:'Iron gate.',interactionType:'villageGate'}
+        {x:35,y:28,type:'key',name:'Graveyard Key',description:'A bone key.',interactionType:'graveyardKey'}
     ];
     m.npcs=[{x:18,y:30,name:'Ghost',sprite:'ghost',dialogue:["GHOST: Beware the RA..."],interactionType:'ghost'}];
     m.exits=[
@@ -216,7 +205,6 @@ function generateVillage(){
     m.objects=[
         {x:13,y:7,type:'bed',name:'Healer',interactionType:'healer'},
         {x:27,y:7,type:'desk',name:'Merchant',interactionType:'merchant'},
-        {x:20,y:3,type:'gate',name:'Upper Village Gate',interactionType:'upperVillageGate'},
         {x:5,y:20,type:'key',name:'Village Key',interactionType:'villageKey'}
     ];
     m.npcs=[
@@ -242,7 +230,6 @@ function generateUpperVillage(){
     for(let y=15;y<20;y++){for(let x=15;x<22;x++)m.collisionMap[y][x]=1;}
     m.objects=[
         {x:27,y:7,type:'desk',name:'Upper Merchant',interactionType:'upperMerchant'},
-        {x:20,y:3,type:'gate',name:'Castle Walls Gate',interactionType:'castleWallsGate'},
         {x:5,y:25,type:'key',name:'Castle Key',interactionType:'castleKey'}
     ];
     m.npcs=[{x:23,y:17,name:'Upper Elder',sprite:'elder',interactionType:'elder',dialogue:["ELDER: Find the Castle Key..."]}];
@@ -259,14 +246,10 @@ function generateCastleWalls(){
     for(let y=0;y<m.height;y++){m.collisionMap[y][0]=1;m.collisionMap[y][m.width-1]=1;}
     m.collisionMap[m.height-1][25]=0;m.collisionMap[m.height-2][25]=0;
     m.collisionMap[3][25]=0;
-    for(let x=5;x<45;x+=5){for(let y=10;y<15;y++)m.collisionMap[y][x]=1;}
-    for(let y=5;y<10;y++){for(let x=5;x<10;x++)m.collisionMap[y][x]=1;for(let x=40;x<45;x++)m.collisionMap[y][x]=1;}
     for(let y=35;y<40;y++)m.collisionMap[y][25]=0;
     for(let y=4;y<35;y++)m.collisionMap[y][25]=0;
     m.objects=[
-        {x:25,y:38,type:'portal',name:'Path back',interactionType:'returnToUpperVillage'},
-        {x:25,y:4,type:'gate',name:'Castle Gate',interactionType:'castleGate'},
-        {x:10,y:8,type:'note',name:'Guard Note',interactionType:'note'}
+        {x:25,y:38,type:'portal',name:'Path back',interactionType:'returnToUpperVillage'}
     ];
     m.npcs=[{x:25,y:6,name:'IAN',sprite:'ian',interactionType:'ianBoss',dialogue:["IAN: HALT!","IAN: Defeat me to pass!"]}];
     m.exits=[
@@ -281,13 +264,10 @@ function generateCastle(){
     for(let x=0;x<m.width;x++){m.collisionMap[0][x]=1;m.collisionMap[m.height-1][x]=1;}
     for(let y=0;y<m.height;y++){m.collisionMap[y][0]=1;m.collisionMap[y][m.width-1]=1;}
     m.collisionMap[m.height-1][20]=0;m.collisionMap[m.height-2][20]=0;
-    for(let y=5;y<15;y++){for(let x=10;x<30;x++){if(x===10||x===29||y===5||y===14)m.collisionMap[y][x]=1;}}
-    for(let y=8;y<12;y++){m.collisionMap[y][15]=1;m.collisionMap[y][25]=1;}
     for(let y=15;y<35;y++)m.collisionMap[y][20]=0;
     m.objects=[
         {x:20,y:33,type:'portal',name:'Exit',interactionType:'returnToCastleWalls'},
-        {x:20,y:7,type:'desk',name:'Desk of Power',interactionType:'throne'},
-        {x:5,y:10,type:'note',name:'Diary',interactionType:'note'}
+        {x:20,y:7,type:'desk',name:'Desk of Power',interactionType:'throne'}
     ];
     m.npcs=[
         {x:20,y:9,name:'RYLEE',sprite:'rylee',interactionType:'ryleeBoss',dialogue:["RYLEE: You won't defeat me!"]},
@@ -295,7 +275,9 @@ function generateCastle(){
     ];
     m.exits=[{x:20,y:34,targetArea:'castleWalls',targetX:25,targetY:3,transitionText:'Back to walls...'}];
 }
-
+</script>
+</body>
+</html>
 // ============ ENEMY SPAWN ============
 function spawnEnemies(){
     const m=maps[gameState.currentArea];
@@ -333,7 +315,8 @@ function checkEnemyCollision(){
         return true;
     });
 }
-    // ============ DRAWING FUNCTIONS ============
+
+// ============ DRAWING FUNCTIONS ============
 function drawFloorTile(c,x,y,s,col){
     c.fillStyle=col;c.fillRect(x,y,s,s);
     c.fillStyle='rgba(0,0,0,.2)';c.fillRect(x+2,y+2,s-4,s-4);
@@ -342,7 +325,6 @@ function drawFloorTile(c,x,y,s,col){
 function drawWallTile(c,x,y,s,col){
     c.fillStyle=col;c.fillRect(x,y,s,s);
     c.strokeStyle='rgba(0,0,0,.3)';c.lineWidth=1;c.strokeRect(x,y,s,s);
-    c.beginPath();c.moveTo(x,y+s/2);c.lineTo(x+s,y+s/2);c.stroke();
 }
 function drawTreeTile(c,x,y,s){
     c.fillStyle='#0a2a0a';c.fillRect(x,y,s,s);
@@ -354,26 +336,20 @@ function drawTombstoneTile(c,x,y,s){
     c.fillStyle='#1a1a1a';c.fillRect(x,y,s,s);
     c.fillStyle='#808080';c.fillRect(x+4,y+2,s-8,s-4);
     c.fillStyle='#666';c.fillRect(x+6,y+6,s-12,s-12);
-    c.fillStyle='#999';c.fillRect(x+s/2-1,y+3,2,s-6);
 }
 function drawBuildingTile(c,x,y,s){
     c.fillStyle='#4a3a2a';c.fillRect(x,y,s,s);
     c.fillStyle='#5a4a3a';c.fillRect(x+3,y+3,s-6,s-6);
     c.fillStyle='#FFD700';c.fillRect(x+s/4,y+s/4,s/2,s/2);
-    c.fillStyle='#8B4513';c.fillRect(x+s/4+1,y+s/4+1,s/2-2,s/2-2);
 }
 function drawCastleWallTile(c,x,y,s){
     c.fillStyle='#3a3a4a';c.fillRect(x,y,s,s);
-    c.fillStyle='#4a4a5a';c.fillRect(x+2,y+2,s-4,s-4);
-    c.fillStyle='#5a5a6a';c.fillRect(x+4,y+4,s-8,s-8);
-    c.strokeStyle='#2a2a3a';c.strokeRect(x+2,y+2,s-4,s-4);
+    c.fillStyle='#4a4a5a';c.fillRect(x+3,y+3,s-6,s-6);
 }
 function drawCastleTile(c,x,y,s){
     c.fillStyle='#2a0a2a';c.fillRect(x,y,s,s);
-    c.fillStyle='#3a1a3a';c.fillRect(x+2,y+2,s-4,s-4);
-    c.fillStyle='#4a2a4a';c.fillRect(x+4,y+4,s-8,s-8);
-    c.fillStyle='#FFD700';c.fillRect(x+s/4,y+s/4,2,2);c.fillRect(x+3*s/4,y+s/4,2,2);
-    c.fillRect(x+s/4,y+3*s/4,2,2);c.fillRect(x+3*s/4,y+3*s/4,2,2);
+    c.fillStyle='#3a1a3a';c.fillRect(x+3,y+3,s-6,s-6);
+    c.fillStyle='#FFD700';c.fillRect(x+s/4,y+s/4,2,2);
 }
 
 function drawObject(c,o,s){
@@ -383,12 +359,11 @@ function drawObject(c,o,s){
             c.fillStyle='#8B4513';c.fillRect(x,y,s*3,s*2);
             c.fillStyle='#4169E1';c.fillRect(x+2,y+2,s*3-4,s*2-4);
             c.fillStyle='#fff';c.fillRect(x+5,y+5,s*2,s);
-            c.fillStyle='#FF69B4';c.fillRect(x+8,y+s,s,s/2);
             break;
         case'desk':
             c.fillStyle='#8B4513';c.fillRect(x,y,s*2,s);
             c.fillStyle='#654321';c.fillRect(x,y+s,s*2,s/2);
-            c.fillStyle='#FFD700';c.fillRect(x+5,y+3,8,3);c.fillRect(x+8,y+6,3,4);
+            c.fillStyle='#FFD700';c.fillRect(x+5,y+3,8,3);
             break;
         case'bookshelf':
             c.fillStyle='#654321';c.fillRect(x,y,s,s*3);
@@ -396,7 +371,6 @@ function drawObject(c,o,s){
             break;
         case'clothes':
             c.fillStyle='#FF69B4';c.fillRect(x,y,s,s);
-            c.fillStyle='#FF1493';c.fillRect(x+5,y+5,s-10,s-10);
             break;
         case'boxes':
             c.fillStyle='#8B7355';c.fillRect(x,y,s*2,s*2);
@@ -404,18 +378,19 @@ function drawObject(c,o,s){
             break;
         case'portal':
             const t=Date.now()/1000,p=Math.sin(t*3)*.3+.7;
-            c.fillStyle=`rgba(255,0,255,${p})`;c.fillRect(x-5,y-5,s*2+10,s*2+10);
-            c.fillStyle=`rgba(255,0,255,${p*.8})`;c.fillRect(x,y,s*2,s*2);
+            c.fillStyle=`rgba(255,0,255,${p})`;c.fillRect(x,y,s*2,s*2);
             c.fillStyle=`rgba(0,255,255,${p*.5})`;c.fillRect(x+4,y+4,s*2-8,s*2-8);
             c.fillStyle=`rgba(255,255,255,${p*.7})`;c.fillRect(x+8,y+8,s*2-16,s*2-16);
             break;
         case'key':
+            // VISIBLE GOLDEN KEY WITH GLOW
+            c.fillStyle='rgba(255,215,0,.4)';
+            c.beginPath();c.arc(x+s/2,y+s/2,s/2,0,Math.PI*2);c.fill();
             c.fillStyle='#FFD700';
             c.beginPath();c.arc(x+s/2,y+s/3,s/4,0,Math.PI*2);c.fill();
             c.fillRect(x+s/2,y+s/3,s/3,s/5);
             c.fillRect(x+s/2+s/3-3,y+s/3+s/5,3,s/5);
             c.fillStyle='#FFF8DC';c.fillRect(x+s/2+2,y+s/3+2,s/6,2);
-            c.fillStyle='rgba(255,215,0,.3)';c.beginPath();c.arc(x+s/2,y+s/2,s/2,0,Math.PI*2);c.fill();
             break;
         case'gate':
             c.fillStyle='#654321';c.fillRect(x,y,s*3,s*2);
@@ -425,17 +400,14 @@ function drawObject(c,o,s){
             break;
         case'note':
             c.fillStyle='#fff';c.fillRect(x,y,s,s);
-            c.strokeStyle='#000';c.strokeRect(x,y,s,s);
-            c.fillStyle='#00F';c.fillRect(x+3,y+3,s-6,3);c.fillRect(x+3,y+8,s-6,3);
+            c.fillStyle='#00F';c.fillRect(x+3,y+3,s-6,3);
             break;
         case'mushroom':
             c.fillStyle='#8B008B';c.fillRect(x,y,s,s);
             c.fillStyle='#FF69B4';c.beginPath();c.arc(x+s/2,y+s/2,s/2,0,Math.PI*2);c.fill();
-            c.fillStyle='#fff';c.fillRect(x+s/4,y+s/3,2,2);c.fillRect(x+3*s/4,y+s/3,2,2);
             break;
         case'tombstone':
             c.fillStyle='#808080';c.fillRect(x,y,s,s);
-            c.fillStyle='#666';c.fillRect(x+5,y+5,s-10,s-10);
             break;
     }
 }
@@ -444,43 +416,31 @@ function drawNPC(c,n,s){
     const x=n.x*s,y=n.y*s;
     if(n.sprite==='ian'){
         c.fillStyle='#8B0000';c.fillRect(x,y,s*2,s*2);
-        c.fillStyle='#A00000';c.fillRect(x+5,y-5,s*2-10,10);
         c.fillStyle='#FFD700';c.fillRect(x+8,y-10,s*2-16,8);
-        c.fillStyle='#C0C0C0';c.fillRect(x+10,y+25,5,15);c.fillRect(x+35,y+25,5,15);
         c.fillStyle='#000';c.fillRect(x+15,y+15,5,5);c.fillRect(x+30,y+15,5,5);
     }else if(n.sprite==='rylee'){
         c.fillStyle='#FF00FF';c.fillRect(x,y,s*2,s*2);
-        c.fillStyle='#FF69B4';c.fillRect(x+5,y-5,s*2-10,10);
-        c.fillStyle='#FFD700';c.fillRect(x+5,y-12,5,5);c.fillRect(x+15,y-15,5,8);c.fillRect(x+25,y-12,5,5);
+        c.fillStyle='#FFD700';c.fillRect(x+8,y-10,s*2-16,8);
         c.fillStyle='#F00';c.fillRect(x+15,y+15,5,5);c.fillRect(x+30,y+15,5,5);
-        c.fillStyle='#8B0000';c.fillRect(x+45,y+50,10,10);
     }else if(n.sprite==='bekah'){
         c.fillStyle='#FF69B4';c.fillRect(x,y,s,s*.8);
         c.fillStyle='#FFC0CB';c.fillRect(x+3,y-3,s-6,s-6);
         c.fillStyle='#8B4513';c.fillRect(x+3,y-6,s-6,5);
-        c.fillStyle='#000';c.fillRect(x+5,y+3,3,3);c.fillRect(x+12,y+3,3,3);
     }else if(n.sprite==='ghost'){
-        c.fillStyle='#E0E0E0';
-        c.beginPath();c.arc(x+s/2,y+s/2,s/2,0,Math.PI*2);c.fill();
-        c.fillRect(x,y+s/2,s,s/2);
-        c.fillStyle='#000';c.fillRect(x+5,y+8,3,3);c.fillRect(x+12,y+8,3,3);
+        c.fillStyle='#E0E0E0';c.beginPath();c.arc(x+s/2,y+s/2,s/2,0,Math.PI*2);c.fill();
     }else if(n.sprite==='merchant'){
         c.fillStyle='#2F4F4F';c.fillRect(x,y,s,s);
-        c.fillStyle='#FFD700';c.fillRect(x+5,y+3,10,5);
-        c.fillStyle='#000';c.fillRect(x+5,y+8,3,3);c.fillRect(x+12,y+8,3,3);
     }else if(n.sprite==='healer'){
         c.fillStyle='#fff';c.fillRect(x,y,s,s);
         c.fillStyle='#F00';c.fillRect(x+5,y+5,10,10);
-        c.fillStyle='#000';c.fillRect(x+5,y+8,3,3);c.fillRect(x+12,y+8,3,3);
     }else if(n.sprite==='elder'){
         c.fillStyle='#8B4513';c.fillRect(x,y,s,s);
         c.fillStyle='#fff';c.fillRect(x,y,s,s/3);
-        c.fillStyle='#000';c.fillRect(x+5,y+8,3,3);c.fillRect(x+12,y+8,3,3);
     }else{
         c.fillStyle='#FFC0CB';c.fillRect(x,y,s,s);
         c.fillStyle='#8B4513';c.fillRect(x,y,s,s/3);
-        c.fillStyle='#000';c.fillRect(x+5,y+8,3,3);c.fillRect(x+12,y+8,3,3);
     }
+    c.fillStyle='#000';c.fillRect(x+5,y+8,3,3);c.fillRect(x+12,y+8,3,3);
 }
 
 function drawPlayer(c){
@@ -489,9 +449,7 @@ function drawPlayer(c){
     c.fillStyle=l.shirtColor;c.fillRect(p.x,p.y,s,s);
     c.fillStyle=l.skinTone;c.fillRect(p.x+3,p.y-5,s-6,s-6);
     c.fillStyle=l.hairColor;c.fillRect(p.x+3,p.y-8,s-6,5);
-    c.fillStyle='#000';
-    if(p.direction==='down'){c.fillRect(p.x+5,p.y+3,3,3);c.fillRect(p.x+12,p.y+3,3,3);}
-    else{c.fillRect(p.x+5,p.y+2,3,3);c.fillRect(p.x+12,p.y+2,3,3);}
+    c.fillStyle='#000';c.fillRect(p.x+5,p.y+3,3,3);c.fillRect(p.x+12,p.y+3,3,3);
     c.fillStyle=l.pantsColor;c.fillRect(p.x+3,p.y+s-5,5,5);c.fillRect(p.x+12,p.y+s-5,5,5);
 }
 
@@ -501,7 +459,7 @@ function drawVisibleEnemies(c){
         const x=e.x*s,y=e.y*s,d=enemies[e.type];
         c.fillStyle=d.color;c.fillRect(x,y,s,s);
         c.fillStyle='#F00';c.fillRect(x+5,y+5,5,5);c.fillRect(x+12,y+5,5,5);
-        c.strokeStyle='#000';c.lineWidth=1;c.strokeRect(x,y,s,s);
+        c.strokeStyle='#000';c.strokeRect(x,y,s,s);
     });
 }
 
@@ -521,7 +479,10 @@ function renderGame(){
             else drawWallTile(c,x*m.tileSize,y*m.tileSize,m.tileSize,m.wallColor);
         }
     }
-    m.objects.forEach(o=>{if(!o.hidden)drawObject(c,o,m.tileSize);});
+    // DRAW ALL OBJECTS INCLUDING VISIBLE KEYS
+    m.objects.forEach(o=>{
+        if(!o.hidden)drawObject(c,o,m.tileSize);
+    });
     drawVisibleEnemies(c);
     m.npcs.forEach(n=>drawNPC(c,n,m.tileSize));
     drawPlayer(c);
@@ -559,6 +520,7 @@ function checkAreaTransition(){
     m.exits.forEach(e=>{
         const ex=e.x*m.tileSize,ey=e.y*m.tileSize;
         if(Math.abs(p.x-ex)<m.tileSize/2&&Math.abs(p.y-ey)<m.tileSize/2){
+            // CHECK GATES
             if(e.targetArea==='graveyard'&&!gameState.flags.openedForestGate){
                 if(!hasItem('forestKey')){showDialogue('The gate is locked. You need the Forest Key...');gameState.inDialogue=true;return;}
                 else gameState.flags.openedForestGate=true;
@@ -578,6 +540,7 @@ function checkAreaTransition(){
             if(e.targetArea==='castle'&&!gameState.flags.defeatedIan){
                 showDialogue('IAN blocks the gate!');gameState.inDialogue=true;return;
             }
+            // TRANSITION
             if(e.transitionText){
                 gameState.inDialogue=true;gameState.dialogueQueue=[e.transitionText,null];
                 showDialogue(gameState.dialogueQueue.shift());gameState.pendingExit=e;
@@ -609,7 +572,7 @@ function checkInteractions(){
 }
 
 function interactWithNPC(n){
-    gameState.keys.interact=false;soundSystem.playSound('interact');
+    gameState.keys.interact=false;
     if(n.interactionType==='izzy'){showDialogue(n.dialogue[0]);}
     else if(n.interactionType==='izzyRescue'){
         if(gameState.flags.defeatedRylee){gameState.flags.rescuedIzzy=true;gameState.dialogueQueue=['IZZY: You saved me!','Thank you for playing!'];showDialogue(gameState.dialogueQueue.shift());}
@@ -635,52 +598,61 @@ function interactWithNPC(n){
 }
 
 function interactWithObject(o){
-    gameState.keys.interact=false;soundSystem.playSound('interact');
+    gameState.keys.interact=false;
+    // PORTALS
     if(o.interactionType==='portal'){gameState.pendingExit={targetArea:'darkForest',targetX:25,targetY:38};showDialogue('You step through the portal...');}
     else if(o.interactionType==='returnPortal'){gameState.pendingExit={targetArea:'closet',targetX:14,targetY:14};showDialogue('Back to closet...');}
     else if(o.interactionType==='returnToForest'){gameState.pendingExit={targetArea:'darkForest',targetX:25,targetY:3};showDialogue('Back to forest...');}
     else if(o.interactionType==='returnToUpperVillage'){gameState.pendingExit={targetArea:'upperVillage',targetX:20,targetY:2};showDialogue('Back to Upper Village...');}
     else if(o.interactionType==='returnToCastleWalls'){gameState.pendingExit={targetArea:'castleWalls',targetX:25,targetY:3};showDialogue('Back to Castle Walls...');}
+    // ANCIENT TREE - REVEALS FOREST KEY
     else if(o.interactionType==='ancientTree'){
         if(!gameState.flags.forestKeyRevealed){
             gameState.flags.forestKeyRevealed=true;
-            for(let i=0;i<maps.darkForest.objects.length;i++){if(maps.darkForest.objects[i].id==='forestKey')maps.darkForest.objects[i].hidden=false;}
-            gameState.dialogueQueue=['You push the knot...','A key falls from the branches!','Look near the glowing mushrooms!'];
+            // UNHIDE THE FOREST KEY
+            for(let i=0;i<maps.darkForest.objects.length;i++){
+                if(maps.darkForest.objects[i].id==='forestKey')maps.darkForest.objects[i].hidden=false;
+            }
+            gameState.dialogueQueue=['You push the knot...','A key falls from the branches!','Look near the glowing mushrooms to the east!','The Forest Key is now VISIBLE!'];
             showDialogue(gameState.dialogueQueue.shift());
         }else showDialogue('The knot is still there...');
     }
+    // KEY COLLECTION
     else if(o.interactionType==='forestKey'){
-        if(!hasItem('forestKey')){addItem('forestKey');gameState.flags.foundForestKey=true;showDialogue('You found the Forest Key!');}
+        if(!hasItem('forestKey')){addItem('forestKey');showDialogue('You found the Forest Key! Now walk through the gate!');}
         else showDialogue('Already have Forest Key.');
     }
     else if(o.interactionType==='graveyardKey'){
-        if(!hasItem('graveyardKey')){addItem('graveyardKey');gameState.flags.foundGraveyardKey=true;showDialogue('You found the Graveyard Key!');}
+        if(!hasItem('graveyardKey')){addItem('graveyardKey');showDialogue('You found the Graveyard Key! Now walk through the gate!');}
     }
     else if(o.interactionType==='villageKey'){
-        if(!hasItem('villageKey')){addItem('villageKey');gameState.flags.foundVillageKey=true;showDialogue('You found the Village Key!');}
+        if(!hasItem('villageKey')){addItem('villageKey');showDialogue('You found the Village Key! Now walk through the gate!');}
     }
     else if(o.interactionType==='castleKey'){
-        if(!hasItem('castleKey')){addItem('castleKey');gameState.flags.foundCastleKey=true;showDialogue('You found the Castle Key!');}
+        if(!hasItem('castleKey')){addItem('castleKey');showDialogue('You found the Castle Key! Now walk through the gate!');}
     }
-    else if(o.interactionType==='gate'){if(hasItem('forestKey')){gameState.flags.openedForestGate=true;showDialogue('Gate opened!');}else showDialogue('Locked. Need Forest Key.');}
-    else if(o.interactionType==='villageGate'){if(hasItem('graveyardKey')){gameState.flags.openedVillageGate=true;showDialogue('Gate opened!');}else showDialogue('Locked.');}
-    else if(o.interactionType==='upperVillageGate'){if(hasItem('villageKey')){gameState.flags.openedUpperVillageGate=true;showDialogue('Gate opened!');}else showDialogue('Locked.');}
-    else if(o.interactionType==='castleWallsGate'){if(hasItem('castleKey')){gameState.flags.openedCastleWallsGate=true;showDialogue('Gate opened!');}else showDialogue('Locked.');}
-    else if(o.interactionType==='castleGate'){if(gameState.flags.defeatedIan)showDialogue('Castle gate is open!');else showDialogue('IAN blocks the gate!');}
+    // ITEM DROPS
+    else if(o.itemDrop){
+        if(!hasItem(o.itemDrop)){addItem(o.itemDrop);showDialogue('Found: '+items[o.itemDrop].name+'!');}
+        else showDialogue(o.description||o.name);
+    }
     else if(o.interactionType==='throne'){showDialogue('The Desk of Power...');}
     else if(o.interactionType==='note'){showDialogue(o.description);}
-    else if(o.itemDrop){if(!hasItem(o.itemDrop)){addItem(o.itemDrop);showDialogue('Found: '+items[o.itemDrop].name);}}
     else showDialogue(o.description||o.name);
 }
-
-// ============ COMBAT ============
+</script>
+</body>
+</html>
+                // ============ COMBAT ============
 function startCombat(t){
     gameState.combat.active=true;gameState.combat.turn='player';gameState.combat.playerDefending=false;
     gameState.combat.enemy=t==='ian'?{...ianBoss}:t==='rylee'?{...ryleeBoss}:{...enemies[t]};
     gameState.combat.activePartyMember=0;
     document.getElementById('combatScreen').classList.add('active');
     document.getElementById('combatMenu').style.display='flex';
-    updateCombatPartyDisplay();soundSystem.playSound('combat');
+    document.getElementById('psiMenu').classList.remove('active');
+    document.getElementById('itemMenu').classList.remove('active');
+    updateCombatPartyDisplay();
     showCombatMessage(gameState.combat.enemy.name+' attacks!');
 }
 
@@ -708,6 +680,9 @@ function showCombatMessage(m){
     document.getElementById('combatMessageText').textContent=m;
     d.classList.add('active');setTimeout(()=>d.classList.remove('active'),1500);
 }
+
+function showPSIMenu(){document.getElementById('combatMenu').style.display='none';document.getElementById('psiMenu').classList.add('active');}
+function hidePSIMenu(){document.getElementById('combatMenu').style.display='flex';document.getElementById('psiMenu').classList.remove('active');}
 
 function playerAttack(){
     if(gameState.combat.turn!=='player')return;
@@ -771,7 +746,7 @@ function enemyTurn(){
     const a=e.attacks[Math.floor(Math.random()*e.attacks.length)];
     let d=Math.max(1,Math.floor(e.attack*a.power-t.defense));
     if(gameState.combat.playerDefending){d=Math.floor(d*.5);gameState.combat.playerDefending=false;}
-    t.hp-=d;updateCombatPartyDisplay();updateHUD();soundSystem.playSound('damage');
+    t.hp-=d;updateCombatPartyDisplay();updateHUD();
     showCombatMessage(`${e.name} uses ${a.name}! ${d} damage!`);
     if(gameState.party.every(m=>m.hp<=0)){
         endCombat(false);
@@ -793,13 +768,13 @@ function endCombat(v){
                 m.exp+=e.exp;m.money=(m.money||0)+e.money;
                 if(m.exp>=m.level*10){
                     m.level++;m.exp=0;m.maxHp+=5;m.hp=m.maxHp;m.maxPp+=3;m.pp=m.maxPp;m.attack+=2;m.defense++;
-                    soundSystem.playSound('levelup');showCombatMessage(m.name+' leveled up!');
+                    showCombatMessage(m.name+' leveled up!');
                 }
             }
         });
-        if(e.isBoss&&e.name.includes('IAN')){gameState.flags.defeatedIan=true;showCombatMessage('IAN defeated!');}
-        if(e.isBoss&&e.name.includes('RYLEE')){gameState.flags.defeatedRylee=true;showCombatMessage('RYLEE defeated!');}
-        soundSystem.playSound('victory');updateHUD();
+        if(e.isBoss&&e.name.includes('IAN')){gameState.flags.defeatedIan=true;showCombatMessage('IAN defeated! Castle gate is open!');}
+        if(e.isBoss&&e.name.includes('RYLEE')){gameState.flags.defeatedRylee=true;showCombatMessage('RYLEE defeated! Izzy is free!');}
+        updateHUD();
     }
 }
 
@@ -830,7 +805,7 @@ function updateInventoryDisplay(){
         const d=document.createElement('div');d.className='inventory-item';
         d.innerHTML=`<div><div class="item-name">${items[i.id].name}</div><div class="item-description">${items[i.id].description}</div></div><div class="item-quantity">x${i.quantity}</div>`;
         d.onclick=()=>{
-            if(items[i.id].type==='item'&&items[i.id].usable){useItem(i.id,0);updateInventoryDisplay();soundSystem.playSound('interact');}
+            if(items[i.id].type==='item'&&items[i.id].usable){useItem(i.id,0);updateInventoryDisplay();}
             else if(items[i.id].type==='weapon'){equipWeapon(i.id);updateInventoryDisplay();}
         };
         l.appendChild(d);
@@ -858,18 +833,10 @@ function updatePhoneDisplay(){
         const now=Date.now();
         if(now-gameState.lastPhoneUse<30000){showCombatMessage('Cooling down...');return;}
         gameState.lastPhoneUse=now;gameState.party[0].money+=20;
-        updatePhoneDisplay();updateHUD();soundSystem.playSound('phone');
+        updatePhoneDisplay();updateHUD();
         showCombatMessage('Parents sent $20!');
     };
     l.appendChild(call);
-    const msg=document.createElement('div');msg.className='phone-item';
-    msg.innerHTML='<div><div class="item-name">💬 Messages</div></div>';
-    msg.onclick=()=>{
-        soundSystem.playSound('phone');
-        gameState.dialogueQueue=['BEKAH: Where are you?','IZZY: HELP!','MOM: Eat well!'];
-        showDialogue(gameState.dialogueQueue.shift());closePhone();
-    };
-    l.appendChild(msg);
 }
 function openShop(t){
     gameState.paused=true;document.getElementById('shopScreen').classList.add('active');
@@ -884,7 +851,7 @@ function openShop(t){
             d.innerHTML=`<div><div class="item-name">${items[id].name}</div><div class="item-description">${items[id].description}</div></div><div class="item-price">$${items[id].price}</div>`;
             d.onclick=()=>{
                 if(gameState.party[0].money>=items[id].price){
-                    gameState.party[0].money-=items[id].price;addItem(id);openShop(t);updateHUD();soundSystem.playSound('interact');
+                    gameState.party[0].money-=items[id].price;addItem(id);openShop(t);updateHUD();
                 }else showCombatMessage('Not enough money!');
             };
             l.appendChild(d);
@@ -923,21 +890,17 @@ function showItemMenu(){
     l.appendChild(back);
     document.getElementById('combatMenu').style.display='none';l.classList.add('active');
 }
-function showPSIMenu(){document.getElementById('combatMenu').style.display='none';document.getElementById('psiMenu').classList.add('active');}
-function hidePSIMenu(){document.getElementById('combatMenu').style.display='flex';document.getElementById('psiMenu').classList.remove('active');}
 function showStatus(){
     const m=gameState.party[0];
-    gameState.dialogueQueue=[`${m.name} - Lv ${m.level}`,`HP: ${m.hp}/${m.maxHp}`,`PP: ${m.pp}/${m.maxPp}`,`ATK: ${m.attack} DEF: ${m.defense}`,`Weapon: ${gameState.equippedWeapon?items[gameState.equippedWeapon].name:'None'}`];
+    gameState.dialogueQueue=[`${m.name} - Lv ${m.level}`,`HP: ${m.hp}/${m.maxHp}`,`PP: ${m.pp}/${m.maxPp}`,`ATK: ${m.attack} DEF: ${m.defense}`];
     showDialogue(gameState.dialogueQueue.shift());document.getElementById('gameMenu').classList.remove('active');
 }
-function saveGame(){localStorage.setItem('johnNeumaierSave',JSON.stringify(gameState));soundSystem.playSound('victory');showCombatMessage('Saved!');document.getElementById('gameMenu').classList.remove('active');}
+function saveGame(){localStorage.setItem('johnNeumaierSave',JSON.stringify(gameState));showCombatMessage('Saved!');document.getElementById('gameMenu').classList.remove('active');}
 function loadGame(){
     const d=localStorage.getItem('johnNeumaierSave');
     if(d){
         const p=JSON.parse(d);
         gameState={...gameState,...p};gameState.player=p.player||gameState.player;
-        gameState.flags=p.flags||gameState.flags;gameState.party=p.party||gameState.party;
-        gameState.inventory=p.inventory||gameState.inventory;
         spawnEnemies();updateHUD();showCombatMessage('Loaded!');
     }else showCombatMessage('No save found.');
     document.getElementById('gameMenu').classList.remove('active');
@@ -958,7 +921,6 @@ function updateHUD(){
 
 // ============ INIT ============
 function initGame(){
-    soundSystem.init();
     const cd=localStorage.getItem('johnNeumaierCharacter');
     if(!cd){window.location.href='index.html';return;}
     const c=JSON.parse(cd);
