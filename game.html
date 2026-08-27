@@ -612,6 +612,7 @@
             dialogueQueue: [],
             pendingExit: null,
             pendingShop: null,
+            pendingBoss: null,
             player: { x: 400, y: 300, direction: 'down', moving: false, speed: 3 },
             keys: { up: false, down: false, left: false, right: false, interact: false },
             flags: { 
@@ -620,7 +621,8 @@
                 foundPortal: false, 
                 enteredForest: false, 
                 metBekah: false, 
-                foundForestKey: false, 
+                foundForestKey: false,
+                forestKeyRevealed: false,
                 openedForestGate: false,
                 enteredGraveyard: false,
                 foundGraveyardKey: false,
@@ -630,7 +632,12 @@
                 openedUpperVillageGate: false,
                 enteredUpperVillage: false,
                 foundCastleKey: false,
-                openedCastleWallsGate: false
+                openedCastleWallsGate: false,
+                enteredCastleWalls: false,
+                defeatedIan: false,
+                enteredCastle: false,
+                defeatedRylee: false,
+                rescuedIzzy: false
             },
             combat: { 
                 active: false, 
@@ -669,6 +676,48 @@
             zombieRA: { name: 'Zombie RA', hp: 40, maxHp: 40, pp: 0, attack: 7, defense: 4, speed: 3, exp: 25, money: 25, color: '#556B2F', sprite: 'zombie', attacks: [{ name: 'Policy Violation', power: 1.8, type: 'physical' }, { name: 'Room Check', power: 1.5, type: 'magical' }] }
         };
         
+        const ianBoss = {
+            name: 'IAN - GIANT GUARD',
+            hp: 75,
+            maxHp: 75,
+            pp: 0,
+            attack: 8,
+            defense: 5,
+            speed: 2,
+            exp: 50,
+            money: 50,
+            color: '#8B0000',
+            sprite: 'ian',
+            isBoss: true,
+            attacks: [
+                { name: 'Giant Punch', power: 1.8, type: 'physical' },
+                { name: 'Wall Smash', power: 2.0, type: 'physical' },
+                { name: 'Guard Slam', power: 1.5, type: 'physical' }
+            ]
+        };
+        
+        const ryleeBoss = {
+            name: 'RYLEE - QUEEN OF THE DESK',
+            hp: 100,
+            maxHp: 100,
+            pp: 30,
+            attack: 10,
+            defense: 6,
+            speed: 5,
+            exp: 100,
+            money: 100,
+            color: '#FF00FF',
+            sprite: 'rylee',
+            isBoss: true,
+            isFinalBoss: true,
+            attacks: [
+                { name: 'Desk Slam', power: 2.0, type: 'physical' },
+                { name: 'Queen\'s Decree', power: 2.2, type: 'magical' },
+                { name: 'Heart Break', power: 1.8, type: 'magical' },
+                { name: 'Policy Enforcement', power: 2.5, type: 'physical' }
+            ]
+        };
+        
         const psychicAbilities = {
             coffeeBreak: { name: 'Coffee Break', cost: 5, power: 1.8, type: 'magical', description: 'Channel caffeine into psychic damage' },
             allNighter: { name: 'All-Nighter', cost: 8, power: 2.2, type: 'magical', description: 'Unleash the power of sleep deprivation' },
@@ -699,6 +748,8 @@
             maps.graveyard = { width: 45, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a1a1a', floorColor: '#2a2a2a', wallColor: '#3a3a3a', enemies: ['skeletonStudent', 'ghostFreshman', 'shadowStudent'] };
             maps.village = { width: 40, height: 35, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#2a1a0a', floorColor: '#4a3a2a', wallColor: '#3a2a1a', enemies: [] };
             maps.upperVillage = { width: 40, height: 35, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a2a0a', floorColor: '#3a4a2a', wallColor: '#2a3a1a', enemies: [] };
+            maps.castleWalls = { width: 50, height: 40, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#1a1a2a', floorColor: '#3a3a4a', wallColor: '#4a4a5a', enemies: ['shadowStudent', 'zombieRA', 'textbookTitan'] };
+            maps.castle = { width: 40, height: 35, tileSize: 20, collisionMap: [], npcs: [], objects: [], exits: [], backgroundColor: '#2a0a2a', floorColor: '#4a2a4a', wallColor: '#3a1a3a', enemies: ['shadowStudent', 'zombieRA', 'coffeeGolem'] };
             
             generateRoom303();
             generateCloset();
@@ -706,6 +757,8 @@
             generateGraveyard();
             generateVillage();
             generateUpperVillage();
+            generateCastleWalls();
+            generateCastle();
         }
         
         function generateRoom303() {
@@ -840,10 +893,10 @@
             
             map.objects = [
                 { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
-                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted, dark tree.' },
+                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted tree with a huge knot...', interactionType: 'ancientTree' },
                 { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms.' },
                 { x: 15, y: 28, type: 'note', name: 'Torn Note', description: '"The key is hidden where the mushrooms glow..."', interactionType: 'note' },
-                { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key.', interactionType: 'forestKey' },
+                { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key.', interactionType: 'forestKey', hidden: true, id: 'forestKey' },
                 { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate.', interactionType: 'gate' }
             ];
             
@@ -1003,12 +1056,152 @@
             ];
             
             map.npcs = [
-                { x: 18, y: 18, name: 'Upper Elder', sprite: 'elder', dialogue: ["ELDER: The castle walls are guarded by Ian...", "ELDER: He was once a student, but Rylee transformed him...", "ELDER: Find the Castle Key to reach the walls..."], interactionType: 'elder' }
+                { x: 18, y: 18, name: 'Upper Elder', sprite: 'elder', dialogue: ["ELDER: The castle walls are guarded by Ian...", "ELDER: Find the Castle Key to reach the walls..."], interactionType: 'elder' }
             ];
             
             map.exits = [
                 { x: 20, y: 34, targetArea: 'village', targetX: 20, targetY: 2, transitionText: 'You return to the Village...' },
-                { x: 20, y: 2, targetArea: 'castleWalls', targetX: 20, targetY: 38, transitionText: 'You approach the Castle Walls...' }
+                { x: 20, y: 2, targetArea: 'castleWalls', targetX: 25, targetY: 38, transitionText: 'You approach the Castle Walls...' }
+            ];
+        }
+        
+        function generateCastleWalls() {
+            const map = maps.castleWalls;
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1;
+                map.collisionMap[map.height - 1][x] = 1;
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1;
+                map.collisionMap[y][map.width - 1] = 1;
+            }
+            
+            map.collisionMap[map.height - 1][25] = 0;
+            map.collisionMap[map.height - 2][25] = 0;
+            map.collisionMap[3][25] = 0;
+            map.collisionMap[3][24] = 1;
+            map.collisionMap[3][26] = 1;
+            
+            for (let x = 5; x < 45; x += 5) {
+                for (let y = 10; y < 15; y++) {
+                    map.collisionMap[y][x] = 1;
+                }
+            }
+            
+            for (let y = 5; y < 10; y++) {
+                for (let x = 5; x < 10; x++) map.collisionMap[y][x] = 1;
+                for (let x = 40; x < 45; x++) map.collisionMap[y][x] = 1;
+            }
+            
+            for (let y = 35; y < 40; y++) map.collisionMap[y][25] = 0;
+            for (let y = 20; y < 35; y++) map.collisionMap[y][25] = 0;
+            
+            map.objects = [
+                { x: 25, y: 38, type: 'portal', name: 'Upper Village Path', description: 'The path back to Upper Village.', interactionType: 'returnToUpperVillage' },
+                { x: 25, y: 5, type: 'gate', name: 'Castle Gate', description: 'The entrance to the Castle.', interactionType: 'castleGate' },
+                { x: 10, y: 8, type: 'note', name: 'Guard Note', description: '"Ian is unstoppable. Do not engage."', interactionType: 'note' }
+            ];
+            
+            map.npcs = [
+                { 
+                    x: 25, 
+                    y: 6, 
+                    name: 'IAN', 
+                    sprite: 'ian', 
+                    dialogue: [
+                        "IAN: HALT!",
+                        "IAN: No one enters the castle without Rylee's permission...",
+                        "IAN: I was once a student like you...",
+                        "IAN: But Rylee showed me the truth...",
+                        "IAN: Now I am her strongest guard!",
+                        "IAN: If you want to pass, you'll have to defeat me!"
+                    ],
+                    interactionType: 'ianBoss'
+                }
+            ];
+            
+            map.exits = [
+                { x: 25, y: 39, targetArea: 'upperVillage', targetX: 20, targetY: 2, transitionText: 'You return to the Upper Village...' },
+                { x: 25, y: 3, targetArea: 'castle', targetX: 20, targetY: 33, transitionText: 'You enter the Castle...' }
+            ];
+        }
+        
+        function generateCastle() {
+            const map = maps.castle;
+            map.collisionMap = Array(map.height).fill().map(() => Array(map.width).fill(0));
+            
+            for (let x = 0; x < map.width; x++) {
+                map.collisionMap[0][x] = 1;
+                map.collisionMap[map.height - 1][x] = 1;
+            }
+            for (let y = 0; y < map.height; y++) {
+                map.collisionMap[y][0] = 1;
+                map.collisionMap[y][map.width - 1] = 1;
+            }
+            
+            map.collisionMap[map.height - 1][20] = 0;
+            map.collisionMap[map.height - 2][20] = 0;
+            
+            // Throne room walls
+            for (let y = 5; y < 15; y++) {
+                for (let x = 10; x < 30; x++) {
+                    if (x === 10 || x === 29 || y === 5 || y === 14) {
+                        map.collisionMap[y][x] = 1;
+                    }
+                }
+            }
+            
+            // Pillars
+            for (let y = 8; y < 12; y++) {
+                map.collisionMap[y][15] = 1;
+                map.collisionMap[y][25] = 1;
+            }
+            
+            // Path to throne
+            for (let y = 15; y < 35; y++) map.collisionMap[y][20] = 0;
+            
+            map.objects = [
+                { x: 20, y: 33, type: 'portal', name: 'Castle Entrance', description: 'The way back to the Castle Walls.', interactionType: 'returnToCastleWalls' },
+                { x: 20, y: 7, type: 'desk', name: 'The Desk of Power', description: 'Rylee\'s throne. The source of her power...', interactionType: 'throne' },
+                { x: 5, y: 10, type: 'note', name: 'Rylee\'s Diary', description: 'A diary entry... "They don\'t understand. The Desk chose me..."', interactionType: 'note' },
+                { x: 35, y: 10, type: 'note', name: 'Old Photo', description: 'A photo of Rylee as a student... She looks happy...', interactionType: 'note' }
+            ];
+            
+            map.npcs = [
+                { 
+                    x: 20, 
+                    y: 8, 
+                    name: 'RYLEE', 
+                    sprite: 'rylee', 
+                    dialogue: [
+                        "RYLEE: Welcome to my castle...",
+                        "RYLEE: I've been expecting you...",
+                        "RYLEE: You've defeated my guards...",
+                        "RYLEE: But you won't defeat me!",
+                        "RYLEE: The Desk chose me as its Queen!",
+                        "RYLEE: With its power, I will rule all of John Neumaier Hall!",
+                        "RYLEE: And you... will be expelled!"
+                    ],
+                    interactionType: 'ryleeBoss'
+                },
+                { 
+                    x: 15, 
+                    y: 25, 
+                    name: 'IZZY', 
+                    sprite: 'izzy', 
+                    dialogue: [
+                        "IZZY: You came for me!",
+                        "IZZY: Thank you!",
+                        "IZZY: Let's go home!"
+                    ],
+                    interactionType: 'izzyRescue'
+                }
+            ];
+            
+            map.exits = [
+                { x: 20, y: 34, targetArea: 'castleWalls', targetX: 25, targetY: 3, transitionText: 'You return to the Castle Walls...' }
             ];
         }
         
@@ -1102,16 +1295,13 @@
                 const y = enemy.y * tileSize;
                 const enemyData = enemies[enemy.type];
                 
-                // Draw enemy body with detail
                 ctx.fillStyle = enemyData.color;
                 ctx.fillRect(x, y, tileSize, tileSize);
                 
-                // Add eyes
                 ctx.fillStyle = '#FF0000';
                 ctx.fillRect(x + 5, y + 5, 5, 5);
                 ctx.fillRect(x + 12, y + 5, 5, 5);
                 
-                // Add outline
                 ctx.strokeStyle = '#000000';
                 ctx.lineWidth = 1;
                 ctx.strokeRect(x, y, tileSize, tileSize);
@@ -1452,7 +1642,15 @@
             gameState.combat.active = true;
             gameState.combat.turn = 'player';
             gameState.combat.playerDefending = false;
-            gameState.combat.enemy = { ...enemies[enemyType] };
+            
+            if (enemyType === 'ian') {
+                gameState.combat.enemy = { ...ianBoss };
+            } else if (enemyType === 'rylee') {
+                gameState.combat.enemy = { ...ryleeBoss };
+            } else {
+                gameState.combat.enemy = { ...enemies[enemyType] };
+            }
+            
             gameState.combat.activePartyMember = 0;
             
             document.getElementById('combatScreen').classList.add('active');
@@ -1520,68 +1718,38 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             switch(enemy.sprite) {
+                case 'ian':
+                    ctx.fillStyle = '#8B0000';
+                    ctx.fillRect(20, 20, 60, 70);
+                    ctx.fillStyle = '#A00000';
+                    ctx.fillRect(25, 15, 50, 15);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(30, 10, 40, 10);
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(40, 35, 8, 8);
+                    ctx.fillRect(55, 35, 8, 8);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(45, 50, 10, 20);
+                    break;
+                case 'rylee':
+                    ctx.fillStyle = '#FF00FF';
+                    ctx.fillRect(25, 20, 50, 60);
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(30, 15, 40, 15);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(35, 10, 30, 10);
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(40, 35, 8, 8);
+                    ctx.fillRect(55, 35, 8, 8);
+                    ctx.fillStyle = '#8B0000';
+                    ctx.fillRect(45, 50, 10, 10);
+                    break;
                 case 'laundry':
                     ctx.fillStyle = '#808080';
                     ctx.fillRect(30, 50, 40, 30);
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(25, 45, 15, 15);
                     ctx.fillRect(60, 45, 15, 15);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(45, 55, 10, 5);
-                    break;
-                case 'microwave':
-                    ctx.fillStyle = '#C0C0C0';
-                    ctx.fillRect(20, 30, 60, 40);
-                    ctx.fillStyle = '#808080';
-                    ctx.fillRect(30, 25, 40, 10);
-                    ctx.fillStyle = '#00FF00';
-                    ctx.fillRect(35, 35, 30, 5);
-                    break;
-                case 'imp':
-                    ctx.fillStyle = '#228B22';
-                    ctx.fillRect(25, 40, 50, 30);
-                    ctx.fillStyle = '#32CD32';
-                    ctx.fillRect(35, 25, 30, 20);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(45, 35, 10, 5);
-                    break;
-                case 'mushroom':
-                    ctx.fillStyle = '#8B008B';
-                    ctx.fillRect(30, 30, 40, 40);
-                    ctx.fillStyle = '#FF69B4';
-                    ctx.fillRect(40, 20, 20, 20);
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(45, 35, 5, 5);
-                    ctx.fillRect(55, 35, 5, 5);
-                    break;
-                case 'skeleton':
-                    ctx.fillStyle = '#F5F5DC';
-                    ctx.fillRect(35, 30, 30, 40);
-                    ctx.fillStyle = '#F5F5DC';
-                    ctx.beginPath();
-                    ctx.arc(50, 30, 15, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(45, 25, 5, 5);
-                    ctx.fillRect(55, 25, 5, 5);
-                    break;
-                case 'ghost':
-                    ctx.fillStyle = '#E0E0E0';
-                    ctx.beginPath();
-                    ctx.arc(50, 40, 25, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillRect(25, 40, 50, 30);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(40, 35, 8, 8);
-                    ctx.fillRect(52, 35, 8, 8);
-                    break;
-                case 'shadow':
-                    ctx.fillStyle = '#2F4F4F';
-                    ctx.fillRect(25, 25, 50, 50);
-                    ctx.fillStyle = '#1a1a1a';
-                    ctx.fillRect(35, 35, 30, 30);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(45, 45, 10, 5);
                     break;
                 default:
                     ctx.fillStyle = enemy.color;
@@ -1728,12 +1896,12 @@
         function playerRun() {
             if (gameState.combat.turn !== 'player') return;
             
-            const escapeChance = 0.7;
+            const escapeChance = gameState.combat.enemy.isBoss ? 0 : 0.7;
             if (Math.random() < escapeChance) {
                 endCombat(false);
                 showCombatMessage('You escaped!');
             } else {
-                showCombatMessage('Couldn\'t escape!');
+                showCombatMessage(gameState.combat.enemy.isBoss ? 'Cannot escape from a boss!' : 'Couldn\'t escape!');
                 gameState.combat.turn = 'enemy';
                 setTimeout(enemyTurn, 1000);
             }
@@ -1811,6 +1979,16 @@
                         }
                     }
                 });
+                
+                if (enemy.isBoss && enemy.name.includes('IAN')) {
+                    gameState.flags.defeatedIan = true;
+                    showCombatMessage('IAN has been defeated! The castle gate is open!');
+                }
+                
+                if (enemy.isBoss && enemy.name.includes('RYLEE')) {
+                    gameState.flags.defeatedRylee = true;
+                    showCombatMessage('RYLEE has been defeated! Izzy is free!');
+                }
                 
                 updateHUD();
             }
@@ -1896,6 +2074,12 @@
                         }
                     }
                     
+                    if (exit.targetArea === 'castle' && !gameState.flags.defeatedIan) {
+                        showDialogue('IAN blocks the castle gate! You must defeat him first!');
+                        gameState.inDialogue = true;
+                        return;
+                    }
+                    
                     if (exit.transitionText) {
                         transitionWithDialogue(exit);
                     } else {
@@ -1953,8 +2137,27 @@
                 gameState.flags.enteredUpperVillage = true;
                 gameState.dialogueQueue = [
                     "You enter the Upper Village...",
-                    "The castle looms in the distance...",
-                    "Find the Castle Key to reach the walls..."
+                    "The castle looms in the distance..."
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+            
+            if (areaId === 'castleWalls' && !gameState.flags.enteredCastleWalls) {
+                gameState.flags.enteredCastleWalls = true;
+                gameState.dialogueQueue = [
+                    "You approach the Castle Walls...",
+                    "IAN blocks the castle gate!"
+                ];
+                setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
+            }
+            
+            if (areaId === 'castle' && !gameState.flags.enteredCastle) {
+                gameState.flags.enteredCastle = true;
+                gameState.dialogueQueue = [
+                    "You enter the Castle...",
+                    "The throne room awaits...",
+                    "Rylee sits upon the Desk of Power...",
+                    "Izzy is trapped nearby!"
                 ];
                 setTimeout(() => showDialogue(gameState.dialogueQueue.shift()), 500);
             }
@@ -1963,7 +2166,7 @@
         function checkInteractions() {
             const map = maps[gameState.currentArea];
             const player = gameState.player;
-            const interactRange = 30;
+            const interactRange = 40;
             
             let nearInteraction = false;
             
@@ -1979,6 +2182,8 @@
             });
             
             map.objects.forEach(obj => {
+                if (obj.hidden) return;
+                
                 const objX = obj.x * map.tileSize;
                 const objY = obj.y * map.tileSize;
                 
@@ -2004,6 +2209,20 @@
                 gameState.flags.heardIzzyScream = true;
                 gameState.dialogueQueue = [...npc.dialogue];
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (npc.interactionType === 'izzyRescue') {
+                if (gameState.flags.defeatedRylee) {
+                    gameState.flags.rescuedIzzy = true;
+                    gameState.dialogueQueue = [
+                        "IZZY: You defeated Rylee!",
+                        "IZZY: Thank you for saving me!",
+                        "IZZY: Let's go back to our dorm!",
+                        "THE END... or is it?",
+                        "Thank you for playing!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = ["IZZY: Help! Rylee has me trapped!"];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (npc.interactionType === 'bekah') {
                 if (!gameState.flags.metBekah) {
                     gameState.flags.metBekah = true;
@@ -2025,6 +2244,26 @@
             } else if (npc.interactionType === 'elder') {
                 gameState.dialogueQueue = [...npc.dialogue];
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (npc.interactionType === 'ianBoss') {
+                if (!gameState.flags.defeatedIan) {
+                    gameState.dialogueQueue = [...npc.dialogue];
+                    gameState.dialogueQueue.push(null);
+                    gameState.pendingBoss = 'ian';
+                    showDialogue(gameState.dialogueQueue.shift());
+                } else {
+                    gameState.dialogueQueue = ["IAN: You... defeated me...", "IAN: The castle is open..."];
+                    showDialogue(gameState.dialogueQueue.shift());
+                }
+            } else if (npc.interactionType === 'ryleeBoss') {
+                if (!gameState.flags.defeatedRylee) {
+                    gameState.dialogueQueue = [...npc.dialogue];
+                    gameState.dialogueQueue.push(null);
+                    gameState.pendingBoss = 'rylee';
+                    showDialogue(gameState.dialogueQueue.shift());
+                } else {
+                    gameState.dialogueQueue = ["RYLEE: How... could you... defeat me..."];
+                    showDialogue(gameState.dialogueQueue.shift());
+                }
             }
         }
         
@@ -2045,6 +2284,29 @@
             } else if (obj.interactionType === 'returnToForest') {
                 gameState.dialogueQueue = ["The path back to the Dark Forest."];
                 gameState.pendingExit = { targetArea: 'darkForest', targetX: 25, targetY: 3 };
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'returnToUpperVillage') {
+                gameState.dialogueQueue = ["The path back to the Upper Village."];
+                gameState.pendingExit = { targetArea: 'upperVillage', targetX: 20, targetY: 2 };
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'returnToCastleWalls') {
+                gameState.dialogueQueue = ["The way back to the Castle Walls."];
+                gameState.pendingExit = { targetArea: 'castleWalls', targetX: 25, targetY: 3 };
+                showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'ancientTree') {
+                if (!gameState.flags.forestKeyRevealed) {
+                    gameState.flags.forestKeyRevealed = true;
+                    gameState.dialogueQueue = [
+                        "You examine the ancient tree...",
+                        "There's a huge knot in the trunk...",
+                        "You push on the knot...",
+                        "Something falls from the branches!",
+                        "A key clatters to the ground nearby!",
+                        "The Forest Key is now visible near the glowing mushrooms!"
+                    ];
+                } else {
+                    gameState.dialogueQueue = ["The ancient tree still has the huge knot..."];
+                }
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'note') {
                 gameState.dialogueQueue = ["You find a note...", obj.description];
@@ -2085,6 +2347,13 @@
                     gameState.dialogueQueue = ["You already have the Castle Key."];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'throne') {
+                if (gameState.flags.defeatedRylee) {
+                    gameState.dialogueQueue = ["The Desk of Power is now dormant...", "Its influence is broken..."];
+                } else {
+                    gameState.dialogueQueue = ["The Desk of Power radiates dark energy...", "Rylee must be defeated to break its hold..."];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'gate') {
                 if (hasItem('forestKey')) {
                     gameState.flags.openedForestGate = true;
@@ -2117,6 +2386,13 @@
                     gameState.dialogueQueue = ["The Castle Walls gate is locked.", "You need the Castle Key..."];
                 }
                 showDialogue(gameState.dialogueQueue.shift());
+            } else if (obj.interactionType === 'castleGate') {
+                if (gameState.flags.defeatedIan) {
+                    gameState.dialogueQueue = ["The castle gate is open!"];
+                } else {
+                    gameState.dialogueQueue = ["IAN blocks the gate!", "Defeat Ian to enter the Castle!"];
+                }
+                showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.interactionType === 'merchant') {
                 openShop('shadyMerchant');
             } else if (obj.interactionType === 'upperMerchant') {
@@ -2126,9 +2402,7 @@
             } else if (obj.interactionType === 'castleInfo') {
                 gameState.dialogueQueue = [
                     "The records mention Ian...",
-                    "He was a star athlete before Rylee transformed him...",
-                    "Now he guards the Castle Walls...",
-                    "He cannot be reasoned with..."
+                    "He was a star athlete before Rylee transformed him..."
                 ];
                 showDialogue(gameState.dialogueQueue.shift());
             } else if (obj.itemDrop) {
@@ -2153,7 +2427,6 @@
             ctx.fillStyle = map.backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw floor with texture
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if (map.collisionMap[y][x] === 0) {
@@ -2162,7 +2435,6 @@
                 }
             }
             
-            // Draw walls/obstacles with detail
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if (map.collisionMap[y][x] === 1) {
@@ -2172,6 +2444,10 @@
                             drawTombstoneTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else if (gameState.currentArea === 'village' || gameState.currentArea === 'upperVillage') {
                             drawBuildingTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                        } else if (gameState.currentArea === 'castleWalls') {
+                            drawCastleWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
+                        } else if (gameState.currentArea === 'castle') {
+                            drawCastleTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize);
                         } else {
                             drawWallTile(ctx, x * map.tileSize, y * map.tileSize, map.tileSize, map.wallColor);
                         }
@@ -2179,16 +2455,12 @@
                 }
             }
             
-            // Draw objects with detail
-            map.objects.forEach(obj => drawObject(ctx, obj, map.tileSize));
+            map.objects.forEach(obj => {
+                if (!obj.hidden) drawObject(ctx, obj, map.tileSize);
+            });
             
-            // Draw visible enemies
             drawVisibleEnemies(ctx);
-            
-            // Draw NPCs
             map.npcs.forEach(npc => drawNPC(ctx, npc, map.tileSize));
-            
-            // Draw player
             drawPlayer(ctx);
         }
         
@@ -2207,10 +2479,6 @@
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.lineWidth = 1;
             ctx.strokeRect(x, y, size, size);
-            ctx.beginPath();
-            ctx.moveTo(x, y + size/2);
-            ctx.lineTo(x + size, y + size/2);
-            ctx.stroke();
         }
         
         function drawTreeTile(ctx, x, y, size) {
@@ -2224,10 +2492,6 @@
             ctx.beginPath();
             ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = '#2a5a2a';
-            ctx.beginPath();
-            ctx.arc(x + size/2, y + size/2, size/6, 0, Math.PI * 2);
-            ctx.fill();
         }
         
         function drawTombstoneTile(ctx, x, y, size) {
@@ -2235,10 +2499,6 @@
             ctx.fillRect(x, y, size, size);
             ctx.fillStyle = '#808080';
             ctx.fillRect(x + 5, y + 3, size - 10, size - 6);
-            ctx.fillStyle = '#666666';
-            ctx.fillRect(x + 8, y + 8, size - 16, size - 16);
-            ctx.fillStyle = '#999999';
-            ctx.fillRect(x + 8, y + 3, size - 16, 3);
         }
         
         function drawBuildingTile(ctx, x, y, size) {
@@ -2246,7 +2506,21 @@
             ctx.fillRect(x, y, size, size);
             ctx.fillStyle = '#5a4a3a';
             ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
-            ctx.fillStyle = '#6a5a4a';
+        }
+        
+        function drawCastleWallTile(ctx, x, y, size) {
+            ctx.fillStyle = '#3a3a4a';
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = '#4a4a5a';
+            ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
+        }
+        
+        function drawCastleTile(ctx, x, y, size) {
+            ctx.fillStyle = '#2a0a2a';
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = '#3a1a3a';
+            ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
+            ctx.fillStyle = '#4a2a4a';
             ctx.fillRect(x + 5, y + 5, size - 10, size - 10);
         }
         
@@ -2260,16 +2534,12 @@
                     ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(x + 5, y + 5, tileSize * 2, tileSize);
-                    ctx.fillStyle = '#FF69B4';
-                    ctx.fillRect(x + 8, y + tileSize, tileSize, tileSize/2);
                     break;
                 case 'desk':
                     ctx.fillStyle = '#8B4513';
                     ctx.fillRect(x, y, tileSize * 2, tileSize);
                     ctx.fillStyle = '#654321';
                     ctx.fillRect(x, y + tileSize, tileSize * 2, tileSize/2);
-                    ctx.fillStyle = '#FFD700';
-                    ctx.fillRect(x + 5, y + 3, 10, 5);
                     break;
                 case 'bookshelf':
                     ctx.fillStyle = '#654321';
@@ -2282,56 +2552,31 @@
                 case 'clothes':
                     ctx.fillStyle = '#FF69B4';
                     ctx.fillRect(x, y, tileSize, tileSize);
-                    ctx.fillStyle = '#FF1493';
-                    ctx.fillRect(x + 5, y + 5, tileSize - 10, tileSize - 10);
                     break;
                 case 'boxes':
                     ctx.fillStyle = '#8B7355';
                     ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
-                    ctx.strokeStyle = '#654321';
-                    ctx.strokeRect(x, y, tileSize * 2, tileSize * 2);
-                    ctx.fillStyle = '#A0825A';
-                    ctx.fillRect(x + 5, y + 5, tileSize - 5, tileSize - 5);
                     break;
                 case 'portal':
                     const time = Date.now() / 1000;
                     const pulse = Math.sin(time * 3) * 0.3 + 0.7;
                     ctx.fillStyle = `rgba(255, 0, 255, ${pulse})`;
                     ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
-                    ctx.fillStyle = `rgba(0, 255, 255, ${pulse * 0.5})`;
-                    ctx.fillRect(x + 5, y + 5, tileSize * 2 - 10, tileSize * 2 - 10);
-                    ctx.fillStyle = `rgba(255, 255, 255, ${pulse * 0.7})`;
-                    ctx.fillRect(x + 8, y + 8, tileSize * 2 - 16, tileSize * 2 - 16);
                     break;
                 case 'key':
                     ctx.fillStyle = '#FFD700';
-                    ctx.fillRect(x + 5, y + 8, 10, 4);
-                    ctx.fillRect(x + 12, y + 5, 3, 10);
-                    ctx.fillStyle = '#FFF8DC';
-                    ctx.fillRect(x + 7, y + 9, 6, 2);
+                    ctx.beginPath();
+                    ctx.arc(x + tileSize/2, y + tileSize/3, tileSize/4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillRect(x + tileSize/2, y + tileSize/3, tileSize/3, tileSize/6);
                     break;
                 case 'gate':
                     ctx.fillStyle = '#654321';
                     ctx.fillRect(x, y, tileSize * 3, tileSize * 2);
-                    ctx.strokeStyle = '#000000';
-                    ctx.lineWidth = 2;
-                    for (let i = 0; i < 3; i++) {
-                        ctx.beginPath();
-                        ctx.moveTo(x + i * tileSize, y);
-                        ctx.lineTo(x + i * tileSize, y + tileSize * 2);
-                        ctx.stroke();
-                    }
-                    ctx.fillStyle = '#FFD700';
-                    ctx.fillRect(x + tileSize - 5, y + tileSize/2, 10, 10);
                     break;
                 case 'note':
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(x, y, tileSize, tileSize);
-                    ctx.strokeStyle = '#000000';
-                    ctx.strokeRect(x, y, tileSize, tileSize);
-                    ctx.fillStyle = '#0000FF';
-                    ctx.fillRect(x + 3, y + 3, tileSize - 6, 3);
-                    ctx.fillRect(x + 3, y + 8, tileSize - 6, 3);
                     break;
             }
         }
@@ -2340,57 +2585,59 @@
             const x = npc.x * tileSize;
             const y = npc.y * tileSize;
             
-            if (npc.sprite === 'bekah') {
+            if (npc.sprite === 'ian') {
+                ctx.fillStyle = '#8B0000';
+                ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+                ctx.fillStyle = '#A00000';
+                ctx.fillRect(x + 5, y - 5, tileSize * 2 - 10, 10);
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(x + 8, y - 10, tileSize * 2 - 16, 8);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + 15, y + 15, 5, 5);
+                ctx.fillRect(x + 30, y + 15, 5, 5);
+            } else if (npc.sprite === 'rylee') {
+                ctx.fillStyle = '#FF00FF';
+                ctx.fillRect(x, y, tileSize * 2, tileSize * 2);
+                ctx.fillStyle = '#FF69B4';
+                ctx.fillRect(x + 5, y - 5, tileSize * 2 - 10, 10);
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(x + 8, y - 10, tileSize * 2 - 16, 8);
+                ctx.fillStyle = '#FF0000';
+                ctx.fillRect(x + 15, y + 15, 5, 5);
+                ctx.fillRect(x + 30, y + 15, 5, 5);
+            } else if (npc.sprite === 'bekah') {
                 ctx.fillStyle = '#FF69B4';
                 ctx.fillRect(x, y, tileSize, tileSize * 0.8);
                 ctx.fillStyle = '#FFC0CB';
                 ctx.fillRect(x + 3, y - 3, tileSize - 6, tileSize - 6);
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x + 3, y - 6, tileSize - 6, 5);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 3, 3, 3);
-                ctx.fillRect(x + 12, y + 3, 3, 3);
             } else if (npc.sprite === 'ghost') {
                 ctx.fillStyle = '#E0E0E0';
                 ctx.beginPath();
                 ctx.arc(x + tileSize/2, y + tileSize/2, tileSize/2, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'merchant') {
                 ctx.fillStyle = '#2F4F4F';
                 ctx.fillRect(x, y, tileSize, tileSize);
-                ctx.fillStyle = '#FFD700';
-                ctx.fillRect(x + 5, y + 3, 10, 5);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'healer') {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x, y, tileSize, tileSize);
-                ctx.fillStyle = '#FF0000';
-                ctx.fillRect(x + 5, y + 5, 10, 10);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else if (npc.sprite === 'elder') {
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x, y, tileSize, tileSize);
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x, y, tileSize, tileSize/3);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             } else {
                 ctx.fillStyle = '#FFC0CB';
                 ctx.fillRect(x, y, tileSize, tileSize);
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x, y, tileSize, tileSize/3);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 5, y + 8, 3, 3);
-                ctx.fillRect(x + 12, y + 8, 3, 3);
             }
+            
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x + 5, y + 8, 3, 3);
+            ctx.fillRect(x + 12, y + 8, 3, 3);
         }
         
         function drawPlayer(ctx) {
@@ -2456,11 +2703,19 @@
                 const nextDialogue = gameState.dialogueQueue.shift();
                 if (nextDialogue) {
                     setTimeout(() => showDialogue(nextDialogue), 500);
+                } else if (gameState.pendingBoss) {
+                    const boss = gameState.pendingBoss;
+                    gameState.pendingBoss = null;
+                    startCombat(boss);
                 }
             } else if (gameState.pendingExit) {
                 const exit = gameState.pendingExit;
                 gameState.pendingExit = null;
                 transitionArea(exit.targetArea, exit.targetX, exit.targetY);
+            } else if (gameState.pendingBoss) {
+                const boss = gameState.pendingBoss;
+                gameState.pendingBoss = null;
+                startCombat(boss);
             }
         }
         
