@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>John Neumaier Hall - The Adventure Begins</title>
+    <title>John Neumaier Hall - The Complete Adventure</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -126,7 +126,7 @@
             transform: scale(1.05);
         }
         
-        .inventory-screen, .shop-screen {
+        .inventory-screen, .shop-screen, .phone-screen {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -142,11 +142,11 @@
             overflow-y: auto;
         }
         
-        .inventory-screen.active, .shop-screen.active {
+        .inventory-screen.active, .shop-screen.active, .phone-screen.active {
             display: block;
         }
         
-        .inventory-screen h2, .shop-screen h2 {
+        .inventory-screen h2, .shop-screen h2, .phone-screen h2 {
             color: #ff00ff;
             margin-bottom: 20px;
             font-size: 16px;
@@ -181,7 +181,7 @@
             min-height: 200px;
         }
         
-        .inventory-item, .shop-item {
+        .inventory-item, .shop-item, .phone-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -193,7 +193,7 @@
             transition: all 0.3s;
         }
         
-        .inventory-item:hover, .shop-item:hover {
+        .inventory-item:hover, .shop-item:hover, .phone-item:hover {
             background: rgba(255, 0, 255, 0.3);
             transform: scale(1.02);
         }
@@ -487,6 +487,24 @@
         .item-menu.active {
             display: flex;
         }
+        
+        .phone-screen {
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 100%);
+            border: 4px solid #00ff00;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+        }
+        
+        .phone-screen h2 {
+            color: #00ff00;
+        }
+        
+        .phone-item {
+            border-color: #00ff00;
+        }
+        
+        .phone-item:hover {
+            background: rgba(0, 255, 0, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -523,8 +541,10 @@
                 <h2>MENU</h2>
                 <button onclick="toggleMenu()">RESUME</button>
                 <button onclick="showInventory()">INVENTORY</button>
+                <button onclick="showPhone()">PHONE</button>
                 <button onclick="showStatus()">STATUS</button>
                 <button onclick="saveGame()">SAVE</button>
+                <button onclick="loadGame()">LOAD</button>
                 <button onclick="returnToTitle()">TITLE SCREEN</button>
             </div>
             
@@ -540,6 +560,16 @@
                 </div>
                 <div class="inventory-actions">
                     <button onclick="closeInventory()">CLOSE</button>
+                </div>
+            </div>
+            
+            <div class="phone-screen" id="phoneScreen">
+                <h2>📱 PHONE</h2>
+                <div class="money-display">YOUR MONEY: $<span id="phoneMoney">0</span></div>
+                <div class="inventory-list" id="phoneList">
+                </div>
+                <div class="inventory-actions">
+                    <button onclick="closePhone()">CLOSE PHONE</button>
                 </div>
             </div>
             
@@ -588,6 +618,97 @@
     </div>
     
     <script>
+        // ============ SOUND SYSTEM ============
+        const soundSystem = {
+            audioContext: null,
+            
+            init() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                    console.log('Audio not supported');
+                }
+            },
+            
+            playSound(type) {
+                if (!this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                switch(type) {
+                    case 'interact':
+                        oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(1200, this.audioContext.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                        oscillator.start(this.audioContext.currentTime);
+                        oscillator.stop(this.audioContext.currentTime + 0.1);
+                        break;
+                        
+                    case 'combat':
+                        oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.3);
+                        gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                        oscillator.start(this.audioContext.currentTime);
+                        oscillator.stop(this.audioContext.currentTime + 0.3);
+                        break;
+                        
+                    case 'victory':
+                        oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(1200, this.audioContext.currentTime + 0.4);
+                        gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.4);
+                        oscillator.start(this.audioContext.currentTime);
+                        oscillator.stop(this.audioContext.currentTime + 0.4);
+                        break;
+                        
+                    case 'damage':
+                        oscillator.type = 'sawtooth';
+                        oscillator.frequency.setValueAtTime(150, this.audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(50, this.audioContext.currentTime + 0.2);
+                        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
+                        oscillator.start(this.audioContext.currentTime);
+                        oscillator.stop(this.audioContext.currentTime + 0.2);
+                        break;
+                        
+                    case 'levelup':
+                        [523, 659, 784, 1047].forEach((freq, i) => {
+                            const osc = this.audioContext.createOscillator();
+                            const gain = this.audioContext.createGain();
+                            osc.connect(gain);
+                            gain.connect(this.audioContext.destination);
+                            osc.frequency.setValueAtTime(freq, this.audioContext.currentTime + i * 0.1);
+                            gain.gain.setValueAtTime(0.3, this.audioContext.currentTime + i * 0.1);
+                            gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + i * 0.1 + 0.1);
+                            osc.start(this.audioContext.currentTime + i * 0.1);
+                            osc.stop(this.audioContext.currentTime + i * 0.1 + 0.1);
+                        });
+                        break;
+                        
+                    case 'phone':
+                        [440, 550].forEach((freq, i) => {
+                            const osc = this.audioContext.createOscillator();
+                            const gain = this.audioContext.createGain();
+                            osc.connect(gain);
+                            gain.connect(this.audioContext.destination);
+                            osc.frequency.setValueAtTime(freq, this.audioContext.currentTime + i * 0.15);
+                            gain.gain.setValueAtTime(0.4, this.audioContext.currentTime + i * 0.15);
+                            gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + i * 0.15 + 0.15);
+                            osc.start(this.audioContext.currentTime + i * 0.15);
+                            osc.stop(this.audioContext.currentTime + i * 0.15 + 0.15);
+                        });
+                        break;
+                }
+            }
+        };
+        
+        // ============ ITEM DEFINITIONS ============
         const items = {
             ramen: { name: 'Instant Ramen', type: 'item', healAmount: 20, description: 'Cheap instant noodles. Restores 20 HP.', price: 5, usable: true },
             energyDrink: { name: 'Energy Drink', type: 'item', healAmount: 50, description: 'Highly caffeinated. Restores 50 HP.', price: 15, usable: true },
@@ -603,6 +724,7 @@
             castleKey: { name: 'Castle Key', type: 'keyItem', description: 'An ornate key that opens the Castle Walls gate.', price: 0, usable: false }
         };
         
+        // ============ GAME STATE ============
         let gameState = {
             character: null,
             currentArea: 'room303',
@@ -655,7 +777,9 @@
             inventoryTab: 'items',
             selectedItem: null,
             currentShop: null,
-            visibleEnemies: []
+            visibleEnemies: [],
+            phoneCooldown: 0,
+            lastPhoneUse: 0
         };
         
         const bekahStats = {
@@ -887,26 +1011,27 @@
             
             for (let y = 35; y < 40; y++) map.collisionMap[y][25] = 0;
             
-            map.collisionMap[5][24] = 1;
-            map.collisionMap[5][25] = 1;
-            map.collisionMap[5][26] = 1;
+            // Clear path to forest gate (no collision blocking)
+            map.collisionMap[4][24] = 0;
+            map.collisionMap[4][25] = 0;
+            map.collisionMap[4][26] = 0;
             
             map.objects = [
                 { x: 25, y: 38, type: 'portal', name: 'Return Portal', description: 'A portal back to the closet.', interactionType: 'returnPortal' },
-                { x: 10, y: 15, type: 'tree', name: 'Ancient Tree', description: 'A twisted tree with a huge knot...', interactionType: 'ancientTree' },
+                { x: 10, y: 14, type: 'tree', name: 'Ancient Tree', description: 'A twisted tree with a huge knot...', interactionType: 'ancientTree' },
                 { x: 30, y: 22, type: 'mushroom', name: 'Glowing Mushrooms', description: 'Bioluminescent mushrooms.' },
                 { x: 15, y: 28, type: 'note', name: 'Torn Note', description: '"The key is hidden where the mushrooms glow..."', interactionType: 'note' },
                 { x: 35, y: 30, type: 'key', name: 'Forest Key', description: 'A rusted key.', interactionType: 'forestKey', hidden: true, id: 'forestKey' },
-                { x: 25, y: 5, type: 'gate', name: 'Forest Gate', description: 'A massive gate.', interactionType: 'gate' }
+                { x: 25, y: 4, type: 'gate', name: 'Forest Gate', description: 'A massive gate.', interactionType: 'gate' }
             ];
             
             map.npcs = [
-                { x: 40, y: 35, name: 'Bekah', sprite: 'bekah', dialogue: ["BEKAH: Help! I'm trapped!", "BEKAH: Thank you! I'll join you!"], interactionType: 'bekah' }
+                { x: 40, y: 34, name: 'Bekah', sprite: 'bekah', dialogue: ["BEKAH: Help! I'm trapped!", "BEKAH: Thank you! I'll join you!"], interactionType: 'bekah' }
             ];
             
             map.exits = [
                 { x: 25, y: 39, targetArea: 'closet', targetX: 14, targetY: 14, transitionText: 'You return through the portal...' },
-                { x: 25, y: 4, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You enter the graveyard...' }
+                { x: 25, y: 3, targetArea: 'graveyard', targetX: 22, targetY: 38, transitionText: 'You enter the graveyard...' }
             ];
         }
         
@@ -1000,17 +1125,17 @@
             }
             
             map.objects = [
-                { x: 7, y: 5, type: 'bed', name: 'Healer\'s Bed', description: 'A warm bed.', interactionType: 'healer' },
-                { x: 30, y: 5, type: 'desk', name: 'Merchant\'s Stall', description: 'Various goods.', interactionType: 'merchant' },
-                { x: 17, y: 15, type: 'bookshelf', name: 'Village Records', description: 'Old records.', interactionType: 'elder' },
+                { x: 13, y: 7, type: 'bed', name: 'Healer\'s Bed', description: 'A warm bed.', interactionType: 'healer' },
+                { x: 27, y: 7, type: 'desk', name: 'Merchant\'s Stall', description: 'Various goods.', interactionType: 'merchant' },
+                { x: 23, y: 17, type: 'bookshelf', name: 'Village Records', description: 'Old records.', interactionType: 'elder' },
                 { x: 20, y: 3, type: 'gate', name: 'Upper Village Gate', description: 'A gate to the Upper Village.', interactionType: 'upperVillageGate' },
                 { x: 5, y: 20, type: 'key', name: 'Village Key', description: 'A brass key.', interactionType: 'villageKey' }
             ];
             
             map.npcs = [
-                { x: 15, y: 8, name: 'Village Healer', sprite: 'healer', dialogue: ["HEALER: I can heal your party for $20..."], interactionType: 'healer' },
-                { x: 32, y: 8, name: 'Shady Merchant', sprite: 'merchant', dialogue: ["MERCHANT: Psst... hey kid..."], interactionType: 'merchant' },
-                { x: 18, y: 18, name: 'Village Elder', sprite: 'elder', dialogue: ["ELDER: Find the Village Key to reach Upper Village..."], interactionType: 'elder' }
+                { x: 13, y: 7, name: 'Village Healer', sprite: 'healer', dialogue: ["HEALER: I can heal your party for $20..."], interactionType: 'healer' },
+                { x: 27, y: 7, name: 'Shady Merchant', sprite: 'merchant', dialogue: ["MERCHANT: Psst... hey kid..."], interactionType: 'merchant' },
+                { x: 23, y: 17, name: 'Village Elder', sprite: 'elder', dialogue: ["ELDER: Find the Village Key to reach Upper Village..."], interactionType: 'elder' }
             ];
             
             map.exits = [
@@ -1048,15 +1173,15 @@
             }
             
             map.objects = [
-                { x: 30, y: 5, type: 'desk', name: 'Upper Merchant', description: 'Better supplies.', interactionType: 'upperMerchant' },
-                { x: 7, y: 5, type: 'bed', name: 'Upper Healer', description: 'A comfortable bed.', interactionType: 'healer' },
-                { x: 17, y: 15, type: 'bookshelf', name: 'Castle Records', description: 'Records about the castle...', interactionType: 'castleInfo' },
+                { x: 27, y: 7, type: 'desk', name: 'Upper Merchant', description: 'Better supplies.', interactionType: 'upperMerchant' },
+                { x: 13, y: 7, type: 'bed', name: 'Upper Healer', description: 'A comfortable bed.', interactionType: 'healer' },
+                { x: 23, y: 17, type: 'bookshelf', name: 'Castle Records', description: 'Records about the castle...', interactionType: 'castleInfo' },
                 { x: 20, y: 3, type: 'gate', name: 'Castle Walls Gate', description: 'A massive gate to the Castle Walls.', interactionType: 'castleWallsGate' },
                 { x: 5, y: 25, type: 'key', name: 'Castle Key', description: 'An ornate key for the Castle Walls.', interactionType: 'castleKey' }
             ];
             
             map.npcs = [
-                { x: 18, y: 18, name: 'Upper Elder', sprite: 'elder', dialogue: ["ELDER: The castle walls are guarded by Ian...", "ELDER: Find the Castle Key to reach the walls..."], interactionType: 'elder' }
+                { x: 23, y: 17, name: 'Upper Elder', sprite: 'elder', dialogue: ["ELDER: The castle walls are guarded by Ian...", "ELDER: Find the Castle Key to reach the walls..."], interactionType: 'elder' }
             ];
             
             map.exits = [
@@ -1081,8 +1206,6 @@
             map.collisionMap[map.height - 1][25] = 0;
             map.collisionMap[map.height - 2][25] = 0;
             map.collisionMap[3][25] = 0;
-            map.collisionMap[3][24] = 1;
-            map.collisionMap[3][26] = 1;
             
             for (let x = 5; x < 45; x += 5) {
                 for (let y = 10; y < 15; y++) {
@@ -1097,29 +1220,16 @@
             
             for (let y = 35; y < 40; y++) map.collisionMap[y][25] = 0;
             for (let y = 20; y < 35; y++) map.collisionMap[y][25] = 0;
+            for (let y = 4; y < 20; y++) map.collisionMap[y][25] = 0;
             
             map.objects = [
                 { x: 25, y: 38, type: 'portal', name: 'Upper Village Path', description: 'The path back to Upper Village.', interactionType: 'returnToUpperVillage' },
-                { x: 25, y: 5, type: 'gate', name: 'Castle Gate', description: 'The entrance to the Castle.', interactionType: 'castleGate' },
+                { x: 25, y: 4, type: 'gate', name: 'Castle Gate', description: 'The entrance to the Castle.', interactionType: 'castleGate' },
                 { x: 10, y: 8, type: 'note', name: 'Guard Note', description: '"Ian is unstoppable. Do not engage."', interactionType: 'note' }
             ];
             
             map.npcs = [
-                { 
-                    x: 25, 
-                    y: 6, 
-                    name: 'IAN', 
-                    sprite: 'ian', 
-                    dialogue: [
-                        "IAN: HALT!",
-                        "IAN: No one enters the castle without Rylee's permission...",
-                        "IAN: I was once a student like you...",
-                        "IAN: But Rylee showed me the truth...",
-                        "IAN: Now I am her strongest guard!",
-                        "IAN: If you want to pass, you'll have to defeat me!"
-                    ],
-                    interactionType: 'ianBoss'
-                }
+                { x: 25, y: 6, name: 'IAN', sprite: 'ian', dialogue: ["IAN: HALT!", "IAN: No one enters without Rylee's permission...", "IAN: If you want to pass, defeat me!"], interactionType: 'ianBoss' }
             ];
             
             map.exits = [
@@ -1144,7 +1254,6 @@
             map.collisionMap[map.height - 1][20] = 0;
             map.collisionMap[map.height - 2][20] = 0;
             
-            // Throne room walls
             for (let y = 5; y < 15; y++) {
                 for (let x = 10; x < 30; x++) {
                     if (x === 10 || x === 29 || y === 5 || y === 14) {
@@ -1153,51 +1262,22 @@
                 }
             }
             
-            // Pillars
             for (let y = 8; y < 12; y++) {
                 map.collisionMap[y][15] = 1;
                 map.collisionMap[y][25] = 1;
             }
             
-            // Path to throne
             for (let y = 15; y < 35; y++) map.collisionMap[y][20] = 0;
             
             map.objects = [
                 { x: 20, y: 33, type: 'portal', name: 'Castle Entrance', description: 'The way back to the Castle Walls.', interactionType: 'returnToCastleWalls' },
-                { x: 20, y: 7, type: 'desk', name: 'The Desk of Power', description: 'Rylee\'s throne. The source of her power...', interactionType: 'throne' },
-                { x: 5, y: 10, type: 'note', name: 'Rylee\'s Diary', description: 'A diary entry... "They don\'t understand. The Desk chose me..."', interactionType: 'note' },
-                { x: 35, y: 10, type: 'note', name: 'Old Photo', description: 'A photo of Rylee as a student... She looks happy...', interactionType: 'note' }
+                { x: 20, y: 7, type: 'desk', name: 'The Desk of Power', description: 'Rylee\'s throne.', interactionType: 'throne' },
+                { x: 5, y: 10, type: 'note', name: 'Rylee\'s Diary', description: '"They don\'t understand. The Desk chose me..."', interactionType: 'note' }
             ];
             
             map.npcs = [
-                { 
-                    x: 20, 
-                    y: 8, 
-                    name: 'RYLEE', 
-                    sprite: 'rylee', 
-                    dialogue: [
-                        "RYLEE: Welcome to my castle...",
-                        "RYLEE: I've been expecting you...",
-                        "RYLEE: You've defeated my guards...",
-                        "RYLEE: But you won't defeat me!",
-                        "RYLEE: The Desk chose me as its Queen!",
-                        "RYLEE: With its power, I will rule all of John Neumaier Hall!",
-                        "RYLEE: And you... will be expelled!"
-                    ],
-                    interactionType: 'ryleeBoss'
-                },
-                { 
-                    x: 15, 
-                    y: 25, 
-                    name: 'IZZY', 
-                    sprite: 'izzy', 
-                    dialogue: [
-                        "IZZY: You came for me!",
-                        "IZZY: Thank you!",
-                        "IZZY: Let's go home!"
-                    ],
-                    interactionType: 'izzyRescue'
-                }
+                { x: 20, y: 9, name: 'RYLEE', sprite: 'rylee', dialogue: ["RYLEE: Welcome to my castle...", "RYLEE: You won't defeat me!", "RYLEE: The Desk chose me as its Queen!"], interactionType: 'ryleeBoss' },
+                { x: 15, y: 27, name: 'IZZY', sprite: 'izzy', dialogue: ["IZZY: You came for me!", "IZZY: Thank you!", "IZZY: Let's go home!"], interactionType: 'izzyRescue' }
             ];
             
             map.exits = [
@@ -1309,6 +1389,8 @@
         }
         
         function initGame() {
+            soundSystem.init();
+            
             const characterData = localStorage.getItem('johnNeumaierCharacter');
             
             if (!characterData) {
@@ -1329,15 +1411,26 @@
             
             gameState.character = gameState.party[0];
             
-            if (!charData.inventory) charData.inventory = [];
-            gameState.inventory = charData.inventory;
-            
-            if (gameState.inventory.length === 0) {
-                addItem('ramen', 2);
-                addItem('coffee', 1);
+            const saveData = localStorage.getItem('johnNeumaierSave');
+            if (saveData) {
+                const parsed = JSON.parse(saveData);
+                gameState = { ...gameState, ...parsed };
+                gameState.player = parsed.player || gameState.player;
+                gameState.flags = parsed.flags || gameState.flags;
+                gameState.party = parsed.party || gameState.party;
+                gameState.inventory = parsed.inventory || gameState.inventory;
+                gameState.currentArea = parsed.currentArea || 'room303';
+            } else {
+                if (!charData.inventory) charData.inventory = [];
+                gameState.inventory = charData.inventory;
+                
+                if (gameState.inventory.length === 0) {
+                    addItem('ramen', 2);
+                    addItem('coffee', 1);
+                }
+                
+                gameState.party[0].money = 50;
             }
-            
-            gameState.party[0].money = 50;
             
             initMaps();
             spawnEnemies();
@@ -1484,13 +1577,84 @@
             if (itemData.type === 'item' && itemData.usable) {
                 if (useItem(itemId, 0)) {
                     showCombatMessage(`Used ${itemData.name}!`);
+                    soundSystem.playSound('interact');
                     updateInventoryDisplay();
                 }
             } else if (itemData.type === 'weapon') {
                 equipWeapon(itemId);
                 showCombatMessage(`Equipped ${itemData.name}!`);
+                soundSystem.playSound('interact');
                 updateInventoryDisplay();
             }
+        }
+        
+        function showPhone() {
+            document.getElementById('gameMenu').classList.remove('active');
+            gameState.paused = true;
+            document.getElementById('phoneScreen').classList.add('active');
+            updatePhoneDisplay();
+        }
+        
+        function closePhone() {
+            document.getElementById('phoneScreen').classList.remove('active');
+            gameState.paused = false;
+        }
+        
+        function updatePhoneDisplay() {
+            const listElement = document.getElementById('phoneList');
+            const moneyElement = document.getElementById('phoneMoney');
+            moneyElement.textContent = gameState.party[0].money || 0;
+            listElement.innerHTML = '';
+            
+            const callHome = document.createElement('div');
+            callHome.className = 'phone-item';
+            callHome.innerHTML = `
+                <div>
+                    <div class="item-name">📞 Call Home</div>
+                    <div class="item-description">Ask parents for money (+$20)</div>
+                </div>
+                <div class="item-price">FREE</div>
+            `;
+            callHome.addEventListener('click', () => callHomeForMoney());
+            listElement.appendChild(callHome);
+            
+            const checkMessages = document.createElement('div');
+            checkMessages.className = 'phone-item';
+            checkMessages.innerHTML = `
+                <div>
+                    <div class="item-name">💬 Check Messages</div>
+                    <div class="item-description">Read text messages from friends</div>
+                </div>
+            `;
+            checkMessages.addEventListener('click', () => checkMessages());
+            listElement.appendChild(checkMessages);
+        }
+        
+        function callHomeForMoney() {
+            const now = Date.now();
+            if (now - gameState.lastPhoneUse < 30000) {
+                showCombatMessage('Phone is cooling down. Wait 30 seconds...');
+                return;
+            }
+            
+            gameState.lastPhoneUse = now;
+            gameState.party[0].money = (gameState.party[0].money || 0) + 20;
+            updatePhoneDisplay();
+            updateHUD();
+            soundSystem.playSound('phone');
+            showCombatMessage('Parents sent you $20!');
+        }
+        
+        function checkMessages() {
+            soundSystem.playSound('phone');
+            gameState.dialogueQueue = [
+                "BEKAH: Hey, where are you?",
+                "IZZY: HELP! Rylee has me!",
+                "MOM: Don't forget to eat!",
+                "DAD: Study hard!"
+            ];
+            showDialogue(gameState.dialogueQueue.shift());
+            closePhone();
         }
         
         function openShop(shopType) {
@@ -1558,6 +1722,7 @@
                 addItem(itemId);
                 updateShopDisplay();
                 updateHUD();
+                soundSystem.playSound('interact');
                 showCombatMessage(`Bought ${itemData.name}!`);
             } else {
                 showCombatMessage('Not enough money!');
@@ -1575,6 +1740,7 @@
                 });
                 updateShopDisplay();
                 updateHUD();
+                soundSystem.playSound('victory');
                 showCombatMessage('Party fully healed!');
             } else {
                 showCombatMessage('Not enough money!');
@@ -1603,6 +1769,7 @@
                     const target = gameState.combat.activePartyMember;
                     if (useItem(item.id, target)) {
                         showCombatMessage(`${gameState.party[target].name} uses ${itemData.name}!`);
+                        soundSystem.playSound('interact');
                         document.getElementById('combatMenu').style.display = 'flex';
                         itemMenu.classList.remove('active');
                         gameState.combat.turn = 'enemy';
@@ -1660,6 +1827,7 @@
             
             drawCombatEnemy();
             updateCombatPartyDisplay();
+            soundSystem.playSound('combat');
             showCombatMessage(`${gameState.combat.enemy.name} attacks!`);
         }
         
@@ -1728,8 +1896,6 @@
                     ctx.fillStyle = '#000000';
                     ctx.fillRect(40, 35, 8, 8);
                     ctx.fillRect(55, 35, 8, 8);
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(45, 50, 10, 20);
                     break;
                 case 'rylee':
                     ctx.fillStyle = '#FF00FF';
@@ -1741,8 +1907,6 @@
                     ctx.fillStyle = '#FF0000';
                     ctx.fillRect(40, 35, 8, 8);
                     ctx.fillRect(55, 35, 8, 8);
-                    ctx.fillStyle = '#8B0000';
-                    ctx.fillRect(45, 50, 10, 10);
                     break;
                 case 'laundry':
                     ctx.fillStyle = '#808080';
@@ -1928,6 +2092,7 @@
             target.hp -= damage;
             updateCombatPartyDisplay();
             updateHUD();
+            soundSystem.playSound('damage');
             
             showCombatMessage(`${enemy.name} uses ${attack.name}! ${damage} damage!`);
             
@@ -1975,6 +2140,7 @@
                             member.defense += 1;
                             member.speed += 1;
                             
+                            soundSystem.playSound('levelup');
                             showCombatMessage(`${member.name} reached level ${member.level}!`);
                         }
                     }
@@ -1990,6 +2156,7 @@
                     showCombatMessage('RYLEE has been defeated! Izzy is free!');
                 }
                 
+                soundSystem.playSound('victory');
                 updateHUD();
             }
         }
@@ -2204,6 +2371,7 @@
         
         function interactWithNPC(npc) {
             gameState.keys.interact = false;
+            soundSystem.playSound('interact');
             
             if (npc.interactionType === 'izzy') {
                 gameState.flags.heardIzzyScream = true;
@@ -2269,6 +2437,7 @@
         
         function interactWithObject(obj) {
             gameState.keys.interact = false;
+            soundSystem.playSound('interact');
             
             if (obj.interactionType === 'portal') {
                 gameState.dialogueQueue = [
@@ -2296,13 +2465,15 @@
             } else if (obj.interactionType === 'ancientTree') {
                 if (!gameState.flags.forestKeyRevealed) {
                     gameState.flags.forestKeyRevealed = true;
+                    const keyObj = maps.darkForest.objects.find(o => o.id === 'forestKey');
+                    if (keyObj) keyObj.hidden = false;
                     gameState.dialogueQueue = [
                         "You examine the ancient tree...",
                         "There's a huge knot in the trunk...",
                         "You push on the knot...",
                         "Something falls from the branches!",
                         "A key clatters to the ground nearby!",
-                        "The Forest Key is now visible near the glowing mushrooms!"
+                        "The Forest Key is now visible!"
                     ];
                 } else {
                     gameState.dialogueQueue = ["The ancient tree still has the huge knot..."];
@@ -2520,8 +2691,6 @@
             ctx.fillRect(x, y, size, size);
             ctx.fillStyle = '#3a1a3a';
             ctx.fillRect(x + 3, y + 3, size - 6, size - 6);
-            ctx.fillStyle = '#4a2a4a';
-            ctx.fillRect(x + 5, y + 5, size - 10, size - 10);
         }
         
         function drawObject(ctx, obj, tileSize) {
@@ -2741,16 +2910,50 @@
         }
         
         function showStatus() {
-            console.log('Status screen coming soon!');
+            const partyLeader = gameState.party[0];
+            gameState.dialogueQueue = [
+                `${partyLeader.name} - Level ${partyLeader.level}`,
+                `HP: ${partyLeader.hp}/${partyLeader.maxHp}`,
+                `PP: ${partyLeader.pp}/${partyLeader.maxPp}`,
+                `Attack: ${partyLeader.attack}`,
+                `Defense: ${partyLeader.defense}`,
+                `Speed: ${partyLeader.speed}`,
+                `Weapon: ${gameState.equippedWeapon ? items[gameState.equippedWeapon].name : 'None'}`
+            ];
+            showDialogue(gameState.dialogueQueue.shift());
+            document.getElementById('gameMenu').classList.remove('active');
         }
         
         function saveGame() {
             localStorage.setItem('johnNeumaierSave', JSON.stringify(gameState));
+            soundSystem.playSound('victory');
             showCombatMessage('Game saved!');
+            document.getElementById('gameMenu').classList.remove('active');
+        }
+        
+        function loadGame() {
+            const saveData = localStorage.getItem('johnNeumaierSave');
+            if (saveData) {
+                const parsed = JSON.parse(saveData);
+                gameState = { ...gameState, ...parsed };
+                gameState.player = parsed.player || gameState.player;
+                gameState.flags = parsed.flags || gameState.flags;
+                gameState.party = parsed.party || gameState.party;
+                gameState.inventory = parsed.inventory || gameState.inventory;
+                gameState.currentArea = parsed.currentArea || 'room303';
+                spawnEnemies();
+                updateHUD();
+                soundSystem.playSound('victory');
+                showCombatMessage('Game loaded!');
+            } else {
+                showCombatMessage('No save file found!');
+            }
+            document.getElementById('gameMenu').classList.remove('active');
         }
         
         function returnToTitle() {
-            if (confirm('Return to title screen?')) {
+            if (confirm('Return to title screen? Your progress will be saved.')) {
+                saveGame();
                 window.location.href = 'index.html';
             }
         }
@@ -2797,6 +3000,8 @@
                     closeInventory();
                 } else if (document.getElementById('shopScreen').classList.contains('active')) {
                     closeShop();
+                } else if (document.getElementById('phoneScreen').classList.contains('active')) {
+                    closePhone();
                 } else {
                     toggleMenu();
                 }
