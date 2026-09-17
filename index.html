@@ -4,34 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Living Curriculum</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* ---------- FONTS ---------- */
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
-
   :root{
-    --ink:        #0d0b0a;
-    --espresso:   #1a1512;
-    --oxblood:    #4a1f1c;
-    --oxblood-lt: #6b2a25;
-    --gold:       #b08d57;
-    --gold-lt:    #d4b483;
-    --parchment:  #e8dcc4;
-    --parchment-2:#c9b89a;
-    --slate:      #2a2a2e;
+    --ink:#0b0e13;
+    --ink-2:#11151c;
+    --parchment:#e8e0cf;
+    --parchment-dim:#c9c0ad;
+    --gold:#b08d4f;
+    --gold-soft:#8a6f3d;
+    --oxblood:#5a1f1f;
+    --forest:#1c2a24;
+    --navy:#131c2b;
+    --line:rgba(176,141,79,0.35);
   }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
-
-  html,body{
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
     background:var(--ink);
     color:var(--parchment);
     font-family:'EB Garamond', Georgia, serif;
     overflow-x:hidden;
+    min-height:100vh;
   }
 
-  /* ---------- TOP BAR ---------- */
-  .topbar{
+  /* ---------- FLOATING IMAGE FIELD ---------- */
+  .float-field{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(28,42,36,0.9), transparent 60%),
+      radial-gradient(ellipse at 80% 70%, rgba(19,28,43,0.9), transparent 60%),
+      linear-gradient(180deg,#0b0e13 0%, #0e1219 50%, #0b0e13 100%);
+  }
+
+  .float-field::after{
+    /* vignette to deepen the mood */
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
+    pointer-events:none;
+  }
+
+  .float-img{
+    position:absolute;
+    width:340px;
+    height:240px;
+    object-fit:cover;
+    border:1px solid var(--line);
+    filter:sepia(0.45) hue-rotate(180deg) saturate(0.55) brightness(0.5) contrast(1.05);
+    opacity:0.28;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    will-change:transform;
+  }
+
+  /* individual drift paths */
+  @keyframes drift1{
+    0%{transform:translate(-10vw, 5vh) rotate(-2deg);}
+    50%{transform:translate(60vw, 25vh) rotate(3deg);}
+    100%{transform:translate(-10vw, 5vh) rotate(-2deg);}
+  }
+  @keyframes drift2{
+    0%{transform:translate(75vw, 60vh) rotate(2deg);}
+    50%{transform:translate(5vw, 30vh) rotate(-3deg);}
+    100%{transform:translate(75vw, 60vh) rotate(2deg);}
+  }
+  @keyframes drift3{
+    0%{transform:translate(30vw, 80vh) rotate(-1deg);}
+    50%{transform:translate(70vw, 10vh) rotate(4deg);}
+    100%{transform:translate(30vw, 80vh) rotate(-1deg);}
+  }
+  @keyframes drift4{
+    0%{transform:translate(90vw, 15vh) rotate(3deg);}
+    50%{transform:translate(20vw, 70vh) rotate(-2deg);}
+    100%{transform:translate(90vw, 15vh) rotate(3deg);}
+  }
+  @keyframes drift5{
+    0%{transform:translate(-5vw, 55vh) rotate(1deg);}
+    50%{transform:translate(50vw, 5vh) rotate(-4deg);}
+    100%{transform:translate(-5vw, 55vh) rotate(1deg);}
+  }
+  @keyframes drift6{
+    0%{transform:translate(55vw, -10vh) rotate(-3deg);}
+    50%{transform:translate(15vw, 65vh) rotate(2deg);}
+    100%{transform:translate(55vw, -10vh) rotate(-3deg);}
+  }
+
+  .f1{animation:drift1 48s ease-in-out infinite;}
+  .f2{animation:drift2 62s ease-in-out infinite;}
+  .f3{animation:drift3 55s ease-in-out infinite;}
+  .f4{animation:drift4 70s ease-in-out infinite;}
+  .f5{animation:drift5 58s ease-in-out infinite;}
+  .f6{animation:drift6 66s ease-in-out infinite;}
+
+  /* ---------- HEADER / NAV ---------- */
+  header{
     position:fixed;
     top:0; left:0; right:0;
     z-index:100;
@@ -39,267 +113,269 @@
     align-items:center;
     justify-content:space-between;
     padding:18px 40px;
-    background:linear-gradient(to bottom, rgba(13,11,10,.96), rgba(13,11,10,.85));
-    border-bottom:1px solid rgba(176,141,87,.35);
-    backdrop-filter:blur(6px);
+    background:linear-gradient(180deg, rgba(11,14,19,0.96) 0%, rgba(11,14,19,0.82) 70%, rgba(11,14,19,0) 100%);
+    backdrop-filter:blur(3px);
+    border-bottom:1px solid var(--line);
   }
 
   .brand{
-    font-family:'Cormorant Garamond', serif;
-    font-size:1.15rem;
-    letter-spacing:.14em;
+    font-family:'Cinzel', serif;
+    font-size:1.05rem;
+    letter-spacing:0.22em;
     text-transform:uppercase;
-    color:var(--gold-lt);
+    color:var(--parchment);
     text-decoration:none;
-    border:1px solid var(--gold);
-    padding:8px 18px;
-    transition:background .3s, color .3s;
+    border:1px solid var(--line);
+    padding:10px 18px;
+    transition:all .35s ease;
+    white-space:nowrap;
   }
   .brand:hover{
-    background:var(--gold);
-    color:var(--ink);
+    color:var(--gold);
+    border-color:var(--gold);
+    background:rgba(176,141,79,0.06);
   }
 
-  /* ---------- NAV ---------- */
   nav ul{
     list-style:none;
+    margin:0; padding:0;
     display:flex;
-    gap:34px;
     align-items:center;
+    gap:6px;
   }
-  nav > ul > li{ position:relative; }
+  nav li{position:relative;}
 
-  nav a, .navlabel{
-    font-family:'Cormorant Garamond', serif;
-    font-size:.95rem;
-    letter-spacing:.16em;
+  nav a.nav-link, nav .nav-link{
+    display:block;
+    font-family:'Cinzel', serif;
+    font-size:0.72rem;
+    letter-spacing:0.18em;
     text-transform:uppercase;
-    color:var(--parchment-2);
+    color:var(--parchment-dim);
     text-decoration:none;
+    padding:12px 16px;
+    transition:color .3s ease, background .3s ease;
     cursor:pointer;
-    padding:10px 0;
-    display:inline-block;
-    transition:color .3s;
   }
-  nav a:hover, .navlabel:hover{ color:var(--gold-lt); }
+  nav .nav-link:hover{
+    color:var(--gold);
+    background:rgba(176,141,79,0.07);
+  }
+
+  /* caret */
+  .has-drop > .nav-link::after{
+    content:"";
+    display:inline-block;
+    margin-left:8px;
+    width:6px;height:6px;
+    border-right:1px solid currentColor;
+    border-bottom:1px solid currentColor;
+    transform:rotate(45deg) translateY(-2px);
+    opacity:0.7;
+  }
 
   /* dropdown */
   .dropdown{
     position:absolute;
-    top:100%;
-    left:50%;
-    transform:translateX(-50%) translateY(8px);
+    top:100%; left:0;
     min-width:220px;
-    background:rgba(20,16,14,.98);
-    border:1px solid rgba(176,141,87,.45);
-    padding:14px 0;
+    background:rgba(11,14,19,0.98);
+    border:1px solid var(--line);
+    padding:8px 0;
     opacity:0;
     visibility:hidden;
-    transition:opacity .28s ease, transform .28s ease;
+    transform:translateY(6px);
+    transition:opacity .3s ease, transform .3s ease, visibility .3s;
+    box-shadow:0 20px 50px rgba(0,0,0,0.7);
   }
-  nav li:hover .dropdown{
+  .has-drop:hover > .dropdown{
     opacity:1;
     visibility:visible;
-    transform:translateX(-50%) translateY(0);
+    transform:translateY(0);
   }
-  .dropdown a{
+  .dropdown li a{
     display:block;
-    padding:8px 22px;
-    font-size:.85rem;
-    letter-spacing:.12em;
-    text-transform:none;
-    color:var(--parchment-2);
+    padding:9px 22px;
+    font-family:'EB Garamond', serif;
+    font-size:0.92rem;
+    letter-spacing:0.06em;
+    color:var(--parchment-dim);
+    text-decoration:none;
+    transition:color .25s ease, background .25s ease, padding-left .25s ease;
   }
-  .dropdown a:hover{
-    color:var(--gold-lt);
-    background:rgba(176,141,87,.08);
+  .dropdown li a:hover{
+    color:var(--gold);
+    background:rgba(176,141,79,0.07);
+    padding-left:28px;
   }
 
   /* ---------- HERO ---------- */
-  .hero{
+  main{
     position:relative;
+    z-index:10;
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:140px 40px 80px;
-    overflow:hidden;
-    background:
-      radial-gradient(ellipse at 50% 40%, rgba(74,31,28,.35), transparent 60%),
-      linear-gradient(160deg, #0d0b0a 0%, #1a1512 50%, #0d0b0a 100%);
+    padding:160px 40px 100px;
   }
 
-  /* floating image layer */
-  .floaters{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    z-index:1;
-  }
-  .floater{
-    position:absolute;
-    width:280px;
-    height:190px;
-    background-size:cover;
-    background-position:center;
-    filter:sepia(.5) contrast(.9) brightness(.55) hue-rotate(-10deg);
-    border:1px solid rgba(176,141,87,.35);
-    box-shadow:0 20px 50px rgba(0,0,0,.6);
-    opacity:.42;
-    animation:drift 38s linear infinite;
-  }
-  .floater:nth-child(1){ top:8%;  left:-10%; animation-duration:44s; animation-delay:0s; }
-  .floater:nth-child(2){ top:32%; left:-25%; animation-duration:52s; animation-delay:-8s; width:340px; height:220px; }
-  .floater:nth-child(3){ top:62%; left:-15%; animation-duration:48s; animation-delay:-20s; }
-  .floater:nth-child(4){ top:18%; left:-40%; animation-duration:60s; animation-delay:-30s; width:300px; height:200px; }
-  .floater:nth-child(5){ top:75%; left:-30%; animation-duration:55s; animation-delay:-14s; width:320px; height:210px; }
-  .floater:nth-child(6){ top:45%; left:-50%; animation-duration:65s; animation-delay:-40s; }
-
-  @keyframes drift{
-    0%   { transform:translateX(0) translateY(0) rotate(-1.5deg); }
-    50%  { transform:translateX(60vw) translateY(-18px) rotate(1.5deg); }
-    100% { transform:translateX(120vw) translateY(0) rotate(-1.5deg); }
-  }
-
-  /* hero text */
-  .hero-inner{
-    position:relative;
-    z-index:5;
-    max-width:1000px;
+  .hero{
+    max-width:960px;
     text-align:center;
   }
+
+  .hero-rule{
+    width:80px;
+    height:1px;
+    background:var(--gold);
+    margin:0 auto 34px;
+    opacity:0.7;
+  }
+
   .hero h1{
     font-family:'Cormorant Garamond', serif;
     font-weight:500;
-    font-size:clamp(1.9rem, 4.2vw, 3.6rem);
-    line-height:1.32;
-    letter-spacing:.01em;
+    font-size:clamp(1.9rem, 3.6vw, 3.15rem);
+    line-height:1.35;
+    letter-spacing:0.01em;
     color:var(--parchment);
-    text-shadow:0 4px 30px rgba(0,0,0,.8);
+    margin:0 0 28px;
+    text-shadow:0 2px 30px rgba(0,0,0,0.85);
   }
-  .hero h1 .accent{ color:var(--gold-lt); font-style:italic; }
 
-  .rule{
-    width:120px;
-    height:1px;
-    background:var(--gold);
-    margin:38px auto 0;
-    position:relative;
-  }
-  .rule::before{
-    content:"❦";
-    position:absolute;
-    top:-13px; left:50%;
-    transform:translateX(-50%);
+  .hero h1 em{
+    font-style:italic;
     color:var(--gold);
-    font-size:.9rem;
-    background:var(--ink);
-    padding:0 10px;
+  }
+
+  .hero-sub{
+    font-family:'EB Garamond', serif;
+    font-style:italic;
+    font-size:1.05rem;
+    letter-spacing:0.08em;
+    color:var(--parchment-dim);
+    margin:0;
+    opacity:0.85;
+  }
+
+  .hero-rule.bottom{
+    margin:34px auto 0;
   }
 
   /* ---------- FOOTER ---------- */
   footer{
-    border-top:1px solid rgba(176,141,87,.25);
-    padding:34px 40px;
+    position:relative;
+    z-index:10;
     text-align:center;
-    font-family:'Cormorant Garamond', serif;
-    font-size:.8rem;
-    letter-spacing:.22em;
+    padding:30px 20px 44px;
+    font-family:'Cinzel', serif;
+    font-size:0.62rem;
+    letter-spacing:0.28em;
     text-transform:uppercase;
-    color:rgba(201,184,154,.5);
-    background:var(--ink);
+    color:var(--parchment-dim);
+    opacity:0.6;
+    border-top:1px solid var(--line);
+    background:rgba(11,14,19,0.85);
   }
 
-  /* ---------- RESPONSIVE ---------- */
-  @media(max-width:900px){
-    .topbar{ flex-direction:column; gap:14px; padding:16px 20px; }
-    nav ul{ flex-wrap:wrap; justify-content:center; gap:18px; }
-    .floater{ display:none; }
-    .hero{ padding-top:190px; }
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 900px){
+    header{flex-direction:column; gap:12px; padding:14px 18px;}
+    nav ul{flex-wrap:wrap; justify-content:center; gap:0;}
+    nav .nav-link{font-size:0.62rem; padding:9px 10px;}
+    .dropdown{position:static; opacity:1; visibility:visible; transform:none; display:none; border:none; box-shadow:none; background:transparent;}
+    .has-drop:hover > .dropdown{display:block;}
+    main{padding:200px 22px 80px;}
+    .float-img{width:220px; height:150px; opacity:0.2;}
+    .brand{font-size:0.85rem; padding:8px 12px; letter-spacing:0.16em;}
   }
 </style>
 </head>
 <body>
 
-<!-- ================= TOP BAR ================= -->
-<header class="topbar">
-  <a href="index.html" class="brand">The Living Curriculum</a>
-
-  <nav>
-    <ul>
-      <li>
-        <span class="navlabel">Early Childhood</span>
-        <div class="dropdown">
-          <a href="early-childhood/birth-18-months.html">Birth – 18 Months</a>
-          <a href="early-childhood/19-months-2-years.html">19 Months – 2 Years</a>
-          <a href="early-childhood/3-year-olds.html">3 Year Olds</a>
-          <a href="early-childhood/4-year-olds.html">4 Year Olds</a>
-        </div>
-      </li>
-
-      <li>
-        <span class="navlabel">School Age</span>
-        <div class="dropdown">
-          <a href="school-age/kindergarten.html">Kindergarten</a>
-          <a href="school-age/1st-grade.html">1st Grade</a>
-          <a href="school-age/2nd-grade.html">2nd Grade</a>
-          <a href="school-age/3rd-grade.html">3rd Grade</a>
-          <a href="school-age/4th-grade.html">4th Grade</a>
-        </div>
-      </li>
-
-      <li>
-        <span class="navlabel">Middle School</span>
-        <div class="dropdown">
-          <a href="middle-school/5th-grade.html">5th Grade</a>
-          <a href="middle-school/6th-grade.html">6th Grade</a>
-          <a href="middle-school/7th-grade.html">7th Grade</a>
-          <a href="middle-school/8th-grade.html">8th Grade</a>
-        </div>
-      </li>
-
-      <li>
-        <span class="navlabel">High School</span>
-        <div class="dropdown">
-          <a href="high-school/9th-grade.html">9th Grade</a>
-          <a href="high-school/10th-grade.html">10th Grade</a>
-          <a href="high-school/11th-grade.html">11th Grade</a>
-          <a href="high-school/12th-grade.html">12th Grade</a>
-        </div>
-      </li>
-
-      <li><a href="sign-ups.html">Sign Ups</a></li>
-      <li><a href="floorplans.html">Floorplans</a></li>
-    </ul>
-  </nav>
-</header>
-
-<!-- ================= HERO ================= -->
-<section class="hero">
-
-  <!-- floating school imagery -->
-  <div class="floaters" aria-hidden="true">
-    <div class="floater" style="background-image:url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=60');"></div>
-    <div class="floater" style="background-image:url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=60');"></div>
-    <div class="floater" style="background-image:url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=60');"></div>
-    <div class="floater" style="background-image:url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=60');"></div>
-    <div class="floater" style="background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=60');"></div>
-    <div class="floater" style="background-image:url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=60');"></div>
+  <!-- FLOATING BACKGROUND IMAGES -->
+  <div class="float-field" aria-hidden="true">
+    <!-- Replace the src values with your own school / classroom images -->
+    <img class="float-img f1" src="https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=60" alt="">
+    <img class="float-img f2" src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=60" alt="">
+    <img class="float-img f3" src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=60" alt="">
+    <img class="float-img f4" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=60" alt="">
+    <img class="float-img f5" src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&q=60" alt="">
+    <img class="float-img f6" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=60" alt="">
   </div>
 
-  <div class="hero-inner">
-    <h1>
-      Thinking is an attribute,<br>
-      gaining skills is something we have lost.<br>
-      <span class="accent">Let&rsquo;s make something new to improve our country.</span>
-    </h1>
-    <div class="rule"></div>
-  </div>
-</section>
+  <!-- HEADER -->
+  <header>
+    <a href="index.html" class="brand">The Living Curriculum</a>
 
-<footer>
-  The Living Curriculum &nbsp;·&nbsp; Est. MMXXV
-</footer>
+    <nav>
+      <ul>
+        <li class="has-drop">
+          <span class="nav-link">Early Childhood</span>
+          <ul class="dropdown">
+            <li><a href="early-childhood/birth-18-months.html">Birth–18 Months</a></li>
+            <li><a href="early-childhood/19-months-2-years.html">19 Months–2 Years</a></li>
+            <li><a href="early-childhood/3-year-olds.html">3 Year Olds</a></li>
+            <li><a href="early-childhood/4-year-olds.html">4 Year Olds</a></li>
+          </ul>
+        </li>
+
+        <li class="has-drop">
+          <span class="nav-link">School Age</span>
+          <ul class="dropdown">
+            <li><a href="school-age/kindergarten.html">Kindergarten</a></li>
+            <li><a href="school-age/1st-grade.html">1st Grade</a></li>
+            <li><a href="school-age/2nd-grade.html">2nd Grade</a></li>
+            <li><a href="school-age/3rd-grade.html">3rd Grade</a></li>
+            <li><a href="school-age/4th-grade.html">4th Grade</a></li>
+          </ul>
+        </li>
+
+        <li class="has-drop">
+          <span class="nav-link">Middle School</span>
+          <ul class="dropdown">
+            <li><a href="middle-school/5th-grade.html">5th Grade</a></li>
+            <li><a href="middle-school/6th-grade.html">6th Grade</a></li>
+            <li><a href="middle-school/7th-grade.html">7th Grade</a></li>
+            <li><a href="middle-school/8th-grade.html">8th Grade</a></li>
+          </ul>
+        </li>
+
+        <li class="has-drop">
+          <span class="nav-link">High School</span>
+          <ul class="dropdown">
+            <li><a href="high-school/9th-grade.html">9th Grade</a></li>
+            <li><a href="high-school/10th-grade.html">10th Grade</a></li>
+            <li><a href="high-school/11th-grade.html">11th Grade</a></li>
+            <li><a href="high-school/12th-grade.html">12th Grade</a></li>
+          </ul>
+        </li>
+
+        <li><a class="nav-link" href="sign-ups.html">Sign Ups</a></li>
+        <li><a class="nav-link" href="floorplans.html">Floorplans</a></li>
+        <li><a class="nav-link" href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero">
+      <div class="hero-rule"></div>
+      <h1>
+        Thinking is an attribute,<br>
+        gaining skills is something we have lost.<br>
+        <em>Let's make something new to improve our country.</em>
+      </h1>
+      <p class="hero-sub">A living curriculum — built for the next generation.</p>
+      <div class="hero-rule bottom"></div>
+    </section>
+  </main>
+
+  <footer>
+    The Living Curriculum &nbsp;·&nbsp; Est. MMXXV
+  </footer>
 
 </body>
 </html>
