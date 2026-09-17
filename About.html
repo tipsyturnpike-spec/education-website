@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Our Curriculum — The Living Curriculum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0e13;
+    --ink-2:#11151c;
+    --parchment:#e8e0cf;
+    --parchment-dim:#c9c0ad;
+    --gold:#b08d4f;
+    --gold-soft:#8a6f3d;
+    --oxblood:#5a1f1f;
+    --forest:#1c2a24;
+    --navy:#131c2b;
+    --line:rgba(176,141,79,0.35);
+    --line-soft:rgba(176,141,79,0.18);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--parchment);
+    font-family:'EB Garamond', Georgia, serif;
+    overflow-x:hidden;
+    min-height:100vh;
+    line-height:1.7;
+  }
+
+  /* ---------- BACKGROUND ---------- */
+  .bg-field{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(28,42,36,0.55), transparent 55%),
+      radial-gradient(ellipse at 85% 85%, rgba(19,28,43,0.55), transparent 55%),
+      linear-gradient(180deg,#0b0e13 0%, #0e1219 50%, #0b0e13 100%);
+  }
+  .bg-field::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+  }
+
+  /* ---------- HEADER / NAV ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 40px;
+    background:linear-gradient(180deg, rgba(11,14,19,0.97) 0%, rgba(11,14,19,0.85) 75%, rgba(11,14,19,0) 100%);
+    backdrop-filter:blur(4px);
+    border-bottom:1px solid var(--line);
+  }
+
+  .brand{
+    font-family:'Cinzel', serif;
+    font-size:1.05rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--parchment);
+    text-decoration:none;
+    border:1px solid var(--line);
+    padding:10px 18px;
+    transition:all .35s ease;
+    white-space:nowrap;
+  }
+  .brand:hover{
+    color:var(--gold);
+    border-color:var(--gold);
+    background:rgba(176,141,79,0.06);
+  }
+
+  nav ul{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  nav li{position:relative;}
+
+  nav .nav-link{
+    display:block;
+    font-family:'Cinzel', serif;
+    font-size:0.72rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    text-decoration:none;
+    padding:12px 16px;
+    transition:color .3s ease, background .3s ease;
+    cursor:pointer;
+  }
+  nav .nav-link:hover{
+    color:var(--gold);
+    background:rgba(176,141,79,0.07);
+  }
+  nav .nav-link.active{
+    color:var(--gold);
+  }
+
+  .has-drop > .nav-link::after{
+    content:"";
+    display:inline-block;
+    margin-left:8px;
+    width:6px;height:6px;
+    border-right:1px solid currentColor;
+    border-bottom:1px solid currentColor;
+    transform:rotate(45deg) translateY(-2px);
+    opacity:0.7;
+  }
+
+  .dropdown{
+    position:absolute;
+    top:100%; left:0;
+    min-width:220px;
+    background:rgba(11,14,19,0.98);
+    border:1px solid var(--line);
+    padding:8px 0;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(6px);
+    transition:opacity .3s ease, transform .3s ease, visibility .3s;
+    box-shadow:0 20px 50px rgba(0,0,0,0.7);
+  }
+  .has-drop:hover > .dropdown{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+  .dropdown li a{
+    display:block;
+    padding:9px 22px;
+    font-family:'EB Garamond', serif;
+    font-size:0.92rem;
+    letter-spacing:0.06em;
+    color:var(--parchment-dim);
+    text-decoration:none;
+    transition:color .25s ease, background .25s ease, padding-left .25s ease;
+  }
+  .dropdown li a:hover{
+    color:var(--gold);
+    background:rgba(176,141,79,0.07);
+    padding-left:28px;
+  }
+
+  /* ---------- PAGE LAYOUT ---------- */
+  main{
+    position:relative;
+    z-index:10;
+    max-width:1180px;
+    margin:0 auto;
+    padding:170px 40px 120px;
+  }
+
+  /* ---------- PAGE TITLE ---------- */
+  .page-head{
+    text-align:center;
+    margin-bottom:80px;
+  }
+  .page-head .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:0.7rem;
+    letter-spacing:0.4em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:22px;
+    display:block;
+    opacity:0.85;
+  }
+  .page-head h1{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size:clamp(2.2rem, 4.5vw, 3.4rem);
+    letter-spacing:0.02em;
+    margin:0 0 24px;
+    color:var(--parchment);
+  }
+  .page-head .lede{
+    font-family:'EB Garamond', serif;
+    font-style:italic;
+    font-size:1.15rem;
+    color:var(--parchment-dim);
+    max-width:640px;
+    margin:0 auto;
+    opacity:0.9;
+  }
+  .rule{
+    width:70px;
+    height:1px;
+    background:var(--gold);
+    margin:34px auto 0;
+    opacity:0.7;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section.block{
+    margin-bottom:90px;
+  }
+
+  .section-title{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:clamp(1.5rem, 2.6vw, 2rem);
+    letter-spacing:0.02em;
+    color:var(--parchment);
+    margin:0 0 26px;
+    text-align:center;
+  }
+  .section-title em{
+    font-style:italic;
+    color:var(--gold);
+  }
+
+  .prose{
+    max-width:760px;
+    margin:0 auto;
+    font-size:1.08rem;
+    color:var(--parchment-dim);
+  }
+  .prose p{margin:0 0 22px;}
+  .prose p:last-child{margin-bottom:0;}
+  .prose strong{color:var(--parchment); font-weight:500;}
+
+  /* ---------- IMAGE STRIP ---------- */
+  .image-strip{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+    margin:50px 0;
+  }
+  .image-strip figure{
+    margin:0;
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--line);
+    aspect-ratio:4/3;
+  }
+  .image-strip img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    filter:sepia(0.35) hue-rotate(180deg) saturate(0.6) brightness(0.62) contrast(1.05);
+    transition:transform 1.2s ease, filter .6s ease;
+  }
+  .image-strip figure:hover img{
+    transform:scale(1.05);
+    filter:sepia(0.25) hue-rotate(180deg) saturate(0.7) brightness(0.72) contrast(1.05);
+  }
+  .image-strip figcaption{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    padding:12px 14px;
+    background:linear-gradient(180deg, transparent, rgba(11,14,19,0.92));
+    font-family:'Cinzel', serif;
+    font-size:0.6rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+  }
+
+  /* ---------- BOX / CARD GRID ---------- */
+  .box-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:26px;
+    margin:50px 0;
+  }
+  .box{
+    background:linear-gradient(180deg, rgba(17,21,28,0.9), rgba(11,14,19,0.9));
+    border:1px solid var(--line-soft);
+    padding:34px 30px;
+    position:relative;
+    transition:border-color .4s ease, transform .4s ease, background .4s ease;
+  }
+  .box::before{
+    content:"";
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity:0.5;
+  }
+  .box:hover{
+    border-color:var(--line);
+    transform:translateY(-4px);
+    background:linear-gradient(180deg, rgba(20,25,33,0.95), rgba(13,16,22,0.95));
+  }
+  .box h3{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:1.35rem;
+    letter-spacing:0.03em;
+    color:var(--gold);
+    margin:0 0 16px;
+  }
+  .box p{
+    font-size:1rem;
+    color:var(--parchment-dim);
+    margin:0 0 14px;
+  }
+  .box p:last-child{margin-bottom:0;}
+  .box em{
+    font-style:italic;
+    color:var(--parchment);
+  }
+
+  /* ---------- PULL QUOTE ---------- */
+  .pull-quote{
+    max-width:820px;
+    margin:70px auto;
+    text-align:center;
+    padding:50px 30px;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .pull-quote::before{
+    content:"“";
+    position:absolute;
+    top:-10px; left:50%;
+    transform:translateX(-50%);
+    background:var(--ink);
+    padding:0 18px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:2.4rem;
+    color:var(--gold);
+    line-height:1;
+  }
+  .pull-quote p{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:clamp(1.25rem, 2.2vw, 1.65rem);
+    line-height:1.5;
+    color:var(--parchment);
+    margin:0;
+  }
+
+  /* ---------- TWO-COLUMN FEATURE ---------- */
+  .feature{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:50px;
+    align-items:center;
+    margin:70px 0;
+  }
+  .feature.reverse .feature-text{order:2;}
+  .feature.reverse .feature-image{order:1;}
+  .feature-image{
+    border:1px solid var(--line);
+    overflow:hidden;
+    aspect-ratio:5/4;
+    position:relative;
+  }
+  .feature-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:sepia(0.35) hue-rotate(180deg) saturate(0.6) brightness(0.62) contrast(1.05);
+    transition:transform 1.4s ease;
+  }
+  .feature-image:hover img{
+    transform:scale(1.04);
+  }
+  .feature-text h3{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:1.7rem;
+    color:var(--parchment);
+    margin:0 0 18px;
+    letter-spacing:0.02em;
+  }
+  .feature-text h3 em{
+    color:var(--gold);
+    font-style:italic;
+  }
+  .feature-text p{
+    font-size:1.05rem;
+    color:var(--parchment-dim);
+    margin:0 0 18px;
+  }
+
+  /* ---------- CLOSING / CTA ---------- */
+  .closing{
+    text-align:center;
+    max-width:760px;
+    margin:100px auto 0;
+    padding:60px 30px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(17,21,28,0.85), rgba(11,14,19,0.85));
+  }
+  .closing h2{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:2rem;
+    color:var(--parchment);
+    margin:0 0 22px;
+  }
+  .closing p{
+    font-size:1.05rem;
+    color:var(--parchment-dim);
+    margin:0 0 18px;
+  }
+  .closing a.cta{
+    display:inline-block;
+    margin-top:18px;
+    font-family:'Cinzel', serif;
+    font-size:0.72rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--gold);
+    text-decoration:none;
+    border:1px solid var(--gold);
+    padding:14px 30px;
+    transition:all .35s ease;
+  }
+  .closing a.cta:hover{
+    background:var(--gold);
+    color:var(--ink);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    position:relative;
+    z-index:10;
+    text-align:center;
+    padding:30px 20px 44px;
+    font-family:'Cinzel', serif;
+    font-size:0.62rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    opacity:0.6;
+    border-top:1px solid var(--line);
+    background:rgba(11,14,19,0.85);
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 900px){
+    header{flex-direction:column; gap:12px; padding:14px 18px;}
+    nav ul{flex-wrap:wrap; justify-content:center; gap:0;}
+    nav .nav-link{font-size:0.62rem; padding:9px 10px;}
+    .dropdown{position:static; opacity:1; visibility:visible; transform:none; display:none; border:none; box-shadow:none; background:transparent;}
+    .has-drop:hover > .dropdown{display:block;}
+    main{padding:200px 22px 80px;}
+    .brand{font-size:0.85rem; padding:8px 12px; letter-spacing:0.16em;}
+    .image-strip{grid-template-columns:1fr;}
+    .feature{grid-template-columns:1fr; gap:30px;}
+    .feature.reverse .feature-text{order:1;}
+    .feature.reverse .feature-image{order:2;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="bg-field" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+  <header>
+    <a href="index.html" class="brand">The Living Curriculum</a>
+
+    <nav>
+      <ul>
+        <li class="has-drop">
+          <span class="nav-link">Early Childhood</span>
+          <ul class="dropdown">
+            <li><a href="early-childhood/birth-18-months.html">Birth–18 Months</a></li>
+            <li><a href="early-childhood/19-months-2-years.html">19 Months–2 Years</a></li>
+            <li><a href="early-childhood/3-year-olds.html">3 Year Olds</a></li>
+            <li><a href="early-childhood/4-year-olds.html">4 Year Olds</a></li>
+          </ul>
+        </li>
+
+        <li class="has-drop">
+          <span class="nav-link">School Age</span>
+          <ul class="dropdown">
+            <li><a href="school-age/kindergarten.html">Kindergarten</a></li>
+            <li><a href="school-age/1st-grade.html">1st Grade</a></li>
+            <li><a href="school-age/2nd-grade.html">2nd Grade</a></li>
+            <li><a href="school-age/3rd-grade.html">3rd Grade</a></li>
+            <li><a href="school-age/4th-grade.html">4th Grade</a></li>
+          </ul>
+        </li>
+
+        <li class="has-drop">
+          <span class="nav-link">Middle School</span>
+          <ul class="dropdown">
+            <li><a href="middle-school/5th-grade.html">5th Grade</a></li>
+            <li><a href="middle-school/6th-grade.html">6th Grade</a></li>
+            <li><a href="middle-school/7th-grade.html">7th Grade</a></li>
+            <li><a href="middle-school/8th-grade.html">8th Grade</a></li>
+          </ul>
+        </li>
+
+        <li class="has-drop">
+          <span class="nav-link">High School</span>
+          <ul class="dropdown">
+            <li><a href="high-school/9th-grade.html">9th Grade</a></li>
+            <li><a href="high-school/10th-grade.html">10th Grade</a></li>
+            <li><a href="high-school/11th-grade.html">11th Grade</a></li>
+            <li><a href="high-school/12th-grade.html">12th Grade</a></li>
+          </ul>
+        </li>
+
+        <li><a class="nav-link" href="sign-ups.html">Sign Ups</a></li>
+        <li><a class="nav-link" href="floorplans.html">Floorplans</a></li>
+        <li><a class="nav-link active" href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- PAGE TITLE -->
+    <div class="page-head">
+      <span class="eyebrow">About Our Curriculum</span>
+      <h1>Learning by Living</h1>
+      <p class="lede">Imagine a classroom where the desks are empty—not because no one showed up, but because everyone is too busy doing to sit down.</p>
+      <div class="rule"></div>
+    </div>
+
+    <!-- INTRO PROSE -->
+    <section class="block">
+      <div class="prose">
+        <p>Our curriculum was built on a simple, radical belief: <strong>children don't learn best by following instructions all day. They learn by living.</strong></p>
+        <p>For too long, education has asked kids to sit still, stay quiet, and memorize facts they'll forget by Friday. We believe that's backwards. Real learning happens when hands are moving, minds are racing, and the work actually matters. That's why every subject in our curriculum is taught through doing—not as a break from "real learning," but as the very heart of it.</p>
+      </div>
+    </section>
+
+    <!-- IMAGE STRIP -->
+    <div class="image-strip">
+      <figure>
+        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=70" alt="Children building together">
+        <figcaption>Building</figcaption>
+      </figure>
+      <figure>
+        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900&q=70" alt="Children exploring outdoors">
+        <figcaption>Exploring</figcaption>
+      </figure>
+      <figure>
+        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=900&q=70" alt="Children thinking together">
+        <figcaption>Thinking</figcaption>
+      </figure>
+    </div>
+
+    <!-- SUBJECTS -->
+    <section class="block">
+      <h2 class="section-title">Math, Science, English, and History—<em>Out in the World</em></h2>
+
+      <div class="box-grid">
+        <div class="box">
+          <h3>Mathematics</h3>
+          <p>Here, math isn't a worksheet. It's measuring ingredients for a meal the class will share. It's calculating the angles and load limits for a playground the community will actually use.</p>
+        </div>
+
+        <div class="box">
+          <h3>Science</h3>
+          <p>Science isn't a textbook chapter. It's watching bread rise, testing the strength of a wood joint, or figuring out why the soccer ball curves when you kick it just right.</p>
+        </div>
+
+        <div class="box">
+          <h3>English</h3>
+          <p>English isn't just grammar drills. It's reading stories that spark big questions, writing clues for an escape room your classmates will solve, and learning to speak with confidence when you present your ideas to a neighbor.</p>
+        </div>
+
+        <div class="box">
+          <h3>History</h3>
+          <p>History isn't a list of dates. It's stepping into the past through fine arts—painting, music, theater—and discovering that the people who came before us were just as alive, curious, and complicated as we are.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PULL QUOTE -->
+    <div class="pull-quote">
+      <p>Kids don't need to be bribed into learning when the learning itself is an adventure.</p>
+    </div>
+
+    <!-- TOOLS OF REAL LIFE -->
+    <section class="block">
+      <h2 class="section-title">The Tools of <em>Real Life</em></h2>
+      <div class="prose">
+        <p>We don't just talk about practical skills—we hand kids the tools.</p>
+      </div>
+
+      <div class="box-grid" style="margin-top:40px;">
+        <div class="box"><p><em>Cooking</em></p></div>
+        <div class="box"><p><em>Sports</em></p></div>
+        <div class="box"><p><em>Reading</em></p></div>
+        <div class="box"><p><em>Woodworking</em></p></div>
+        <div class="box"><p><em>Metalworking</em></p></div>
+        <div class="box"><p><em>Escape Rooms</em></p></div>
+        <div class="box"><p><em>Interactive Puzzles</em></p></div>
+      </div>
+
+      <div class="prose" style="margin-top:40px;">
+        <p>Every activity is chosen because it teaches something worth knowing and because it's genuinely fun.</p>
+      </div>
+    </section>
+
+    <!-- COMMUNITY FEATURE -->
+    <section class="block">
+      <h2 class="section-title">Building More Than Projects—<em>Building Community</em></h2>
+
+      <div class="feature">
+        <div class="feature-text">
+          <h3>Perhaps the most important thing we build is <em>each other</em>.</h3>
+          <p>At every age level, our curriculum includes community building—not as a unit we study, but as work we do. Children go door to door to help neighbors strengthen their lives and their neighborhoods.</p>
+          <p>Maybe the community needs a new playground. Maybe an elderly neighbor needs help with a repair. Whatever the need, our students show up—not as observers, but as contributors.</p>
+        </div>
+        <div class="feature-image">
+          <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1000&q=70" alt="Children and community building together">
+        </div>
+      </div>
+
+      <div class="feature reverse">
+        <div class="feature-text">
+          <h3>When a whole class comes together to build something real.</h3>
+          <p>When a whole class comes together to build something real—like a playground—they learn more than engineering and teamwork. They learn that they belong to something bigger than themselves. They learn that their hands can change the world around them.</p>
+        </div>
+        <div class="feature-image">
+          <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1000&q=70" alt="Students working on a shared project">
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY IT WORKS -->
+    <section class="block">
+      <h2 class="section-title">Why It <em>Works</em></h2>
+      <div class="prose">
+        <p>Because it's how humans have always learned.</p>
+        <p>We weren't designed to sit in rows, absorbing information passively. We were designed to move, to make, to solve, to help, to create. When children learn this way, something remarkable happens: <strong>they stop asking "When will I ever use this?" because they're already using it.</strong></p>
+        <p>They don't just learn math, science, English, and history. They learn how to think, how to work, how to collaborate, and how to care. They learn that they are capable—and that learning is one of the most exciting things a person can do.</p>
+      </div>
+    </section>
+
+    <!-- A PLACE FOR EVERY CHILD -->
+    <section class="block">
+      <h2 class="section-title">A Place for <em>Every Child</em></h2>
+      <div class="prose">
+        <p>This curriculum is for the tinkerer and the dreamer, the athlete and the artist, the kid who can't sit still and the kid who never raises their hand. It's for families who want something different, and for educators who know in their bones that there's a better way.</p>
+        <p>It's for anyone who believes that childhood shouldn't be spent waiting for recess—and that education should look a lot more like life.</p>
+      </div>
+    </section>
+
+    <!-- CLOSING CTA -->
+    <div class="closing">
+      <h2>Join Us</h2>
+      <p>We're not just rewriting lesson plans. We're reimagining what school can be.</p>
+      <p>If you believe kids learn best by doing, by making, by helping, and by living—then you're already one of us. Come build something real.</p>
+      <p>Want to learn more about how this curriculum works in practice, or how to bring it to your school or community? We'd love to hear from you.</p>
+      <a href="sign-ups.html" class="cta">Get in Touch</a>
+    </div>
+
+  </main>
+
+  <footer>
+    The Living Curriculum &nbsp;·&nbsp; Est. MMXXV
+  </footer>
+
+</body>
+</html>
